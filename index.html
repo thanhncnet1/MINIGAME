@@ -36,7 +36,7 @@
     <div class="relative w-full overflow-hidden shadow-lg bg-slate-900">
         <img src="banner.jpg" 
              alt="Banner CLB Pickleball CMTD" 
-             class="w-full h-auto max-h-80 object-cover mx-auto block">
+             class="w-full h-auto max-h-96 object-cover mx-auto block">
     </div>
 
     <!-- 2. THANH TIÊU ĐỀ & THANH ĐIỀU HƯỚNG (NAVIGATION BAR) -->
@@ -557,32 +557,8 @@
             renderPlayers();
         }
 
-        function editPlayer(id) {
-            const player = players.find(p => p.id == id);
-            if (player) {
-                document.getElementById('player-id').value = player.id;
-                document.getElementById('player-name').value = player.name;
-                document.getElementById('player-gender').value = player.gender;
-                document.getElementById('modal-title').innerText = 'Sửa Thông Tin Pick Thủ';
-                document.getElementById('player-modal').classList.remove('hidden');
-            }
-        }
-
-        function deletePlayer(id) {
-            if (confirm('Bạn có chắc muốn xóa VĐV này?')) {
-                players = players.filter(p => p.id != id);
-                renderPlayers();
-            }
-        }
-
-        function renderM2() {
-            // Hàm xử lý Minigame 2
-        }
-
         // Khởi tạo hiển thị ban đầu
-        window.onload = function() {
-            renderPlayers();
-        };
+        renderPlayers();
     </script>
 </body>
 </html>
