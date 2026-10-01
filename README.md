@@ -51,41 +51,27 @@
             </div>
 
             <!-- Trạng thái Sync Firebase -->
-           
-            <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-            <!-- Firebase Realtime Database (bắt buộc) -->
-            <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-            // 1. Cấu hình Firebase Project của bạn
-const firebaseConfig = {
-    apiKey: "AIzaSy...",
-    authDomain: "ten-du-an-cua-ban.firebaseapp.com",
-    databaseURL: "https://ten-du-an-cua-ban-default-rtdb.firebaseio.com", // ĐÂY LÀ ĐƯỜNG DẪN QUAN TRỌNG
-    projectId: "ten-du-an-cua-ban",
-    storageBucket: "ten-du-an-cua-ban.appspot.com",
-    messagingSenderId: "123456789...",
-    appId: "1:123456789...:web:..."
-};
+            <div id="sync-status" class="text-xs px-2 py-1 rounded bg-amber-500 text-slate-900 font-bold flex items-center gap-1">
+                <i class="fa-solid fa-spinner fa-spin"></i> Đang kết nối Firebase...
+            </div>
 
-// 2. Khởi tạo Firebase
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-
-const database = firebase.database();
-// Kiểm tra và cập nhật trạng thái kết nối trên giao diện
-const syncStatusEl = document.getElementById('sync-status');
-
-database.ref('.info/connected').on('value', (snapshot) => {
-    if (snapshot.val() === true) {
-        // Đã kết nối thành công
-        syncStatusEl.className = "text-xs px-2 py-1 rounded bg-emerald-500 text-white font-bold flex items-center gap-1";
-        syncStatusEl.innerHTML = '<i class="fa-solid fa-wifi"></i> Đã kết nối Firebase';
-    } else {
-        // Đang kết nối hoặc mất kết nối
-        syncStatusEl.className = "text-xs px-2 py-1 rounded bg-amber-500 text-slate-900 font-bold flex items-center gap-1";
-        syncStatusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang kết nối Firebase...';
-    }
-});
+            <!-- Menu Điều Hướng -->
+            <div class="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm font-semibold mt-2 sm:mt-0 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-0 border-slate-700 pt-2 sm:pt-0">
+                <button onclick="showTab('home')" id="btn-home" class="nav-btn hover:bg-slate-700 px-2 sm:px-3 py-1.5 rounded-lg transition flex items-center gap-1 text-yellow-400">
+                    <i class="fa-solid fa-house"></i> <span>HOME</span>
+                </button>
+                <button onclick="showTab('players')" id="btn-players" class="nav-btn hover:bg-slate-700 px-2 sm:px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+                    <i class="fa-solid fa-users"></i> <span>Pick Thủ</span>
+                </button>
+                <button onclick="showTab('minigame1')" id="btn-minigame1" class="nav-btn hover:bg-slate-700 px-2 sm:px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+                    <i class="fa-solid fa-trophy"></i> <span>MINIGAME 1</span>
+                </button>
+                <button onclick="showTab('minigame2')" id="btn-minigame2" class="nav-btn hover:bg-slate-700 px-2 sm:px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+                    <i class="fa-solid fa-medal"></i> <span>MINIGAME 2</span>
+                </button>
+            </div>
+        </div>
+    </nav>
 
     <!-- NỘI DUNG CHÍNH (MAIN CONTAINER) -->
     <main class="max-w-7xl mx-auto w-full p-2 sm:p-4 flex-grow">
