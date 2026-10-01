@@ -172,7 +172,7 @@
                 </div>
             </div>
 
-            <!-- 2. Bảng Lịch Thi Đấu -->
+            <!-- 2. Bảng Lịch Thi Đấu (Mô phỏng Ảnh mẫu 1) -->
             <div class="bg-white rounded-xl shadow-md p-6 mb-6">
                 <div class="flex justify-between items-center mb-2">
                     <div>
@@ -267,7 +267,7 @@
                     </div>
                 </div>
 
-                <!-- Bảng Hiển thị Vòng Bảng -->
+                <!-- Bảng Hiển thị Vòng Bảng (Ảnh Mẫu 2 Layout) -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                     <!-- BẢNG A -->
                     <div class="space-y-4">
@@ -344,11 +344,11 @@
                     </div>
                 </div>
 
-                <!-- VÒNG KNOCKOUT -->
+                <!-- VÒNG KNOCKOUT (BÁN KẾT, CHUNG KẾT, TRANH 3/4) -->
                 <div class="max-w-2xl mx-auto space-y-6 pt-4 border-t">
-                    <h3 class="text-center font-extrabold text-slate-800 text-lg uppercase">VÒNG KNOCKOUT (BÁN KẾT & CHUNG KẾT)</h3>
+                    <h3 class="text-center font-extrabold text-slate-800 text-lg uppercase">VÒNG NOCKOUT (BÁN KẾT & CHUNG KẾT)</h3>
 
-                    <!-- BÁN KẾT -->
+                    <!-- BÁN KẾT C1 & C2 -->
                     <div class="border rounded overflow-hidden">
                         <div class="bg-blue-700 text-white text-xs font-bold p-1 text-center">VÒNG BÁN KẾT (BK1: Nhất A - Nhì B | BK2: Nhất B - Nhì A)</div>
                         <table class="w-full text-xs text-center border-collapse">
@@ -481,16 +481,7 @@
 
     <!-- JAVASCRIPT LOGIC XỬ LÝ -->
     <script>
-        // Hàm chuyển đổi TAB
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('text-yellow-400'));
-            
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-            document.getElementById('btn-' + tabId).classList.add('text-yellow-400');
-        }
-
-        // ================= STATE =================
+        // ================= STATE (DỮ LIỆU BẢN ĐỒ) =================
         let players = [
             { id: 1, name: "Tiến Thọ", gender: "Nam" },
             { id: 2, name: "Châu Sĩ", gender: "Nam" },
@@ -499,33 +490,111 @@
             { id: 5, name: "Phú Mỗ", gender: "Nam" },
             { id: 6, name: "Hà Giấy", gender: "Nam" },
             { id: 7, name: "Long Diễm", gender: "Nam" },
-            { id: 8, name: "Tuấn La", gender: "Nam" }
+            { id: 8, name: "Tuấn La", gender: "Nam" },
+            { id: 9, name: "Trí Đô", gender: "Nam" },
+            { id: 10, name: "Thành Sóc", gender: "Nam" },
+            { id: 11, name: "Quỳnh Cool", gender: "Nữ" },
+            { id: 12, name: "Hải Hà", gender: "Nữ" },
+            { id: 13, name: "Dũng Ngạc", gender: "Nam" },
+            { id: 14, name: "Lợi Trì", gender: "Nam" },
+            { id: 15, name: "Thành Đàm", gender: "Nam" },
+            { id: 16, name: "Điền Chèm", gender: "Nam" },
+            { id: 17, name: "Hạnh", gender: "Nữ" },
+            { id: 18, name: "Minh Vương", gender: "Nam" }
         ];
 
+        // Minigame 1: Danh sách Team A, Team B
+        let m1TeamA = ["Tiến Thọ", "Châu Sĩ", "Vân Đình", "Ly", "Phú Mỗ", "Hà Giấy", "Long Diễm", "Tuấn La", "Hạnh"];
+        let m1TeamB = ["Trí Đô", "Thành Sóc", "Quỳnh Cool", "Hải Hà", "Dũng Ngạc", "Lợi Trì", "Thành Đàm", "Điền Chèm", "Minh Vương"];
+
+        // Minigame 1: Danh sách 24 trận theo mẫu
+        let m1Matches = [
+            { id:1, luot:1, san:1, content:"Nam xoay vòng", a1:"Tiến Thọ", a2:"Châu Sĩ", scoreA:"", scoreB:"", b1:"Trí Đô", b2:"Thành Sóc" },
+            { id:2, luot:1, san:2, content:"Nữ xoay vòng", a1:"Vân Đình", a2:"Ly", scoreA:"", scoreB:"", b1:"Quỳnh Cool", b2:"Hải Hà" },
+            { id:3, luot:1, san:3, content:"Nam xoay vòng", a1:"Phú Mỗ", a2:"Hà Giấy", scoreA:"", scoreB:"", b1:"Dũng Ngạc", b2:"Lợi Trì" },
+            { id:4, luot:2, san:1, content:"Nam xoay vòng", a1:"Long Diễm", a2:"Châu Sĩ", scoreA:"", scoreB:"", b1:"Thành Đàm", b2:"Thành Sóc" },
+            { id:5, luot:2, san:2, content:"Nam-Nữ không xoay vòng", a1:"Tuấn La", a2:"Ly", scoreA:"", scoreB:"", b1:"Điền Chèm", b2:"Hải Hà" },
+            { id:6, luot:2, san:3, content:"Nam-Nữ không xoay vòng", a1:"Hà Giấy", a2:"Vân Đình", scoreA:"", scoreB:"", b1:"Lợi Trì", b2:"Quỳnh Cool" },
+            { id:7, luot:3, san:1, content:"Nam xoay vòng", a1:"Tiến Thọ", a2:"Hà Giấy", scoreA:"", scoreB:"", b1:"Trí Đô", b2:"Lợi Trì" },
+            { id:8, luot:3, san:2, content:"Nam xoay vòng", a1:"Long Diễm", a2:"Phú Mỗ", scoreA:"", scoreB:"", b1:"Thành Đàm", b2:"Dũng Ngạc" },
+            { id:9, luot:3, san:3, content:"Nữ xoay vòng", a1:"Ly", a2:"Hạnh", scoreA:"", scoreB:"", b1:"Hải Hà", b2:"Minh Vương" },
+            { id:10, luot:4, san:1, content:"Nam-Nữ không xoay vòng", a1:"Châu Sĩ", a2:"Hạnh", scoreA:"", scoreB:"", b1:"Thành Sóc", b2:"Minh Vương" },
+            { id:11, luot:4, san:2, content:"Nam xoay vòng", a1:"Long Diễm", a2:"Tuấn La", scoreA:"", scoreB:"", b1:"Thành Đàm", b2:"Điền Chèm" },
+            { id:12, luot:4, san:3, content:"Nam xoay vòng", a1:"Tiến Thọ", a2:"Phú Mỗ", scoreA:"", scoreB:"", b1:"Trí Đô", b2:"Dũng Ngạc" },
+            { id:13, luot:5, san:1, content:"Nam xoay vòng", a1:"Hà Giấy", a2:"Châu Sĩ", scoreA:"", scoreB:"", b1:"Lợi Trì", b2:"Thành Sóc" },
+            { id:14, luot:5, san:2, content:"Nam-Nữ không xoay vòng", a1:"Long Diễm", a2:"Ly", scoreA:"", scoreB:"", b1:"Thành Đàm", b2:"Hải Hà" },
+            { id:15, luot:5, san:3, content:"Nam xoay vòng", a1:"Tiến Thọ", a2:"Tuấn La", scoreA:"", scoreB:"", b1:"Trí Đô", b2:"Điền Chèm" },
+            { id:16, luot:6, san:1, content:"Nam xoay vòng", a1:"Tiến Thọ", a2:"Long Diễm", scoreA:"", scoreB:"", b1:"Trí Đô", b2:"Thành Đàm" },
+            { id:17, luot:6, san:2, content:"Nam xoay vòng", a1:"Phú Mỗ", a2:"Tuấn La", scoreA:"", scoreB:"", b1:"Dũng Ngạc", b2:"Điền Chèm" },
+            { id:18, luot:6, san:3, content:"Nữ xoay vòng", a1:"Vân Đình", a2:"Hạnh", scoreA:"", scoreB:"", b1:"Quỳnh Cool", b2:"Minh Vương" },
+            { id:19, luot:7, san:1, content:"Nam-Nữ không xoay vòng", a1:"Tiến Thọ", a2:"Vân Đình", scoreA:"", scoreB:"", b1:"Trí Đô", b2:"Quỳnh Cool" },
+            { id:20, luot:7, san:2, content:"Nam xoay vòng", a1:"Hà Giấy", a2:"Tuấn La", scoreA:"", scoreB:"", b1:"Lợi Trì", b2:"Điền Chèm" },
+            { id:21, luot:7, san:3, content:"Nam xoay vòng", a1:"Phú Mỗ", a2:"Châu Sĩ", scoreA:"", scoreB:"", b1:"Dũng Ngạc", b2:"Thành Sóc" },
+            { id:22, luot:8, san:1, content:"Nam-Nữ không xoay vòng", a1:"Phú Mỗ", a2:"Hạnh", scoreA:"", scoreB:"", b1:"Dũng Ngạc", b2:"Minh Vương" },
+            { id:23, luot:8, san:2, content:"Nam xoay vòng", a1:"Long Diễm", a2:"Hà Giấy", scoreA:"", scoreB:"", b1:"Thành Đàm", b2:"Lợi Trì" },
+            { id:24, luot:8, san:3, content:"Nam xoay vòng", a1:"Tuấn La", a2:"Châu Sĩ", scoreA:"", scoreB:"", b1:"Điền Chèm", b2:"Thành Sóc" }
+        ];
+
+        // Minigame 2: Cặp VĐV
+        let m2PairsA = [
+            { code:"a", name:"Đội a" }, { code:"b", name:"Đội b" },
+            { code:"c", name:"Đội c" }, { code:"d", name:"Đội d" }
+        ];
+        let m2PairsB = [
+            { code:"e", name:"Đội e" }, { code:"f", name:"Đội f" },
+            { code:"g", name:"Đội g" }, { code:"h", name:"Đội h" }
+        ];
+
+        let m2MatchesA = [];
+        let m2MatchesB = [];
+
+        // ================= ĐIỀU HƯỚNG TAB =================
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('text-yellow-400'));
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            if(activeBtn) activeBtn.classList.add('text-yellow-400');
+        }
+
+        // ================= XỬ LÝ PICK THỦ (PLAYERS) =================
         function renderPlayers() {
             const tbody = document.getElementById('player-table-body');
-            if(!tbody) return;
             tbody.innerHTML = '';
             players.forEach((p, index) => {
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
-                        <td class="p-3 border text-center font-bold">${index + 1}</td>
-                        <td class="p-3 border font-semibold">${p.name}</td>
+                        <td class="p-3 border">${index + 1}</td>
+                        <td class="p-3 border font-semibold text-slate-800">${p.name}</td>
                         <td class="p-3 border">${p.gender}</td>
-                        <td class="p-3 border text-center">
-                            <button onclick="editPlayer(${p.id})" class="text-blue-600 hover:text-blue-800 mx-1"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button onclick="deletePlayer(${p.id})" class="text-red-600 hover:text-red-800 mx-1"><i class="fa-solid fa-trash"></i></button>
+                        <td class="p-3 border text-center space-x-2">
+                            <button onclick="openPlayerModal(${p.id})" class="text-blue-600 hover:text-blue-800 font-semibold text-xs border border-blue-200 px-2 py-1 rounded bg-blue-50">
+                                <i class="fa-solid fa-pen"></i> Sửa
+                            </button>
+                            <button onclick="deletePlayer(${p.id})" class="text-red-600 hover:text-red-800 font-semibold text-xs border border-red-200 px-2 py-1 rounded bg-red-50">
+                                <i class="fa-solid fa-trash"></i> Xoá
+                            </button>
                         </td>
                     </tr>
                 `;
             });
         }
 
-        function openPlayerModal() {
-            document.getElementById('player-id').value = '';
-            document.getElementById('player-name').value = '';
-            document.getElementById('modal-title').innerText = 'Thêm Pick Thủ Mới';
+        function openPlayerModal(id = null) {
             document.getElementById('player-modal').classList.remove('hidden');
+            if(id) {
+                const player = players.find(p => p.id === id);
+                document.getElementById('modal-title').innerText = "Sửa Thông Tin Pick Thủ";
+                document.getElementById('player-id').value = player.id;
+                document.getElementById('player-name').value = player.name;
+                document.getElementById('player-gender').value = player.gender;
+            } else {
+                document.getElementById('modal-title').innerText = "Thêm Pick Thủ Mới";
+                document.getElementById('player-id').value = "";
+                document.getElementById('player-name').value = "";
+                document.getElementById('player-gender').value = "Nam";
+            }
         }
 
         function closePlayerModal() {
@@ -537,14 +606,12 @@
             const name = document.getElementById('player-name').value.trim();
             const gender = document.getElementById('player-gender').value;
 
-            if (!name) return alert('Vui lòng nhập tên VĐV');
+            if(!name) { alert("Vui lòng nhập tên VĐV!"); return; }
 
-            if (id) {
+            if(id) {
                 const player = players.find(p => p.id == id);
-                if (player) {
-                    player.name = name;
-                    player.gender = gender;
-                }
+                player.name = name;
+                player.gender = gender;
             } else {
                 players.push({
                     id: Date.now(),
@@ -552,13 +619,456 @@
                     gender: gender
                 });
             }
-
             closePlayerModal();
             renderPlayers();
+            renderM1TeamLists();
+            renderM1Schedule();
         }
 
-        // Khởi tạo hiển thị ban đầu
-        renderPlayers();
+        function deletePlayer(id) {
+            if(confirm("Bạn có chắc chắn muốn xoá Pick thủ này?")) {
+                players = players.filter(p => p.id !== id);
+                renderPlayers();
+            }
+        }
+
+        // ================= XỬ LÝ MINIGAME 1 =================
+        function renderM1TeamLists() {
+            const renderList = (team, containerId) => {
+                const container = document.getElementById(containerId);
+                container.innerHTML = '';
+                team.forEach((name, idx) => {
+                    container.innerHTML += `
+                        <div class="flex justify-between items-center bg-white p-2 rounded border text-xs">
+                            <span class="font-medium">${idx + 1}. ${name}</span>
+                            <div class="space-x-1">
+                                <button onclick="editTeamMember('${containerId}', ${idx})" class="text-blue-600 hover:underline">Sửa</button>
+                                <button onclick="removeTeamMember('${containerId}', ${idx})" class="text-red-600 hover:underline">Xoá</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            };
+            renderList(m1TeamA, 'team-A-list');
+            renderList(m1TeamB, 'team-B-list');
+        }
+
+        function addTeamMember(teamType) {
+            const name = prompt(`Nhập tên VĐV cho Team ${teamType}:`);
+            if(name) {
+                if(teamType === 'A') m1TeamA.push(name);
+                else m1TeamB.push(name);
+                renderM1TeamLists();
+            }
+        }
+
+        function editTeamMember(containerId, idx) {
+            const isTeamA = containerId === 'team-A-list';
+            const currentName = isTeamA ? m1TeamA[idx] : m1TeamB[idx];
+            const newName = prompt("Sửa tên VĐV:", currentName);
+            if(newName) {
+                if(isTeamA) m1TeamA[idx] = newName;
+                else m1TeamB[idx] = newName;
+                renderM1TeamLists();
+            }
+        }
+
+        function removeTeamMember(containerId, idx) {
+            if(confirm("Xoá VĐV khỏi team?")) {
+                if(containerId === 'team-A-list') m1TeamA.splice(idx, 1);
+                else m1TeamB.splice(idx, 1);
+                renderM1TeamLists();
+            }
+        }
+
+        function renderM1Schedule() {
+            const tbody = document.getElementById('m1-schedule-body');
+            tbody.innerHTML = '';
+            document.getElementById('m1-match-count').innerText = m1Matches.length;
+
+            m1Matches.forEach((m, idx) => {
+                // Tính toán các cột
+                let winner = "";
+                let diff = "";
+                let ptsA = "";
+                let ptsB = "";
+                let status = "Chưa đấu";
+
+                if(m.scoreA !== "" && m.scoreB !== "") {
+                    const sa = parseInt(m.scoreA);
+                    const sb = parseInt(m.scoreB);
+                    status = "Đã đấu";
+                    diff = sa - sb;
+                    if(sa > sb) {
+                        winner = "Team A";
+                        ptsA = 1;
+                        ptsB = 0;
+                    } else if(sb > sa) {
+                        winner = "Team B";
+                        ptsA = 0;
+                        ptsB = 1;
+                    } else {
+                        winner = "Hòa";
+                        ptsA = 0.5;
+                        ptsB = 0.5;
+                    }
+                }
+
+                // Option VĐV
+                const optsA = m1TeamA.map(p => `<option value="${p}">${p}</option>`).join('');
+                const optsB = m1TeamB.map(p => `<option value="${p}">${p}</option>`).join('');
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="font-bold text-center">${idx + 1}</td>
+                        <td><input type="number" value="${m.luot}" onchange="m1Matches[${idx}].luot=this.value" class="text-center"></td>
+                        <td><input type="number" value="${m.san}" onchange="m1Matches[${idx}].san=this.value" class="text-center"></td>
+                        <td><input type="text" value="${m.content}" onchange="m1Matches[${idx}].content=this.value"></td>
+                        <td>
+                            <select onchange="m1Matches[${idx}].a1=this.value">
+                                ${optsA}
+                            </select>
+                        </td>
+                        <td>
+                            <select onchange="m1Matches[${idx}].a2=this.value">
+                                ${optsA}
+                            </select>
+                        </td>
+                        <td><input type="number" value="${m.scoreA}" onchange="updateM1Score(${idx}, 'A', this.value)" class="text-center font-bold bg-yellow-50"></td>
+                        <td class="font-bold text-center">vs</td>
+                        <td><input type="number" value="${m.scoreB}" onchange="updateM1Score(${idx}, 'B', this.value)" class="text-center font-bold bg-yellow-50"></td>
+                        <td>
+                            <select onchange="m1Matches[${idx}].b1=this.value">
+                                ${optsB}
+                            </select>
+                        </td>
+                        <td>
+                            <select onchange="m1Matches[${idx}].b2=this.value">
+                                ${optsB}
+                            </select>
+                        </td>
+                        <td class="font-bold text-center ${winner==='Team A'?'text-blue-600':winner==='Team B'?'text-orange-600':''}">${winner}</td>
+                        <td class="text-center font-medium">${diff}</td>
+                        <td class="text-center font-bold">${ptsA}</td>
+                        <td class="text-center font-bold">${ptsB}</td>
+                        <td class="text-center text-xs ${status==='Đã đấu'?'text-green-600 font-bold':'text-slate-400'}">${status}</td>
+                        <td class="text-center">
+                            <button onclick="deleteM1Match(${idx})" class="text-red-600 hover:text-red-800">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Set giá trị mặc định cho select box
+            setTimeout(() => {
+                const rows = tbody.querySelectorAll('tr');
+                m1Matches.forEach((m, idx) => {
+                    if(rows[idx]) {
+                        const selects = rows[idx].querySelectorAll('select');
+                        selects[0].value = m.a1;
+                        selects[1].value = m.a2;
+                        selects[2].value = m.b1;
+                        selects[3].value = m.b2;
+                    }
+                });
+            }, 0);
+
+            renderM1Summary();
+        }
+
+        function updateM1Score(index, team, val) {
+            if(team === 'A') m1Matches[index].scoreA = val;
+            if(team === 'B') m1Matches[index].scoreB = val;
+            renderM1Schedule();
+        }
+
+        function addM1Match() {
+            m1Matches.push({
+                id: Date.now(),
+                luot: 1, san: 1, content: "Đôi Nam/Nữ",
+                a1: m1TeamA[0] || "", a2: m1TeamA[1] || "",
+                scoreA: "", scoreB: "",
+                b1: m1TeamB[0] || "", b2: m1TeamB[1] || ""
+            });
+            renderM1Schedule();
+        }
+
+        function deleteM1Match(index) {
+            if(confirm("Bạn có chắc chắn xoá trận đấu này?")) {
+                m1Matches.splice(index, 1);
+                renderM1Schedule();
+            }
+        }
+
+        function renderM1Summary() {
+            let playedA = 0, playedB = 0;
+            let ptsA = 0, ptsB = 0;
+            let diffA = 0, diffB = 0;
+
+            m1Matches.forEach(m => {
+                if(m.scoreA !== "" && m.scoreB !== "") {
+                    const sa = parseInt(m.scoreA);
+                    const sb = parseInt(m.scoreB);
+                    playedA++;
+                    playedB++;
+                    diffA += (sa - sb);
+                    diffB += (sb - sa);
+
+                    if(sa > sb) { ptsA += 1; }
+                    else if(sb > sa) { ptsB += 1; }
+                    else { ptsA += 0.5; ptsB += 0.5; }
+                }
+            });
+
+            const totalMatches = m1Matches.length;
+            let statusA = "Đang hoà", statusB = "Đang hoà";
+
+            if(playedA === totalMatches && totalMatches > 0) {
+                if(ptsA > ptsB) { statusA = "Thắng chung cuộc"; statusB = "Thua chung cuộc"; }
+                else if(ptsB > ptsA) { statusA = "Thua chung cuộc"; statusB = "Thắng chung cuộc"; }
+                else { statusA = "Hoà chung cuộc"; statusB = "Hoà chung cuộc"; }
+            } else {
+                if(ptsA > ptsB) { statusA = "Tạm dẫn trước"; statusB = "Tạm thua"; }
+                else if(ptsB > ptsA) { statusA = "Tạm thua"; statusB = "Tạm dẫn trước"; }
+            }
+
+            const tbody = document.getElementById('m1-summary-body');
+            tbody.innerHTML = `
+                <tr class="bg-blue-50">
+                    <td class="p-2 border font-bold text-blue-900">TEAM A</td>
+                    <td class="p-2 border">${playedA} / ${totalMatches}</td>
+                    <td class="p-2 border text-blue-700 font-extrabold">${ptsA}</td>
+                    <td class="p-2 border">${diffA > 0 ? '+'+diffA : diffA}</td>
+                    <td class="p-2 border text-xs font-bold ${statusA.includes('Thắng')?'text-green-600':statusA.includes('Thua')?'text-red-600':'text-amber-600'}">${statusA}</td>
+                </tr>
+                <tr class="bg-orange-50">
+                    <td class="p-2 border font-bold text-orange-900">TEAM B</td>
+                    <td class="p-2 border">${playedB} / ${totalMatches}</td>
+                    <td class="p-2 border text-orange-700 font-extrabold">${ptsB}</td>
+                    <td class="p-2 border">${diffB > 0 ? '+'+diffB : diffB}</td>
+                    <td class="p-2 border text-xs font-bold ${statusB.includes('Thắng')?'text-green-600':statusB.includes('Thua')?'text-red-600':'text-amber-600'}">${statusB}</td>
+                </tr>
+            `;
+        }
+
+        // ================= XỬ LÝ MINIGAME 2 =================
+        function renderM2Pairs() {
+            const renderGroup = (pairs, group, containerId) => {
+                const container = document.getElementById(containerId);
+                container.innerHTML = '';
+                pairs.forEach((p, idx) => {
+                    const opts = players.map(pl => `<option value="${pl.name}">${pl.name}</option>`).join('');
+                    container.innerHTML += `
+                        <div class="flex items-center gap-2 text-xs">
+                            <span class="font-bold w-12">${p.code.toUpperCase()}:</span>
+                            <input type="text" value="${p.name}" onchange="updateM2PairName('${group}', ${idx}, this.value)" class="border p-1 rounded font-semibold w-24">
+                            <button onclick="removePairM2('${group}', ${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-circle-xmark"></i></button>
+                        </div>
+                    `;
+                });
+            };
+            renderGroup(m2PairsA, 'A', 'm2-pairs-A');
+            renderGroup(m2PairsB, 'B', 'm2-pairs-B');
+        }
+
+        function updateM2PairName(group, idx, name) {
+            if(group === 'A') m2PairsA[idx].name = name;
+            else m2PairsB[idx].name = name;
+            generateM2RoundRobin();
+            renderM2();
+        }
+
+        function addPairM2(group) {
+            const pairs = group === 'A' ? m2PairsA : m2PairsB;
+            const code = String.fromCharCode(97 + pairs.length + (group === 'B' ? 4 : 0));
+            pairs.push({ code: code, name: `Đội ${code}` });
+            renderM2Pairs();
+            generateM2RoundRobin();
+            renderM2();
+        }
+
+        function removePairM2(group, idx) {
+            const pairs = group === 'A' ? m2PairsA : m2PairsB;
+            if(pairs.length <= 2) { alert("Tối thiểu cần 2 đội!"); return; }
+            pairs.splice(idx, 1);
+            renderM2Pairs();
+            generateM2RoundRobin();
+            renderM2();
+        }
+
+        // Tự động tạo Lịch Thi Đấu Vòng Tròn
+        function generateM2RoundRobin() {
+            const createMatches = (pairs, existingMatches) => {
+                let matches = [];
+                let matchId = 1;
+                for(let i = 0; i < pairs.length; i++) {
+                    for(let j = i + 1; j < pairs.length; j++) {
+                        const oldMatch = existingMatches.find(m => 
+                            (m.team1Code === pairs[i].code && m.team2Code === pairs[j].code) ||
+                            (m.team1Code === pairs[j].code && m.team2Code === pairs[i].code)
+                        );
+                        matches.push({
+                            id: matchId++,
+                            team1Code: pairs[i].code,
+                            team2Code: pairs[j].code,
+                            s1: oldMatch ? oldMatch.s1 : "",
+                            s2: oldMatch ? oldMatch.s2 : ""
+                        });
+                    }
+                }
+                return matches;
+            };
+
+            m2MatchesA = createMatches(m2PairsA, m2MatchesA);
+            m2MatchesB = createMatches(m2PairsB, m2MatchesB);
+        }
+
+        function renderM2() {
+            // 1. Render Lịch thi đấu & Tính điểm
+            const processTable = (pairs, matches, schedId, rankId) => {
+                const schedTbody = document.getElementById(schedId);
+                schedTbody.innerHTML = '';
+
+                // Khởi tạo điểm số
+                let stats = {};
+                pairs.forEach(p => {
+                    stats[p.code] = { pair: p, pts: 0, diff: 0, headToHead: {} };
+                });
+
+                matches.forEach((m, idx) => {
+                    const p1 = pairs.find(p => p.code === m.team1Code);
+                    const p2 = pairs.find(p => p.code === m.team2Code);
+
+                    if(m.s1 !== "" && m.s2 !== "") {
+                        const s1 = parseInt(m.s1);
+                        const s2 = parseInt(m.s2);
+                        const diff = s1 - s2;
+
+                        stats[m.team1Code].diff += diff;
+                        stats[m.team2Code].diff -= diff;
+
+                        stats[m.team1Code].headToHead[m.team2Code] = diff;
+                        stats[m.team2Code].headToHead[m.team1Code] = -diff;
+
+                        if(s1 > s2) stats[m.team1Code].pts += 1;
+                        else if(s2 > s1) stats[m.team2Code].pts += 1;
+                    }
+
+                    schedTbody.innerHTML += `
+                        <tr>
+                            <td class="border p-1 font-bold">${m.id}</td>
+                            <td class="border p-1 font-semibold">${p1 ? p1.name : m.team1Code}</td>
+                            <td class="border p-1"><input type="number" value="${m.s1}" onchange="matches[${idx}].s1=this.value; renderM2();" class="w-10 text-center border font-bold"></td>
+                            <td class="border p-1"><input type="number" value="${m.s2}" onchange="matches[${idx}].s2=this.value; renderM2();" class="w-10 text-center border font-bold"></td>
+                            <td class="border p-1 font-semibold">${p2 ? p2.name : m.team2Code}</td>
+                        </tr>
+                    `;
+                });
+
+                // Xếp hạng (Điểm -> Hiệu Số -> Đối Đầu)
+                let ranked = Object.values(stats).sort((a, b) => {
+                    if(b.pts !== a.pts) return b.pts - a.pts;
+                    if(b.diff !== a.diff) return b.diff - a.diff;
+                    // Đối đầu trực tiếp
+                    if(a.headToHead[b.pair.code] !== undefined) {
+                        return b.headToHead[a.pair.code] - a.headToHead[b.pair.code];
+                    }
+                    return 0;
+                });
+
+                const rankTbody = document.getElementById(rankId);
+                rankTbody.innerHTML = '';
+                ranked.forEach((item, index) => {
+                    rankTbody.innerHTML += `
+                        <tr class="${index < 2 ? 'bg-yellow-50 font-bold' : ''}">
+                            <td class="border p-1">${index + 1}</td>
+                            <td class="border p-1 text-left font-semibold">${item.pair.name}</td>
+                            <td class="border p-1 font-extrabold text-blue-700">${item.pts}</td>
+                            <td class="border p-1">${item.diff > 0 ? '+'+item.diff : item.diff}</td>
+                            <td class="border p-1 text-slate-500 text-[10px]">-</td>
+                        </tr>
+                    `;
+                });
+
+                return ranked;
+            };
+
+            const rankA = processTable(m2PairsA, m2MatchesA, 'm2-schedule-A', 'm2-rank-A');
+            const rankB = processTable(m2PairsB, m2MatchesB, 'm2-schedule-B', 'm2-rank-B');
+
+            // 2. Cập nhật Bán kết
+            const firstA = rankA[0] ? rankA[0].pair.name : "Nhất A";
+            const secondA = rankA[1] ? rankA[1].pair.name : "Nhì A";
+            const firstB = rankB[0] ? rankB[0].pair.name : "Nhất B";
+            const secondB = rankB[1] ? rankB[1].pair.name : "Nhì B";
+
+            document.getElementById('bk1-team1-name').innerText = firstA;
+            document.getElementById('bk1-team2-name').innerText = secondB;
+
+            document.getElementById('bk2-team1-name').innerText = firstB;
+            document.getElementById('bk2-team2-name').innerText = secondA;
+
+            // Tính toán Bán kết -> Chung kết & Tranh 3/4
+            const bk1_s1 = document.getElementById('bk1-s1').value;
+            const bk1_s2 = document.getElementById('bk1-s2').value;
+            const bk2_s1 = document.getElementById('bk2-s1').value;
+            const bk2_s2 = document.getElementById('bk2-s2').value;
+
+            let winBK1 = "Thắng BK1", loseBK1 = "Thua BK1";
+            let winBK2 = "Thắng BK2", loseBK2 = "Thua BK2";
+
+            if(bk1_s1 !== "" && bk1_s2 !== "") {
+                if(parseInt(bk1_s1) > parseInt(bk1_s2)) { winBK1 = firstA; loseBK1 = secondB; }
+                else { winBK1 = secondB; loseBK1 = firstA; }
+            }
+
+            if(bk2_s1 !== "" && bk2_s2 !== "") {
+                if(parseInt(bk2_s1) > parseInt(bk2_s2)) { winBK2 = firstB; loseBK2 = secondA; }
+                else { winBK2 = secondA; loseBK2 = firstB; }
+            }
+
+            document.getElementById('t3-team1-name').innerText = loseBK1;
+            document.getElementById('t3-team2-name').innerText = loseBK2;
+
+            document.getElementById('ck-team1-name').innerText = winBK1;
+            document.getElementById('ck-team2-name').innerText = winBK2;
+
+            // Tính Bảng Chung Cuộc
+            const t3_s1 = document.getElementById('t3-s1').value;
+            const t3_s2 = document.getElementById('t3-s2').value;
+            const ck_s1 = document.getElementById('ck-s1').value;
+            const ck_s2 = document.getElementById('ck-s2').value;
+
+            if(ck_s1 !== "" && ck_s2 !== "") {
+                if(parseInt(ck_s1) > parseInt(ck_s2)) {
+                    document.getElementById('winner-1').innerText = winBK1;
+                    document.getElementById('winner-2').innerText = winBK2;
+                } else {
+                    document.getElementById('winner-1').innerText = winBK2;
+                    document.getElementById('winner-2').innerText = winBK1;
+                }
+            }
+
+            if(t3_s1 !== "" && t3_s2 !== "") {
+                if(parseInt(t3_s1) > parseInt(t3_s2)) {
+                    document.getElementById('winner-3').innerText = loseBK1;
+                } else {
+                    document.getElementById('winner-3').innerText = loseBK2;
+                }
+            }
+        }
+
+        // ================= KHỞI TẠO HỆ THỐNG =================
+        window.onload = function() {
+            renderPlayers();
+            renderM1TeamLists();
+            renderM1Schedule();
+            renderM2Pairs();
+            generateM2RoundRobin();
+            renderM2();
+        };
     </script>
 </body>
 </html>
