@@ -8,9 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Firebase SDK (Version 10 Compat) -->
+    <!-- Firebase SDK (Version 10 Modular/Compat) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     
     <style>
         .excel-table th {
@@ -49,12 +49,11 @@
 </head>
 <body id="app-body" class="bg-theme-slate min-h-screen flex flex-col font-sans transition-colors duration-300">
 
-    <!-- 1. BANNER TRÊN CÙNG -->
+    <!-- 1. BANNER TRÊN CÙNG (Căn chỉnh tỉ lệ chuẩn Web App) -->
     <div class="relative w-full bg-slate-900 shadow-md flex justify-center items-center overflow-hidden">
         <img src="banner.jpg" 
              alt="Banner CLB Pickleball CMTD" 
-             class="w-full h-auto max-h-48 sm:max-h-64 md:max-h-80 object-cover object-center block"
-             onerror="this.src='https://via.placeholder.com/1200x300?text=CLB+PICKLEBALL+CMTD'">
+             class="w-full h-auto max-h-48 sm:max-h-64 md:max-h-80 object-cover object-center block">
     </div>
 
     <!-- 2. THANH TIÊU ĐỀ & THANH ĐIỀU HƯỚNG (NAVIGATION BAR) -->
@@ -65,8 +64,7 @@
             <div class="flex items-center space-x-3 cursor-pointer py-1" onclick="showTab('home')">
                 <img src="logo1.png" 
                      alt="Logo CLB Pickleball CMTD" 
-                     class="w-10 h-10 object-contain bg-white/10 rounded-full p-0.5 border border-yellow-400/50 shadow-md"
-                     onerror="this.src='https://via.placeholder.com/40'">
+                     class="w-10 h-10 object-contain bg-white/10 rounded-full p-0.5 border border-yellow-400/50 shadow-md">
                 
                 <span class="font-extrabold text-lg md:text-xl tracking-tight text-yellow-400">CLB-PICKLEBALL-CMTD</span>
             </div>
@@ -202,7 +200,7 @@
                 </div>
             </div>
 
-            <!-- 2. Bảng Lịch Thi Đấu -->
+            <!-- 2. Bảng Lịch Thi Đấu (Đã điều chỉnh độ rộng cột Lượt, Sân, Nội dung) -->
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
                 <div class="flex justify-between items-center mb-3">
                     <div>
@@ -285,7 +283,7 @@
                     </div>
                 </div>
 
-                <!-- Thiết lập Cặp VĐV cho Bảng A & B -->
+                <!-- Thiết lập Cặp VĐV cho Bảng A & B (Có nút Bút Chì Chỉnh Sửa) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div class="border rounded-lg p-3 bg-blue-50/40 border-blue-200">
                         <h4 class="font-bold text-sm text-blue-900 mb-3 flex items-center gap-2">
@@ -306,6 +304,7 @@
                     <!-- BẢNG A -->
                     <div class="space-y-4">
                         <h3 class="font-extrabold text-blue-900 border-b-2 border-blue-900 pb-1">BẢNG A</h3>
+                        <!-- Bảng xếp hạng Bảng A -->
                         <div>
                             <p class="text-xs font-bold text-slate-700 mb-1">Bảng Xếp Hạng Bảng A</p>
                             <table class="w-full text-xs text-center border-collapse border border-slate-300">
@@ -321,6 +320,7 @@
                                 <tbody id="m2-rank-A"></tbody>
                             </table>
                         </div>
+                        <!-- Lịch thi đấu Bảng A -->
                         <div>
                             <p class="text-xs font-bold text-slate-700 mb-1">Lịch Thi Đấu Bảng A</p>
                             <table class="w-full text-xs text-center border-collapse border border-slate-300">
@@ -341,6 +341,7 @@
                     <!-- BẢNG B -->
                     <div class="space-y-4">
                         <h3 class="font-extrabold text-orange-900 border-b-2 border-orange-900 pb-1">BẢNG B</h3>
+                        <!-- Bảng xếp hạng Bảng B -->
                         <div>
                             <p class="text-xs font-bold text-slate-700 mb-1">Bảng Xếp Hạng Bảng B</p>
                             <table class="w-full text-xs text-center border-collapse border border-slate-300">
@@ -356,6 +357,7 @@
                                 <tbody id="m2-rank-B"></tbody>
                             </table>
                         </div>
+                        <!-- Lịch thi đấu Bảng B -->
                         <div>
                             <p class="text-xs font-bold text-slate-700 mb-1">Lịch Thi Đấu Bảng B</p>
                             <table class="w-full text-xs text-center border-collapse border border-slate-300">
@@ -396,8 +398,8 @@
                                     <td id="bk1-team1-name" class="border p-1.5 font-medium">Nhất A</td>
                                     <td class="border p-1.5">
                                         <div class="flex justify-center items-center gap-1">
-                                            <input type="number" id="bk1-s1" onchange="saveStateToFirebase()">
-                                            <input type="number" id="bk1-s2" onchange="saveStateToFirebase()">
+                                            <input type="number" id="bk1-s1" class="w-8 border text-center rounded" onchange="renderM2()">-
+                                            <input type="number" id="bk1-s2" class="w-8 border text-center rounded" onchange="renderM2()">
                                         </div>
                                     </td>
                                     <td id="bk1-team2-name" class="border p-1.5 font-medium">Nhì B</td>
@@ -407,8 +409,8 @@
                                     <td id="bk2-team1-name" class="border p-1.5 font-medium">Nhất B</td>
                                     <td class="border p-1.5">
                                         <div class="flex justify-center items-center gap-1">
-                                            <input type="number" id="bk2-s1" onchange="saveStateToFirebase()">
-                                            <input type="number" id="bk2-s2" onchange="saveStateToFirebase()">
+                                            <input type="number" id="bk2-s1" class="w-8 border text-center rounded" onchange="renderM2()">-
+                                            <input type="number" id="bk2-s2" class="w-8 border text-center rounded" onchange="renderM2()">
                                         </div>
                                     </td>
                                     <td id="bk2-team2-name" class="border p-1.5 font-medium">Nhì A</td>
@@ -536,7 +538,7 @@
 
     <!-- JAVASCRIPT LOGIC XỬ LÝ -->
     <script>
-        // ================= STATE (DỮ LIỆU) =================
+        // ================= STATE (DỮ LIỆU BẢN ĐỒ) =================
         let players = [
             { id: 1, name: "Tiến Thọ", gender: "Nam" },
             { id: 2, name: "Châu Sĩ", gender: "Nam" },
@@ -590,7 +592,7 @@
             { id:24, luot:8, san:3, content:"Đôi Nam-Nữ", a1:"Châu Sĩ", a2:"Hạnh", scoreA:"", scoreB:"", b1:"Thành Sóc", b2:"Hải Hà" }
         ];
 
-        // Minigame 2: Cặp VĐV Bảng A và B
+        // Minigame 2: Danh sách Cặp VĐV Bảng A và B (Mặc định 4-5 cặp)
         let m2PairsA = [
             { p1: "Tiến Thọ", p2: "Châu Sĩ" },
             { p1: "Phú Mỗ", p2: "Hà Giấy" },
@@ -605,6 +607,7 @@
             { p1: "Quỳnh Cool", p2: "Hải Hà" }
         ];
 
+        // M2 Scores state
         let m2ScoresA = {};
         let m2ScoresB = {};
 
@@ -713,6 +716,7 @@
 
         // ================= MINIGAME 1 LOGIC =================
         function renderMinigame1() {
+            // Render Team A & B
             const listA = document.getElementById('team-A-list');
             const listB = document.getElementById('team-B-list');
             listA.innerHTML = '';
@@ -736,6 +740,7 @@
                 `;
             });
 
+            // Render Matches Table
             const body = document.getElementById('m1-schedule-body');
             body.innerHTML = '';
             document.getElementById('m1-match-count').innerText = m1Matches.length;
@@ -802,6 +807,7 @@
                 `;
             });
 
+            // Summary Table
             const sumBody = document.getElementById('m1-summary-body');
             let teamAStatus = "Đang thi đấu";
             let teamBStatus = "Đang thi đấu";
@@ -880,7 +886,7 @@
             renderMinigame1();
         }
 
-        // ================= MINIGAME 2 LOGIC =================
+        // ================= MINIGAME 2 LOGIC (BẢNG A, B & CÁC CẶP VĐV) =================
         function renderM2Pairs() {
             const boxA = document.getElementById('m2-pairs-A');
             const boxB = document.getElementById('m2-pairs-B');
@@ -967,6 +973,7 @@
             }
         }
 
+        // Tạo vòng tròn đấu cho bảng M2
         function generateM2GroupSchedule(pairs, groupName) {
             let schedule = [];
             let count = pairs.length;
@@ -991,9 +998,11 @@
         function renderM2() {
             renderM2Pairs();
 
+            // Schedule A
             const schedA = generateM2GroupSchedule(m2PairsA, 'A');
             const schedB = generateM2GroupSchedule(m2PairsB, 'B');
 
+            // Tính điểm Bảng A
             let statsA = m2PairsA.map((p, idx) => ({
                 idx,
                 name: `${p.p1} - ${p.p2}`,
@@ -1038,6 +1047,7 @@
                 `;
             });
 
+            // Sắp xếp BXH Bảng A
             statsA.sort((a,b) => {
                 if(b.pts !== a.pts) return b.pts - a.pts;
                 if(b.diff !== a.diff) return b.diff - a.diff;
@@ -1058,6 +1068,7 @@
                 `;
             });
 
+            // Tính điểm Bảng B
             let statsB = m2PairsB.map((p, idx) => ({
                 idx,
                 name: `${p.p1} - ${p.p2}`,
@@ -1102,6 +1113,7 @@
                 `;
             });
 
+            // Sắp xếp BXH Bảng B
             statsB.sort((a,b) => {
                 if(b.pts !== a.pts) return b.pts - a.pts;
                 if(b.diff !== a.diff) return b.diff - a.diff;
@@ -1122,6 +1134,7 @@
                 `;
             });
 
+            // CẬP NHẬT TÊN VÒNG KNOCKOUT
             const team1A = statsA[0] ? statsA[0].name : "Nhất A";
             const team2A = statsA[1] ? statsA[1].name : "Nhì A";
             const team1B = statsB[0] ? statsB[0].name : "Nhất B";
@@ -1132,6 +1145,7 @@
             document.getElementById('bk2-team1-name').innerText = team1B;
             document.getElementById('bk2-team2-name').innerText = team2A;
 
+            // Tính Thắng/Thua Bán kết
             const bk1_s1 = parseInt(document.getElementById('bk1-s1').value || -1);
             const bk1_s2 = parseInt(document.getElementById('bk1-s2').value || -1);
             const bk2_s1 = parseInt(document.getElementById('bk2-s1').value || -1);
@@ -1155,6 +1169,7 @@
             document.getElementById('ck-team1-name').innerText = winBK1;
             document.getElementById('ck-team2-name').innerText = winBK2;
 
+            // Tính Chung kết & Tranh 3/4
             const t3_s1 = parseInt(document.getElementById('t3-s1').value || -1);
             const t3_s2 = parseInt(document.getElementById('t3-s2').value || -1);
             const ck_s1 = parseInt(document.getElementById('ck-s1').value || -1);
@@ -1183,179 +1198,12 @@
             renderM2();
         }
 
-        // KHI TRANG TẢI XONG
+        // INIT
         window.onload = function() {
             renderPlayers();
             renderMinigame1();
             renderM2();
         };
     </script>
-</body>
-</html>
-
-<!-- FIREBASE ENGINE INTEGRATION (Khởi tạo Firestore đồng bộ đám mây) -->
-</script>
-// 1. Cấu hình Firebase Project
-const firebaseConfig = {
-    apiKey: "AIzaSy...", // Lấy trong Firebase Console > Project Settings
-    authDomain: "minigame-bb991.firebaseapp.com",
-    projectId: "minigame-bb991",
-    storageBucket: "minigame-bb991.appspot.com",
-    messagingSenderId: "...",
-    appId: "..."
-};
-
-// Khởi tạo Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-// 2. Lắng nghe dữ liệu thời gian thực (Real-time listener) từ Firestore
-function initFirebaseSync() {
-    // Đồng bộ danh sách Pick thủ
-    db.collection("appData").doc("players").onSnapshot((doc) => {
-        if (doc.exists && doc.data().list) {
-            players = doc.data().list;
-            renderPlayers();
-        }
-    });
-
-    // Đồng bộ dữ liệu Minigame 1
-    db.collection("appData").doc("minigame1").onSnapshot((doc) => {
-        if (doc.exists) {
-            const data = doc.data();
-            if (data.matches) m1Matches = data.matches;
-            if (data.teamA) m1TeamA = data.teamA;
-            if (data.teamB) m1TeamB = data.teamB;
-            renderMinigame1();
-        }
-    });
-
-    // Đồng bộ dữ liệu Minigame 2
-    db.collection("appData").doc("minigame2").onSnapshot((doc) => {
-        if (doc.exists) {
-            const data = doc.data();
-            if (data.pairsA) m2PairsA = data.pairsA;
-            if (data.pairsB) m2PairsB = data.pairsB;
-            if (data.scoresA) m2ScoresA = data.scoresA;
-            if (data.scoresB) m2ScoresB = data.scoresB;
-            renderM2();
-        }
-    });
-}
-
-// 3. Hàm lưu dữ liệu lên Firestore
-function saveToFirestore(collectionDoc, dataObj) {
-    db.collection("appData").doc(collectionDoc).set(dataObj, { merge: true })
-      .then(() => console.log(`Đã đồng bộ ${collectionDoc} lên Firestore!`))
-      .catch((error) => console.error("Lỗi đồng bộ:", error));
-}
- </script>
-<!-- FIREBASE V9+ MODULAR & SCRIPT TOÀN BỘ LOGIC -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    // 1. Cấu hình Firebase Project
-    const firebaseConfig = {
-      projectId: "minigame-bb991",
-      authDomain: "minigame-bb991.firebaseapp.com",
-      storageBucket: "minigame-bb991.appspot.com"
-    };
-
-    // 2. Khởi tạo App & Firestore
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // Dữ liệu ứng dụng toàn cục
-    window.players = [];
-
-    // 3. Chuyển Tab
-    window.switchTab = function(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-      
-      document.getElementById(tabId).classList.add('active');
-      event.target.classList.add('active');
-    };
-
-    // 4. Quản lý danh sách VĐV
-    window.renderPlayers = function() {
-      const tbody = document.getElementById('playerList');
-      tbody.innerHTML = ''; // Xóa danh sách cũ tránh bị trùng lặp dữ liệu
-      window.players.forEach((p, index) => {
-        tbody.innerHTML += `
-          <tr>
-            <td>${index + 1}</td>
-            <td>${p}</td>
-            <td><button style="background:red; color:#fff; border:none; padding:4px 8px; border-radius:3px; cursor:pointer;" onclick="deletePlayer(${index})">Xóa</button></td>
-          </tr>
-        `;
-      });
-    };
-
-    window.addPlayer = function() {
-      const nameInput = document.getElementById('newPlayerName');
-      if (nameInput.value.trim() !== '') {
-        window.players.push(nameInput.value.trim());
-        nameInput.value = '';
-        window.renderPlayers();
-        window.saveStateToFirebase();
-      }
-    };
-
-    window.deletePlayer = function(index) {
-      window.players.splice(index, 1);
-      window.renderPlayers();
-      window.saveStateToFirebase();
-    };
-
-    // 5. Tự động đồng bộ Realtime từ Firestore
-    onSnapshot(doc(db, "minigame", "app_state"), (docSnap) => {
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        
-        // Cập nhật VĐV
-        if (data.players) {
-          window.players = data.players;
-          window.renderPlayers();
-        }
-
-        // Cập nhật Tỉ số
-        const scores = data.knockoutScores || {};
-        const setVal = (id, val) => {
-          const el = document.getElementById(id);
-          if (el && val !== undefined) el.value = val;
-        };
-
-        if (scores.bk1) { setVal('bk1-s1', scores.bk1[0]); setVal('bk1-s2', scores.bk1[1]); }
-        if (scores.bk2) { setVal('bk2-s1', scores.bk2[0]); setVal('bk2-s2', scores.bk2[1]); }
-        if (scores.t3)  { setVal('t3-s1',  scores.t3[0]);  setVal('t3-s2',  scores.t3[1]); }
-        if (scores.ck)  { setVal('ck-s1',  scores.ck[0]);  setVal('ck-s2',  scores.ck[1]); }
-      }
-    });
-
-    // 6. Hàm Lưu Toàn Bộ Dữ Liệu Lên Cloud Firestore
-    window.saveStateToFirebase = async function() {
-      try {
-        const getVal = (id) => document.getElementById(id)?.value || "";
-
-        const knockoutScores = {
-          bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
-          bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
-          t3:  [getVal('t3-s1'),  getVal('t3-s2')],
-          ck:  [getVal('ck-s1'),  getVal('ck-s2')]
-        };
-
-        await setDoc(doc(db, "minigame", "app_state"), {
-          players: window.players,
-          knockoutScores: knockoutScores
-        }, { merge: true });
-
-        console.log("Đã đồng bộ lên Firestore thành công!");
-      } catch (error) {
-        console.error("Lỗi đồng bộ Firebase:", error);
-      }
-    };
-  </script>
 </body>
 </html>
