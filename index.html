@@ -8,9 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Firebase SDK (Version 10 Modular/Compat) -->
+    <!-- Firebase SDK (Version 10 Compat) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     
     <style>
         .excel-table th {
@@ -1194,6 +1194,132 @@
 </html>
 
 <!-- FIREBASE ENGINE INTEGRATION (Khởi tạo Firestore đồng bộ đám mây) -->
+</script>
+// 1. Cấu hình Firebase Project
+const firebaseConfig = {
+    apiKey: "AIzaSy...", // Lấy trong Firebase Console > Project Settings
+    authDomain: "minigame-bb991.firebaseapp.com",
+    projectId: "minigame-bb991",
+    storageBucket: "minigame-bb991.appspot.com",
+    messagingSenderId: "...",
+    appId: "..."
+};
+
+// Khởi tạo Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// 2. Lắng nghe dữ liệu thời gian thực (Real-time listener) từ Firestore
+function initFirebaseSync() {
+    // Đồng bộ danh sách Pick thủ
+    db.collection("appData").doc("players").onSnapshot((doc) => {
+        if (doc.exists && doc.data().list) {
+            players = doc.data().list;
+            renderPlayers();
+        }
+    });
+
+    // Đồng bộ dữ liệu Minigame 1
+    db.collection("appData").doc("minigame1").onSnapshot((doc) => {
+        if (doc.exists) {
+            const data = doc.data();
+            if (data.matches) m1Matches = data.matches;
+            if (data.teamA) m1TeamA = data.teamA;
+            if (data.teamB) m1TeamB = data.teamB;
+            renderMinigame1();
+        }
+    });
+
+    // Đồng bộ dữ liệu Minigame 2
+    db.collection("appData").doc("minigame2").onSnapshot((doc) => {
+        if (doc.exists) {
+            const data = doc.data();
+            if (data.pairsA) m2PairsA = data.pairsA;
+            if (data.pairsB) m2PairsB = data.pairsB;
+            if (data.scoresA) m2ScoresA = data.scoresA;
+            if (data.scoresB) m2ScoresB = data.scoresB;
+            renderM2();
+        }
+    });
+}
+
+// 3. Hàm lưu dữ liệu lên Firestore
+function saveToFirestore(collectionDoc, dataObj) {
+    db.collection("appData").doc(collectionDoc).set(dataObj, { merge: true })
+      .then(() => console.log(`Đã đồng bộ ${collectionDoc} lên Firestore!`))
+      .catch((error) => console.error("Lỗi đồng bộ:", error));
+}
+ </script>
+<!-- FIREBASE SYNC MODULE HOÀN CHỈNH -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { 
+    getFirestore, 
+    doc, 
+    setDoc, 
+    onSnapshot 
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // 1. Cấu hình Firebase Project
+  const firebaseConfig = {
+    projectId: "minigame-bb991",
+    authDomain: "minigame-bb991.firebaseapp.com",
+    storageBucket: "minigame-bb991.appspot.com"
+  };
+
+  // Khởi tạo Firebase & Firestore
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 2. Lắng nghe dữ liệu thời gian thực (Real-time Listener) từ Firestore
+  function initFirebaseSync() {
+    // Đồng bộ danh sách VĐV
+    onSnapshot(doc(db, "appData", "players"), (docSnap) => {
+      if (docSnap.exists() && docSnap.data().list) {
+        window.players = docSnap.data().list;
+        if (typeof window.renderPlayers === 'function') window.renderPlayers();
+      }
+    });
+
+    // Đồng bộ dữ liệu Minigame 1
+    onSnapshot(doc(db, "appData", "minigame1"), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data.matches) window.m1Matches = data.matches;
+        if (data.teamA) window.m1TeamA = data.teamA;
+        if (data.teamB) window.m1TeamB = data.teamB;
+        if (typeof window.renderMinigame1 === 'function') window.renderMinigame1();
+      }
+    });
+
+    // Đồng bộ dữ liệu Minigame 2
+    onSnapshot(doc(db, "appData", "minigame2"), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data.pairsA) window.m2PairsA = data.pairsA;
+        if (data.pairsB) window.m2PairsB = data.pairsB;
+        if (data.scoresA) window.m2ScoresA = data.scoresA;
+        if (data.scoresB) window.m2ScoresB = data.scoresB;
+        if (typeof window.renderM2 === 'function') window.renderM2();
+      }
+    });
+  }
+
+  // 3. Hàm lưu dữ liệu lên Cloud Firestore
+  window.saveToFirestore = async function(collectionDoc, dataObj) {
+    try {
+      await setDoc(doc(db, "appData", collectionDoc), dataObj, { merge: true });
+      console.log(`Đã đồng bộ thành công: ${collectionDoc}`);
+    } catch (error) {
+      console.error(`Lỗi đồng bộ ${collectionDoc}:`, error);
+    }
+  };
+
+  // Khởi chạy đồng bộ ngay khi trang load xong
+  window.addEventListener("DOMContentLoaded", () => {
+    initFirebaseSync();
+  });
+</script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
