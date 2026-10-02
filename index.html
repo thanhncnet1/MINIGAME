@@ -1258,7 +1258,12 @@
           if (document.getElementById('ck-s2')) document.getElementById('ck-s2').value = ks.ck?.[1] || "";
         }
 
-        window.renderAllViews();
+       // Định nghĩa hàm render toàn bộ giao diện
+window.renderAllViews = function() {
+    if (typeof renderPlayers === 'function') renderPlayers();
+    if (typeof renderMinigame1 === 'function') renderMinigame1();
+    if (typeof renderM2 === 'function') renderM2();
+};
       } else {
         window.saveStateToFirebase();
       }
