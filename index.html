@@ -1281,7 +1281,7 @@ function saveToFirestore(collectionDoc, dataObj) {
     // 4. Quản lý danh sách VĐV
     window.renderPlayers = function() {
       const tbody = document.getElementById('playerList');
-      tbody.innerHTML = '';
+      tbody.innerHTML = ''; // Xóa danh sách cũ tránh bị trùng lặp dữ liệu
       window.players.forEach((p, index) => {
         tbody.innerHTML += `
           <tr>
