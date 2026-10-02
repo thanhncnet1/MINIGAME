@@ -11,7 +11,7 @@
   <style>
     .excel-table th { background-color: #1e3a8a; color: white; text-align: center; font-size: 0.8rem; padding: 6px 4px; white-space: nowrap; }
     .excel-table td { padding: 4px 4px; font-size: 0.8rem; border: 1px solid #e5e7eb; }
-    .excel-table input { width: 100%; padding: 2px 4px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.8rem; }
+    .excel-table input { width: 100%; padding: 2px 4px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.8rem; text-align: center; }
     .player-cell { min-width: 110px; font-weight: 600; }
     .bg-theme-slate { background-color: #f1f5f9; }
     .bg-theme-dark { background-color: #0f172a; color: #f8fafc; }
@@ -23,14 +23,14 @@
 
   <!-- Banner -->
   <div class="relative w-full bg-slate-900 shadow-md flex justify-center items-center overflow-hidden">
-    <img src="banner.jpg" alt="Banner CLB Pickleball CMTD" class="w-full h-auto max-h-48 sm:max-h-64 md:max-h-80 object-cover object-center block">
+    <img src="banner.jpg" alt="Banner CLB Pickleball CMTD" class="w-full h-auto max-h-48 sm:max-h-64 md:max-h-80 object-cover object-center block" onerror="this.src='https://via.placeholder.com/1200x300?text=CLB+PICKLEBALL+CMTD'">
   </div>
 
   <!-- Navigation Bar -->
   <nav class="bg-slate-800 text-white shadow-md sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between h-auto py-2 md:h-16 md:py-0">
       <div class="flex items-center space-x-3 cursor-pointer py-1" onclick="showTab('home')">
-        <img src="logo1.png" alt="Logo CLB" class="w-10 h-10 object-contain bg-white/10 rounded-full p-0.5 border border-yellow-400/50 shadow-md">
+        <img src="logo1.png" alt="Logo CLB" class="w-10 h-10 object-contain bg-white/10 rounded-full p-0.5 border border-yellow-400/50 shadow-md" onerror="this.src='https://via.placeholder.com/40'">
         <span class="font-extrabold text-lg md:text-xl tracking-tight text-yellow-400">CLB-PICKLEBALL-CMTD</span>
       </div>
       <div class="flex flex-wrap items-center gap-2 md:gap-3 text-xs md:text-sm font-semibold py-1">
@@ -75,7 +75,7 @@
           <div onclick="showTab('minigame1')" class="cursor-pointer bg-amber-50 border border-amber-200 p-6 rounded-xl hover:shadow-lg transition text-center group">
             <i class="fa-solid fa-people-group text-4xl text-amber-600 mb-3 group-hover:scale-110 transition-transform"></i>
             <h3 class="font-bold text-lg text-slate-800">MINIGAME 1</h3>
-            <p class="text-xs text-slate-500 mt-2">Đấu Team A vs Team B (Lịch 24 trận & Tổng hợp)</p>
+            <p class="text-xs text-slate-500 mt-2">Đấu Team A vs Team B (Lịch các trận & Tổng hợp)</p>
           </div>
           <div onclick="showTab('minigame2')" class="cursor-pointer bg-emerald-50 border border-emerald-200 p-6 rounded-xl hover:shadow-lg transition text-center group">
             <i class="fa-solid fa-diagram-project text-4xl text-emerald-600 mb-3 group-hover:scale-110 transition-transform"></i>
@@ -153,7 +153,7 @@
       <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
         <div class="flex justify-between items-center mb-3">
           <div>
-            <h2 class="text-xl md:text-2xl font-black text-blue-900 tracking-wide uppercase">LỊCH THI ĐẤU - <span id="m1-match-count">24</span> TRẬN</h2>
+            <h2 class="text-xl md:text-2xl font-black text-blue-900 tracking-wide uppercase">LỊCH THI ĐẤU MINIGAME 1</h2>
             <p class="text-xs italic text-slate-500">3 sân thi đấu; mỗi VĐV xuất hiện tối đa 1 lần/lượt.</p>
           </div>
           <button onclick="addM1Match()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded shadow flex items-center gap-1 font-bold">
@@ -176,11 +176,10 @@
                 <th class="player-cell">Đội B - VĐV 1</th>
                 <th class="player-cell">Đội B - VĐV 2</th>
                 <th class="w-20">Đội thắng</th>
-                <th class="w-16">Hiệu số A-B</th>
+                <th class="w-16">Hiệu số</th>
                 <th class="w-12">Điểm A</th>
                 <th class="w-12">Điểm B</th>
-                <th class="w-20">Trạng thái</th>
-                <th class="w-12">Thao tác</th>
+                <th class="w-12">Xóa</th>
               </tr>
             </thead>
             <tbody id="m1-schedule-body"></tbody>
@@ -251,9 +250,9 @@
             <div>
               <p class="text-xs font-bold text-slate-700 mb-1">Bảng Xếp Hạng Bảng A</p>
               <table class="w-full text-xs text-center border-collapse border border-slate-300">
-                <thead class="bg-orange-500 text-white font-bold">
+                <thead class="bg-blue-600 text-white font-bold">
                   <tr>
-                    <th class="p-1 border w-8">A</th>
+                    <th class="p-1 border w-8">STT</th>
                     <th class="p-1 border">Cặp VĐV</th>
                     <th class="p-1 border w-12">Điểm</th>
                     <th class="p-1 border w-12">Hiệu số</th>
@@ -265,7 +264,7 @@
             <div>
               <p class="text-xs font-bold text-slate-700 mb-1">Lịch Thi Đấu Bảng A</p>
               <table class="w-full text-xs text-center border-collapse border border-slate-300">
-                <thead class="bg-blue-600 text-white font-bold">
+                <thead class="bg-slate-700 text-white font-bold">
                   <tr>
                     <th class="p-1 border w-12">Trận</th>
                     <th class="p-1 border">Đội 1</th>
@@ -287,7 +286,7 @@
               <table class="w-full text-xs text-center border-collapse border border-slate-300">
                 <thead class="bg-orange-500 text-white font-bold">
                   <tr>
-                    <th class="p-1 border w-8">B</th>
+                    <th class="p-1 border w-8">STT</th>
                     <th class="p-1 border">Cặp VĐV</th>
                     <th class="p-1 border w-12">Điểm</th>
                     <th class="p-1 border w-12">Hiệu số</th>
@@ -299,7 +298,7 @@
             <div>
               <p class="text-xs font-bold text-slate-700 mb-1">Lịch Thi Đấu Bảng B</p>
               <table class="w-full text-xs text-center border-collapse border border-slate-300">
-                <thead class="bg-blue-600 text-white font-bold">
+                <thead class="bg-slate-700 text-white font-bold">
                   <tr>
                     <th class="p-1 border w-12">Trận</th>
                     <th class="p-1 border">Đội 1</th>
@@ -467,12 +466,473 @@
     </div>
   </div>
 
-  <!-- FIREBASE ENGINE INTEGRATION -->
+  <!-- APP LOGIC SCRIPT (Đặt lên trước để sẵn sàng xử lý dữ liệu) -->
+  <script>
+    // Dữ liệu ban đầu
+    window.players = [
+      { id: 1, name: "Tiến Thọ", gender: "Nam" },
+      { id: 2, name: "Châu Sĩ", gender: "Nam" },
+      { id: 3, name: "Vân Đình", gender: "Nữ" },
+      { id: 4, name: "Ly", gender: "Nữ" },
+      { id: 5, name: "Phú Mỗ", gender: "Nam" },
+      { id: 6, name: "Hà Giấy", gender: "Nam" },
+      { id: 7, name: "Long Diễm", gender: "Nam" },
+      { id: 8, name: "Tuấn La", gender: "Nam" }
+    ];
+
+    window.teamA = ["Tiến Thọ", "Châu Sĩ", "Vân Đình", "Ly"];
+    window.teamB = ["Phú Mỗ", "Hà Giấy", "Long Diễm", "Tuấn La"];
+
+    window.m1Matches = [
+      { id: 1, turn: 1, court: 1, type: "Đôi Nam", a1: "Tiến Thọ", a2: "Châu Sĩ", sA: "", sB: "", b1: "Phú Mỗ", b2: "Hà Giấy" }
+    ];
+
+    window.m2PairsA = [{ p1: "Tiến Thọ", p2: "Châu Sĩ" }, { p1: "Vân Đình", p2: "Ly" }];
+    window.m2PairsB = [{ p1: "Phú Mỗ", p2: "Hà Giấy" }, { p1: "Long Diễm", p2: "Tuấn La" }];
+    window.m2MatchesA = [];
+    window.m2MatchesB = [];
+
+    // Chuyển Tab
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById('tab-' + tabId).classList.remove('hidden');
+    }
+
+    // Đổi chủ đề
+    function changeTheme(themeClass) {
+      document.getElementById('app-body').className = `${themeClass} min-h-screen flex flex-col font-sans transition-colors duration-300`;
+    }
+
+    // Quản lý Pick Thủ
+    function renderPlayers() {
+      const tbody = document.getElementById('player-table-body');
+      if(!tbody) return;
+      tbody.innerHTML = window.players.map((p, idx) => `
+        <tr>
+          <td class="p-3 border text-center font-bold">${idx + 1}</td>
+          <td class="p-3 border font-semibold">${p.name}</td>
+          <td class="p-3 border text-center">${p.gender}</td>
+          <td class="p-3 border text-center space-x-2">
+            <button onclick="openPlayerModal(${p.id})" class="text-blue-600 hover:text-blue-800"><i class="fa-solid fa-pen"></i></button>
+            <button onclick="deletePlayer(${p.id})" class="text-red-600 hover:text-red-800"><i class="fa-solid fa-trash"></i></button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openPlayerModal(id = null) {
+      document.getElementById('player-id').value = id || '';
+      document.getElementById('modal-title').innerText = id ? 'Chỉnh Sửa Pick Thủ' : 'Thêm Pick Thủ Mới';
+      if(id) {
+        const p = window.players.find(item => item.id === id);
+        if(p) {
+          document.getElementById('player-name').value = p.name;
+          document.getElementById('player-gender').value = p.gender;
+        }
+      } else {
+        document.getElementById('player-name').value = '';
+        document.getElementById('player-gender').value = 'Nam';
+      }
+      document.getElementById('player-modal').classList.remove('hidden');
+    }
+
+    function closePlayerModal() {
+      document.getElementById('player-modal').classList.add('hidden');
+    }
+
+    function savePlayer() {
+      const id = document.getElementById('player-id').value;
+      const name = document.getElementById('player-name').value.trim();
+      const gender = document.getElementById('player-gender').value;
+
+      if (!name) return;
+
+      if (id) {
+        const p = window.players.find(x => x.id == id);
+        if (p) { p.name = name; p.gender = gender; }
+      } else {
+        window.players.push({ id: Date.now(), name, gender });
+      }
+
+      closePlayerModal();
+      renderAllViews();
+      if (window.saveStateToFirebase) window.saveStateToFirebase();
+    }
+
+    function deletePlayer(id) {
+      if (confirm('Bạn có chắc chắn muốn xóa pick thủ này?')) {
+        window.players = window.players.filter(p => p.id !== id);
+        renderAllViews();
+        if (window.saveStateToFirebase) window.saveStateToFirebase();
+      }
+    }
+
+    // MINIGAME 1 LOGIC
+    function renderMinigame1() {
+      // Teams
+      const tA = document.getElementById('team-A-list');
+      const tB = document.getElementById('team-B-list');
+      if(tA) tA.innerHTML = window.teamA.map((name, i) => `
+        <div class="flex items-center justify-between bg-white p-2 rounded border">
+          <span class="text-xs font-semibold">${name}</span>
+          <button onclick="removeTeamMember('A', ${i})" class="text-red-500 text-xs"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      `).join('');
+
+      if(tB) tB.innerHTML = window.teamB.map((name, i) => `
+        <div class="flex items-center justify-between bg-white p-2 rounded border">
+          <span class="text-xs font-semibold">${name}</span>
+          <button onclick="removeTeamMember('B', ${i})" class="text-red-500 text-xs"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      `).join('');
+
+      // Schedule Table
+      const m1Body = document.getElementById('m1-schedule-body');
+      if(m1Body) {
+        let statsA = { played: 0, score: 0, diff: 0 };
+        let statsB = { played: 0, score: 0, diff: 0 };
+
+        m1Body.innerHTML = window.m1Matches.map((m, idx) => {
+          const sA = parseInt(m.sA) || 0;
+          const sB = parseInt(m.sB) || 0;
+          const isPlayed = m.sA !== "" && m.sB !== "";
+          let winner = "-", diff = 0, ptsA = 0, ptsB = 0;
+
+          if (isPlayed) {
+            statsA.played++; statsB.played++;
+            diff = sA - sB;
+            statsA.diff += diff; statsB.diff -= diff;
+
+            if (sA > sB) { winner = "Team A"; ptsA = 1; statsA.score += 1; }
+            else if (sB > sA) { winner = "Team B"; ptsB = 1; statsB.score += 1; }
+            else { winner = "Hòa"; }
+          }
+
+          return `
+            <tr>
+              <td class="text-center font-bold">${idx + 1}</td>
+              <td><input type="number" value="${m.turn || 1}" onchange="updateM1Match(${idx}, 'turn', this.value)"></td>
+              <td><input type="number" value="${m.court || 1}" onchange="updateM1Match(${idx}, 'court', this.value)"></td>
+              <td><input type="text" value="${m.type || 'Đôi Nam'}" onchange="updateM1Match(${idx}, 'type', this.value)"></td>
+              <td><input type="text" value="${m.a1 || ''}" onchange="updateM1Match(${idx}, 'a1', this.value)"></td>
+              <td><input type="text" value="${m.a2 || ''}" onchange="updateM1Match(${idx}, 'a2', this.value)"></td>
+              <td><input type="number" value="${m.sA}" onchange="updateM1Match(${idx}, 'sA', this.value)"></td>
+              <td class="text-center font-bold">VS</td>
+              <td><input type="number" value="${m.sB}" onchange="updateM1Match(${idx}, 'sB', this.value)"></td>
+              <td><input type="text" value="${m.b1 || ''}" onchange="updateM1Match(${idx}, 'b1', this.value)"></td>
+              <td><input type="text" value="${m.b2 || ''}" onchange="updateM1Match(${idx}, 'b2', this.value)"></td>
+              <td class="text-center font-bold text-blue-700">${winner}</td>
+              <td class="text-center">${isPlayed ? diff : 0}</td>
+              <td class="text-center">${ptsA}</td>
+              <td class="text-center">${ptsB}</td>
+              <td class="text-center">
+                <button onclick="deleteM1Match(${idx})" class="text-red-600"><i class="fa-solid fa-trash"></i></button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        // Summary
+        const sumBody = document.getElementById('m1-summary-body');
+        if(sumBody) {
+          sumBody.innerHTML = `
+            <tr class="bg-blue-50">
+              <td class="p-2 border text-blue-800">Team A</td>
+              <td class="p-2 border">${statsA.played}</td>
+              <td class="p-2 border text-blue-600">${statsA.score}</td>
+              <td class="p-2 border">${statsA.diff}</td>
+              <td class="p-2 border">${statsA.score > statsB.score ? 'Dẫn Trước' : (statsA.score < statsB.score ? 'Thua' : 'Hòa')}</td>
+            </tr>
+            <tr class="bg-orange-50">
+              <td class="p-2 border text-orange-800">Team B</td>
+              <td class="p-2 border">${statsB.played}</td>
+              <td class="p-2 border text-orange-600">${statsB.score}</td>
+              <td class="p-2 border">${statsB.diff}</td>
+              <td class="p-2 border">${statsB.score > statsA.score ? 'Dẫn Trước' : (statsB.score < statsA.score ? 'Thua' : 'Hòa')}</td>
+            </tr>
+          `;
+        }
+      }
+    }
+
+    function addTeamMember(team) {
+      const name = prompt("Nhập tên VĐV:");
+      if(name) {
+        if(team === 'A') window.teamA.push(name);
+        else window.teamB.push(name);
+        renderMinigame1();
+        if (window.saveStateToFirebase) window.saveStateToFirebase();
+      }
+    }
+
+    function removeTeamMember(team, index) {
+      if(team === 'A') window.teamA.splice(index, 1);
+      else window.teamB.splice(index, 1);
+      renderMinigame1();
+      if (window.saveStateToFirebase) window.saveStateToFirebase();
+    }
+
+    function addM1Match() {
+      window.m1Matches.push({ id: Date.now(), turn: 1, court: 1, type: "Đôi Nam", a1: "", a2: "", sA: "", sB: "", b1: "", b2: "" });
+      renderMinigame1();
+      if (window.saveStateToFirebase) window.saveStateToFirebase();
+    }
+
+    function updateM1Match(index, field, val) {
+      window.m1Matches[index][field] = val;
+      renderMinigame1();
+      if (window.saveStateToFirebase) window.saveStateToFirebase();
+    }
+
+    function deleteM1Match(index) {
+      window.m1Matches.splice(index, 1);
+      renderMinigame1();
+      if (window.saveStateToFirebase) window.saveStateToFirebase();
+    }
+
+    // MINIGAME 2 LOGIC
+    function renderMinigame2() {
+      // Render Cặp VĐV
+      const renderPairList = (list, group) => list.map((p, i) => `
+        <div class="flex justify-between items-center bg-white p-2 rounded border text-xs">
+          <span><b>Cặp ${i+1}:</b> ${p.p1} & ${p.p2}</span>
+          <div class="space-x-1">
+            <button onclick="openM2EditModal('${group}', ${i})" class="text-blue-600"><i class="fa-solid fa-pen"></i></button>
+            <button onclick="deletePairM2('${group}', ${i})" class="text-red-600"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('m2-pairs-A').innerHTML = renderPairList(window.m2PairsA, 'A');
+      document.getElementById('m2-pairs-B').innerHTML = renderPairList(window.m2PairsB, 'B');
+
+      // Tạo/Cập nhật Lịch Thi Đấu Vòng Tròn Tự Động
+      const autoGenerateSchedule = (pairs) => {
+        let matches = [];
+        for(let i=0; i<pairs.length; i++) {
+          for(let j=i+1; j<pairs.length; j++) {
+            matches.push({
+              t1: `${pairs[i].p1} & ${pairs[i].p2}`,
+              t2: `${pairs[j].p1} & ${pairs[j].p2}`,
+              s1: "", s2: ""
+            });
+          }
+        }
+        return matches;
+      };
+
+      if(window.m2MatchesA.length === 0 && window.m2PairsA.length >= 2) window.m2MatchesA = autoGenerateSchedule(window.m2PairsA);
+      if(window.m2MatchesB.length === 0 && window.m2PairsB.length >= 2) window.m2MatchesB = autoGenerateSchedule(window.m2PairsB);
+
+      // Render Lịch Thi Đấu Bảng
+      const renderScheduleTable = (matches, group) => matches.map((m, i) => `
+        <tr>
+          <td class="p-1 border font-bold">T${i+1}</td>
+          <td class="p-1 border">${m.t1}</td>
+          <td class="p-1 border"><input type="number" class="w-10 border text-center rounded" value="${m.s1}" onchange="updateM2Score('${group}', ${i}, 's1', this.value)"></td>
+          <td class="p-1 border"><input type="number" class="w-10 border text-center rounded" value="${m.s2}" onchange="updateM2Score('${group}', ${i}, 's2', this.value)"></td>
+          <td class="p-1 border">${m.t2}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('m2-schedule-A').innerHTML = renderScheduleTable(window.m2MatchesA, 'A');
+      document.getElementById('m2-schedule-B').innerHTML = renderScheduleTable(window.m2MatchesB, 'B');
+
+      // Tính Bảng Xếp Hạng & Render
+      const calculateRank = (pairs, matches) => {
+        let stats = pairs.map(p => ({ name: `${p.p1} & ${p.p2}`, pts: 0, diff: 0 }));
+        matches.forEach(m => {
+          if(m.s1 !== "" && m.s2 !== "") {
+            const s1 = parseInt(m.s1) || 0;
+            const s2 = parseInt(m.s2) || 0;
+            const t1Obj = stats.find(x => x.name === m.t1);
+            const t2Obj = stats.find(x => x.name === m.t2);
+
+            if(t1Obj && t2Obj) {
+              t1Obj.diff += (s1 - s2);
+              t2Obj.diff += (s2 - s1);
+              if(s1 > s2) t1Obj.pts += 1;
+              else if(s2 > s1) t2Obj.pts += 1;
+            }
+          }
+        });
+        return stats.sort((a,b) => b.pts - a.pts || b.diff - a.diff);
+      };
+
+      const rankA = calculateRank(window.m2PairsA, window.m2MatchesA);
+      const rankB = calculateRank(window.m2PairsB, window.m2MatchesB);
+
+      const renderRankTable = (rankList) => rankList.map((r, i) => `
+        <tr>
+          <td class="p-1 border font-bold">${i+1}</td>
+          <td class="p-1 border font-semibold">${r.name}</td>
+          <td class="p-1 border font-bold text-blue-700">${r.pts}</td>
+          <td class="p-1 border">${r.diff}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('m2-rank-A').innerHTML = renderRankTable(rankA);
+      document.getElementById('m2-rank-B').innerHTML = renderRankTable(rankB);
+
+      // Cập nhật tên các đội vào Vòng Bán Kết Tự Động
+      if(rankA.length >= 2 && rankB.length >= 2) {
+        document.getElementById('bk1-team1-name').innerText = rankA[0].name; // Nhất A
+        document.getElementById('bk1-team2-name').innerText = rankB[1].name; // Nhì B
+        document.getElementById('bk2-team1-name').innerText = rankB[0].name; // Nhất B
+        document.getElementById('bk2-team2-name').innerText = rankA[1].name; // Nhì A
+      }
+
+      // Cập nhật Chung kết & Tranh 3/4
+      updateKnockoutWinners();
+    }
+
+    function updateM2Score(group, index, field, value) {
+      if(group === 'A') window.m2MatchesA[index][field] = value;
+      else window.m2MatchesB[index][field] = value;
+      renderMinigame2();
+      if (window.saveStateToFirebase) window.saveStateToFirebase();
+    }
+
+    function addPairM2(group) {
+      const p1 = prompt("Tên VĐV 1:");
+      const p2 = prompt("Tên VĐV 2:");
+      if(p1 && p2) {
+        if(group === 'A') {
+          window.m2PairsA.push({ p1, p2 });
+          window.m2MatchesA = []; // reset để sinh lại lịch đấu
+        } else {
+          window.m2PairsB.push({ p1, p2 });
+          window.m2MatchesB = [];
+        }
+        renderMinigame2();
+        if (window.saveStateToFirebase) window.saveStateToFirebase();
+      }
+    }
+
+    function deletePairM2(group, index) {
+      if(group === 'A') {
+        window.m2PairsA.splice(index, 1);
+        window.m2MatchesA = [];
+      } else {
+        window.m2PairsB.splice(index, 1);
+        window.m2MatchesB = [];
+      }
+      renderMinigame2();
+      if (window.saveStateToFirebase) window.saveStateToFirebase();
+    }
+
+    function openM2EditModal(group, index) {
+      const pair = (group === 'A') ? window.m2PairsA[index] : window.m2PairsB[index];
+      document.getElementById('m2-edit-group').value = group;
+      document.getElementById('m2-edit-index').value = index;
+      document.getElementById('m2-p1-input').value = pair.p1;
+      document.getElementById('m2-p2-input').value = pair.p2;
+      document.getElementById('m2-edit-modal').classList.remove('hidden');
+    }
+
+    function closeM2EditModal() {
+      document.getElementById('m2-edit-modal').classList.add('hidden');
+    }
+
+    function saveM2PairEdit() {
+      const group = document.getElementById('m2-edit-group').value;
+      const index = document.getElementById('m2-edit-index').value;
+      const p1 = document.getElementById('m2-p1-input').value.trim();
+      const p2 = document.getElementById('m2-p2-input').value.trim();
+
+      if(p1 && p2) {
+        if(group === 'A') {
+          window.m2PairsA[index] = { p1, p2 };
+          window.m2MatchesA = [];
+        } else {
+          window.m2PairsB[index] = { p1, p2 };
+          window.m2MatchesB = [];
+        }
+        closeM2EditModal();
+        renderMinigame2();
+        if (window.saveStateToFirebase) window.saveStateToFirebase();
+      }
+    }
+
+    function updateKnockoutWinners() {
+      const bk1s1 = parseInt(document.getElementById('bk1-s1')?.value) || 0;
+      const bk1s2 = parseInt(document.getElementById('bk1-s2')?.value) || 0;
+      const bk2s1 = parseInt(document.getElementById('bk2-s1')?.value) || 0;
+      const bk2s2 = parseInt(document.getElementById('bk2-s2')?.value) || 0;
+
+      const bk1T1 = document.getElementById('bk1-team1-name')?.innerText;
+      const bk1T2 = document.getElementById('bk1-team2-name')?.innerText;
+      const bk2T1 = document.getElementById('bk2-team1-name')?.innerText;
+      const bk2T2 = document.getElementById('bk2-team2-name')?.innerText;
+
+      let winBK1 = "Thắng BK1", loseBK1 = "Thua BK1";
+      let winBK2 = "Thắng BK2", loseBK2 = "Thua BK2";
+
+      if(document.getElementById('bk1-s1')?.value !== "" && document.getElementById('bk1-s2')?.value !== "") {
+        if(bk1s1 > bk1s2) { winBK1 = bk1T1; loseBK1 = bk1T2; }
+        else if(bk1s2 > bk1s1) { winBK1 = bk1T2; loseBK1 = bk1T1; }
+      }
+
+      if(document.getElementById('bk2-s1')?.value !== "" && document.getElementById('bk2-s2')?.value !== "") {
+        if(bk2s1 > bk2s2) { winBK2 = bk2T1; loseBK2 = bk2T2; }
+        else if(bk2s2 > bk2s1) { winBK2 = bk2T2; loseBK2 = bk2T1; }
+      }
+
+      if(document.getElementById('ck-team1-name')) document.getElementById('ck-team1-name').innerText = winBK1;
+      if(document.getElementById('ck-team2-name')) document.getElementById('ck-team2-name').innerText = winBK2;
+      if(document.getElementById('t3-team1-name')) document.getElementById('t3-team1-name').innerText = loseBK1;
+      if(document.getElementById('t3-team2-name')) document.getElementById('t3-team2-name').innerText = loseBK2;
+
+      // Tính kết quả Vô Địch, Hạng Nhì, Hạng Ba
+      const cks1 = parseInt(document.getElementById('ck-s1')?.value) || 0;
+      const cks2 = parseInt(document.getElementById('ck-s2')?.value) || 0;
+      const t3s1 = parseInt(document.getElementById('t3-s1')?.value) || 0;
+      const t3s2 = parseInt(document.getElementById('t3-s2')?.value) || 0;
+
+      if(document.getElementById('ck-s1')?.value !== "" && document.getElementById('ck-s2')?.value !== "") {
+        if(cks1 > cks2) {
+          document.getElementById('winner-1').innerText = winBK1;
+          document.getElementById('winner-2').innerText = winBK2;
+        } else if(cks2 > cks1) {
+          document.getElementById('winner-1').innerText = winBK2;
+          document.getElementById('winner-2').innerText = winBK1;
+        }
+      }
+
+      if(document.getElementById('t3-s1')?.value !== "" && document.getElementById('t3-s2')?.value !== "") {
+        if(t3s1 > t3s2) {
+          document.getElementById('winner-3').innerText = loseBK1;
+        } else if(t3s2 > t3s1) {
+          document.getElementById('winner-3').innerText = loseBK2;
+        }
+      }
+    }
+
+    function updateM2AndSave() {
+      updateKnockoutWinners();
+      if (window.saveStateToFirebase) window.saveStateToFirebase();
+    }
+
+    // Render toàn bộ dữ liệu
+    function renderAllViews() {
+      renderPlayers();
+      renderMinigame1();
+      renderMinigame2();
+    }
+
+    window.renderAllViews = renderAllViews;
+
+    // Chạy render lần đầu
+    document.addEventListener('DOMContentLoaded', () => {
+      renderAllViews();
+    });
+  </script>
+
+  <!-- FIREBASE ENGINE INTEGRATION (Khởi tạo Firestore đồng bộ đám mây) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Cấu hình Firebase công khai lấy từ Firebase Console
     const firebaseConfig = {
       projectId: "minigame-bb991",
       authDomain: "minigame-bb991.firebaseapp.com",
@@ -482,7 +942,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Lưu toàn bộ trạng thái lên Firestore
+    // Lưu trạng thái lên Firestore
     window.saveStateToFirebase = async function() {
       try {
         const knockoutScores = {
@@ -508,7 +968,7 @@
       }
     };
 
-    // Lắng nghe biến động Realtime từ Cloud
+    // Lắng nghe biến động Realtime
     onSnapshot(doc(db, "minigame", "app_state"), (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.data();
@@ -539,267 +999,5 @@
       }
     });
   </script>
-
-  <!-- APP LOGIC SCRIPT -->
-  <script>
-    let players = [
-      { id: 1, name: "Tiến Thọ", gender: "Nam" },
-      { id: 2, name: "Châu Sĩ", gender: "Nam" },
-      { id: 3, name: "Vân Đình", gender: "Nữ" },
-      { id: 4, name: "Ly", gender: "Nữ" },
-      { id: 5, name: "Phú Mỗ", gender: "Nam" },
-      { id: 6, name: "Hà Giấy", gender: "Nam" },
-      { id: 7, name: "Long Diễm", gender: "Nam" },
-      { id: 8, name: "Tuấn La", gender: "Nam" }
-    ];
-
-    let teamA = ["Tiến Thọ", "Châu Sĩ", "Vân Đình", "Ly"];
-    let teamB = ["Phú Mỗ", "Hà Giấy", "Long Diễm", "Tuấn La"];
-
-    let m1Matches = [
-      { id: 1, turn: 1, court: 1, type: "Đôi Nam", a1: "Tiến Thọ", a2: "Châu Sĩ", sA: "", sB: "", b1: "Phú Mỗ", b2: "Hà Giấy" }
-    ];
-
-    let m2PairsA = [{ p1: "Tiến Thọ", p2: "Châu Sĩ" }];
-    let m2PairsB = [{ p1: "Phú Mỗ", p2: "Hà Giấy" }];
-    let m2MatchesA = [];
-    let m2MatchesB = [];
-
-    function showTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.getElementById('tab-' + tabId).classList.remove('hidden');
-    }
-
-    function changeTheme(themeClass) {
-      document.getElementById('app-body').className = `${themeClass} min-h-screen flex flex-col font-sans transition-colors duration-300`;
-    }
-
-    function renderPlayers() {
-      const tbody = document.getElementById('player-table-body');
-      if(!tbody) return;
-      tbody.innerHTML = players.map((p, idx) => `
-        <tr>
-          <td class="p-3 border text-center font-bold">${idx + 1}</td>
-          <td class="p-3 border font-semibold">${p.name}</td>
-          <td class="p-3 border text-center">${p.gender}</td>
-          <td class="p-3 border text-center space-x-2">
-            <button onclick="editPlayer(${p.id})" class="text-blue-600 hover:text-blue-800"><i class="fa-solid fa-pen"></i></button>
-            <button onclick="deletePlayer(${p.id})" class="text-red-600 hover:text-red-800"><i class="fa-solid fa-trash"></i></button>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function openPlayerModal(id = null) {
-      document.getElementById('player-id').value = id || '';
-      document.getElementById('player-name').value = id ? players.find(p => p.id === id).name : '';
-      document.getElementById('player-modal').classList.remove('hidden');
-    }
-
-    function closePlayerModal() {
-      document.getElementById('player-modal').classList.add('hidden');
-    }
-
-    function savePlayer() {
-      const id = document.getElementById('player-id').value;
-      const name = document.getElementById('player-name').value.trim();
-      const gender = document.getElementById('player-gender').value;
-
-      if (!name) return;
-
-      if (id) {
-        const p = players.find(x => x.id == id);
-        if (p) { p.name = name; p.gender = gender; }
-      } else {
-        players.push({ id: Date.now(), name, gender });
-      }
-
-      closePlayerModal();
-      renderPlayers();
-      if (window.saveStateToFirebase) window.saveStateToFirebase();
-    }
-
-    function deletePlayer(id) {
-      players = players.filter(p => p.id !== id);
-      renderPlayers();
-      if (window.saveStateToFirebase) window.saveStateToFirebase();
-    }
-
-    function editPlayer(id) { openPlayerModal(id); }
-
-    function renderM1() {
-      const tbodyA = document.getElementById('team-A-list');
-      const tbodyB = document.getElementById('team-B-list');
-      if (tbodyA) tbodyA.innerHTML = teamA.map((name, i) => `<div class="flex justify-between bg-white p-2 rounded shadow-sm text-xs font-semibold"><span>${name}</span><button onclick="removeTeamMember('A', ${i})" class="text-red-500"><i class="fa-solid fa-xmark"></i></button></div>`).join('');
-      if (tbodyB) tbodyB.innerHTML = teamB.map((name, i) => `<div class="flex justify-between bg-white p-2 rounded shadow-sm text-xs font-semibold"><span>${name}</span><button onclick="removeTeamMember('B', ${i})" class="text-red-500"><i class="fa-solid fa-xmark"></i></button></div>`).join('');
-
-      const mBody = document.getElementById('m1-schedule-body');
-      if (mBody) {
-        mBody.innerHTML = m1Matches.map((m, idx) => `
-          <tr>
-            <td class="text-center font-bold">${idx + 1}</td>
-            <td class="text-center">${m.turn}</td>
-            <td class="text-center">${m.court}</td>
-            <td class="text-center">${m.type}</td>
-            <td class="player-cell">${m.a1}</td>
-            <td class="player-cell">${m.a2}</td>
-            <td><input type="number" value="${m.sA}" onchange="updateM1Score(${idx}, 'sA', this.value)" class="text-center font-bold"></td>
-            <td class="text-center font-bold">-</td>
-            <td><input type="number" value="${m.sB}" onchange="updateM1Score(${idx}, 'sB', this.value)" class="text-center font-bold"></td>
-            <td class="player-cell">${m.b1}</td>
-            <td class="player-cell">${m.b2}</td>
-            <td class="text-center font-bold">${m.sA !== "" && m.sB !== "" ? (Number(m.sA) > Number(m.sB) ? "Đội A" : Number(m.sB) > Number(m.sA) ? "Đội B" : "Hòa") : "-"}</td>
-            <td class="text-center">${m.sA !== "" && m.sB !== "" ? Number(m.sA) - Number(m.sB) : 0}</td>
-            <td class="text-center">${m.sA !== "" && m.sB !== "" ? (Number(m.sA) > Number(m.sB) ? 1 : 0) : 0}</td>
-            <td class="text-center">${m.sA !== "" && m.sB !== "" ? (Number(m.sB) > Number(m.sA) ? 1 : 0) : 0}</td>
-            <td class="text-center">${m.sA !== "" && m.sB !== "" ? "Hoàn thành" : "Chưa đấu"}</td>
-            <td class="text-center"><button onclick="deleteM1Match(${idx})" class="text-red-500"><i class="fa-solid fa-trash"></i></button></td>
-          </tr>
-        `).join('');
-      }
-    }
-
-    function updateM1Score(index, field, val) {
-      m1Matches[index][field] = val;
-      renderM1();
-      if (window.saveStateToFirebase) window.saveStateToFirebase();
-    }
-
-    function addM1Match() {
-      m1Matches.push({ id: Date.now(), turn: 1, court: 1, type: "Đôi Nam", a1: "VĐV 1", a2: "VĐV 2", sA: "", sB: "", b1: "VĐV 3", b2: "VĐV 4" });
-      renderM1();
-      if (window.saveStateToFirebase) window.saveStateToFirebase();
-    }
-
-    function deleteM1Match(idx) {
-      m1Matches.splice(idx, 1);
-      renderM1();
-      if (window.saveStateToFirebase) window.saveStateToFirebase();
-    }
-
-    function addTeamMember(team) {
-      const name = prompt("Nhập tên VĐV:");
-      if (!name) return;
-      if (team === 'A') teamA.push(name);
-      else teamB.push(name);
-      renderM1();
-      if (window.saveStateToFirebase) window.saveStateToFirebase();
-    }
-
-    function removeTeamMember(team, idx) {
-      if (team === 'A') teamA.splice(idx, 1);
-      else teamB.splice(idx, 1);
-      renderM1();
-      if (window.saveStateToFirebase) window.saveStateToFirebase();
-    }
-
-    function renderM2() {
-      const pA = document.getElementById('m2-pairs-A');
-      const pB = document.getElementById('m2-pairs-B');
-      if (pA) pA.innerHTML = m2PairsA.map((p, i) => `<div class="flex justify-between bg-white p-2 rounded border text-xs"><span><b>A${i+1}:</b> ${p.p1} - ${p.p2}</span></div>`).join('');
-      if (pB) pB.innerHTML = m2PairsB.map((p, i) => `<div class="flex justify-between bg-white p-2 rounded border text-xs"><span><b>B${i+1}:</b> ${p.p1} - ${p.p2}</span></div>`).join('');
-    }
-
-    function addPairM2(group) {
-      const p1 = prompt("Tên VĐV 1:");
-      const p2 = prompt("Tên VĐV 2:");
-      if (!p1 || !p2) return;
-      if (group === 'A') m2PairsA.push({ p1, p2 });
-      else m2PairsB.push({ p1, p2 });
-      renderM2();
-      if (window.saveStateToFirebase) window.saveStateToFirebase();
-    }
-
-    function updateM2AndSave() {
-      renderM2();
-      if (window.saveStateToFirebase) window.saveStateToFirebase();
-    }
-
-    window.renderAllViews = function() {
-      renderPlayers();
-      renderM1();
-      renderM2();
-    };
-
-    document.addEventListener("DOMContentLoaded", () => {
-      window.renderAllViews();
-    });
-  </script>
 </body>
 </html>
-<!-- FIREBASE ENGINE INTEGRATION -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    // 🔴 DÁN ĐỦ FIREBASE CONFIG TỪ BƯỚC 1 VÀO ĐÂY
-    const firebaseConfig = {
-      apiKey: "DÁN_API_KEY_CỦA_BẠN_VÀO_ĐÂY",
-      authDomain: "minigame-bb991.firebaseapp.com",
-      projectId: "minigame-bb991",
-      storageBucket: "minigame-bb991.firebasestorage.app",
-      messagingSenderId: "DÁN_SENDER_ID_VÀO_ĐÂY",
-      appId: "DÁN_APP_ID_VÀO_ĐÂY"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // Hàm lưu trạng thái
-    window.saveStateToFirebase = async function() {
-      try {
-        const knockoutScores = {
-          bk1: [document.getElementById('bk1-s1')?.value || "", document.getElementById('bk1-s2')?.value || ""],
-          bk2: [document.getElementById('bk2-s1')?.value || "", document.getElementById('bk2-s2')?.value || ""],
-          t3: [document.getElementById('t3-s1')?.value || "", document.getElementById('t3-s2')?.value || ""],
-          ck: [document.getElementById('ck-s1')?.value || "", document.getElementById('ck-s2')?.value || ""]
-        };
-
-        await setDoc(doc(db, "minigame", "app_state"), {
-          players: window.players || [],
-          teamA: window.teamA || [],
-          teamB: window.teamB || [],
-          m1Matches: window.m1Matches || [],
-          m2PairsA: window.m2PairsA || [],
-          m2PairsB: window.m2PairsB || [],
-          m2MatchesA: window.m2MatchesA || [],
-          m2MatchesB: window.m2MatchesB || [],
-          knockoutScores: knockoutScores
-        });
-        console.log("Đã đồng bộ lên Firestore thành công!");
-      } catch (err) {
-        console.error("Lỗi khi đồng bộ Firestore:", err);
-      }
-    };
-
-    // Lắng nghe thay đổi Realtime
-    onSnapshot(doc(db, "minigame", "app_state"), (snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.data();
-        if (data.players) window.players = data.players;
-        if (data.teamA) window.teamA = data.teamA;
-        if (data.teamB) window.teamB = data.teamB;
-        if (data.m1Matches) window.m1Matches = data.m1Matches;
-        if (data.m2PairsA) window.m2PairsA = data.m2PairsA;
-        if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
-
-        if (data.knockoutScores) {
-          const ks = data.knockoutScores;
-          if (document.getElementById('bk1-s1')) document.getElementById('bk1-s1').value = ks.bk1?.[0] || "";
-          if (document.getElementById('bk1-s2')) document.getElementById('bk1-s2').value = ks.bk1?.[1] || "";
-          if (document.getElementById('bk2-s1')) document.getElementById('bk2-s1').value = ks.bk2?.[0] || "";
-          if (document.getElementById('bk2-s2')) document.getElementById('bk2-s2').value = ks.bk2?.[1] || "";
-          if (document.getElementById('t3-s1')) document.getElementById('t3-s1').value = ks.t3?.[0] || "";
-          if (document.getElementById('t3-s2')) document.getElementById('t3-s2').value = ks.t3?.[1] || "";
-          if (document.getElementById('ck-s1')) document.getElementById('ck-s1').value = ks.ck?.[0] || "";
-          if (document.getElementById('ck-s2')) document.getElementById('ck-s2').value = ks.ck?.[1] || "";
-        }
-
-        if (typeof window.renderAllViews === 'function') {
-          window.renderAllViews();
-        }
-      } else {
-        window.saveStateToFirebase();
-      }
-    });
-  </script>
