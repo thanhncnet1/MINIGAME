@@ -10,7 +10,7 @@
     .excel-table th { background-color: #1e3a8a; color: white; text-align: center; font-size: 0.8rem; padding: 6px 4px; white-space: nowrap; }
     .excel-table td { padding: 4px 4px; font-size: 0.8rem; border: 1px solid #e5e7eb; }
     .excel-table input { width: 100%; padding: 2px 4px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.8rem; text-align: center; }
-    .player-cell { min-width: 110px; font-weight: 600; }
+    .player-cell { min-width: 110px; font-weight: 600; text-align: center; }
     .bg-theme-slate { background-color: #f1f5f9; }
     .bg-theme-dark { background-color: #0f172a; color: #f8fafc; }
     .bg-theme-emerald { background-color: #ecfdf5; }
@@ -118,7 +118,7 @@
     <section id="tab-minigame1" class="tab-content hidden">
       <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
         <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
-          🛡️ Danh Sách Chia 2 Team (A & B)
+          🛡️️ Danh Sách Chia 2 Team (Team A & Team B)
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="border border-blue-200 bg-blue-50/50 rounded-lg p-4">
@@ -126,14 +126,14 @@
               <h4 class="font-bold text-blue-800 uppercase flex items-center gap-2">Team A</h4>
               <button onclick="addTeamMember('A')" class="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700">➕ Thêm VĐV</button>
             </div>
-            <div id="team-A-list" class="space-y-2"></div>
+            <div id="team-A-list" class="grid grid-cols-2 gap-2"></div>
           </div>
           <div class="border border-orange-200 bg-orange-50/50 rounded-lg p-4">
             <div class="flex justify-between items-center mb-3">
               <h4 class="font-bold text-orange-800 uppercase flex items-center gap-2">Team B</h4>
               <button onclick="addTeamMember('B')" class="text-xs bg-orange-600 text-white px-2 py-1 rounded hover:bg-orange-700">➕ Thêm VĐV</button>
             </div>
-            <div id="team-B-list" class="space-y-2"></div>
+            <div id="team-B-list" class="grid grid-cols-2 gap-2"></div>
           </div>
         </div>
       </div>
@@ -141,7 +141,7 @@
       <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
         <div class="flex justify-between items-center mb-3">
           <div>
-            <h2 class="text-xl md:text-2xl font-black text-blue-900 tracking-wide uppercase">LỊCH THI ĐẤU MINIGAME 1</h2>
+            <h2 class="text-xl md:text-2xl font-black text-blue-900 tracking-wide uppercase">LỊCH THI ĐẤU MINIGAME 1 (24 TRẬN)</h2>
             <p class="text-xs italic text-slate-500">Cập nhật điểm trực tiếp theo từng lượt trận</p>
           </div>
           <button onclick="addM1Match()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded shadow font-bold">➕ Thêm Trận</button>
@@ -153,15 +153,15 @@
                 <th class="w-10">STT</th>
                 <th class="w-12">Lượt</th>
                 <th class="w-12">Sân</th>
-                <th class="w-36">Nội dung</th>
+                <th class="w-32">Nội dung</th>
                 <th class="player-cell">Đội A - VĐV 1</th>
                 <th class="player-cell">Đội A - VĐV 2</th>
-                <th class="w-12">Tỷ số A</th>
+                <th class="w-14">Tỷ số A</th>
                 <th class="w-8">VS</th>
-                <th class="w-12">Tỷ số B</th>
+                <th class="w-14">Tỷ số B</th>
                 <th class="player-cell">Đội B - VĐV 1</th>
                 <th class="player-cell">Đội B - VĐV 2</th>
-                <th class="w-20">Đội thắng</th>
+                <th class="w-24">Đội thắng</th>
                 <th class="w-12">Thao tác</th>
               </tr>
             </thead>
@@ -175,7 +175,7 @@
     <section id="tab-minigame2" class="tab-content hidden">
       <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
         <div class="flex justify-between items-center mb-4 border-b pb-3">
-          <h2 class="text-xl font-bold text-slate-800 uppercase flex items-center gap-2">🥇 Lịch Thi Đấu Minigame 2</h2>
+          <h2 class="text-xl font-bold text-slate-800 uppercase flex items-center gap-2">🥇 CÁC BẢNG ĐẤU MINIGAME 2</h2>
           <div class="flex gap-2">
             <button onclick="addPairM2('A')" class="bg-blue-600 text-white text-xs px-3 py-1.5 rounded hover:bg-blue-700 font-semibold">➕ Cặp Bảng A</button>
             <button onclick="addPairM2('B')" class="bg-orange-600 text-white text-xs px-3 py-1.5 rounded hover:bg-orange-700 font-semibold">➕ Cặp Bảng B</button>
@@ -184,12 +184,33 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div class="border rounded-lg p-3 bg-blue-50/40 border-blue-200">
-            <h4 class="font-bold text-sm text-blue-900 mb-3">Cặp VĐV Bảng A</h4>
+            <h4 class="font-bold text-sm text-blue-900 mb-3">Danh Sách Bảng A (4 Cặp)</h4>
             <div id="m2-pairs-A" class="space-y-2"></div>
           </div>
           <div class="border rounded-lg p-3 bg-orange-50/40 border-orange-200">
-            <h4 class="font-bold text-sm text-orange-900 mb-3">Cặp VĐV Bảng B</h4>
+            <h4 class="font-bold text-sm text-orange-900 mb-3">Danh Sách Bảng B (4 Cặp)</h4>
             <div id="m2-pairs-B" class="space-y-2"></div>
+          </div>
+        </div>
+
+        <div class="border-t pt-4">
+          <h3 class="text-lg font-bold text-slate-800 mb-3 uppercase">Lịch Thi Đấu Vòng Bảng Minigame 2</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full excel-table border-collapse">
+              <thead>
+                <tr>
+                  <th class="w-10">STT</th>
+                  <th class="w-16">Bảng</th>
+                  <th class="player-cell">Cặp VĐV 1</th>
+                  <th class="w-14">Tỷ số 1</th>
+                  <th class="w-8">VS</th>
+                  <th class="w-14">Tỷ số 2</th>
+                  <th class="player-cell">Cặp VĐV 2</th>
+                  <th class="w-24">Cặp Thắng</th>
+                </tr>
+              </thead>
+              <tbody id="m2-schedule-body"></tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -226,7 +247,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Cấu hình kết nối Firebase dự án minigame-bb991
     const firebaseConfig = {
       apiKey: "AIzaSyC...", 
       authDomain: "minigame-bb991.firebaseapp.com",
@@ -239,7 +259,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Lưu dữ liệu trực tiếp lên Cloud
     window.saveStateToFirebase = async function() {
       try {
         await setDoc(doc(db, "minigame", "app_state"), {
@@ -248,7 +267,8 @@
           teamB: window.teamB || [],
           m1Matches: window.m1Matches || [],
           m2PairsA: window.m2PairsA || [],
-          m2PairsB: window.m2PairsB || []
+          m2PairsB: window.m2PairsB || [],
+          m2Matches: window.m2Matches || []
         });
         console.log("Đồng bộ Firestore thành công!");
       } catch (err) {
@@ -256,7 +276,6 @@
       }
     };
 
-    // Lắng nghe dữ liệu Thời gian thực (Realtime)
     onSnapshot(doc(db, "minigame", "app_state"), (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.data();
@@ -266,6 +285,7 @@
         if (data.m1Matches) window.m1Matches = data.m1Matches;
         if (data.m2PairsA) window.m2PairsA = data.m2PairsA;
         if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
+        if (data.m2Matches) window.m2Matches = data.m2Matches;
 
         if (typeof window.renderAllViews === 'function') {
           window.renderAllViews();
@@ -276,31 +296,106 @@
     });
   </script>
 
-  <!-- APP CORE LOGIC -->
+  <!-- APP CORE LOGIC & INITIAL DATA -->
   <script>
+    // 1. DỮ LIỆU PICK THỦ BAN ĐẦU
     let players = [
       { id: 1, name: "Tiến Thọ", gender: "Nam" },
       { id: 2, name: "Châu Sĩ", gender: "Nam" },
-      { id: 3, name: "Vân Đình", gender: "Nữ" },
-      { id: 4, name: "Ly", gender: "Nữ" }
+      { id: 3, name: "Đức Hoàng", gender: "Nam" },
+      { id: 4, name: "Anh Tuấn", gender: "Nam" },
+      { id: 5, name: "Văn Hùng", gender: "Nam" },
+      { id: 6, name: "Quốc Bảo", gender: "Nam" },
+      { id: 7, name: "Thành Nam", gender: "Nam" },
+      { id: 8, name: "Minh Trí", gender: "Nam" },
+      { id: 9, name: "Vân Đình", gender: "Nữ" },
+      { id: 10, name: "Bích Ly", gender: "Nữ" },
+      { id: 11, name: "Thu Trang", gender: "Nữ" },
+      { id: 12, name: "Phương Thảo", gender: "Nữ" }
     ];
 
-    let teamA = ["Tiến Thọ", "Châu Sĩ"];
-    let teamB = ["Vân Đình", "Ly"];
+    // 2. KHÔI PHỤC TEAM A VÀ TEAM B (MINIGAME 1)
+    let teamA = ["Tiến Thọ", "Châu Sĩ", "Đức Hoàng", "Anh Tuấn", "Văn Hùng", "Vân Đình"];
+    let teamB = ["Quốc Bảo", "Thành Nam", "Minh Trí", "Bích Ly", "Thu Trang", "Phương Thảo"];
 
-    let m1Matches = [
-      { id: 1, turn: 1, court: 1, type: "Đôi Nam", a1: "Tiến Thọ", a2: "Châu Sĩ", sA: "", sB: "", b1: "Vân Đình", b2: "Ly" }
+    // 3. TẠO TỰ ĐỘNG LỊCH THI ĐẤU 24 TRẬN CHO MINIGAME 1
+    function generate24Matches() {
+      let matches = [];
+      let types = ["Đôi Nam", "Đôi Nữ", "Đôi Nam Nữ"];
+      for (let i = 1; i <= 24; i++) {
+        let turn = Math.ceil(i / 2);
+        let court = (i % 2 === 1) ? 1 : 2;
+        let type = types[(i - 1) % 3];
+        
+        // Luân chuyển VĐV Team A & Team B
+        let a1 = teamA[(i - 1) % teamA.length];
+        let a2 = teamA[i % teamA.length];
+        let b1 = teamB[(i - 1) % teamB.length];
+        let b2 = teamB[i % teamB.length];
+
+        matches.push({
+          id: i, turn: turn, court: court, type: type,
+          a1: a1, a2: a2, sA: "", sB: "",
+          b1: b1, b2: b2
+        });
+      }
+      return matches;
+    }
+
+    let m1Matches = generate24Matches();
+
+    // 4. KHÔI PHỤC BẢNG ĐẤU MINIGAME 2 (4 CẶP BẢNG A & 4 CẶP BẢNG B)
+    let m2PairsA = [
+      { p1: "Tiến Thọ", p2: "Châu Sĩ" },
+      { p1: "Đức Hoàng", p2: "Vân Đình" },
+      { p1: "Anh Tuấn", p2: "Bích Ly" },
+      { p1: "Văn Hùng", p2: "Thu Trang" }
     ];
 
-    let m2PairsA = [{ p1: "Tiến Thọ", p2: "Châu Sĩ" }];
-    let m2PairsB = [{ p1: "Vân Đình", p2: "Ly" }];
+    let m2PairsB = [
+      { p1: "Quốc Bảo", p2: "Thành Nam" },
+      { p1: "Minh Trí", p2: "Phương Thảo" },
+      { p1: "Ngọc Sơn", p2: "Thùy Linh" },
+      { p1: "Hải Đăng", p2: "Kim Oanh" }
+    ];
 
+    // Lịch đấu vòng bảng Minigame 2
+    function generateM2Matches() {
+      let matches = [];
+      let count = 1;
+      // Bảng A
+      for (let i = 0; i < m2PairsA.length; i++) {
+        for (let j = i + 1; j < m2PairsA.length; j++) {
+          matches.push({
+            id: count++, group: "A",
+            p1: `A${i+1} (${m2PairsA[i].p1}-${m2PairsA[i].p2})`,
+            p2: `A${j+1} (${m2PairsA[j].p1}-${m2PairsA[j].p2})`,
+            s1: "", s2: ""
+          });
+        }
+      }
+      // Bảng B
+      for (let i = 0; i < m2PairsB.length; i++) {
+        for (let j = i + 1; j < m2PairsB.length; j++) {
+          matches.push({
+            id: count++, group: "B",
+            p1: `B${i+1} (${m2PairsB[i].p1}-${m2PairsB[i].p2})`,
+            p2: `B${j+1} (${m2PairsB[j].p1}-${m2PairsB[j].p2})`,
+            s1: "", s2: ""
+          });
+        }
+      }
+      return matches;
+    }
+
+    let m2Matches = generateM2Matches();
+
+    // TAB SYSTEM
     function showTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       const targetTab = document.getElementById('tab-' + tabId);
       if (targetTab) targetTab.classList.remove('hidden');
 
-      // Chuyển màu active cho nút
       document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('text-yellow-400', 'bg-slate-700'));
       const activeBtn = document.getElementById('btn-' + tabId);
       if (activeBtn) activeBtn.classList.add('text-yellow-400', 'bg-slate-700');
@@ -310,6 +405,7 @@
       document.getElementById('app-body').className = `${themeClass} min-h-screen flex flex-col font-sans transition-colors duration-300`;
     }
 
+    // RENDER PICK THỦ
     function renderPlayers() {
       const tbody = document.getElementById('player-table-body');
       if (!tbody) return;
@@ -332,9 +428,7 @@
       document.getElementById('player-modal').classList.remove('hidden');
     }
 
-    function closePlayerModal() {
-      document.getElementById('player-modal').classList.add('hidden');
-    }
+    function closePlayerModal() { document.getElementById('player-modal').classList.add('hidden'); }
 
     function savePlayer() {
       const id = document.getElementById('player-id').value;
@@ -342,7 +436,6 @@
       const gender = document.getElementById('player-gender').value;
 
       if (!name) return;
-
       if (id) {
         const p = players.find(x => x.id == id);
         if (p) { p.name = name; p.gender = gender; }
@@ -363,11 +456,12 @@
 
     function editPlayer(id) { openPlayerModal(id); }
 
+    // RENDER MINIGAME 1
     function renderM1() {
       const tbodyA = document.getElementById('team-A-list');
       const tbodyB = document.getElementById('team-B-list');
-      if (tbodyA) tbodyA.innerHTML = teamA.map((name, i) => `<div class="flex justify-between bg-white p-2 rounded shadow-sm text-xs font-semibold"><span>${name}</span><button onclick="removeTeamMember('A', ${i})" class="text-red-500 font-bold">✕</button></div>`).join('');
-      if (tbodyB) tbodyB.innerHTML = teamB.map((name, i) => `<div class="flex justify-between bg-white p-2 rounded shadow-sm text-xs font-semibold"><span>${name}</span><button onclick="removeTeamMember('B', ${i})" class="text-red-500 font-bold">✕</button></div>`).join('');
+      if (tbodyA) tbodyA.innerHTML = teamA.map((name, i) => `<div class="flex justify-between items-center bg-white p-2 rounded shadow-sm text-xs font-semibold"><span>${i+1}. ${name}</span><button onclick="removeTeamMember('A', ${i})" class="text-red-500 font-bold ml-1">✕</button></div>`).join('');
+      if (tbodyB) tbodyB.innerHTML = teamB.map((name, i) => `<div class="flex justify-between items-center bg-white p-2 rounded shadow-sm text-xs font-semibold"><span>${i+1}. ${name}</span><button onclick="removeTeamMember('B', ${i})" class="text-red-500 font-bold ml-1">✕</button></div>`).join('');
 
       const mBody = document.getElementById('m1-schedule-body');
       if (mBody) {
@@ -376,7 +470,7 @@
             <td class="text-center font-bold">${idx + 1}</td>
             <td class="text-center">${m.turn}</td>
             <td class="text-center">${m.court}</td>
-            <td class="text-center">${m.type}</td>
+            <td class="text-center font-medium">${m.type}</td>
             <td class="player-cell">${m.a1}</td>
             <td class="player-cell">${m.a2}</td>
             <td><input type="number" value="${m.sA}" onchange="updateM1Score(${idx}, 'sA', this.value)"></td>
@@ -398,7 +492,8 @@
     }
 
     function addM1Match() {
-      m1Matches.push({ id: Date.now(), turn: 1, court: 1, type: "Đôi Nam", a1: "VĐV 1", a2: "VĐV 2", sA: "", sB: "", b1: "VĐV 3", b2: "VĐV 4" });
+      let newIdx = m1Matches.length + 1;
+      m1Matches.push({ id: Date.now(), turn: Math.ceil(newIdx/2), court: (newIdx%2===1?1:2), type: "Đôi Nam Nữ", a1: "VĐV A1", a2: "VĐV A2", sA: "", sB: "", b1: "VĐV B1", b2: "VĐV B2" });
       renderM1();
       if (window.saveStateToFirebase) window.saveStateToFirebase();
     }
@@ -425,11 +520,34 @@
       if (window.saveStateToFirebase) window.saveStateToFirebase();
     }
 
+    // RENDER MINIGAME 2
     function renderM2() {
       const pA = document.getElementById('m2-pairs-A');
       const pB = document.getElementById('m2-pairs-B');
-      if (pA) pA.innerHTML = m2PairsA.map((p, i) => `<div class="flex justify-between bg-white p-2 rounded border text-xs"><span><b>A${i+1}:</b> ${p.p1} - ${p.p2}</span></div>`).join('');
-      if (pB) pB.innerHTML = m2PairsB.map((p, i) => `<div class="flex justify-between bg-white p-2 rounded border text-xs"><span><b>B${i+1}:</b> ${p.p1} - ${p.p2}</span></div>`).join('');
+      if (pA) pA.innerHTML = m2PairsA.map((p, i) => `<div class="flex justify-between bg-white p-2 rounded border text-xs font-semibold"><span><b>A${i+1}:</b> ${p.p1} & ${p.p2}</span><button onclick="deletePairM2('A', ${i})" class="text-red-500 font-bold">✕</button></div>`).join('');
+      if (pB) pB.innerHTML = m2PairsB.map((p, i) => `<div class="flex justify-between bg-white p-2 rounded border text-xs font-semibold"><span><b>B${i+1}:</b> ${p.p1} & ${p.p2}</span><button onclick="deletePairM2('B', ${i})" class="text-red-500 font-bold">✕</button></div>`).join('');
+
+      const m2Body = document.getElementById('m2-schedule-body');
+      if (m2Body) {
+        m2Body.innerHTML = m2Matches.map((m, idx) => `
+          <tr>
+            <td class="text-center font-bold">${idx + 1}</td>
+            <td class="text-center font-bold ${m.group==='A'?'text-blue-600':'text-orange-600'}">Bảng ${m.group}</td>
+            <td class="player-cell">${m.p1}</td>
+            <td><input type="number" value="${m.s1}" onchange="updateM2Score(${idx}, 's1', this.value)"></td>
+            <td class="text-center font-bold">-</td>
+            <td><input type="number" value="${m.s2}" onchange="updateM2Score(${idx}, 's2', this.value)"></td>
+            <td class="player-cell">${m.p2}</td>
+            <td class="text-center font-bold">${m.s1 !== "" && m.s2 !== "" ? (Number(m.s1) > Number(m.s2) ? "Cặp 1" : Number(m.s2) > Number(m.s1) ? "Cặp 2" : "Hòa") : "-"}</td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    function updateM2Score(idx, field, val) {
+      m2Matches[idx][field] = val;
+      renderM2();
+      if (window.saveStateToFirebase) window.saveStateToFirebase();
     }
 
     function addPairM2(group) {
@@ -438,6 +556,15 @@
       if (!p1 || !p2) return;
       if (group === 'A') m2PairsA.push({ p1, p2 });
       else m2PairsB.push({ p1, p2 });
+      m2Matches = generateM2Matches();
+      renderM2();
+      if (window.saveStateToFirebase) window.saveStateToFirebase();
+    }
+
+    function deletePairM2(group, idx) {
+      if (group === 'A') m2PairsA.splice(idx, 1);
+      else m2PairsB.splice(idx, 1);
+      m2Matches = generateM2Matches();
       renderM2();
       if (window.saveStateToFirebase) window.saveStateToFirebase();
     }
