@@ -1385,11 +1385,11 @@ function saveToFirestore(collectionDoc, dataObj) {
     storageBucket: "minigame-bb991.appspot.com"
   };
 
-  // 2. Khởi tạo App và Firestore TRƯỚC KHI DÙNG
+  // 2. Khởi tạo App & Firestore
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // 3. Lắng nghe dữ liệu thời gian thực từ Firestore về giao diện
+  // 3. Tự động đồng bộ điểm số từ Firestore về trang web
   onSnapshot(doc(db, "minigame", "app_state"), (docSnap) => {
     if (docSnap.exists()) {
       const data = docSnap.data();
@@ -1407,7 +1407,7 @@ function saveToFirestore(collectionDoc, dataObj) {
     }
   });
 
-  // 4. Định nghĩa hàm lưu toàn bộ trạng thái giải đấu
+  // 4. Hàm đẩy điểm số và dữ liệu lên Firestore
   window.saveStateToFirebase = async function() {
     try {
       const getValue = (id) => document.getElementById(id)?.value || "";
@@ -1420,80 +1420,12 @@ function saveToFirestore(collectionDoc, dataObj) {
       };
 
       await setDoc(doc(db, "minigame", "app_state"), {
-        players: window.players || [],
-        teamA: window.teamA || [],
-        teamB: window.teamB || [],
-        m1Matches: window.m1Matches || [],
         knockoutScores: knockoutScores
       }, { merge: true });
 
-      console.log("Đã đồng bộ thành công lên Firestore!");
+      console.log("Đã đồng bộ điểm số lên Firestore!");
     } catch (error) {
       console.error("Lỗi khi lưu Firestore:", error);
     }
   };
-
-    // Lưu trạng thái lên Firestore
-    window.saveStateToFirebase = async function() {
-      try {
-        const knockoutScores = {
-          bk1: [document.getElementById('bk1-s1')?.value || "", document.getElementById('bk1-s2')?.value || ""],
-          bk2: [document.getElementById('bk2-s1')?.value || "", document.getElementById('bk2-s2')?.value || ""],
-          t3: [document.getElementById('t3-s1')?.value || "", document.getElementById('t3-s2')?.value || ""],
-          ck: [document.getElementById('ck-s1')?.value || "", document.getElementById('ck-s2')?.value || ""]
-        };
-
-        await setDoc(doc(db, "minigame", "app_state"), {
-          players: window.players || [],
-          teamA: window.teamA || [],
-          teamB: window.teamB || [],
-          m1Matches: window.m1Matches || [],
-          m2PairsA: window.m2PairsA || [],
-          m2PairsB: window.m2PairsB || [],
-          m2MatchesA: window.m2MatchesA || [],
-          m2MatchesB: window.m2MatchesB || [],
-          knockoutScores: knockoutScores
-        });
-      } catch (err) {
-        console.error("Lỗi khi đồng bộ Firestore:", err);
-      }
-    };
-
-    // Lắng nghe biến động Realtime
-    onSnapshot(doc(db, "minigame", "app_state"), (snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.data();
-        if (data.players) window.players = data.players;
-        if (data.teamA) window.teamA = data.teamA;
-        if (data.teamB) window.teamB = data.teamB;
-        if (data.m1Matches) window.m1Matches = data.m1Matches;
-        if (data.m2PairsA) window.m2PairsA = data.m2PairsA;
-        if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
-        if (data.m2MatchesA) window.m2MatchesA = data.m2MatchesA;
-        if (data.m2MatchesB) window.m2MatchesB = data.m2MatchesB;
-
-        if (data.knockoutScores) {
-          const ks = data.knockoutScores;
-          if (document.getElementById('bk1-s1')) document.getElementById('bk1-s1').value = ks.bk1?.[0] || "";
-          if (document.getElementById('bk1-s2')) document.getElementById('bk1-s2').value = ks.bk1?.[1] || "";
-          if (document.getElementById('bk2-s1')) document.getElementById('bk2-s1').value = ks.bk2?.[0] || "";
-          if (document.getElementById('bk2-s2')) document.getElementById('bk2-s2').value = ks.bk2?.[1] || "";
-          if (document.getElementById('t3-s1')) document.getElementById('t3-s1').value = ks.t3?.[0] || "";
-          if (document.getElementById('t3-s2')) document.getElementById('t3-s2').value = ks.t3?.[1] || "";
-          if (document.getElementById('ck-s1')) document.getElementById('ck-s1').value = ks.ck?.[0] || "";
-          if (document.getElementById('ck-s2')) document.getElementById('ck-s2').value = ks.ck?.[1] || "";
-        }
-
-       // Định nghĩa hàm render toàn bộ giao diện
-window.renderAllViews = function() {
-    if (typeof renderPlayers === 'function') renderPlayers();
-    if (typeof renderMinigame1 === 'function') renderMinigame1();
-    if (typeof renderM2 === 'function') renderM2();
-};
-      } else {
-        window.saveStateToFirebase();
-      }
-    });
-  </script>
-</body>
-</html>
+</script>
