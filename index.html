@@ -49,11 +49,12 @@
 </head>
 <body id="app-body" class="bg-theme-slate min-h-screen flex flex-col font-sans transition-colors duration-300">
 
-    <!-- 1. BANNER TRÊN CÙNG (Căn chỉnh tỉ lệ chuẩn Web App) -->
+    <!-- 1. BANNER TRÊN CÙNG -->
     <div class="relative w-full bg-slate-900 shadow-md flex justify-center items-center overflow-hidden">
         <img src="banner.jpg" 
              alt="Banner CLB Pickleball CMTD" 
-             class="w-full h-auto max-h-48 sm:max-h-64 md:max-h-80 object-cover object-center block">
+             class="w-full h-auto max-h-48 sm:max-h-64 md:max-h-80 object-cover object-center block"
+             onerror="this.src='https://via.placeholder.com/1200x300?text=CLB+PICKLEBALL+CMTD'">
     </div>
 
     <!-- 2. THANH TIÊU ĐỀ & THANH ĐIỀU HƯỚNG (NAVIGATION BAR) -->
@@ -64,7 +65,8 @@
             <div class="flex items-center space-x-3 cursor-pointer py-1" onclick="showTab('home')">
                 <img src="logo1.png" 
                      alt="Logo CLB Pickleball CMTD" 
-                     class="w-10 h-10 object-contain bg-white/10 rounded-full p-0.5 border border-yellow-400/50 shadow-md">
+                     class="w-10 h-10 object-contain bg-white/10 rounded-full p-0.5 border border-yellow-400/50 shadow-md"
+                     onerror="this.src='https://via.placeholder.com/40'">
                 
                 <span class="font-extrabold text-lg md:text-xl tracking-tight text-yellow-400">CLB-PICKLEBALL-CMTD</span>
             </div>
@@ -200,7 +202,7 @@
                 </div>
             </div>
 
-            <!-- 2. Bảng Lịch Thi Đấu (Đã điều chỉnh độ rộng cột Lượt, Sân, Nội dung) -->
+            <!-- 2. Bảng Lịch Thi Đấu -->
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
                 <div class="flex justify-between items-center mb-3">
                     <div>
@@ -283,7 +285,7 @@
                     </div>
                 </div>
 
-                <!-- Thiết lập Cặp VĐV cho Bảng A & B (Có nút Bút Chì Chỉnh Sửa) -->
+                <!-- Thiết lập Cặp VĐV cho Bảng A & B -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div class="border rounded-lg p-3 bg-blue-50/40 border-blue-200">
                         <h4 class="font-bold text-sm text-blue-900 mb-3 flex items-center gap-2">
@@ -304,7 +306,6 @@
                     <!-- BẢNG A -->
                     <div class="space-y-4">
                         <h3 class="font-extrabold text-blue-900 border-b-2 border-blue-900 pb-1">BẢNG A</h3>
-                        <!-- Bảng xếp hạng Bảng A -->
                         <div>
                             <p class="text-xs font-bold text-slate-700 mb-1">Bảng Xếp Hạng Bảng A</p>
                             <table class="w-full text-xs text-center border-collapse border border-slate-300">
@@ -320,7 +321,6 @@
                                 <tbody id="m2-rank-A"></tbody>
                             </table>
                         </div>
-                        <!-- Lịch thi đấu Bảng A -->
                         <div>
                             <p class="text-xs font-bold text-slate-700 mb-1">Lịch Thi Đấu Bảng A</p>
                             <table class="w-full text-xs text-center border-collapse border border-slate-300">
@@ -341,7 +341,6 @@
                     <!-- BẢNG B -->
                     <div class="space-y-4">
                         <h3 class="font-extrabold text-orange-900 border-b-2 border-orange-900 pb-1">BẢNG B</h3>
-                        <!-- Bảng xếp hạng Bảng B -->
                         <div>
                             <p class="text-xs font-bold text-slate-700 mb-1">Bảng Xếp Hạng Bảng B</p>
                             <table class="w-full text-xs text-center border-collapse border border-slate-300">
@@ -357,7 +356,6 @@
                                 <tbody id="m2-rank-B"></tbody>
                             </table>
                         </div>
-                        <!-- Lịch thi đấu Bảng B -->
                         <div>
                             <p class="text-xs font-bold text-slate-700 mb-1">Lịch Thi Đấu Bảng B</p>
                             <table class="w-full text-xs text-center border-collapse border border-slate-300">
@@ -538,7 +536,7 @@
 
     <!-- JAVASCRIPT LOGIC XỬ LÝ -->
     <script>
-        // ================= STATE (DỮ LIỆU BẢN ĐỒ) =================
+        // ================= STATE (DỮ LIỆU) =================
         let players = [
             { id: 1, name: "Tiến Thọ", gender: "Nam" },
             { id: 2, name: "Châu Sĩ", gender: "Nam" },
@@ -592,7 +590,7 @@
             { id:24, luot:8, san:3, content:"Đôi Nam-Nữ", a1:"Châu Sĩ", a2:"Hạnh", scoreA:"", scoreB:"", b1:"Thành Sóc", b2:"Hải Hà" }
         ];
 
-        // Minigame 2: Danh sách Cặp VĐV Bảng A và B (Mặc định 4-5 cặp)
+        // Minigame 2: Cặp VĐV Bảng A và B
         let m2PairsA = [
             { p1: "Tiến Thọ", p2: "Châu Sĩ" },
             { p1: "Phú Mỗ", p2: "Hà Giấy" },
@@ -607,7 +605,6 @@
             { p1: "Quỳnh Cool", p2: "Hải Hà" }
         ];
 
-        // M2 Scores state
         let m2ScoresA = {};
         let m2ScoresB = {};
 
@@ -716,7 +713,6 @@
 
         // ================= MINIGAME 1 LOGIC =================
         function renderMinigame1() {
-            // Render Team A & B
             const listA = document.getElementById('team-A-list');
             const listB = document.getElementById('team-B-list');
             listA.innerHTML = '';
@@ -740,7 +736,6 @@
                 `;
             });
 
-            // Render Matches Table
             const body = document.getElementById('m1-schedule-body');
             body.innerHTML = '';
             document.getElementById('m1-match-count').innerText = m1Matches.length;
@@ -807,7 +802,6 @@
                 `;
             });
 
-            // Summary Table
             const sumBody = document.getElementById('m1-summary-body');
             let teamAStatus = "Đang thi đấu";
             let teamBStatus = "Đang thi đấu";
@@ -886,7 +880,7 @@
             renderMinigame1();
         }
 
-        // ================= MINIGAME 2 LOGIC (BẢNG A, B & CÁC CẶP VĐV) =================
+        // ================= MINIGAME 2 LOGIC =================
         function renderM2Pairs() {
             const boxA = document.getElementById('m2-pairs-A');
             const boxB = document.getElementById('m2-pairs-B');
@@ -973,7 +967,6 @@
             }
         }
 
-        // Tạo vòng tròn đấu cho bảng M2
         function generateM2GroupSchedule(pairs, groupName) {
             let schedule = [];
             let count = pairs.length;
@@ -998,11 +991,9 @@
         function renderM2() {
             renderM2Pairs();
 
-            // Schedule A
             const schedA = generateM2GroupSchedule(m2PairsA, 'A');
             const schedB = generateM2GroupSchedule(m2PairsB, 'B');
 
-            // Tính điểm Bảng A
             let statsA = m2PairsA.map((p, idx) => ({
                 idx,
                 name: `${p.p1} - ${p.p2}`,
@@ -1047,7 +1038,6 @@
                 `;
             });
 
-            // Sắp xếp BXH Bảng A
             statsA.sort((a,b) => {
                 if(b.pts !== a.pts) return b.pts - a.pts;
                 if(b.diff !== a.diff) return b.diff - a.diff;
@@ -1068,7 +1058,6 @@
                 `;
             });
 
-            // Tính điểm Bảng B
             let statsB = m2PairsB.map((p, idx) => ({
                 idx,
                 name: `${p.p1} - ${p.p2}`,
@@ -1113,7 +1102,6 @@
                 `;
             });
 
-            // Sắp xếp BXH Bảng B
             statsB.sort((a,b) => {
                 if(b.pts !== a.pts) return b.pts - a.pts;
                 if(b.diff !== a.diff) return b.diff - a.diff;
@@ -1134,7 +1122,6 @@
                 `;
             });
 
-            // CẬP NHẬT TÊN VÒNG KNOCKOUT
             const team1A = statsA[0] ? statsA[0].name : "Nhất A";
             const team2A = statsA[1] ? statsA[1].name : "Nhì A";
             const team1B = statsB[0] ? statsB[0].name : "Nhất B";
@@ -1145,7 +1132,6 @@
             document.getElementById('bk2-team1-name').innerText = team1B;
             document.getElementById('bk2-team2-name').innerText = team2A;
 
-            // Tính Thắng/Thua Bán kết
             const bk1_s1 = parseInt(document.getElementById('bk1-s1').value || -1);
             const bk1_s2 = parseInt(document.getElementById('bk1-s2').value || -1);
             const bk2_s1 = parseInt(document.getElementById('bk2-s1').value || -1);
@@ -1169,7 +1155,6 @@
             document.getElementById('ck-team1-name').innerText = winBK1;
             document.getElementById('ck-team2-name').innerText = winBK2;
 
-            // Tính Chung kết & Tranh 3/4
             const t3_s1 = parseInt(document.getElementById('t3-s1').value || -1);
             const t3_s2 = parseInt(document.getElementById('t3-s2').value || -1);
             const ck_s1 = parseInt(document.getElementById('ck-s1').value || -1);
@@ -1198,7 +1183,7 @@
             renderM2();
         }
 
-        // INIT
+        // KHI TRANG TẢI XONG
         window.onload = function() {
             renderPlayers();
             renderMinigame1();
