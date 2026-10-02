@@ -1192,3 +1192,77 @@
     </script>
 </body>
 </html>
+
+<!-- FIREBASE ENGINE INTEGRATION (Khởi tạo Firestore đồng bộ đám mây) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      projectId: "minigame-bb991",
+      authDomain: "minigame-bb991.firebaseapp.com",
+      storageBucket: "minigame-bb991.firebasestorage.app"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Lưu trạng thái lên Firestore
+    window.saveStateToFirebase = async function() {
+      try {
+        const knockoutScores = {
+          bk1: [document.getElementById('bk1-s1')?.value || "", document.getElementById('bk1-s2')?.value || ""],
+          bk2: [document.getElementById('bk2-s1')?.value || "", document.getElementById('bk2-s2')?.value || ""],
+          t3: [document.getElementById('t3-s1')?.value || "", document.getElementById('t3-s2')?.value || ""],
+          ck: [document.getElementById('ck-s1')?.value || "", document.getElementById('ck-s2')?.value || ""]
+        };
+
+        await setDoc(doc(db, "minigame", "app_state"), {
+          players: window.players || [],
+          teamA: window.teamA || [],
+          teamB: window.teamB || [],
+          m1Matches: window.m1Matches || [],
+          m2PairsA: window.m2PairsA || [],
+          m2PairsB: window.m2PairsB || [],
+          m2MatchesA: window.m2MatchesA || [],
+          m2MatchesB: window.m2MatchesB || [],
+          knockoutScores: knockoutScores
+        });
+      } catch (err) {
+        console.error("Lỗi khi đồng bộ Firestore:", err);
+      }
+    };
+
+    // Lắng nghe biến động Realtime
+    onSnapshot(doc(db, "minigame", "app_state"), (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.data();
+        if (data.players) window.players = data.players;
+        if (data.teamA) window.teamA = data.teamA;
+        if (data.teamB) window.teamB = data.teamB;
+        if (data.m1Matches) window.m1Matches = data.m1Matches;
+        if (data.m2PairsA) window.m2PairsA = data.m2PairsA;
+        if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
+        if (data.m2MatchesA) window.m2MatchesA = data.m2MatchesA;
+        if (data.m2MatchesB) window.m2MatchesB = data.m2MatchesB;
+
+        if (data.knockoutScores) {
+          const ks = data.knockoutScores;
+          if (document.getElementById('bk1-s1')) document.getElementById('bk1-s1').value = ks.bk1?.[0] || "";
+          if (document.getElementById('bk1-s2')) document.getElementById('bk1-s2').value = ks.bk1?.[1] || "";
+          if (document.getElementById('bk2-s1')) document.getElementById('bk2-s1').value = ks.bk2?.[0] || "";
+          if (document.getElementById('bk2-s2')) document.getElementById('bk2-s2').value = ks.bk2?.[1] || "";
+          if (document.getElementById('t3-s1')) document.getElementById('t3-s1').value = ks.t3?.[0] || "";
+          if (document.getElementById('t3-s2')) document.getElementById('t3-s2').value = ks.t3?.[1] || "";
+          if (document.getElementById('ck-s1')) document.getElementById('ck-s1').value = ks.ck?.[0] || "";
+          if (document.getElementById('ck-s2')) document.getElementById('ck-s2').value = ks.ck?.[1] || "";
+        }
+
+        window.renderAllViews();
+      } else {
+        window.saveStateToFirebase();
+      }
+    });
+  </script>
+</body>
+</html>
