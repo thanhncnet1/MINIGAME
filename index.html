@@ -1374,7 +1374,64 @@ function saveToFirestore(collectionDoc, dataObj) {
     }
   });
       
-    const db = getFirestore(app);
+   <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // 1. Cấu hình Firebase Project
+  const firebaseConfig = {
+    projectId: "minigame-bb991",
+    authDomain: "minigame-bb991.firebaseapp.com",
+    storageBucket: "minigame-bb991.appspot.com"
+  };
+
+  // 2. Khởi tạo App và Firestore TRƯỚC KHI DÙNG
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 3. Lắng nghe dữ liệu thời gian thực từ Firestore về giao diện
+  onSnapshot(doc(db, "minigame", "app_state"), (docSnap) => {
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      const scores = data.knockoutScores || {};
+
+      const setValue = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && val !== undefined) el.value = val;
+      };
+
+      if (scores.bk1) { setValue('bk1-s1', scores.bk1[0]); setValue('bk1-s2', scores.bk1[1]); }
+      if (scores.bk2) { setValue('bk2-s1', scores.bk2[0]); setValue('bk2-s2', scores.bk2[1]); }
+      if (scores.t3)  { setValue('t3-s1',  scores.t3[0]);  setValue('t3-s2',  scores.t3[1]); }
+      if (scores.ck)  { setValue('ck-s1',  scores.ck[0]);  setValue('ck-s2',  scores.ck[1]); }
+    }
+  });
+
+  // 4. Định nghĩa hàm lưu toàn bộ trạng thái giải đấu
+  window.saveStateToFirebase = async function() {
+    try {
+      const getValue = (id) => document.getElementById(id)?.value || "";
+
+      const knockoutScores = {
+        bk1: [getValue('bk1-s1'), getValue('bk1-s2')],
+        bk2: [getValue('bk2-s1'), getValue('bk2-s2')],
+        t3:  [getValue('t3-s1'),  getValue('t3-s2')],
+        ck:  [getValue('ck-s1'),  getValue('ck-s2')]
+      };
+
+      await setDoc(doc(db, "minigame", "app_state"), {
+        players: window.players || [],
+        teamA: window.teamA || [],
+        teamB: window.teamB || [],
+        m1Matches: window.m1Matches || [],
+        knockoutScores: knockoutScores
+      }, { merge: true });
+
+      console.log("Đã đồng bộ thành công lên Firestore!");
+    } catch (error) {
+      console.error("Lỗi khi lưu Firestore:", error);
+    }
+  };
 
     // Lưu trạng thái lên Firestore
     window.saveStateToFirebase = async function() {
