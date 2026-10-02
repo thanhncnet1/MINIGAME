@@ -1,50 +1,177 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLB-PICKLEBALL-CMTD - Quản Lý Giải Đấu</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Firebase SDK (Version 10 Modular/Compat) -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CLB PICKLEBALL - CMTD | MINIGAME </title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <style>
+    :root {
+      --primary-color: #0f172a;
+      --accent-color: #2563eb;
+      --score-border: #a855f7;
+      --card-bg: #ffffff;
+      --border-color: #cbd5e1;
+      --text-main: #1e293b;
+    }
+    * { box-sizing: border-box; }
     
-    <style>
-        .excel-table th {
-            background-color: #1e3a8a;
-            color: white;
-            text-align: center;
-            font-size: 0.8rem;
-            padding: 6px 4px;
-            white-space: nowrap;
-        }
-        .excel-table td {
-            padding: 4px 4px;
-            font-size: 0.8rem;
-            border: 1px solid #e5e7eb;
-        }
-        .excel-table input, .excel-table select {
-            width: 100%;
-            padding: 2px 4px;
-            border: 1px solid #d1d5db;
-            border-radius: 4px;
-            font-size: 0.8rem;
-        }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f1f5f9;
+      color: var(--text-main);
+      margin: 0;
+      padding: 10px 6px;
+      min-height: 100vh;
+    }
 
-        /* Khung hiển thị tên VĐV mượt mà */
-        .player-cell {
-            min-width: 110px;
-            font-weight: 600;
-        }
+    .container { max-width: 1600px; margin: 0 auto; position: relative; }
+    
+    .hero-banner {
+      background-image: url('banner.jpg');
+      background-size: 100% 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+      width: 100%;
+      aspect-ratio: 16 / 6.2;
+      border-radius: 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+    }
 
-        /* Lớp nền tùy chỉnh */
-        .bg-theme-slate { background-color: #f1f5f9; }
-        .bg-theme-dark { background-color: #0f172a; color: #f8fafc; }
-        .bg-theme-emerald { background-color: #ecfdf5; }
-        .bg-theme-blue { background-color: #eff6ff; }
+    .header-section {
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      z-index: 500;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .brand-title { display: flex; align-items: center; gap: 10px; }
+
+    .title-logo-img {
+      height: 36px; width: auto; object-fit: contain;
+      filter: drop-shadow(0px 2px 5px rgba(255,255,255,0.3));
+    }
+
+    .top-nav {
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 8px; position: relative;
+    }
+    
+    .nav-item { position: relative; }
+    .nav-btn {
+      background: rgba(51, 65, 85, 0.9);
+      color: white; border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 10px; border-radius: 6px; cursor: pointer;
+      font-weight: 700; font-size: 11px; transition: all 0.2s ease;
+      white-space: nowrap; display: flex; align-items: center; gap: 4px;
+    }
+    .nav-btn:hover { background-color: var(--accent-color); border-color: var(--accent-color); }
+    
+    .dropdown-menu {
+      display: none; position: absolute; top: 115%; left: 0; min-width: 220px;
+      background: #ffffff; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      border: 1px solid var(--border-color); z-index: 9999 !important; padding: 4px 0; color: var(--text-main);
+    }
+    .dropdown-menu.right-align { left: auto; right: 0; }
+    .dropdown-menu.show { display: block; }
+    .dropdown-item {
+      padding: 8px 12px; font-size: 11px; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; gap: 6px; color: #334155;
+    }
+    .dropdown-item:hover { background-color: #f1f5f9; color: var(--accent-color); }
+    .dropdown-divider { height: 1px; background-color: #e2e8f0; margin: 3px 0; }
+    
+    .cloud-status { font-size: 10px; padding: 3px 8px; border-radius: 15px; font-weight: bold; margin-left: auto; cursor: pointer; }
+    .cloud-online { background-color: #10b981; color: white; }
+    .cloud-syncing { background-color: #f59e0b; color: white; }
+    .cloud-error { background-color: #ef4444; color: white; }
+    
+    .vdv-container { padding: 8px; width: 240px; }
+    .vdv-scroll-list { max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
+    .vdv-item { background: #f8fafc; padding: 4px 6px; border-radius: 4px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
+
+    .btn { background-color: var(--accent-color); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: 700; font-size: 11px; transition: all 0.2s; white-space: nowrap; }
+    .btn-sm { padding: 3px 6px; font-size: 10px; }
+    .btn-green { background-color: #10b981; }
+    .btn-red { background-color: #ef4444; }
+
+    .card { background: var(--card-bg); padding: 10px 8px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 14px; position: relative; z-index: 10; border: 1px solid #e2e8f0; }
+    .card-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; flex-wrap: wrap; gap: 6px; }
+    .card-title { font-size: 13px; font-weight: 800; color: #0f172a; margin: 0; text-transform: uppercase; }
+    .table-actions-toolbar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    
+    .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 6px; border: 1px solid #cbd5e1; }
+    table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 680px; table-layout: fixed; }
+    th, td { border: 1px solid #cbd5e1; padding: 5px 2px; text-align: center; vertical-align: middle; word-wrap: break-word; }
+    th { background-color: #f8fafc; color: #334155; font-weight: 800; font-size: 10px; text-transform: uppercase; }
+    
+    .th-team-a { background-color: #15803d; color: #ffffff !important; }
+    .th-team-b { background-color: #0369a1; color: #ffffff !important; }
+    .th-pick1 { background-color: #dcfce7; color: #166534; }
+    .th-pick2 { background-color: #fee2e2; color: #991b1b; }
+    .th-money { background-color: #fef3c7; color: #92400e; }
+    
+    select { width: 100%; padding: 3px 1px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 10px; font-weight: 700; background: #fff; text-overflow: ellipsis; cursor: pointer; }
+    input[type="text"], input[type="number"] { width: 100%; padding: 3px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 10px; background: #fff; text-align: center; }
+
+    .score-input { width: 36px !important; height: 24px; padding: 0 !important; font-weight: 800; text-align: center; font-size: 11px; border: 1.5px solid var(--score-border) !important; border-radius: 4px; background: #ffffff; display: inline-flex; align-items: center; justify-content: center; }
+    .ham-text { background-color: #ef4444; color: white; font-weight: 900; font-size: 9px; padding: 2px 0; border-radius: 3px; display: block; width: 100%; text-align: center; line-height: 1; }
+
+    .txt-win { color: #16a34a; font-weight: 800; }
+    .txt-lose { color: #dc2626; font-weight: 800; }
+    .note-paid { color: #16a34a; font-weight: 800; }   
+    .note-unpaid { color: #ef4444; font-weight: 800; } 
+    .checkbox-cell { transform: scale(1.15); cursor: pointer; }
+    .total-summary-row { background-color: #f8fafc; font-weight: 800; }
+
+    .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 900px) { .grid-2col { grid-template-columns: 1fr; } }
+
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 10000; align-items: center; justify-content: center; }
+    .modal.show { display: flex; }
+    .modal-content { background: white; padding: 16px; border-radius: 10px; width: 92%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+
+    .summary-score-card { background: linear-gradient(135deg, #1e293b, #0f172a); color: #fff; padding: 12px; border-radius: 8px; display: flex; justify-content: space-around; align-items: center; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .score-box { text-align: center; }
+    .score-number { font-size: 28px; font-weight: 900; }
+
+    @media (max-width: 600px) {
+      body { padding: 4px 2px; }
+      .hero-banner { aspect-ratio: 16 / 7; }
+      .title-logo-img { height: 28px; }
+      .card { padding: 6px 4px; }
+      .card-title { font-size: 11px; }
+      .nav-btn { font-size: 10px; padding: 4px 6px; }
+      table { min-width: 620px; font-size: 10px; }
+      th, td { padding: 3px 1px; }
+      select { font-size: 9.5px; padding: 1px 0; }
+      .score-input { width: 32px !important; height: 22px; }
+    }
     </style>
 </head>
 <body id="app-body" class="bg-theme-slate min-h-screen flex flex-col font-sans transition-colors duration-300">
