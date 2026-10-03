@@ -1206,4 +1206,179 @@
         };
     </script>
 </body>
+
+<!-- FIREBASE SYNC MODULE HOÀN CHỈNH -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { 
+    getFirestore, 
+    doc, 
+    setDoc, 
+    onSnapshot 
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // 1. Cấu hình Firebase Project
+  const firebaseConfig = {
+  apiKey: "AIzaSyDYCKzobz_fr-1BcHt3TxmOuX1nHCOQFMs", // ⚠️ Bắt buộc phải có API Key thực tế của dự án minigame-bb991
+  projectId: "minigame-bb991",
+  authDomain: "minigame-bb991.firebaseapp.com",
+  storageBucket: "minigame-bb991.appspot.com"
+};
+
+  // Khởi tạo Firebase & Firestore
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 2. Lắng nghe dữ liệu thời gian thực (Real-time Listener) từ Firestore
+  function initFirebaseSync() {
+    // Đồng bộ danh sách VĐV
+    onSnapshot(doc(db, "appData", "players"), (docSnap) => {
+      if (docSnap.exists() && docSnap.data().list) {
+        window.players = docSnap.data().list;
+        if (typeof window.renderPlayers === 'function') window.renderPlayers();
+      }
+    });
+
+    // Đồng bộ dữ liệu Minigame 1
+    onSnapshot(doc(db, "appData", "minigame1"), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data.matches) window.m1Matches = data.matches;
+        if (data.teamA) window.m1TeamA = data.teamA;
+        if (data.teamB) window.m1TeamB = data.teamB;
+        if (typeof window.renderMinigame1 === 'function') window.renderMinigame1();
+      }
+    });
+
+    // Đồng bộ dữ liệu Minigame 2
+    onSnapshot(doc(db, "appData", "minigame2"), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data.pairsA) window.m2PairsA = data.pairsA;
+        if (data.pairsB) window.m2PairsB = data.pairsB;
+        if (data.scoresA) window.m2ScoresA = data.scoresA;
+        if (data.scoresB) window.m2ScoresB = data.scoresB;
+        if (typeof window.renderM2 === 'function') window.renderM2();
+      }
+    });
+  }
+
+  // 3. Hàm lưu dữ liệu lên Cloud Firestore
+  window.saveToFirestore = async function(collectionDoc, dataObj) {
+    try {
+      await setDoc(doc(db, "appData", collectionDoc), dataObj, { merge: true });
+      console.log(`Đã đồng bộ thành công: ${collectionDoc}`);
+    } catch (error) {
+      console.error(`Lỗi đồng bộ ${collectionDoc}:`, error);
+    }
+  };
+
+  // Khởi chạy đồng bộ ngay khi trang load xong
+  window.addEventListener("DOMContentLoaded", () => {
+    initFirebaseSync();
+  });
+</script>
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // Cấu hình Firebase
+  const firebaseConfig = {
+    projectId: "minigame-bb991",
+    authDomain: "minigame-bb991.firebaseapp.com",
+    storageBucket: "minigame-bb991.firebasestorage.app"
+  };
+
+  // Khởi tạo Firebase App & Firestore
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Hàm lưu trạng thái lên Firestore
+  window.saveStateToFirebase = async function() {
+    try {
+      const getValue = (id) => document.getElementById(id)?.value || "";
+
+      const knockoutScores = {
+        bk1: [getValue('bk1-s1'), getValue('bk1-s2')],
+        bk2: [getValue('bk2-s1'), getValue('bk2-s2')],
+        t3:  [getValue('t3-s1'),  getValue('t3-s2')],
+        ck:  [getValue('ck-s1'),  getValue('ck-s2')]
+      };
+
+      // Lưu vào document 'minigame2' trong collection 'appData'
+      await setDoc(doc(db, "appData", "minigame2"), { 
+        knockoutScores: knockoutScores 
+      }, { merge: true });
+
+      console.log("Đã lưu dữ liệu lên Firestore thành công!");
+    } catch (error) {
+      console.error("Lỗi khi lưu dữ liệu lên Firestore:", error);
+    }
+  };
+
+  // Tự động tải/đồng bộ dữ liệu khi Firestore thay đổi
+  onSnapshot(doc(db, "appData", "minigame2"), (docSnap) => {
+    if (docSnap.exists() && docSnap.data().knockoutScores) {
+      const scores = docSnap.data().knockoutScores;
+      const setValue = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && val !== undefined) el.value = val;
+      };
+
+      if (scores.bk1) { setValue('bk1-s1', scores.bk1[0]); setValue('bk1-s2', scores.bk1[1]); }
+      if (scores.bk2) { setValue('bk2-s1', scores.bk2[0]); setValue('bk2-s2', scores.bk2[1]); }
+      if (scores.t3)  { setValue('t3-s1',  scores.t3[0]);  setValue('t3-s2',  scores.t3[1]); }
+      if (scores.ck)  { setValue('ck-s1',  scores.ck[0]);  setValue('ck-s2',  scores.ck[1]); }
+    }
+  });
+      
+   <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // 1. Cấu hình Firebase
+  const firebaseConfig = {
+    projectId: "minigame-bb991",
+    authDomain: "minigame-bb991.firebaseapp.com",
+    storageBucket: "minigame-bb991.appspot.com"
+  };
+
+  // Khởi tạo Firebase & Firestore
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 2. Tự động tải & cập nhật điểm từ Cloud về giao diện khi có thay đổi
+  onSnapshot(doc(db, "minigame", "app_state"), (docSnap) => {
+    if (docSnap.exists()) {
+      const scores = docSnap.data().knockoutScores || {};
+      const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && val !== undefined) el.value = val;
+      };
+
+      if (scores.bk1) { setVal('bk1-s1', scores.bk1[0]); setVal('bk1-s2', scores.bk1[1]); }
+      if (scores.bk2) { setVal('bk2-s1', scores.bk2[0]); setVal('bk2-s2', scores.bk2[1]); }
+      if (scores.t3)  { setVal('t3-s1',  scores.t3[0]);  setVal('t3-s2',  scores.t3[1]); }
+      if (scores.ck)  { setVal('ck-s1',  scores.ck[0]);  setVal('ck-s2',  scores.ck[1]); }
+    }
+  });
+
+  // 3. Hàm lưu điểm lên Cloud Firestore
+  window.saveStateToFirebase = async function() {
+    try {
+      const getVal = (id) => document.getElementById(id)?.value || "";
+      const knockoutScores = {
+        bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
+        bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
+        t3:  [getVal('t3-s1'),  getVal('t3-s2')],
+        ck:  [getVal('ck-s1'),  getVal('ck-s2')]
+      };
+
+      await setDoc(doc(db, "minigame", "app_state"), { knockoutScores }, { merge: true });
+      console.log("Đã đồng bộ Firestore thành công!");
+    } catch (err) {
+      console.error("Lỗi đồng bộ Firebase:", err);
+    }
+  };
+</script>
 </html>
