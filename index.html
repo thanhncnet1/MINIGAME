@@ -1332,53 +1332,116 @@
     }
   });
       
-   <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  <!-- SCRIPT FIREBASE & LOGIC TOÀN BỘ TRANG -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-  // 1. Cấu hình Firebase
-  const firebaseConfig = {
-    projectId: "minigame-bb991",
-    authDomain: "minigame-bb991.firebaseapp.com",
-    storageBucket: "minigame-bb991.appspot.com"
-  };
+    // 1. Cấu hình Firebase Project (Bổ sung apiKey từ Firebase Console)
+    const firebaseConfig = {
+      apiKey: "AIzaSyDYCKzobz_fr-1BcHt3TxmOuX1nHCOQFMs", // ⚠️ Bạn thay bằng apiKey thực tế lấy ở Firebase Console
+      projectId: "minigame-bb991",
+      authDomain: "minigame-bb991.firebaseapp.com",
+      storageBucket: "minigame-bb991.appspot.com"
+    };
 
-  // Khởi tạo Firebase & Firestore
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+    // 2. Khởi tạo App & Firestore
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-  // 2. Tự động tải & cập nhật điểm từ Cloud về giao diện khi có thay đổi
-  onSnapshot(doc(db, "minigame", "app_state"), (docSnap) => {
-    if (docSnap.exists()) {
-      const scores = docSnap.data().knockoutScores || {};
-      const setVal = (id, val) => {
-        const el = document.getElementById(id);
-        if (el && val !== undefined) el.value = val;
-      };
+    // Dữ liệu ứng dụng toàn cục
+    window.players = [];
 
-      if (scores.bk1) { setVal('bk1-s1', scores.bk1[0]); setVal('bk1-s2', scores.bk1[1]); }
-      if (scores.bk2) { setVal('bk2-s1', scores.bk2[0]); setVal('bk2-s2', scores.bk2[1]); }
-      if (scores.t3)  { setVal('t3-s1',  scores.t3[0]);  setVal('t3-s2',  scores.t3[1]); }
-      if (scores.ck)  { setVal('ck-s1',  scores.ck[0]);  setVal('ck-s2',  scores.ck[1]); }
-    }
-  });
+    // 3. Hàm chuyển Tab
+    window.switchTab = function(tabId, btnElement) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      
+      const targetTab = document.getElementById(tabId);
+      if (targetTab) targetTab.classList.add('active');
+      if (btnElement) btnElement.classList.add('active');
+    };
 
-  // 3. Hàm lưu điểm lên Cloud Firestore
-  window.saveStateToFirebase = async function() {
-    try {
-      const getVal = (id) => document.getElementById(id)?.value || "";
-      const knockoutScores = {
-        bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
-        bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
-        t3:  [getVal('t3-s1'),  getVal('t3-s2')],
-        ck:  [getVal('ck-s1'),  getVal('ck-s2')]
-      };
+    // 4. Render danh sách VĐV
+    window.renderPlayers = function() {
+      const tbody = document.getElementById('playerList');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      
+      window.players.forEach((p, index) => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${p}</td>
+            <td><button style="background:#e74c3c; color:#fff; border:none; padding:4px 8px; border-radius:3px; cursor:pointer;" onclick="window.deletePlayer(${index})">Xóa</button></td>
+          </tr>
+        `;
+      });
+    };
 
-      await setDoc(doc(db, "minigame", "app_state"), { knockoutScores }, { merge: true });
-      console.log("Đã đồng bộ Firestore thành công!");
-    } catch (err) {
-      console.error("Lỗi đồng bộ Firebase:", err);
-    }
-  };
-</script>
+    window.addPlayer = function() {
+      const nameInput = document.getElementById('newPlayerName');
+      if (nameInput && nameInput.value.trim() !== '') {
+        window.players.push(nameInput.value.trim());
+        nameInput.value = '';
+        window.renderPlayers();
+        window.saveStateToFirebase();
+      }
+    };
+
+    window.deletePlayer = function(index) {
+      window.players.splice(index, 1);
+      window.renderPlayers();
+      window.saveStateToFirebase();
+    };
+
+    // 5. Tự động đồng bộ dữ liệu Realtime từ Firestore
+    onSnapshot(doc(db, "minigame", "app_state"), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        
+        // Đồng bộ danh sách VĐV
+        if (data.players) {
+          window.players = data.players;
+          window.renderPlayers();
+        }
+
+        // Đồng bộ tỷ số Minigame
+        const scores = data.knockoutScores || {};
+        const setVal = (id, val) => {
+          const el = document.getElementById(id);
+          if (el && val !== undefined) el.value = val;
+        };
+
+        if (scores.bk1) { setVal('bk1-s1', scores.bk1[0]); setVal('bk1-s2', scores.bk1[1]); }
+        if (scores.bk2) { setVal('bk2-s1', scores.bk2[0]); setVal('bk2-s2', scores.bk2[1]); }
+        if (scores.t3)  { setVal('t3-s1',  scores.t3[0]);  setVal('t3-s2',  scores.t3[1]); }
+        if (scores.ck)  { setVal('ck-s1',  scores.ck[0]);  setVal('ck-s2',  scores.ck[1]); }
+      }
+    });
+
+    // 6. Hàm Lưu Toàn Bộ Dữ Liệu Lên Cloud Firestore
+    window.saveStateToFirebase = async function() {
+      try {
+        const getVal = (id) => document.getElementById(id)?.value || "";
+
+        const knockoutScores = {
+          bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
+          bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
+          t3:  [getVal('t3-s1'),  getVal('t3-s2')],
+          ck:  [getVal('ck-s1'),  getVal('ck-s2')]
+        };
+
+        await setDoc(doc(db, "minigame", "app_state"), {
+          players: window.players,
+          knockoutScores: knockoutScores
+        }, { merge: true });
+
+        console.log("Đã đồng bộ lên Firestore thành công!");
+      } catch (error) {
+        console.error("Lỗi đồng bộ Firebase:", error);
+      }
+    };
+  </script>
+</body>
 </html>
