@@ -1227,7 +1227,27 @@
             const el = document.getElementById(id);
             if (el && val !== undefined) el.value = val;
         };
+const db = firebase.firestore();
 
+  db.collection('test').doc('ping').onSnapshot(
+    (doc) => {
+      // Thay đổi UI khi kết nối thành công
+      const el = document.getElementById('status-element');
+      if (el) {
+        el.innerText = "Firestore Online";
+        el.style.color = "green";
+      }
+    },
+    (error) => {
+      console.error("Lỗi Firestore:", error);
+      const el = document.getElementById('status-element');
+      if (el) {
+        el.innerText = "Firestore Offline";
+        el.style.color = "red";
+      }
+    }
+  );
+  // =========================================================
         // Hàm duy nhất gửi toàn bộ dữ liệu lên Firebase Firestore
         window.syncToFirebase = window.saveStateToFirebase = window.saveDataToFirebase = async function() {
             try {
