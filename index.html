@@ -77,6 +77,17 @@
                     <i class="fa-solid fa-medal"></i> <span>MINIGAME 2</span>
                 </button>
 
+                <!-- NÚT BACKUP & RESTORE DỮ LIỆU -->
+                <div class="flex items-center gap-1.5 bg-slate-900/90 px-2 py-1 rounded-lg border border-slate-700">
+                    <button onclick="exportBackupJSON()" title="Xuất file Sao Lưu Dữ Liệu" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-2 py-1 rounded transition flex items-center gap-1">
+                        <i class="fa-solid fa-download"></i> <span>Backup</span>
+                    </button>
+                    <button onclick="triggerRestoreInput()" title="Phục Hồi Dữ Liệu Từ File Backup" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-2 py-1 rounded transition flex items-center gap-1">
+                        <i class="fa-solid fa-upload"></i> <span>Restore</span>
+                    </button>
+                    <input type="file" id="restore-file-input" accept=".json" class="hidden" onchange="importBackupJSON(event)">
+                </div>
+
                 <!-- TRẠNG THÁI FIRESTORE ONLINE -->
                 <div class="flex items-center gap-1.5 bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-700">
                     <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" id="status-dot"></span>
@@ -121,6 +132,24 @@
                         <i class="fa-solid fa-diagram-project text-4xl text-emerald-600 mb-3 group-hover:scale-110 transition-transform"></i>
                         <h3 class="font-bold text-lg text-slate-800">MINIGAME 2</h3>
                         <p class="text-xs text-slate-500 mt-2">Vòng Bảng A-B, Vòng Vòng Tròn, Bán Kết, Chung Kết</p>
+                    </div>
+                </div>
+
+                <!-- QUẢN LÝ SAO LƯU DỮ LIỆU TẠI TRANG CHỦ -->
+                <div class="mt-8 pt-6 border-t border-slate-200 max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50 p-4 rounded-xl border">
+                    <div class="text-left">
+                        <h4 class="font-bold text-sm text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-database text-blue-600"></i> Quản Lý Dữ Liệu An Toàn
+                        </h4>
+                        <p class="text-xs text-slate-500">Xuất file JSON sao lưu hệ thống hoặc tải lên file JSON để khôi phục.</p>
+                    </div>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <button onclick="exportBackupJSON()" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-lg font-semibold flex items-center justify-center gap-1.5 shadow">
+                            <i class="fa-solid fa-file-export"></i> Tải File Backup
+                        </button>
+                        <button onclick="triggerRestoreInput()" class="flex-1 sm:flex-none bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded-lg font-semibold flex items-center justify-center gap-1.5 shadow">
+                            <i class="fa-solid fa-file-import"></i> Nạp File Backup
+                        </button>
                     </div>
                 </div>
             </div>
@@ -510,7 +539,7 @@
 
     <!-- JAVASCRIPT LOGIC XỬ LÝ -->
     <script>
-        // STATE (DỮ LIỆU)
+        // STATE (DỮ LIỆU BẢN QUYỀN)
         window.players = [
             { id: 1, name: "Tiến Thọ", gender: "Nam" },
             { id: 2, name: "Châu Sĩ", gender: "Nam" },
@@ -578,6 +607,93 @@
 
         window.m2ScoresA = {};
         window.m2ScoresB = {};
+
+        // XUẤT SAO LƯU DỮ LIỆU THÀNH FILE .JSON
+        function exportBackupJSON() {
+            const getVal = (id) => document.getElementById(id)?.value || "";
+            const backupData = {
+                appName: "CLB-PICKLEBALL-CMTD",
+                exportDate: new Date().toISOString(),
+                players: window.players,
+                m1TeamA: window.m1TeamA,
+                m1TeamB: window.m1TeamB,
+                m1Matches: window.m1Matches,
+                m2PairsA: window.m2PairsA,
+                m2PairsB: window.m2PairsB,
+                m2ScoresA: window.m2ScoresA,
+                m2ScoresB: window.m2ScoresB,
+                knockoutScores: {
+                    bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
+                    bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
+                    t3:  [getVal('t3-s1'),  getVal('t3-s2')],
+                    ck:  [getVal('ck-s1'),  getVal('ck-s2')]
+                }
+            };
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            const dateStr = new Date().toISOString().slice(0, 10);
+            
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `CMTD_Pickleball_Backup_${dateStr}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        // KÍCH HOẠT INPUT CHỌN FILE
+        function triggerRestoreInput() {
+            document.getElementById('restore-file-input').click();
+        }
+
+        // ĐỌC FILE BACKUP .JSON VÀ PHỤC HỒI
+        function importBackupJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (data.players) window.players = data.players;
+                    if (data.m1TeamA) window.m1TeamA = data.m1TeamA;
+                    if (data.m1TeamB) window.m1TeamB = data.m1TeamB;
+                    if (data.m1Matches) window.m1Matches = data.m1Matches;
+                    if (data.m2PairsA) window.m2PairsA = data.m2PairsA;
+                    if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
+                    if (data.m2ScoresA) window.m2ScoresA = data.m2ScoresA;
+                    if (data.m2ScoresB) window.m2ScoresB = data.m2ScoresB;
+
+                    if (data.knockoutScores) {
+                        const setVal = (id, val) => {
+                            const el = document.getElementById(id);
+                            if (el && val !== undefined) el.value = val;
+                        };
+                        const s = data.knockoutScores;
+                        if (s.bk1) { setVal('bk1-s1', s.bk1[0]); setVal('bk1-s2', s.bk1[1]); }
+                        if (s.bk2) { setVal('bk2-s1', s.bk2[0]); setVal('bk2-s2', s.bk2[1]); }
+                        if (s.t3)  { setVal('t3-s1',  s.t3[0]);  setVal('t3-s2',  s.t3[1]); }
+                        if (s.ck)  { setVal('ck-s1',  s.ck[0]);  setVal('ck-s2',  s.ck[1]); }
+                    }
+
+                    renderPlayers();
+                    renderMinigame1();
+                    renderM2();
+
+                    if (window.syncToFirebase) {
+                        window.syncToFirebase();
+                    }
+
+                    alert("Phục hồi dữ liệu từ file backup thành công!");
+                } catch (err) {
+                    console.error("Lỗi đọc file backup:", err);
+                    alert("Lỗi đọc file backup! File JSON không đúng định dạng.");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ''; // Reset input
+        }
 
         function changeTheme(themeClass) {
             const body = document.getElementById('app-body');
@@ -690,23 +806,18 @@
             listA.innerHTML = '';
             listB.innerHTML = '';
 
-            // Cập nhật số lượng VĐV hiển thị trên tiêu đề
             const countA = document.getElementById('team-A-count');
             const countB = document.getElementById('team-B-count');
             if(countA) countA.innerText = window.m1TeamA.length;
             if(countB) countB.innerText = window.m1TeamB.length;
 
-            // RÀNG BUỘC CHẶT CHẼ:
-            // Các VĐV khả thi chọn cho Team A = Danh sách Pick Thủ trừ đi những ai ĐÃ NẰM TRONG TEAM B
             const availableForA = window.players.filter(p => !window.m1TeamB.includes(p.name));
-            // Các VĐV khả thi chọn cho Team B = Danh sách Pick Thủ trừ đi những ai ĐÃ NẰM TRONG TEAM A
             const availableForB = window.players.filter(p => !window.m1TeamA.includes(p.name));
 
             window.m1TeamA.forEach((currentName, i) => {
                 let options = availableForA.map(p => 
                     `<option value="${p.name}" ${p.name === currentName ? 'selected' : ''}>${p.name}</option>`
                 ).join('');
-                // Giữ lại option nếu tên hiện tại vì lý do nào đó không tìm thấy trong availableForA
                 if (!availableForA.some(p => p.name === currentName) && currentName) {
                     options = `<option value="${currentName}" selected>${currentName}</option>` + options;
                 }
@@ -788,7 +899,6 @@
                     }
                 }
 
-                // Tạo dropdown chọn VĐV trong lịch thi đấu
                 const buildSelect = (teamList, selectedVal, field, matchId, colorClass) => {
                     let opts = `<option value="">--Chọn--</option>`;
                     let found = false;
@@ -924,14 +1034,11 @@
             }
         }
 
-        // TỰ ĐỘNG THÊM VĐV (MỞ RỘNG KHÔNG GIỚI HẠN SỐ LƯỢNG 10, 11,...)
         function addTeamMember(team) {
             let availablePlayers = [];
             if (team === 'A') {
-                // VĐV chọn vào A phải chưa có ở B và chưa có trong A
                 availablePlayers = window.players.filter(p => !window.m1TeamA.includes(p.name) && !window.m1TeamB.includes(p.name));
             } else {
-                // VĐV chọn vào B phải chưa có ở A và chưa có trong B
                 availablePlayers = window.players.filter(p => !window.m1TeamB.includes(p.name) && !window.m1TeamA.includes(p.name));
             }
 
