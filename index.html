@@ -167,7 +167,7 @@
                     <div class="border border-blue-200 bg-blue-50/50 rounded-lg p-4">
                         <div class="flex justify-between items-center mb-3">
                             <h4 class="font-bold text-blue-800 uppercase flex items-center gap-2">
-                                <i class="fa-solid fa-shield-halved"></i> Team A
+                                <i class="fa-solid fa-shield-halved"></i> Team A (<span id="team-A-count">0</span> VĐV)
                             </h4>
                             <button onclick="addTeamMember('A')" class="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700">
                                 <i class="fa-solid fa-plus"></i> Thêm VĐV
@@ -178,7 +178,7 @@
                     <div class="border border-orange-200 bg-orange-50/50 rounded-lg p-4">
                         <div class="flex justify-between items-center mb-3">
                             <h4 class="font-bold text-orange-800 uppercase flex items-center gap-2">
-                                <i class="fa-solid fa-shield-halved"></i> Team B
+                                <i class="fa-solid fa-shield-halved"></i> Team B (<span id="team-B-count">0</span> VĐV)
                             </h4>
                             <button onclick="addTeamMember('B')" class="text-xs bg-orange-600 text-white px-2 py-1 rounded hover:bg-orange-700">
                                 <i class="fa-solid fa-plus"></i> Thêm VĐV
@@ -193,7 +193,7 @@
                 <div class="flex justify-between items-center mb-3">
                     <div>
                         <h2 class="text-xl md:text-2xl font-black text-blue-900 tracking-wide uppercase">LỊCH THI ĐẤU - <span id="m1-match-count">24</span> TRẬN</h2>
-                        <p class="text-xs italic text-slate-500">3 sân thi đấu, 8 lượt; mỗi VĐV xuất hiện tối đa 1 lần/lượt.</p>
+                        <p class="text-xs italic text-slate-500">3 sân thi đấu, 8 lượt; chọn VĐV từ danh sách Team A và Team B.</p>
                     </div>
                     <button onclick="addM1Match()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded shadow flex items-center gap-1 font-bold">
                         <i class="fa-solid fa-plus"></i> Thêm Trận
@@ -254,7 +254,7 @@
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
                 <div class="flex flex-wrap justify-between items-center mb-4 border-b pb-3 gap-2">
                     <h2 class="text-xl font-bold text-slate-800 uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-trophy text-yellow-500"></i> Lịch Thi Đấu (Minigame 2)
+                        <i class="fa-solid fa-trophy text-yellow-500"></i> Lịch Thi Đấu Giải Phú Thọ Open (Minigame 2)
                     </h2>
                     <div class="flex gap-2">
                         <button onclick="addPairM2('A')" class="bg-blue-600 text-white text-xs px-3 py-1.5 rounded hover:bg-blue-700 flex items-center gap-1 font-semibold">
@@ -690,15 +690,23 @@
             listA.innerHTML = '';
             listB.innerHTML = '';
 
-            // VĐV có thể chọn cho Team A: các VĐV từ danh sách chung chưa có trong Team B
+            // Cập nhật số lượng VĐV hiển thị trên tiêu đề
+            const countA = document.getElementById('team-A-count');
+            const countB = document.getElementById('team-B-count');
+            if(countA) countA.innerText = window.m1TeamA.length;
+            if(countB) countB.innerText = window.m1TeamB.length;
+
+            // RÀNG BUỘC CHẶT CHẼ:
+            // Các VĐV khả thi chọn cho Team A = Danh sách Pick Thủ trừ đi những ai ĐÃ NẰM TRONG TEAM B
             const availableForA = window.players.filter(p => !window.m1TeamB.includes(p.name));
-            // VĐV có thể chọn cho Team B: các VĐV từ danh sách chung chưa có trong Team A
+            // Các VĐV khả thi chọn cho Team B = Danh sách Pick Thủ trừ đi những ai ĐÃ NẰM TRONG TEAM A
             const availableForB = window.players.filter(p => !window.m1TeamA.includes(p.name));
 
             window.m1TeamA.forEach((currentName, i) => {
                 let options = availableForA.map(p => 
                     `<option value="${p.name}" ${p.name === currentName ? 'selected' : ''}>${p.name}</option>`
                 ).join('');
+                // Giữ lại option nếu tên hiện tại vì lý do nào đó không tìm thấy trong availableForA
                 if (!availableForA.some(p => p.name === currentName) && currentName) {
                     options = `<option value="${currentName}" selected>${currentName}</option>` + options;
                 }
@@ -710,7 +718,7 @@
                             ${options}
                         </select>
                         <div class="flex items-center gap-1">
-                            <span class="text-blue-500 text-xs px-1" title="Chỉnh sửa VĐV trong danh sách sổ xuống"><i class="fa-solid fa-pencil"></i></span>
+                            <span class="text-blue-500 text-xs px-1" title="Sửa VĐV"><i class="fa-solid fa-pencil"></i></span>
                             <button onclick="removeTeamMember('A', ${i})" class="text-red-500 hover:text-red-700 text-xs p-1"><i class="fa-solid fa-xmark"></i></button>
                         </div>
                     </div>
@@ -732,7 +740,7 @@
                             ${options}
                         </select>
                         <div class="flex items-center gap-1">
-                            <span class="text-orange-500 text-xs px-1" title="Chỉnh sửa VĐV trong danh sách sổ xuống"><i class="fa-solid fa-pencil"></i></span>
+                            <span class="text-orange-500 text-xs px-1" title="Sửa VĐV"><i class="fa-solid fa-pencil"></i></span>
                             <button onclick="removeTeamMember('B', ${i})" class="text-red-500 hover:text-red-700 text-xs p-1"><i class="fa-solid fa-xmark"></i></button>
                         </div>
                     </div>
@@ -916,16 +924,19 @@
             }
         }
 
+        // TỰ ĐỘNG THÊM VĐV (MỞ RỘNG KHÔNG GIỚI HẠN SỐ LƯỢNG 10, 11,...)
         function addTeamMember(team) {
             let availablePlayers = [];
             if (team === 'A') {
+                // VĐV chọn vào A phải chưa có ở B và chưa có trong A
                 availablePlayers = window.players.filter(p => !window.m1TeamA.includes(p.name) && !window.m1TeamB.includes(p.name));
             } else {
+                // VĐV chọn vào B phải chưa có ở A và chưa có trong B
                 availablePlayers = window.players.filter(p => !window.m1TeamB.includes(p.name) && !window.m1TeamA.includes(p.name));
             }
 
             if (availablePlayers.length === 0) {
-                alert("Tất cả VĐV đã được chọn vào 2 team hoặc chưa có VĐV nào trong danh sách Pick Thủ!");
+                alert("Tất cả VĐV trong danh sách Pick Thủ đã được chia vào 2 team hoặc không còn VĐV khả dụng!");
                 return;
             }
 
@@ -1055,7 +1066,6 @@
             return schedule;
         }
 
-        // Tự động tính toán điểm số & hiệu số tương tự logic ở Đoạn 1
         function renderM2() {
             renderM2Pairs();
 
