@@ -690,20 +690,51 @@
             listA.innerHTML = '';
             listB.innerHTML = '';
 
-            window.m1TeamA.forEach((name, i) => {
+            // VĐV có thể chọn cho Team A: các VĐV từ danh sách chung chưa có trong Team B
+            const availableForA = window.players.filter(p => !window.m1TeamB.includes(p.name));
+            // VĐV có thể chọn cho Team B: các VĐV từ danh sách chung chưa có trong Team A
+            const availableForB = window.players.filter(p => !window.m1TeamA.includes(p.name));
+
+            window.m1TeamA.forEach((currentName, i) => {
+                let options = availableForA.map(p => 
+                    `<option value="${p.name}" ${p.name === currentName ? 'selected' : ''}>${p.name}</option>`
+                ).join('');
+                if (!availableForA.some(p => p.name === currentName) && currentName) {
+                    options = `<option value="${currentName}" selected>${currentName}</option>` + options;
+                }
+
                 listA.innerHTML += `
-                    <div class="flex items-center justify-between bg-white px-3 py-1.5 rounded border text-sm font-medium">
-                        <span>${i+1}. ${name}</span>
-                        <button onclick="removeTeamMember('A', ${i})" class="text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-xmark"></i></button>
+                    <div class="flex items-center justify-between bg-white px-2 py-1 rounded border border-blue-200 text-sm gap-2 shadow-sm">
+                        <span class="font-bold text-blue-800 w-6">${i+1}.</span>
+                        <select onchange="updateTeamMember('A', ${i}, this.value)" class="flex-grow bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            ${options}
+                        </select>
+                        <div class="flex items-center gap-1">
+                            <span class="text-blue-500 text-xs px-1" title="Chỉnh sửa VĐV trong danh sách sổ xuống"><i class="fa-solid fa-pencil"></i></span>
+                            <button onclick="removeTeamMember('A', ${i})" class="text-red-500 hover:text-red-700 text-xs p-1"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
                     </div>
                 `;
             });
 
-            window.m1TeamB.forEach((name, i) => {
+            window.m1TeamB.forEach((currentName, i) => {
+                let options = availableForB.map(p => 
+                    `<option value="${p.name}" ${p.name === currentName ? 'selected' : ''}>${p.name}</option>`
+                ).join('');
+                if (!availableForB.some(p => p.name === currentName) && currentName) {
+                    options = `<option value="${currentName}" selected>${currentName}</option>` + options;
+                }
+
                 listB.innerHTML += `
-                    <div class="flex items-center justify-between bg-white px-3 py-1.5 rounded border text-sm font-medium">
-                        <span>${i+1}. ${name}</span>
-                        <button onclick="removeTeamMember('B', ${i})" class="text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-xmark"></i></button>
+                    <div class="flex items-center justify-between bg-white px-2 py-1 rounded border border-orange-200 text-sm gap-2 shadow-sm">
+                        <span class="font-bold text-orange-800 w-6">${i+1}.</span>
+                        <select onchange="updateTeamMember('B', ${i}, this.value)" class="flex-grow bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-orange-500">
+                            ${options}
+                        </select>
+                        <div class="flex items-center gap-1">
+                            <span class="text-orange-500 text-xs px-1" title="Chỉnh sửa VĐV trong danh sách sổ xuống"><i class="fa-solid fa-pencil"></i></span>
+                            <button onclick="removeTeamMember('B', ${i})" class="text-red-500 hover:text-red-700 text-xs p-1"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
                     </div>
                 `;
             });
@@ -749,19 +780,40 @@
                     }
                 }
 
+                // Tạo dropdown chọn VĐV trong lịch thi đấu
+                const buildSelect = (teamList, selectedVal, field, matchId, colorClass) => {
+                    let opts = `<option value="">--Chọn--</option>`;
+                    let found = false;
+                    teamList.forEach(name => {
+                        if (name === selectedVal) found = true;
+                        opts += `<option value="${name}" ${name === selectedVal ? 'selected' : ''}>${name}</option>`;
+                    });
+                    if (selectedVal && !found) {
+                        opts += `<option value="${selectedVal}" selected>${selectedVal}</option>`;
+                    }
+                    return `<select onchange="updateM1MatchPlayer(${matchId}, '${field}', this.value)" class="${colorClass} font-semibold bg-white border border-slate-300 rounded px-1 py-0.5 text-xs focus:outline-none focus:ring-1">
+                        ${opts}
+                    </select>`;
+                };
+
+                const selectA1 = buildSelect(window.m1TeamA, m.a1, 'a1', m.id, 'text-blue-800');
+                const selectA2 = buildSelect(window.m1TeamA, m.a2, 'a2', m.id, 'text-blue-800');
+                const selectB1 = buildSelect(window.m1TeamB, m.b1, 'b1', m.id, 'text-orange-800');
+                const selectB2 = buildSelect(window.m1TeamB, m.b2, 'b2', m.id, 'text-orange-800');
+
                 body.innerHTML += `
                     <tr class="hover:bg-slate-50 text-center">
                         <td class="font-bold">${idx + 1}</td>
                         <td class="font-semibold text-blue-900">${m.luot}</td>
                         <td class="font-semibold text-slate-700">${m.san}</td>
                         <td class="text-left px-2">${m.content}</td>
-                        <td class="text-left px-2 font-medium text-blue-800">${m.a1}</td>
-                        <td class="text-left px-2 font-medium text-blue-800">${m.a2}</td>
+                        <td class="text-left px-1">${selectA1}</td>
+                        <td class="text-left px-1">${selectA2}</td>
                         <td><input type="number" value="${m.scoreA}" onchange="updateM1Score(${m.id}, 'A', this.value)" class="text-center font-bold text-blue-900"></td>
                         <td class="font-bold text-slate-400">vs</td>
                         <td><input type="number" value="${m.scoreB}" onchange="updateM1Score(${m.id}, 'B', this.value)" class="text-center font-bold text-orange-900"></td>
-                        <td class="text-left px-2 font-medium text-orange-800">${m.b1}</td>
-                        <td class="text-left px-2 font-medium text-orange-800">${m.b2}</td>
+                        <td class="text-left px-1">${selectB1}</td>
+                        <td class="text-left px-1">${selectB2}</td>
                         <td class="font-bold ${winner==='Đội A'?'text-blue-700':winner==='Đội B'?'text-orange-700':''}">${winner}</td>
                         <td class="font-semibold">${diff}</td>
                         <td class="font-bold text-blue-700">${ptsA}</td>
@@ -804,6 +856,25 @@
             `;
         }
 
+        function updateTeamMember(team, index, newName) {
+            if (team === 'A') {
+                window.m1TeamA[index] = newName;
+            } else if (team === 'B') {
+                window.m1TeamB[index] = newName;
+            }
+            renderMinigame1();
+            if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function updateM1MatchPlayer(matchId, field, value) {
+            const m = window.m1Matches.find(item => item.id === matchId);
+            if (m) {
+                m[field] = value;
+                renderMinigame1();
+                if(window.syncToFirebase) window.syncToFirebase();
+            }
+        }
+
         function updateM1Score(id, team, val) {
             const m = window.m1Matches.find(item => item.id === id);
             if(m) {
@@ -816,17 +887,22 @@
 
         function addM1Match() {
             const nextId = window.m1Matches.length ? Math.max(...window.m1Matches.map(m=>m.id)) + 1 : 1;
+            const defaultA1 = window.m1TeamA[0] || "";
+            const defaultA2 = window.m1TeamA[1] || "";
+            const defaultB1 = window.m1TeamB[0] || "";
+            const defaultB2 = window.m1TeamB[1] || "";
+
             window.m1Matches.push({
                 id: nextId,
                 luot: 1,
                 san: 1,
                 content: "Đôi Nam/Nữ",
-                a1: "VĐV A1",
-                a2: "VĐV A2",
+                a1: defaultA1,
+                a2: defaultA2,
                 scoreA: "",
                 scoreB: "",
-                b1: "VĐV B1",
-                b2: "VĐV B2"
+                b1: defaultB1,
+                b2: defaultB2
             });
             renderMinigame1();
             if(window.syncToFirebase) window.syncToFirebase();
@@ -841,13 +917,24 @@
         }
 
         function addTeamMember(team) {
-            const name = prompt(`Nhập tên VĐV thêm vào Team ${team}:`);
-            if(name && name.trim()) {
-                if(team === 'A') window.m1TeamA.push(name.trim());
-                if(team === 'B') window.m1TeamB.push(name.trim());
-                renderMinigame1();
-                if(window.syncToFirebase) window.syncToFirebase();
+            let availablePlayers = [];
+            if (team === 'A') {
+                availablePlayers = window.players.filter(p => !window.m1TeamA.includes(p.name) && !window.m1TeamB.includes(p.name));
+            } else {
+                availablePlayers = window.players.filter(p => !window.m1TeamB.includes(p.name) && !window.m1TeamA.includes(p.name));
             }
+
+            if (availablePlayers.length === 0) {
+                alert("Tất cả VĐV đã được chọn vào 2 team hoặc chưa có VĐV nào trong danh sách Pick Thủ!");
+                return;
+            }
+
+            const chosenPlayer = availablePlayers[0].name;
+            if (team === 'A') window.m1TeamA.push(chosenPlayer);
+            if (team === 'B') window.m1TeamB.push(chosenPlayer);
+
+            renderMinigame1();
+            if(window.syncToFirebase) window.syncToFirebase();
         }
 
         function removeTeamMember(team, index) {
