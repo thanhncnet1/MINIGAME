@@ -88,6 +88,12 @@
                     <input type="file" id="restore-file-input" accept=".json" class="hidden" onchange="importBackupJSON(event)">
                 </div>
 
+                <!-- TRẠNG THÁI AUTO-BACKUP CỤC BỘ -->
+                <div class="flex items-center gap-1.5 bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-700" title="Tự động sao lưu dữ liệu khi thay đổi">
+                    <i class="fa-solid fa-floppy-disk text-emerald-400 text-xs"></i>
+                    <span id="auto-backup-status" class="text-xs text-emerald-400 font-medium">Auto-Backup: Sẵn sàng</span>
+                </div>
+
                 <!-- TRẠNG THÁI FIRESTORE ONLINE -->
                 <div class="flex items-center gap-1.5 bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-700">
                     <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" id="status-dot"></span>
@@ -141,9 +147,12 @@
                         <h4 class="font-bold text-sm text-slate-800 flex items-center gap-2">
                             <i class="fa-solid fa-database text-blue-600"></i> Quản Lý Dữ Liệu An Toàn
                         </h4>
-                        <p class="text-xs text-slate-500">Xuất file JSON sao lưu hệ thống hoặc tải lên file JSON để khôi phục.</p>
+                        <p class="text-xs text-slate-500">Tự động sao lưu bộ nhớ hoặc xuất/nạp file JSON để khôi phục.</p>
                     </div>
                     <div class="flex gap-2 w-full sm:w-auto">
+                        <button onclick="restoreAutoBackup()" class="flex-1 sm:flex-none bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-2 rounded-lg font-semibold flex items-center justify-center gap-1.5 shadow" title="Nạp lại bản sao lưu tự động lưu gần nhất">
+                            <i class="fa-solid fa-rotate-left"></i> Nạp Auto-Backup
+                        </button>
                         <button onclick="exportBackupJSON()" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-lg font-semibold flex items-center justify-center gap-1.5 shadow">
                             <i class="fa-solid fa-file-export"></i> Tải File Backup
                         </button>
@@ -403,8 +412,8 @@
                                     <td id="bk1-team1-name" class="border p-1.5 font-medium">Nhất A</td>
                                     <td class="border p-1.5">
                                         <div class="flex justify-center items-center gap-1">
-                                            <input type="number" id="bk1-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase();">-
-                                            <input type="number" id="bk1-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase();">
+                                            <input type="number" id="bk1-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">-
+                                            <input type="number" id="bk1-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">
                                         </div>
                                     </td>
                                     <td id="bk1-team2-name" class="border p-1.5 font-medium">Nhì B</td>
@@ -414,8 +423,8 @@
                                     <td id="bk2-team1-name" class="border p-1.5 font-medium">Nhất B</td>
                                     <td class="border p-1.5">
                                         <div class="flex justify-center items-center gap-1">
-                                            <input type="number" id="bk2-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase();">-
-                                            <input type="number" id="bk2-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase();">
+                                            <input type="number" id="bk2-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">-
+                                            <input type="number" id="bk2-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">
                                         </div>
                                     </td>
                                     <td id="bk2-team2-name" class="border p-1.5 font-medium">Nhì A</td>
@@ -433,8 +442,8 @@
                                     <td id="t3-team1-name" class="border p-1.5 font-medium">Thua BK1</td>
                                     <td class="border p-1.5 w-24">
                                         <div class="flex justify-center items-center gap-1">
-                                            <input type="number" id="t3-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase();">-
-                                            <input type="number" id="t3-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase();">
+                                            <input type="number" id="t3-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">-
+                                            <input type="number" id="t3-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">
                                         </div>
                                     </td>
                                     <td id="t3-team2-name" class="border p-1.5 font-medium">Thua BK2</td>
@@ -452,8 +461,8 @@
                                     <td id="ck-team1-name" class="border p-1.5 font-medium">Thắng BK1</td>
                                     <td class="border p-1.5 w-24">
                                         <div class="flex justify-center items-center gap-1">
-                                            <input type="number" id="ck-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase();">-
-                                            <input type="number" id="ck-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase();">
+                                            <input type="number" id="ck-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">-
+                                            <input type="number" id="ck-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">
                                         </div>
                                     </td>
                                     <td id="ck-team2-name" class="border p-1.5 font-medium">Thắng BK2</td>
@@ -608,6 +617,80 @@
         window.m2ScoresA = {};
         window.m2ScoresB = {};
 
+        // CHỨC NĂNG TỰ ĐỘNG SAO LƯU (AUTO-BACKUP) VÀO LOCALSTORAGE
+        function autoBackupData() {
+            try {
+                const getVal = (id) => document.getElementById(id)?.value || "";
+                const backupData = {
+                    appName: "CLB-PICKLEBALL-CMTD",
+                    exportDate: new Date().toISOString(),
+                    players: window.players,
+                    m1TeamA: window.m1TeamA,
+                    m1TeamB: window.m1TeamB,
+                    m1Matches: window.m1Matches,
+                    m2PairsA: window.m2PairsA,
+                    m2PairsB: window.m2PairsB,
+                    m2ScoresA: window.m2ScoresA,
+                    m2ScoresB: window.m2ScoresB,
+                    knockoutScores: {
+                        bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
+                        bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
+                        t3:  [getVal('t3-s1'),  getVal('t3-s2')],
+                        ck:  [getVal('ck-s1'),  getVal('ck-s2')]
+                    }
+                };
+                localStorage.setItem("auto_backup_minigame", JSON.stringify(backupData));
+                
+                const timeStr = new Date().toLocaleTimeString('vi-VN');
+                const statusEl = document.getElementById('auto-backup-status');
+                if (statusEl) {
+                    statusEl.innerText = `Đã lưu: ${timeStr}`;
+                }
+            } catch (err) {
+                console.error("Lỗi tự động sao lưu LocalStorage:", err);
+            }
+        }
+
+        // PHỤC HỒI TỪ BẢN AUTO-BACKUP CỤC BỘ
+        function restoreAutoBackup(silent = false) {
+            const rawData = localStorage.getItem("auto_backup_minigame");
+            if (!rawData) {
+                if (!silent) alert("Không tìm thấy bản tự động sao lưu nào!");
+                return;
+            }
+            try {
+                const data = JSON.parse(rawData);
+                if (data.players) window.players = data.players;
+                if (data.m1TeamA) window.m1TeamA = data.m1TeamA;
+                if (data.m1TeamB) window.m1TeamB = data.m1TeamB;
+                if (data.m1Matches) window.m1Matches = data.m1Matches;
+                if (data.m2PairsA) window.m2PairsA = data.m2PairsA;
+                if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
+                if (data.m2ScoresA) window.m2ScoresA = data.m2ScoresA;
+                if (data.m2ScoresB) window.m2ScoresB = data.m2ScoresB;
+
+                if (data.knockoutScores) {
+                    const setVal = (id, val) => {
+                        const el = document.getElementById(id);
+                        if (el && val !== undefined) el.value = val;
+                    };
+                    const s = data.knockoutScores;
+                    if (s.bk1) { setVal('bk1-s1', s.bk1[0]); setVal('bk1-s2', s.bk1[1]); }
+                    if (s.bk2) { setVal('bk2-s1', s.bk2[0]); setVal('bk2-s2', s.bk2[1]); }
+                    if (s.t3)  { setVal('t3-s1',  s.t3[0]);  setVal('t3-s2',  s.t3[1]); }
+                    if (s.ck)  { setVal('ck-s1',  s.ck[0]);  setVal('ck-s2',  s.ck[1]); }
+                }
+
+                renderPlayers();
+                renderMinigame1();
+                renderM2();
+
+                if (!silent) alert("Đã nạp thành công dữ liệu từ Auto-Backup!");
+            } catch (err) {
+                console.error("Lỗi nạp Auto-Backup:", err);
+            }
+        }
+
         // XUẤT SAO LƯU DỮ LIỆU THÀNH FILE .JSON
         function exportBackupJSON() {
             const getVal = (id) => document.getElementById(id)?.value || "";
@@ -680,6 +763,7 @@
                     renderPlayers();
                     renderMinigame1();
                     renderM2();
+                    autoBackupData();
 
                     if (window.syncToFirebase) {
                         window.syncToFirebase();
@@ -775,6 +859,7 @@
             closePlayerModal();
             renderPlayers();
             renderMinigame1();
+            autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
@@ -794,6 +879,7 @@
                 window.players = window.players.filter(p => p.id != id);
                 renderPlayers();
                 renderMinigame1();
+                autoBackupData();
                 if(window.syncToFirebase) window.syncToFirebase();
             }
         }
@@ -981,6 +1067,7 @@
                 window.m1TeamB[index] = newName;
             }
             renderMinigame1();
+            autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
@@ -989,6 +1076,7 @@
             if (m) {
                 m[field] = value;
                 renderMinigame1();
+                autoBackupData();
                 if(window.syncToFirebase) window.syncToFirebase();
             }
         }
@@ -999,6 +1087,7 @@
                 if(team === 'A') m.scoreA = val;
                 if(team === 'B') m.scoreB = val;
                 renderMinigame1();
+                autoBackupData();
                 if(window.syncToFirebase) window.syncToFirebase();
             }
         }
@@ -1023,6 +1112,7 @@
                 b2: defaultB2
             });
             renderMinigame1();
+            autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
@@ -1030,6 +1120,7 @@
             if(confirm('Bạn có chắc muốn xóa trận đấu này?')) {
                 window.m1Matches = window.m1Matches.filter(m => m.id !== id);
                 renderMinigame1();
+                autoBackupData();
                 if(window.syncToFirebase) window.syncToFirebase();
             }
         }
@@ -1052,6 +1143,7 @@
             if (team === 'B') window.m1TeamB.push(chosenPlayer);
 
             renderMinigame1();
+            autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
@@ -1059,6 +1151,7 @@
             if(team === 'A') window.m1TeamA.splice(index, 1);
             if(team === 'B') window.m1TeamB.splice(index, 1);
             renderMinigame1();
+            autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
@@ -1128,6 +1221,7 @@
 
             closeM2EditModal();
             renderM2();
+            autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
@@ -1140,6 +1234,7 @@
                 window.m2PairsB.push({ p1: `VĐV B${window.m2PairsB.length*2+1}`, p2: `VĐV B${window.m2PairsB.length*2+2}` });
             }
             renderM2();
+            autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
@@ -1148,6 +1243,7 @@
                 if(group === 'A') window.m2PairsA.splice(index, 1);
                 if(group === 'B') window.m2PairsB.splice(index, 1);
                 renderM2();
+                autoBackupData();
                 if(window.syncToFirebase) window.syncToFirebase();
             }
         }
@@ -1374,10 +1470,12 @@
             if(group === 'A') window.m2ScoresA[key] = val;
             if(group === 'B') window.m2ScoresB[key] = val;
             renderM2();
+            autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
         window.onload = function() {
+            restoreAutoBackup(true); // Khôi phục dữ liệu tự động lưu nếu có
             renderPlayers();
             renderMinigame1();
             renderM2();
@@ -1467,6 +1565,7 @@
                     if (typeof window.renderPlayers === 'function') window.renderPlayers();
                     if (typeof window.renderMinigame1 === 'function') window.renderMinigame1();
                     if (typeof window.renderM2 === 'function') window.renderM2();
+                    if (typeof window.autoBackupData === 'function') window.autoBackupData();
                 }
             },
             (error) => {
