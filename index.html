@@ -1333,119 +1333,70 @@
   });
       
     <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // 1. Cấu hình Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyDYCKzobz_fr-1BcHt3TxmOuX1nHCOQFMs",
-      authDomain: "minigame-bb991.firebaseapp.com",
-      projectId: "minigame-bb991",
-      storageBucket: "minigame-bb991.firebasestorage.app",
-      messagingSenderId: "115186520233",
-      appId: "1:115186520233:web:5cfcd1337f1a6ddb9599b8",
-      measurementId: "G-E9VTC723SF"
-    };
+  // 1. Cấu hình Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyDYCKzobz_fr-1BcHt3TxmOuX1nHCOQFMs", // ⚠️ Nhớ thay apiKey thực tế lấy từ Firebase Console
+    authDomain: "minigame-bb991.firebaseapp.com",
+    projectId: "minigame-bb991",
+    storageBucket: "minigame-bb991.appspot.com"
+  };
 
-    // 2. Khởi tạo App & Firestore
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+  // 2. Khởi tạo Firebase App & Firestore
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-    // Mảng dữ liệu Pick thủ toàn cục
-    window.players = [];
+  window.players = [];
 
-    // 3. Hàm chuyển Tab
-    window.switchTab = function(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  // 3. KHẮC PHỤC LỖI: Khai báo đồng thời cả saveStateToFirebase và saveDataToFirebase vào window
+  window.saveStateToFirebase = window.saveDataToFirebase = async function() {
+    try {
+      const getVal = (id) => document.getElementById(id)?.value || "";
       
-      const targetTab = document.getElementById(tabId);
-      if (targetTab) targetTab.classList.add('active');
-      if (event && event.target) event.target.classList.add('active');
-    };
+      const knockoutScores = {
+        bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
+        bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
+        t3:  [getVal('t3-s1'),  getVal('t3-s2')],
+        ck:  [getVal('ck-s1'),  getVal('ck-s2')]
+      };
 
-    // 4. Quản lý danh sách Pick thủ
-    window.renderPlayers = function() {
-      const tbody = document.getElementById('playerList');
-      if (!tbody) return;
-      tbody.innerHTML = '';
+      await setDoc(doc(db, "minigame", "app_state"), {
+        players: window.players,
+        knockoutScores: knockoutScores
+      }, { merge: true });
+
+      console.log("Đã đồng bộ dữ liệu lên Firebase thành công!");
+    } catch (error) {
+      console.error("Lỗi khi đồng bộ dữ liệu:", error);
+    }
+  };
+
+  // 4. Tự động cập nhật dữ liệu Realtime khi có thay đổi trên Firebase
+  onSnapshot(doc(db, "minigame", "app_state"), (docSnap) => {
+    if (docSnap.exists()) {
+      const data = docSnap.data();
       
-      window.players.forEach((p, index) => {
-        tbody.innerHTML += `
-          <tr>
-            <td>${index + 1}</td>
-            <td>${p}</td>
-            <td>
-              <button style="background:#e74c3c; color:#fff; border:none; padding:4px 8px; border-radius:3px; cursor:pointer;" onclick="window.deletePlayer(${index})">Xóa</button>
-            </td>
-          </tr>
-        `;
-      });
-    };
-
-    window.addPlayer = function() {
-      const nameInput = document.getElementById('newPlayerName');
-      if (nameInput && nameInput.value.trim() !== '') {
-        window.players.push(nameInput.value.trim());
-        nameInput.value = '';
-        window.renderPlayers();
-        window.saveStateToFirebase();
-      }
-    };
-
-    window.deletePlayer = function(index) {
-      window.players.splice(index, 1);
-      window.renderPlayers();
-      window.saveStateToFirebase();
-    };
-
-    // 5. Tự động đồng bộ dữ liệu Realtime từ Cloud Firestore
-    onSnapshot(doc(db, "minigame", "app_state"), (docSnap) => {
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        
-        // Cập nhật danh sách Pick thủ
-        if (data.players) {
-          window.players = data.players;
+      // Đồng bộ danh sách Pick thủ
+      if (data.players) {
+        window.players = data.players;
+        if (typeof window.renderPlayers === 'function') {
           window.renderPlayers();
         }
-
-        // Cập nhật tỉ số
-        const scores = data.knockoutScores || {};
-        const setVal = (id, val) => {
-          const el = document.getElementById(id);
-          if (el && val !== undefined) el.value = val;
-        };
-
-        if (scores.bk1) { setVal('bk1-s1', scores.bk1[0]); setVal('bk1-s2', scores.bk1[1]); }
-        if (scores.bk2) { setVal('bk2-s1', scores.bk2[0]); setVal('bk2-s2', scores.bk2[1]); }
-        if (scores.t3)  { setVal('t3-s1',  scores.t3[0]);  setVal('t3-s2',  scores.t3[1]); }
-        if (scores.ck)  { setVal('ck-s1',  scores.ck[0]);  setVal('ck-s2',  scores.ck[1]); }
       }
-    });
 
-    // 6. Hàm lưu toàn bộ trạng thái lên Firestore
-    window.saveStateToFirebase = async function() {
-      try {
-        const getVal = (id) => document.getElementById(id)?.value || "";
+      // Đồng bộ tỷ số các trận
+      const scores = data.knockoutScores || {};
+      const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && val !== undefined) el.value = val;
+      };
 
-        const knockoutScores = {
-          bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
-          bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
-          t3:  [getVal('t3-s1'),  getVal('t3-s2')],
-          ck:  [getVal('ck-s1'),  getVal('ck-s2')]
-        };
-
-        await setDoc(doc(db, "minigame", "app_state"), {
-          players: window.players,
-          knockoutScores: knockoutScores
-        }, { merge: true });
-
-        console.log("Đã đồng bộ Firestore thành công!");
-      } catch (error) {
-        console.error("Lỗi đồng bộ Firebase:", error);
-      }
-    };
-  </script>
-</body>
-</html>
+      if (scores.bk1) { setVal('bk1-s1', scores.bk1[0]); setVal('bk1-s2', scores.bk1[1]); }
+      if (scores.bk2) { setVal('bk2-s1', scores.bk2[0]); setVal('bk2-s2', scores.bk2[1]); }
+      if (scores.t3)  { setVal('t3-s1',  scores.t3[0]);  setVal('t3-s2',  scores.t3[1]); }
+      if (scores.ck)  { setVal('ck-s1',  scores.ck[0]);  setVal('ck-s2',  scores.ck[1]); }
+    }
+  });
+</script>
