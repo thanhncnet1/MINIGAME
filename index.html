@@ -31,7 +31,6 @@
             font-size: 0.8rem;
         }
 
-        /* Khung hiển thị tên VĐV mượt mà */
         .player-cell {
             min-width: 110px;
             font-weight: 600;
@@ -57,16 +56,13 @@
     <nav class="bg-slate-800 text-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between h-auto py-2 md:h-16 md:py-0">
             
-            <!-- LOGO VÀ TÊN CLB -->
             <div class="flex items-center space-x-3 cursor-pointer py-1" onclick="showTab('home')">
                 <img src="logo1.png" 
                      alt="Logo CLB Pickleball CMTD" 
                      class="w-10 h-10 object-contain bg-white/10 rounded-full p-0.5 border border-yellow-400/50 shadow-md">
-                
                 <span class="font-extrabold text-lg md:text-xl tracking-tight text-yellow-400">CLB-PICKLEBALL-CMTD</span>
             </div>
 
-            <!-- Các nút điều hướng & Chọn Màu Nền & TRẠNG THÁI FIRESTORE -->
             <div class="flex flex-wrap items-center gap-2 md:gap-3 text-xs md:text-sm font-semibold py-1">
                 <button onclick="showTab('home')" id="btn-home" class="nav-btn hover:bg-slate-700 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1.5 text-yellow-400">
                     <i class="fa-solid fa-house"></i> <span>HOME</span>
@@ -81,7 +77,7 @@
                     <i class="fa-solid fa-medal"></i> <span>MINIGAME 2</span>
                 </button>
 
-                <!-- HIỂN THỊ TRẠNG THÁI FIRESTORE ONLINE -->
+                <!-- TRẠNG THÁI FIRESTORE ONLINE -->
                 <div class="flex items-center gap-1.5 bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-700">
                     <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" id="status-dot"></span>
                     <span id="status-element" class="text-xs text-yellow-400 font-medium">Đang kết nối...</span>
@@ -101,10 +97,10 @@
         </div>
     </nav>
 
-    <!-- NỘI DUNG CHÍNH (MAIN CONTAINER) -->
+    <!-- MAIN CONTAINER -->
     <main class="max-w-7xl mx-auto w-full p-2 md:p-4 flex-grow">
 
-        <!-- ================= TRANG CHỦ (HOME) ================= -->
+        <!-- TRANG CHỦ (HOME) -->
         <section id="tab-home" class="tab-content">
             <div class="bg-white/90 backdrop-blur rounded-xl shadow-md p-6 md:p-8 text-center my-4 text-slate-800">
                 <h2 class="text-2xl font-bold mb-4">CHÀO MỪNG ĐẾN VỚI GIẢI ĐẤU CLB-PICKLEBALL-CMTD</h2>
@@ -130,7 +126,7 @@
             </div>
         </section>
 
-        <!-- ================= DANH SÁCH PICK THỦ ================= -->
+        <!-- DANH SÁCH PICK THỦ -->
         <section id="tab-players" class="tab-content hidden">
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
                 <div class="flex justify-between items-center mb-6 pb-4 border-b">
@@ -155,14 +151,13 @@
                                 <th class="p-3 border text-center w-40">Thao Tác</th>
                             </tr>
                         </thead>
-                        <tbody id="player-table-body" class="text-sm divide-y divide-slate-200">
-                        </tbody>
+                        <tbody id="player-table-body" class="text-sm divide-y divide-slate-200"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <!-- ================= MINIGAME 1 ================= -->
+        <!-- MINIGAME 1 -->
         <section id="tab-minigame1" class="tab-content hidden">
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
                 <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
@@ -254,7 +249,7 @@
             </div>
         </section>
 
-        <!-- ================= MINIGAME 2 ================= -->
+        <!-- MINIGAME 2 -->
         <section id="tab-minigame2" class="tab-content hidden">
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
                 <div class="flex flex-wrap justify-between items-center mb-4 border-b pb-3 gap-2">
@@ -515,7 +510,7 @@
 
     <!-- JAVASCRIPT LOGIC XỬ LÝ -->
     <script>
-        // ================= STATE (DỮ LIỆU) =================
+        // STATE (DỮ LIỆU)
         window.players = [
             { id: 1, name: "Tiến Thọ", gender: "Nam" },
             { id: 2, name: "Châu Sĩ", gender: "Nam" },
@@ -973,6 +968,7 @@
             return schedule;
         }
 
+        // Tự động tính toán điểm số & hiệu số tương tự logic ở Đoạn 1
         function renderM2() {
             renderM2Pairs();
 
@@ -1196,7 +1192,6 @@
             storageBucket: "minigame-bb991.appspot.com"
         };
 
-        // Khởi tạo Firebase App & Firestore SDK chuẩn Module
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
@@ -1206,7 +1201,6 @@
             if (el && val !== undefined) el.value = val;
         };
 
-        // Hàm đẩy dữ liệu lên Firebase Firestore
         window.syncToFirebase = window.saveStateToFirebase = window.saveDataToFirebase = async function() {
             try {
                 const knockoutScores = {
@@ -1234,10 +1228,8 @@
             }
         };
 
-        // Lắng nghe dữ liệu tự động Realtime & Cập nhật trạng thái Firestore Online
         onSnapshot(doc(db, "minigame", "app_state"), 
             (docSnap) => {
-                // Đổi trạng thái UI thành Online
                 const statusEl = document.getElementById('status-element');
                 const statusDot = document.getElementById('status-dot');
                 if (statusEl) {
