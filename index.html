@@ -115,34 +115,41 @@
              class="w-full h-auto max-h-48 sm:max-h-64 md:max-h-80 object-cover object-center block">
     </div>
 
-    <!-- 2. THANH TIÊU ĐỀ & THANH ĐIỀU HƯỚNG -->
+    <!-- 2. THANH TIÊU ĐỀ & THANH ĐIỀU HƯỚNG TỐI ƯU RESPONSIVE PHONE & PC -->
     <nav class="bg-slate-800 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between h-auto py-2 md:h-16 md:py-0">
+        <div class="max-w-7xl mx-auto px-2 sm:px-4 flex flex-col md:flex-row items-center justify-between py-2 md:py-0 md:h-16 gap-2">
             
-            <div class="flex items-center space-x-3 cursor-pointer py-1" onclick="showTab('home')">
-                <img src="logo1.png" 
-                     alt="Logo CLB Pickleball CMTD" 
-                     class="w-10 h-10 object-contain bg-white/10 rounded-full p-0.5 border border-yellow-400/50 shadow-md">
-                <span class="font-extrabold text-lg md:text-xl tracking-tight text-yellow-400">CLB-PICKLEBALL-CMTD</span>
+            <!-- LOGO & BRAND -->
+            <div class="flex items-center space-x-2 cursor-pointer w-full md:w-auto justify-between md:justify-start" onclick="showTab('home')">
+                <div class="flex items-center space-x-2">
+                    <img src="logo1.png" alt="Logo CMTD" class="w-8 h-8 md:w-10 md:h-10 object-contain bg-white/10 rounded-full p-0.5 border border-yellow-400/50 shadow-md">
+                    <span class="font-extrabold text-base md:text-xl tracking-tight text-yellow-400">CLB-PICKLEBALL-CMTD</span>
+                </div>
+                <!-- Status Dot Mobile -->
+                <div class="flex items-center gap-1.5 md:hidden bg-slate-900/80 px-2 py-1 rounded-lg border border-slate-700">
+                    <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" id="status-dot-mobile"></span>
+                    <span id="status-element-mobile" class="text-[10px] text-yellow-400 font-medium">Online</span>
+                </div>
             </div>
 
-            <div class="flex flex-wrap items-center gap-2 md:gap-3 text-xs md:text-sm font-semibold py-1">
-                <button onclick="showTab('home')" id="btn-home" class="nav-btn hover:bg-slate-700 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1.5 text-yellow-400">
+            <!-- BUTTONS CONTAINERS -->
+            <div class="flex flex-wrap items-center justify-center md:justify-end gap-1.5 sm:gap-2 text-xs md:text-sm font-semibold w-full md:w-auto">
+                <button onclick="showTab('home')" id="btn-home" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 text-yellow-400">
                     <i class="fa-solid fa-house"></i> <span>HOME</span>
                 </button>
-                <button onclick="showTab('players')" id="btn-players" class="nav-btn hover:bg-slate-700 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                <button onclick="showTab('players')" id="btn-players" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
                     <i class="fa-solid fa-users"></i> <span>Pick Thủ</span>
                 </button>
-                <button onclick="showTab('minigame1')" id="btn-minigame1" class="nav-btn hover:bg-slate-700 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                <button onclick="showTab('minigame1')" id="btn-minigame1" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
                     <i class="fa-solid fa-trophy"></i> <span>MINIGAME 1</span>
                 </button>
-                <button onclick="showTab('minigame2')" id="btn-minigame2" class="nav-btn hover:bg-slate-700 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                <button onclick="showTab('minigame2')" id="btn-minigame2" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
                     <i class="fa-solid fa-medal"></i> <span>MINIGAME 2</span>
                 </button>
 
-                <!-- NÚT SETTING -->
+                <!-- SETTING MENU -->
                 <div class="relative">
-                    <button onclick="toggleMenu('menuSetting', event)" class="nav-btn hover:bg-slate-700 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1.5 bg-slate-700/80 text-amber-300 border border-amber-400/30">
+                    <button onclick="toggleMenu('menuSetting', event)" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-slate-700/80 text-amber-300 border border-amber-400/30">
                         <i class="fa-solid fa-gear"></i> <span>SETTING ▾</span>
                     </button>
                     <div class="dropdown-menu" id="menuSetting">
@@ -152,15 +159,15 @@
                         <div class="dropdown-divider"></div>
                         <div class="dropdown-item" onclick="exportToExcel()"><i class="fa-solid fa-file-excel text-emerald-600"></i> 📥 Xuất Dữ Liệu Excel</div>
                         <div class="dropdown-divider"></div>
-                        <div class="dropdown-item" onclick="backupDataJSON()"><i class="fa-solid fa-floppy-disk text-indigo-600"></i> 💾 Sao Lưu Dữ Liệu (Backup JSON)</div>
-                        <div class="dropdown-item" onclick="triggerRestoreJSON()"><i class="fa-solid fa-file-import text-amber-600"></i> 📤 Phục Hồi Dữ Liệu (Restore JSON)</div>
+                        <div class="dropdown-item" onclick="backupDataJSON()"><i class="fa-solid fa-floppy-disk text-indigo-600"></i> 💾 Sao Lưu (Backup JSON)</div>
+                        <div class="dropdown-item" onclick="triggerRestoreJSON()"><i class="fa-solid fa-file-import text-amber-600"></i> 📤 Phục Hồi (Restore JSON)</div>
                     </div>
                 </div>
 
-                <!-- MENU TỔNG HỢP CÁC NGÀY -->
+                <!-- TỔNG HỢP CÁC NGÀY MENU -->
                 <div class="relative">
-                    <button onclick="toggleMenu('menuTongHop', event)" id="btn-tonghop" class="nav-btn hover:bg-slate-700 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1.5 bg-indigo-900/80 text-indigo-200 border border-indigo-400/30">
-                        <i class="fa-solid fa-chart-column"></i> <span>📊 TỔNG HỢP CÁC NGÀY ▾</span>
+                    <button onclick="toggleMenu('menuTongHop', event)" id="btn-tonghop" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-indigo-900/80 text-indigo-200 border border-indigo-400/30">
+                        <i class="fa-solid fa-chart-column"></i> <span>📊 TỔNG HỢP ▾</span>
                     </button>
                     <div class="dropdown-menu" id="menuTongHop">
                         <div id="datesMenuList"></div>
@@ -171,38 +178,31 @@
                     </div>
                 </div>
 
-                <!-- NÚT BACKUP & RESTORE DỮ LIỆU -->
-                <div class="flex items-center gap-1.5 bg-slate-900/90 px-2 py-1 rounded-lg border border-slate-700">
-                    <button onclick="exportBackupJSON()" title="Xuất file Sao Lưu Dữ Liệu" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-2 py-1 rounded transition flex items-center gap-1">
-                        <i class="fa-solid fa-download"></i> <span>Backup</span>
+                <!-- BACKUP / RESTORE BTNS -->
+                <div class="flex items-center gap-1 bg-slate-900/90 px-1.5 py-1 rounded-lg border border-slate-700">
+                    <button onclick="exportBackupJSON()" title="Xuất file Sao Lưu" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] px-2 py-0.5 rounded transition flex items-center gap-1">
+                        <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">Backup</span>
                     </button>
-                    <button onclick="triggerRestoreInput()" title="Phục Hồi Dữ Liệu Từ File Backup" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-2 py-1 rounded transition flex items-center gap-1">
-                        <i class="fa-solid fa-upload"></i> <span>Restore</span>
+                    <button onclick="triggerRestoreInput()" title="Phục Hồi Dữ Liệu" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] px-2 py-0.5 rounded transition flex items-center gap-1">
+                        <i class="fa-solid fa-upload"></i> <span class="hidden sm:inline">Restore</span>
                     </button>
                     <input type="file" id="restore-file-input" accept=".json" class="hidden" onchange="importBackupJSON(event)">
-                    <input type="file" id="restoreFileInput" accept=".json" class="hidden" onchange="handleRestoreJSON(event)">
                 </div>
 
-                <!-- TRẠNG THÁI AUTO-BACKUP CỤC BỘ -->
-                <div class="flex items-center gap-1.5 bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-700" title="Tự động sao lưu dữ liệu khi thay đổi">
-                    <i class="fa-solid fa-floppy-disk text-emerald-400 text-xs"></i>
-                    <span id="auto-backup-status" class="text-xs text-emerald-400 font-medium">Auto-Backup: Sẵn sàng</span>
-                </div>
-
-                <!-- TRẠNG THÁI FIRESTORE ONLINE -->
-                <div class="flex items-center gap-1.5 bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-700">
+                <!-- STATUS DESKTOP -->
+                <div class="hidden md:flex items-center gap-1.5 bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-700">
                     <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" id="status-dot"></span>
                     <span id="status-element" class="text-xs text-yellow-400 font-medium">Đang kết nối...</span>
                 </div>
 
-                <!-- TÙY CHỌN NỀN WEB APP -->
-                <div class="flex items-center gap-1 bg-slate-900/60 p-1 rounded-lg border border-slate-700 ml-1">
-                    <i class="fa-solid fa-palette text-amber-400 text-xs pl-1"></i>
-                    <select onchange="changeTheme(this.value)" class="bg-transparent text-xs text-slate-200 outline-none cursor-pointer pr-1">
-                        <option value="bg-theme-slate" class="text-slate-900">Nền Sáng</option>
-                        <option value="bg-theme-dark" class="text-slate-900">Nền Tối</option>
-                        <option value="bg-theme-blue" class="text-slate-900">Nền Xanh</option>
-                        <option value="bg-theme-emerald" class="text-slate-900">Nền Ngọc</option>
+                <!-- THEME SELECTOR -->
+                <div class="flex items-center bg-slate-900/60 p-1 rounded-lg border border-slate-700">
+                    <i class="fa-solid fa-palette text-amber-400 text-xs px-1"></i>
+                    <select onchange="changeTheme(this.value)" class="bg-transparent text-xs text-slate-200 outline-none cursor-pointer">
+                        <option value="bg-theme-slate" class="text-slate-900">Sáng</option>
+                        <option value="bg-theme-dark" class="text-slate-900">Tối</option>
+                        <option value="bg-theme-blue" class="text-slate-900">Xanh</option>
+                        <option value="bg-theme-emerald" class="text-slate-900">Ngọc</option>
                     </select>
                 </div>
             </div>
@@ -241,7 +241,7 @@
                     </div>
                 </div>
 
-                <!-- QUẢN LÝ SAO LƯU DỮ LIỆU TẠI TRANG CHỦ -->
+                <!-- QUẢN LÝ SAO LƯU DỮ LIỆU -->
                 <div class="mt-8 pt-6 border-t border-slate-200 max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50 p-4 rounded-xl border">
                     <div class="text-left">
                         <h4 class="font-bold text-sm text-slate-800 flex items-center gap-2">
@@ -250,14 +250,14 @@
                         <p class="text-xs text-slate-500">Tự động sao lưu bộ nhớ hoặc xuất/nạp file JSON để khôi phục.</p>
                     </div>
                     <div class="flex gap-2 w-full sm:w-auto">
-                        <button onclick="restoreAutoBackup()" class="flex-1 sm:flex-none bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-2 rounded-lg font-semibold flex items-center justify-center gap-1.5 shadow" title="Nạp lại bản sao lưu tự động lưu gần nhất">
+                        <button onclick="restoreAutoBackup()" class="flex-1 sm:flex-none bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-2 rounded-lg font-semibold flex items-center justify-center gap-1.5 shadow" title="Nạp lại bản sao lưu tự động">
                             <i class="fa-solid fa-rotate-left"></i> Nạp Auto-Backup
                         </button>
                         <button onclick="exportBackupJSON()" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-lg font-semibold flex items-center justify-center gap-1.5 shadow">
-                            <i class="fa-solid fa-file-export"></i> Tải File Backup
+                            <i class="fa-solid fa-file-export"></i> Tải Backup
                         </button>
                         <button onclick="triggerRestoreInput()" class="flex-1 sm:flex-none bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded-lg font-semibold flex items-center justify-center gap-1.5 shadow">
-                            <i class="fa-solid fa-file-import"></i> Nạp File Backup
+                            <i class="fa-solid fa-file-import"></i> Nạp Backup
                         </button>
                     </div>
                 </div>
@@ -387,7 +387,7 @@
             </div>
         </section>
 
-        <!-- MINIGAME 2 -->
+        <!-- MINIGAME 2 (HỖ TRỢ LINH HOẠT 4, 5 CẶP HOẶC NHIỀU HƠN) -->
         <section id="tab-minigame2" class="tab-content hidden">
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
                 <div class="flex flex-wrap justify-between items-center mb-4 border-b pb-3 gap-2">
@@ -407,13 +407,13 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div class="border rounded-lg p-3 bg-blue-50/40 border-blue-200">
                         <h4 class="font-bold text-sm text-blue-900 mb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-user-group text-blue-600"></i> Cặp VĐV Bảng A
+                            <i class="fa-solid fa-user-group text-blue-600"></i> Cặp VĐV Bảng A (<span id="count-m2-A">0</span> cặp)
                         </h4>
                         <div id="m2-pairs-A" class="space-y-2"></div>
                     </div>
                     <div class="border rounded-lg p-3 bg-orange-50/40 border-orange-200">
                         <h4 class="font-bold text-sm text-orange-900 mb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-user-group text-orange-600"></i> Cặp VĐV Bảng B
+                            <i class="fa-solid fa-user-group text-orange-600"></i> Cặp VĐV Bảng B (<span id="count-m2-B">0</span> cặp)
                         </h4>
                         <div id="m2-pairs-B" class="space-y-2"></div>
                     </div>
@@ -428,18 +428,17 @@
                             <table class="w-full text-xs text-center border-collapse border border-slate-300">
                                 <thead class="bg-orange-500 text-white font-bold">
                                     <tr>
-                                        <th class="p-1 border w-8">A</th>
+                                        <th class="p-1 border w-8">HẠNG</th>
                                         <th class="p-1 border">Pickleball - Bảng A</th>
                                         <th class="p-1 border w-12">Điểm</th>
                                         <th class="p-1 border w-12">Hiệu số</th>
-                                        <th class="p-1 border w-16">Đối đầu</th>
                                     </tr>
                                 </thead>
                                 <tbody id="m2-rank-A"></tbody>
                             </table>
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-slate-700 mb-1">Lịch Thi Đấu Bảng A</p>
+                            <p class="text-xs font-bold text-slate-700 mb-1">Lịch Thi Đấu Vòng Tròn Bảng A</p>
                             <table class="w-full text-xs text-center border-collapse border border-slate-300">
                                 <thead class="bg-blue-600 text-white font-bold">
                                     <tr>
@@ -463,18 +462,17 @@
                             <table class="w-full text-xs text-center border-collapse border border-slate-300">
                                 <thead class="bg-orange-500 text-white font-bold">
                                     <tr>
-                                        <th class="p-1 border w-8">B</th>
+                                        <th class="p-1 border w-8">HẠNG</th>
                                         <th class="p-1 border">Pickleball - Bảng B</th>
                                         <th class="p-1 border w-12">Điểm</th>
                                         <th class="p-1 border w-12">Hiệu số</th>
-                                        <th class="p-1 border w-16">Đối đầu</th>
                                     </tr>
                                 </thead>
                                 <tbody id="m2-rank-B"></tbody>
                             </table>
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-slate-700 mb-1">Lịch Thi Đấu Bảng B</p>
+                            <p class="text-xs font-bold text-slate-700 mb-1">Lịch Thi Đấu Vòng Tròn Bảng B</p>
                             <table class="w-full text-xs text-center border-collapse border border-slate-300">
                                 <thead class="bg-blue-600 text-white font-bold">
                                     <tr>
@@ -594,7 +592,7 @@
             </div>
         </section>
 
-        <!-- BẢNG ĐẤU THEO NGÀY CỤ THỂ (THEO MẪU ẢNH CHÍNH XÁC) -->
+        <!-- BẢNG ĐẤU THEO NGÀY CỤ THỂ -->
         <section id="tab-day_detail" class="tab-content hidden space-y-6">
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
                 <div class="flex flex-wrap justify-between items-center mb-4 pb-3 border-b gap-2">
@@ -629,7 +627,7 @@
                 </div>
             </div>
 
-            <!-- BẢNG TỔNG HỢP THÀNH TIỀN & THU CHI TƯƠNG ỨNG TRONG ẢNH MẪU -->
+            <!-- BẢNG TỔNG HỢP THÀNH TIỀN & THU CHI TƯƠNG ỨNG TRONG NGÀY -->
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
                 <div class="flex justify-between items-center mb-4 pb-3 border-b">
                     <h2 class="text-base md:text-lg font-black text-slate-800 uppercase flex items-center gap-2">
@@ -722,7 +720,7 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC XỬ LÝ hoàn chỉnh -->
+    <!-- JAVASCRIPT LOGIC XỬ LÝ -->
     <script>
         // STATE VẬN ĐỘNG VIÊN
         window.players = [
@@ -793,7 +791,7 @@
         window.m2ScoresA = {};
         window.m2ScoresB = {};
 
-        // STATE DỮ LIỆU ĐẤU CÁC NGÀY (KHỞI TẠO VỚI DỮ LIỆU MẪU NGÀY 1/10/26)
+        // STATE DỮ LIỆU ĐẤU CÁC NGÀY
         window.dates = ["1/10/26"];
         window.currentSelectedDate = "1/10/26";
 
@@ -829,9 +827,7 @@
             const targetMenu = document.getElementById(menuId);
             const isAlreadyShow = targetMenu.classList.contains("show");
             closeAllDropdowns();
-            if (!isAlreadyShow) {
-                targetMenu.classList.add("show");
-            }
+            if (!isAlreadyShow) targetMenu.classList.add("show");
         }
 
         function closeAllDropdowns() {
@@ -964,9 +960,8 @@
 
         function handleBtcNoteChange(selectEl) {
             const dateStr = window.currentSelectedDate;
-            if(!window.paymentStatus[dateStr]) window.paymentStatus[dateStr] = {};
-            if(typeof window.paymentStatus[dateStr] !== 'object') {
-                window.paymentStatus[dateStr] = { paid: window.paymentStatus[dateStr] };
+            if(!window.paymentStatus[dateStr] || typeof window.paymentStatus[dateStr] !== 'object') {
+                window.paymentStatus[dateStr] = {};
             }
             window.paymentStatus[dateStr].btcNoteAdminOption = selectEl.value;
             renderDayDetailView();
@@ -975,7 +970,7 @@
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
-        // VẼ BẢNG THỐNG KÊ TRẬN PICK VÀ BẢNG THU CHI THEO DÚNG ẢNH MẪU
+        // BẢNG THỐNG KÊ TRẬN PICK VÀ BẢNG THU CHI
         function renderDayDetailView() {
             const dateStr = window.currentSelectedDate;
             const titleEl = document.getElementById('current-date-title');
@@ -1030,7 +1025,7 @@
                     window.players.forEach(p => {
                         opts += `<option value="${p.name}" ${p.name === val ? 'selected' : ''}>${p.name}</option>`;
                     });
-                    return `<select onchange="updateMatchData(${idx}, '${field}', this.value)" class="text-xs font-semibold border rounded p-0.5 outline-none">
+                    return `<select onchange="updateMatchData(${idx}, '${field}', this.value)" class="text-xs font-semibold border rounded p-0.5 outline-none w-full">
                         ${opts}
                     </select>`;
                 };
@@ -1066,7 +1061,7 @@
                 `;
             });
 
-            // VẼ BẢNG TỔNG HỢP THÀNH TIỀN & THU CHI TƯƠNG ỨNG TRONG ẢNH MẪU
+            // BẢNG TỔNG HỢP THÀNH TIỀN & THU CHI
             const sumBody = document.getElementById('day-summary-body');
             if(!sumBody) return;
             sumBody.innerHTML = '';
@@ -1135,7 +1130,7 @@
             `;
         }
 
-        // BẢNG TỔNG HỢP CÁC NGÀY
+        // BẢNG TỔNG HỢP CÁC NGÀY (CỤC BỘ DỮ LIỆU ĐƯỢC BẢO BỎ KHI TÙY CHỌN NO)
         function renderTongHopTab() {
             const container = document.getElementById('tonghop-content-container');
             if(!container) return;
@@ -1148,14 +1143,11 @@
 
             let activeDates = window.dates.filter(d => {
                 const matches = window.matchesData[d] || [];
-                const hasMatchData = matches.some(m => (!isNaN(parseInt(m.score1)) && !isNaN(parseInt(m.score2))) || m.c1_p1 || m.c1_p2 || m.c2_p1 || m.c2_p2);
-                const pStatus = window.paymentStatus[d];
-                const isYes = (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "YES");
-                return hasMatchData || isYes;
+                return matches.some(m => (!isNaN(parseInt(m.score1)) && !isNaN(parseInt(m.score2))) || m.c1_p1 || m.c1_p2 || m.c2_p1 || m.c2_p2);
             });
 
             if (activeDates.length === 0) {
-                container.innerHTML = `<div class="p-8 text-center font-bold text-slate-500">Hiện chưa có ngày nào phát sinh dữ liệu trận đấu hoặc chuyển tổng tiền.</div>`;
+                container.innerHTML = `<div class="p-8 text-center font-bold text-slate-500">Hiện chưa có ngày nào phát sinh dữ liệu trận đấu.</div>`;
                 return;
             }
 
@@ -1213,6 +1205,7 @@
                     }
                 });
 
+                // CHỈ CHUYỂN TỔNG NẾU BTC LỰA CHỌN YES
                 const pStatus = window.paymentStatus[d];
                 const isYes = (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "YES");
                 dayTotalsSum[d] = isYes ? (sumAmDay - sumBringBackDay) : 0;
@@ -1272,6 +1265,280 @@
             container.innerHTML = html;
         }
 
+        // MINIGAME 2 (HỖ TRỢ LINH HOẠT TẤT CẢ SỐ CẶP VĐV: 4 CẶP, 5 CẶP, V.V.)
+        function renderM2Pairs() {
+            const boxA = document.getElementById('m2-pairs-A');
+            const boxB = document.getElementById('m2-pairs-B');
+            if(!boxA || !boxB) return;
+            boxA.innerHTML = ''; boxB.innerHTML = '';
+
+            document.getElementById('count-m2-A').innerText = window.m2PairsA.length;
+            document.getElementById('count-m2-B').innerText = window.m2PairsB.length;
+
+            window.m2PairsA.forEach((pair, idx) => {
+                boxA.innerHTML += `<div class="flex items-center justify-between bg-white p-2 rounded border text-xs shadow-sm"><span class="font-semibold">Cặp ${idx+1}: <span class="text-blue-700">${pair.p1} & ${pair.p2}</span></span><div><button onclick="openM2EditModal('A', ${idx})" class="text-blue-600 p-1"><i class="fa-solid fa-pencil"></i></button><button onclick="deletePairM2('A', ${idx})" class="text-red-500 p-1"><i class="fa-solid fa-trash"></i></button></div></div>`;
+            });
+            window.m2PairsB.forEach((pair, idx) => {
+                boxB.innerHTML += `<div class="flex items-center justify-between bg-white p-2 rounded border text-xs shadow-sm"><span class="font-semibold">Cặp ${idx+1}: <span class="text-orange-700">${pair.p1} & ${pair.p2}</span></span><div><button onclick="openM2EditModal('B', ${idx})" class="text-blue-600 p-1"><i class="fa-solid fa-pencil"></i></button><button onclick="deletePairM2('B', ${idx})" class="text-red-500 p-1"><i class="fa-solid fa-trash"></i></button></div></div>`;
+            });
+        }
+
+        function openM2EditModal(group, index) {
+            const pair = group === 'A' ? window.m2PairsA[index] : window.m2PairsB[index];
+            if(pair) {
+                document.getElementById('m2-edit-group').value = group;
+                document.getElementById('m2-edit-index').value = index;
+                document.getElementById('m2-p1-input').value = pair.p1;
+                document.getElementById('m2-p2-input').value = pair.p2;
+                document.getElementById('m2-edit-modal').classList.remove('hidden');
+            }
+        }
+        function closeM2EditModal() { document.getElementById('m2-edit-modal').classList.add('hidden'); }
+
+        function saveM2PairEdit() {
+            const group = document.getElementById('m2-edit-group').value;
+            const index = parseInt(document.getElementById('m2-edit-index').value);
+            const p1 = document.getElementById('m2-p1-input').value.trim();
+            const p2 = document.getElementById('m2-p2-input').value.trim();
+            if(!p1 || !p2) return alert('Vui lòng nhập đầy đủ tên 2 VĐV!');
+
+            if(group === 'A') window.m2PairsA[index] = { p1, p2 };
+            else window.m2PairsB[index] = { p1, p2 };
+
+            closeM2EditModal(); renderM2(); autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function addPairM2(group) {
+            if(group === 'A') window.m2PairsA.push({ p1: `VĐV A${window.m2PairsA.length*2+1}`, p2: `VĐV A${window.m2PairsA.length*2+2}` });
+            else window.m2PairsB.push({ p1: `VĐV B${window.m2PairsB.length*2+1}`, p2: `VĐV B${window.m2PairsB.length*2+2}` });
+            renderM2(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function deletePairM2(group, index) {
+            if(confirm('Bạn có chắc muốn xóa cặp VĐV này?')) {
+                if(group === 'A') window.m2PairsA.splice(index, 1);
+                else window.m2PairsB.splice(index, 1);
+                renderM2(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
+            }
+        }
+
+        // TỰ ĐỘNG TÍNH TOÁN LỊCH THI ĐẤU VÒNG TRÒN DYNAMIC LÊN TỚI N CẶP VĐV
+        function generateM2GroupSchedule(pairs, groupName) {
+            let schedule = [];
+            let count = pairs.length;
+            let matchIdx = 1;
+
+            for(let i = 0; i < count; i++) {
+                for(let j = i + 1; j < count; j++) {
+                    const matchKey = `${groupName}_${i}_${j}`;
+                    schedule.push({
+                        key: matchKey,
+                        matchNum: matchIdx++,
+                        t1Index: i,
+                        t2Index: j,
+                        t1Name: `${pairs[i].p1} - ${pairs[i].p2}`,
+                        t2Name: `${pairs[j].p1} - ${pairs[j].p2}`
+                    });
+                }
+            }
+            return schedule;
+        }
+
+        function renderM2() {
+            renderM2Pairs();
+
+            const schedA = generateM2GroupSchedule(window.m2PairsA, 'A');
+            const schedB = generateM2GroupSchedule(window.m2PairsB, 'B');
+
+            let statsA = window.m2PairsA.map((p, idx) => ({
+                idx, name: `${p.p1} - ${p.p2}`, pts: 0, diff: 0, headToHead: {}
+            }));
+
+            const tbodySchedA = document.getElementById('m2-schedule-A');
+            if(tbodySchedA) {
+                tbodySchedA.innerHTML = '';
+                schedA.forEach(m => {
+                    const s1 = window.m2ScoresA[m.key + '_1'] !== undefined ? window.m2ScoresA[m.key + '_1'] : '';
+                    const s2 = window.m2ScoresA[m.key + '_2'] !== undefined ? window.m2ScoresA[m.key + '_2'] : '';
+
+                    if(s1 !== '' && s2 !== '') {
+                        const v1 = parseInt(s1);
+                        const v2 = parseInt(s2);
+                        const diff = v1 - v2;
+
+                        statsA[m.t1Index].diff += diff;
+                        statsA[m.t2Index].diff -= diff;
+
+                        if(v1 > v2) {
+                            statsA[m.t1Index].pts += 1;
+                            statsA[m.t1Index].headToHead[m.t2Index] = 1;
+                            statsA[m.t2Index].headToHead[m.t1Index] = -1;
+                        } else if(v2 > v1) {
+                            statsA[m.t2Index].pts += 1;
+                            statsA[m.t2Index].headToHead[m.t1Index] = 1;
+                            statsA[m.t1Index].headToHead[m.t2Index] = -1;
+                        }
+                    }
+
+                    tbodySchedA.innerHTML += `
+                        <tr>
+                            <td class="border p-1 font-bold">T${m.matchNum}</td>
+                            <td class="border p-1 text-left">${m.t1Name}</td>
+                            <td class="border p-1"><input type="number" value="${s1}" onchange="updateM2Score('A', '${m.key}_1', this.value)" class="w-10 text-center font-bold"></td>
+                            <td class="border p-1"><input type="number" value="${s2}" onchange="updateM2Score('A', '${m.key}_2', this.value)" class="w-10 text-center font-bold"></td>
+                            <td class="border p-1 text-left">${m.t2Name}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            statsA.sort((a,b) => {
+                if(b.pts !== a.pts) return b.pts - a.pts;
+                if(b.diff !== a.diff) return b.diff - a.diff;
+                return (a.headToHead[b.idx] || 0) < 0 ? 1 : -1;
+            });
+
+            const rankA = document.getElementById('m2-rank-A');
+            if(rankA) {
+                rankA.innerHTML = '';
+                statsA.forEach((st, i) => {
+                    rankA.innerHTML += `
+                        <tr>
+                            <td class="border p-1 font-bold">${i+1}</td>
+                            <td class="border p-1 text-left font-medium">${st.name}</td>
+                            <td class="border p-1 font-bold text-blue-800">${st.pts}</td>
+                            <td class="border p-1 font-semibold">${st.diff > 0 ? '+'+st.diff : st.diff}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            let statsB = window.m2PairsB.map((p, idx) => ({
+                idx, name: `${p.p1} - ${p.p2}`, pts: 0, diff: 0, headToHead: {}
+            }));
+
+            const tbodySchedB = document.getElementById('m2-schedule-B');
+            if(tbodySchedB) {
+                tbodySchedB.innerHTML = '';
+                schedB.forEach(m => {
+                    const s1 = window.m2ScoresB[m.key + '_1'] !== undefined ? window.m2ScoresB[m.key + '_1'] : '';
+                    const s2 = window.m2ScoresB[m.key + '_2'] !== undefined ? window.m2ScoresB[m.key + '_2'] : '';
+
+                    if(s1 !== '' && s2 !== '') {
+                        const v1 = parseInt(s1);
+                        const v2 = parseInt(s2);
+                        const diff = v1 - v2;
+
+                        statsB[m.t1Index].diff += diff;
+                        statsB[m.t2Index].diff -= diff;
+
+                        if(v1 > v2) {
+                            statsB[m.t1Index].pts += 1;
+                            statsB[m.t1Index].headToHead[m.t2Index] = 1;
+                            statsB[m.t2Index].headToHead[m.t1Index] = -1;
+                        } else if(v2 > v1) {
+                            statsB[m.t2Index].pts += 1;
+                            statsB[m.t2Index].headToHead[m.t1Index] = 1;
+                            statsB[m.t1Index].headToHead[m.t2Index] = -1;
+                        }
+                    }
+
+                    tbodySchedB.innerHTML += `
+                        <tr>
+                            <td class="border p-1 font-bold">T${m.matchNum}</td>
+                            <td class="border p-1 text-left">${m.t1Name}</td>
+                            <td class="border p-1"><input type="number" value="${s1}" onchange="updateM2Score('B', '${m.key}_1', this.value)" class="w-10 text-center font-bold"></td>
+                            <td class="border p-1"><input type="number" value="${s2}" onchange="updateM2Score('B', '${m.key}_2', this.value)" class="w-10 text-center font-bold"></td>
+                            <td class="border p-1 text-left">${m.t2Name}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            statsB.sort((a,b) => {
+                if(b.pts !== a.pts) return b.pts - a.pts;
+                if(b.diff !== a.diff) return b.diff - a.diff;
+                return (a.headToHead[b.idx] || 0) < 0 ? 1 : -1;
+            });
+
+            const rankB = document.getElementById('m2-rank-B');
+            if(rankB) {
+                rankB.innerHTML = '';
+                statsB.forEach((st, i) => {
+                    rankB.innerHTML += `
+                        <tr>
+                            <td class="border p-1 font-bold">${i+1}</td>
+                            <td class="border p-1 text-left font-medium">${st.name}</td>
+                            <td class="border p-1 font-bold text-orange-800">${st.pts}</td>
+                            <td class="border p-1 font-semibold">${st.diff > 0 ? '+'+st.diff : st.diff}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            // ĐẨY TÊN ĐỘI NHẤT/NHÌ BẢNG VÀO VÒNG KNOCKOUT
+            const team1A = statsA[0] ? statsA[0].name : "Nhất A";
+            const team2A = statsA[1] ? statsA[1].name : "Nhì A";
+            const team1B = statsB[0] ? statsB[0].name : "Nhất B";
+            const team2B = statsB[1] ? statsB[1].name : "Nhì B";
+
+            if(document.getElementById('bk1-team1-name')) document.getElementById('bk1-team1-name').innerText = team1A;
+            if(document.getElementById('bk1-team2-name')) document.getElementById('bk1-team2-name').innerText = team2B;
+            if(document.getElementById('bk2-team1-name')) document.getElementById('bk2-team1-name').innerText = team1B;
+            if(document.getElementById('bk2-team2-name')) document.getElementById('bk2-team2-name').innerText = team2A;
+
+            const bk1_s1 = parseInt(document.getElementById('bk1-s1')?.value || -1);
+            const bk1_s2 = parseInt(document.getElementById('bk1-s2')?.value || -1);
+            const bk2_s1 = parseInt(document.getElementById('bk2-s1')?.value || -1);
+            const bk2_s2 = parseInt(document.getElementById('bk2-s2')?.value || -1);
+
+            let winBK1 = "Thắng BK1", loseBK1 = "Thua BK1";
+            let winBK2 = "Thắng BK2", loseBK2 = "Thua BK2";
+
+            if(bk1_s1 !== -1 && bk1_s2 !== -1) {
+                if(bk1_s1 > bk1_s2) { winBK1 = team1A; loseBK1 = team2B; }
+                else if(bk1_s2 > bk1_s1) { winBK1 = team2B; loseBK1 = team1A; }
+            }
+
+            if(bk2_s1 !== -1 && bk2_s2 !== -1) {
+                if(bk2_s1 > bk2_s2) { winBK2 = team1B; loseBK2 = team2A; }
+                else if(bk2_s2 > bk2_s1) { winBK2 = team2A; loseBK2 = team1B; }
+            }
+
+            if(document.getElementById('t3-team1-name')) document.getElementById('t3-team1-name').innerText = loseBK1;
+            if(document.getElementById('t3-team2-name')) document.getElementById('t3-team2-name').innerText = loseBK2;
+            if(document.getElementById('ck-team1-name')) document.getElementById('ck-team1-name').innerText = winBK1;
+            if(document.getElementById('ck-team2-name')) document.getElementById('ck-team2-name').innerText = winBK2;
+
+            const t3_s1 = parseInt(document.getElementById('t3-s1')?.value || -1);
+            const t3_s2 = parseInt(document.getElementById('t3-s2')?.value || -1);
+            const ck_s1 = parseInt(document.getElementById('ck-s1')?.value || -1);
+            const ck_s2 = parseInt(document.getElementById('ck-s2')?.value || -1);
+
+            let winner1 = "---", winner2 = "---", winner3 = "---";
+
+            if(ck_s1 !== -1 && ck_s2 !== -1) {
+                if(ck_s1 > ck_s2) { winner1 = winBK1; winner2 = winBK2; }
+                else if(ck_s2 > ck_s1) { winner1 = winBK2; winner2 = winBK1; }
+            }
+
+            if(t3_s1 !== -1 && t3_s2 !== -1) {
+                if(t3_s1 > t3_s2) { winner3 = loseBK1; }
+                else if(t3_s2 > t3_s1) { winner3 = loseBK2; }
+            }
+
+            if(document.getElementById('winner-1')) document.getElementById('winner-1').innerText = winner1;
+            if(document.getElementById('winner-2')) document.getElementById('winner-2').innerText = winner2;
+            if(document.getElementById('winner-3')) document.getElementById('winner-3').innerText = winner3;
+        }
+
+        function updateM2Score(group, key, val) {
+            if(group === 'A') window.m2ScoresA[key] = val;
+            else window.m2ScoresB[key] = val;
+            renderM2(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
+        }
+
         // AUTO-BACKUP & RESTORE JSON
         function autoBackupData() {
             try {
@@ -1299,8 +1566,6 @@
                     }
                 };
                 localStorage.setItem("auto_backup_minigame", JSON.stringify(backupData));
-                const statusEl = document.getElementById('auto-backup-status');
-                if (statusEl) statusEl.innerText = `Đã lưu: ${new Date().toLocaleTimeString('vi-VN')}`;
             } catch (err) { console.error("Lỗi autoBackup:", err); }
         }
 
@@ -1605,71 +1870,6 @@
             renderMinigame1(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
         }
 
-        function renderM2Pairs() {
-            const boxA = document.getElementById('m2-pairs-A');
-            const boxB = document.getElementById('m2-pairs-B');
-            if(!boxA || !boxB) return;
-            boxA.innerHTML = ''; boxB.innerHTML = '';
-
-            window.m2PairsA.forEach((pair, idx) => {
-                boxA.innerHTML += `<div class="flex items-center justify-between bg-white p-2 rounded border text-xs shadow-sm"><span class="font-semibold">Cặp ${idx+1}: <span class="text-blue-700">${pair.p1} & ${pair.p2}</span></span><div><button onclick="openM2EditModal('A', ${idx})" class="text-blue-600 p-1"><i class="fa-solid fa-pencil"></i></button><button onclick="deletePairM2('A', ${idx})" class="text-red-500 p-1"><i class="fa-solid fa-trash"></i></button></div></div>`;
-            });
-            window.m2PairsB.forEach((pair, idx) => {
-                boxB.innerHTML += `<div class="flex items-center justify-between bg-white p-2 rounded border text-xs shadow-sm"><span class="font-semibold">Cặp ${idx+1}: <span class="text-orange-700">${pair.p1} & ${pair.p2}</span></span><div><button onclick="openM2EditModal('B', ${idx})" class="text-blue-600 p-1"><i class="fa-solid fa-pencil"></i></button><button onclick="deletePairM2('B', ${idx})" class="text-red-500 p-1"><i class="fa-solid fa-trash"></i></button></div></div>`;
-            });
-        }
-
-        function openM2EditModal(group, index) {
-            const pair = group === 'A' ? window.m2PairsA[index] : window.m2PairsB[index];
-            if(pair) {
-                document.getElementById('m2-edit-group').value = group;
-                document.getElementById('m2-edit-index').value = index;
-                document.getElementById('m2-p1-input').value = pair.p1;
-                document.getElementById('m2-p2-input').value = pair.p2;
-                document.getElementById('m2-edit-modal').classList.remove('hidden');
-            }
-        }
-        function closeM2EditModal() { document.getElementById('m2-edit-modal').classList.add('hidden'); }
-
-        function saveM2PairEdit() {
-            const group = document.getElementById('m2-edit-group').value;
-            const index = parseInt(document.getElementById('m2-edit-index').value);
-            const p1 = document.getElementById('m2-p1-input').value.trim();
-            const p2 = document.getElementById('m2-p2-input').value.trim();
-            if(!p1 || !p2) return alert('Vui lòng nhập đầy đủ tên 2 VĐV!');
-
-            if(group === 'A') window.m2PairsA[index] = { p1, p2 };
-            else window.m2PairsB[index] = { p1, p2 };
-
-            closeM2EditModal(); renderM2(); autoBackupData();
-            if(window.syncToFirebase) window.syncToFirebase();
-        }
-
-        function addPairM2(group) {
-            if(group === 'A') window.m2PairsA.push({ p1: `VĐV A${window.m2PairsA.length*2+1}`, p2: `VĐV A${window.m2PairsA.length*2+2}` });
-            else window.m2PairsB.push({ p1: `VĐV B${window.m2PairsB.length*2+1}`, p2: `VĐV B${window.m2PairsB.length*2+2}` });
-            renderM2(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
-        }
-
-        function deletePairM2(group, index) {
-            if(confirm('Bạn có chắc muốn xóa cặp VĐV này?')) {
-                if(group === 'A') window.m2PairsA.splice(index, 1);
-                else window.m2PairsB.splice(index, 1);
-                renderM2(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
-            }
-        }
-
-        function renderM2() {
-            renderM2Pairs();
-            // Xử lý vẽ lịch thi đấu và bảng xếp hạng Minigame 2 tương tự
-        }
-
-        function updateM2Score(group, key, val) {
-            if(group === 'A') window.m2ScoresA[key] = val;
-            else window.m2ScoresB[key] = val;
-            renderM2(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
-        }
-
         window.onload = function() {
             restoreAutoBackup(true);
             renderPlayers();
@@ -1734,10 +1934,18 @@
 
         onSnapshot(doc(db, "minigame", "app_state"), 
             (docSnap) => {
-                const statusEl = document.getElementById('status-element');
-                const statusDot = document.getElementById('status-dot');
-                if (statusEl) { statusEl.innerText = "Firestore Online"; statusEl.className = "text-xs text-emerald-400 font-bold"; }
-                if (statusDot) { statusDot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-ping"; }
+                const updateStatus = (text, cls, dotCls) => {
+                    ['status-element', 'status-element-mobile'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) { el.innerText = text; el.className = cls; }
+                    });
+                    ['status-dot', 'status-dot-mobile'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.className = dotCls;
+                    });
+                };
+
+                updateStatus("Firestore Online", "text-xs text-emerald-400 font-bold", "w-2 h-2 rounded-full bg-emerald-500 animate-ping");
 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
@@ -1773,10 +1981,8 @@
             },
             (error) => {
                 console.error("Lỗi Firestore:", error);
-                const statusEl = document.getElementById('status-element');
-                const statusDot = document.getElementById('status-dot');
-                if (statusEl) { statusEl.innerText = "Firestore Offline"; statusEl.className = "text-xs text-red-400 font-bold"; }
-                if (statusDot) { statusDot.className = "w-2 h-2 rounded-full bg-red-500"; }
+                const el = document.getElementById('status-element');
+                if (el) { el.innerText = "Offline"; el.className = "text-xs text-red-400 font-bold"; }
             }
         );
     </script>
