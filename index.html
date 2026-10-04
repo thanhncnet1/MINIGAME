@@ -655,16 +655,17 @@
             </div>
         </section>
 
-        <!-- BẢNG TỔNG HỢP CÁC NGÀY -->
+        <!-- BẢNG TỔNG HỢP CÁC NGÀY (CĂN CHỈNH MOBILE/PC TỐI ƯU & XỬ LÝ CHUYỂN TỔNG) -->
         <section id="tab-tonghop" class="tab-content hidden">
-            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
-                <div class="flex justify-between items-center mb-4 pb-3 border-b">
-                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
-                        <i class="fa-solid fa-chart-column text-indigo-600"></i> BẢNG TỔNG HỢP CÁC NGÀY (CHỈ NGÀY ĐÃ TẠO)
+            <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 text-slate-800">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-3 border-b gap-2">
+                    <h2 class="text-base md:text-xl font-extrabold text-slate-800 flex items-center gap-2 uppercase">
+                        <i class="fa-solid fa-chart-column text-indigo-600"></i> BẢNG TỔNG HỢP CÁC NGÀY
                     </h2>
-                    <span class="text-xs text-slate-500 italic">Tự động tổng hợp điểm các ngày đã phát sinh dữ liệu</span>
+                    <span class="text-[11px] md:text-xs text-slate-500 italic">Chỉ tổng hợp ngày có trạng thái NOTE = YES</span>
                 </div>
-                <div id="tonghop-content-container" class="overflow-x-auto"></div>
+                <!-- Container cuộn ngang tối ưu màn hình di động -->
+                <div id="tonghop-content-container" class="overflow-x-auto w-full"></div>
             </div>
         </section>
 
@@ -1130,7 +1131,7 @@
             `;
         }
 
-        // BẢNG TỔNG HỢP CÁC NGÀY (CỤC BỘ DỮ LIỆU ĐƯỢC BẢO BỎ KHI TÙY CHỌN NO)
+        // BẢNG TỔNG HỢP CÁC NGÀY (CĂN CHỈNH RESPONSIVE & XỬ LÝ ĐÚNG NOTE = YES / NO)
         function renderTongHopTab() {
             const container = document.getElementById('tonghop-content-container');
             if(!container) return;
@@ -1168,6 +1169,10 @@
                 const matches = window.matchesData[d] || [];
                 const currentMode = window.dateKeoMode[d] || "default";
 
+                // Kiểm tra trạng thái NOTE chuyển tổng ngày (Mặc định YES)
+                const pStatus = window.paymentStatus[d];
+                const isTransferYes = (!pStatus || typeof pStatus !== 'object' || pStatus.btcNoteAdminOption !== "NO");
+
                 let statsDay = {};
                 vdvList.forEach(v => { statsDay[v] = { played: 0, total: 0 }; });
 
@@ -1198,17 +1203,21 @@
                 vdvList.forEach(v => {
                     let st = statsDay[v];
                     if (st.played > 0) {
-                        vdvDayTotals[v][d] = st.total;
-                        vdvRowKeoSum[v] += st.total;
+                        // Nếu trạng thái NOTE là YES mới tính tổng kèo dòng và tổng ngày
+                        if (isTransferYes) {
+                            vdvDayTotals[v][d] = st.total;
+                            vdvRowKeoSum[v] += st.total;
+                        } else {
+                            vdvDayTotals[v][d] = 0; // Khi NO: Không chuyển vào bảng tổng hợp
+                        }
+
                         if (st.total < 0) sumAmDay += st.total;
                         else if (st.played >= 4 && st.total > 0) sumBringBackDay += st.total;
                     }
                 });
 
-                // CHỈ CHUYỂN TỔNG NẾU BTC LỰA CHỌN YES
-                const pStatus = window.paymentStatus[d];
-                const isYes = (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "YES");
-                dayTotalsSum[d] = isYes ? (sumAmDay - sumBringBackDay) : 0;
+                // Dòng TỔNG NGÀY (Cột tiền BTC thu về) chỉ tính khi NOTE là YES
+                dayTotalsSum[d] = isTransferYes ? (sumAmDay + sumBringBackDay) : 0;
             });
 
             let grandTotalAllDays = 0;
@@ -1216,9 +1225,9 @@
                 <table class="w-full text-center border-collapse border border-slate-300 text-xs">
                     <thead>
                         <tr class="bg-slate-100 text-slate-800">
-                            <th class="p-2 border font-bold min-w-[140px]">VĐV (PICK THỦ)</th>
-                            ${activeDates.map(d => `<th class="p-2 border font-bold">NGÀY ${d}</th>`).join('')}
-                            <th class="p-2 border font-bold bg-yellow-200 text-amber-900">TỔNG KÈO</th>
+                            <th class="p-2 border font-bold min-w-[130px] sm:min-w-[150px] text-left pl-3">VĐV (PICK THỦ)</th>
+                            ${activeDates.map(d => `<th class="p-2 border font-bold whitespace-nowrap">NGÀY ${d}</th>`).join('')}
+                            <th class="p-2 border font-bold bg-yellow-200 text-amber-900 whitespace-nowrap">TỔNG KÈO</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1237,7 +1246,7 @@
 
                 html += `
                     <tr class="hover:bg-slate-50">
-                        <td class="p-2 border text-left font-bold" style="color: ${vdvColor};">${v}</td>
+                        <td class="p-2 border text-left font-bold pl-3" style="color: ${vdvColor};">${v}</td>
                         ${dayCells}
                         <td class="p-2 border font-bold bg-yellow-100 ${totalCls}">${rowSum !== 0 ? (rowSum > 0 ? '+' + rowSum + 'K' : rowSum + 'K') : '0K'}</td>
                     </tr>
@@ -1255,7 +1264,7 @@
 
             html += `
                         <tr class="bg-slate-100 font-extrabold">
-                            <td class="p-2 border text-center text-red-600">TỔNG NGÀY</td>
+                            <td class="p-2 border text-left pl-3 text-red-600">TỔNG NGÀY (BTC THU VỀ)</td>
                             ${daySumCells}
                             <td class="p-2 border font-extrabold bg-yellow-200 ${grandTotalCls}">${grandTotalAllDays !== 0 ? grandTotalAllDays + 'K' : '0K'}</td>
                         </tr>
@@ -1265,7 +1274,7 @@
             container.innerHTML = html;
         }
 
-        // MINIGAME 2 (HỖ TRỢ LINH HOẠT TẤT CẢ SỐ CẶP VĐV: 4 CẶP, 5 CẶP, V.V.)
+        // MINIGAME 2
         function renderM2Pairs() {
             const boxA = document.getElementById('m2-pairs-A');
             const boxB = document.getElementById('m2-pairs-B');
@@ -1323,7 +1332,6 @@
             }
         }
 
-        // TỰ ĐỘNG TÍNH TOÁN LỊCH THI ĐẤU VÒNG TRÒN DYNAMIC LÊN TỚI N CẶP VĐV
         function generateM2GroupSchedule(pairs, groupName) {
             let schedule = [];
             let count = pairs.length;
@@ -1477,7 +1485,6 @@
                 });
             }
 
-            // ĐẨY TÊN ĐỘI NHẤT/NHÌ BẢNG VÀO VÒNG KNOCKOUT
             const team1A = statsA[0] ? statsA[0].name : "Nhất A";
             const team2A = statsA[1] ? statsA[1].name : "Nhì A";
             const team1B = statsB[0] ? statsB[0].name : "Nhất B";
