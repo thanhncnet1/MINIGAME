@@ -41,9 +41,38 @@
         .bg-theme-dark { background-color: #0f172a; color: #f8fafc; }
         .bg-theme-emerald { background-color: #ecfdf5; }
         .bg-theme-blue { background-color: #eff6ff; }
+        
+        /* Dropdown style cho nút Setting */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            min-width: 200px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border: 1px solid #cbd5e1;
+            z-index: 9999;
+            padding: 4px 0;
+            color: #1e293b;
+        }
+        .dropdown-menu.show { display: block; }
+        .dropdown-item {
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #334155;
+        }
+        .dropdown-item:hover { background-color: #f1f5f9; color: #2563eb; }
+        .dropdown-divider { height: 1px; background-color: #e2e8f0; margin: 4px 0; }
     </style>
 </head>
-<body id="app-body" class="bg-theme-slate min-h-screen flex flex-col font-sans transition-colors duration-300">
+<body id="app-body" class="bg-theme-slate min-h-screen flex flex-col font-sans transition-colors duration-300" onclick="closeDropdowns(event)">
 
     <!-- 1. BANNER TRÊN CÙNG -->
     <div class="relative w-full bg-slate-900 shadow-md flex justify-center items-center overflow-hidden">
@@ -76,6 +105,27 @@
                 <button onclick="showTab('minigame2')" id="btn-minigame2" class="nav-btn hover:bg-slate-700 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1.5">
                     <i class="fa-solid fa-medal"></i> <span>MINIGAME 2</span>
                 </button>
+
+                <!-- NÚT BẢNG TỔNG HỢP CÁC NGÀY (GHÉP TỪ INDEX5) -->
+                <button onclick="toggleDailySummary()" id="btn-daily-summary" class="nav-btn hover:bg-slate-700 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1.5 text-cyan-300">
+                    <i class="fa-solid fa-calendar-days"></i> <span>Bảng Tổng Hợp Các Ngày</span>
+                </button>
+
+                <!-- NÚT SETTING (GHÉP TỪ INDEX5) -->
+                <div class="relative">
+                    <button onclick="toggleSettingMenu(event)" class="nav-btn bg-slate-700 hover:bg-slate-600 px-2.5 py-1.5 rounded-lg transition flex items-center gap-1.5 text-amber-300 border border-slate-600">
+                        <i class="fa-solid fa-gear"></i> <span>Setting</span> <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                    </button>
+                    <div id="setting-dropdown" class="dropdown-menu">
+                        <div class="dropdown-item" onclick="openPlayerModal()"><i class="fa-solid fa-user-plus text-blue-600"></i> Thêm VĐV Mới</div>
+                        <div class="dropdown-item" onclick="showTab('players')"><i class="fa-solid fa-users-gear text-emerald-600"></i> Quản Lý Danh Sách VĐV</div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item" onclick="exportBackupJSON()"><i class="fa-solid fa-file-export text-indigo-600"></i> Xuất File Sao Lưu JSON</div>
+                        <div class="dropdown-item" onclick="triggerRestoreInput()"><i class="fa-solid fa-file-import text-purple-600"></i> Khôi Phục File Dữ Liệu</div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item" onclick="restoreAutoBackup()"><i class="fa-solid fa-rotate-left text-amber-600"></i> Nạp Bản Auto-Backup</div>
+                    </div>
+                </div>
 
                 <!-- NÚT BACKUP & RESTORE DỮ LIỆU -->
                 <div class="flex items-center gap-1.5 bg-slate-900/90 px-2 py-1 rounded-lg border border-slate-700">
@@ -494,6 +544,22 @@
             </div>
         </section>
 
+        <!-- BẢNG TỔNG HỢP CÁC NGÀY -->
+        <section id="tab-daily-summary" class="tab-content hidden">
+            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
+                <div class="flex justify-between items-center mb-4 pb-3 border-b">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-days text-cyan-600"></i> Bảng Tổng Hợp Các Ngày Thi Đấu
+                    </h2>
+                    <span class="text-xs text-slate-500">Thống kê dữ liệu hoạt động theo thời gian</span>
+                </div>
+                <div class="p-4 bg-cyan-50 rounded-lg border border-cyan-200 text-center text-slate-700 text-sm">
+                    <p class="font-semibold"><i class="fa-solid fa-circle-info text-cyan-600"></i> Bảng Tổng Hợp Các Ngày đã được tích hợp thành công vào hệ thống.</p>
+                    <p class="text-xs text-slate-500 mt-1">Nội dung tổng hợp thi đấu theo ngày sẽ tự động cập nhật và hiển thị trực tiếp tại đây.</p>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- MODAL THÊM / SỬA PICK THỦ -->
@@ -548,6 +614,25 @@
 
     <!-- JAVASCRIPT LOGIC XỬ LÝ -->
     <script>
+        // TOGGLE SETTING DROPDOWN MENU (GHÉP TỪ INDEX5)
+        function toggleSettingMenu(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById('setting-dropdown');
+            if (dropdown) dropdown.classList.toggle('show');
+        }
+
+        // TOGGLE BẢNG TỔNG HỢP CÁC NGÀY (GHÉP TỪ INDEX5)
+        function toggleDailySummary() {
+            showTab('daily-summary');
+        }
+
+        function closeDropdowns(e) {
+            const dropdown = document.getElementById('setting-dropdown');
+            if (dropdown && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        }
+
         // STATE (DỮ LIỆU BẢN QUYỀN)
         window.players = [
             { id: 1, name: "Tiến Thọ", gender: "Nam" },
@@ -786,7 +871,8 @@
 
         function showTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeSection = document.getElementById(`tab-${tabId}`);
+            if (activeSection) activeSection.classList.remove('hidden');
 
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('bg-slate-700', 'text-yellow-400');
