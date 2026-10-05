@@ -92,6 +92,16 @@
             align-items: center;
             justify-content: center;
         }
+        .keo-custom-input {
+            width: 42px !important;
+            height: 22px;
+            padding: 0 2px !important;
+            font-size: 11px;
+            font-weight: 800;
+            text-align: center;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+        }
         .ham-text {
             background-color: #ef4444;
             color: white;
@@ -599,9 +609,23 @@
                     <h2 class="text-base md:text-lg font-black text-slate-800 uppercase flex items-center gap-2">
                         <i class="fa-solid fa-calendar-day text-blue-600"></i> BẢNG THỐNG KÊ TRẬN PICK - NGÀY <span id="current-date-title" class="text-blue-700">1/10/26</span>
                     </h2>
-                    <button onclick="addMatchToCurrentDate()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg shadow font-bold flex items-center gap-1">
-                        <i class="fa-solid fa-plus"></i> Thêm Trận
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button onclick="addMatchToCurrentDate()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg shadow font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-plus"></i> Thêm Trận
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CHỌN KÈO ÁP DỤNG CHO TOÀN BỘ CÁC TRẬN CỦA NGÀY -->
+                <div class="mb-4 bg-amber-50 p-2.5 rounded-lg border border-amber-200 flex flex-wrap items-center justify-between gap-2">
+                    <span class="text-xs font-bold text-amber-900 flex items-center gap-1">
+                        <i class="fa-solid fa-coins"></i> KÈO ÁP DỤNG TOÀN NGÀY:
+                    </span>
+                    <select id="keo-mode-select" onchange="applyKeoToAllMatchesInDate(this.value)" class="text-xs p-1.5 border rounded bg-white font-bold outline-none border-amber-400 text-slate-800 cursor-pointer">
+                        <option value="default">Kèo Mặc Định (Thắng +5k / Thua -15k)</option>
+                        <option value="k25">Kèo 25k (Thắng 0k / Thua -25k)</option>
+                        <option value="free">Kèo Tự Do (Tùy chỉnh riêng từng trận)</option>
+                    </select>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -612,14 +636,8 @@
                                 <th class="p-2 border bg-emerald-100 text-emerald-900" colspan="2">CẶP PICK 1</th>
                                 <th class="p-2 border bg-red-100 text-red-900" colspan="2">CẶP PICK 2</th>
                                 <th class="p-2 border w-24">TỶ SỐ</th>
-                                <th class="p-2 border bg-amber-100 text-amber-900" colspan="2">
-                                    <div class="mb-1 text-[10px]">KÈO BAN ĐẦU</div>
-                                    <select id="keo-mode-select" onchange="changeKeoMode(this.value)" class="text-xs p-1 border rounded bg-amber-50 font-bold outline-none border-amber-300">
-                                        <option value="default">Kèo Mặc Định (+5k / -15k)</option>
-                                        <option value="k25">Kèo 25k (0k / -25k)</option>
-                                        <option value="free">Kèo Tự Do (Tùy Chỉnh)</option>
-                                    </select>
-                                </th>
+                                <th class="p-2 border bg-amber-100 text-amber-900 w-36">CHỌN KÈO TRẬN</th>
+                                <th class="p-2 border bg-amber-100 text-amber-900" colspan="2">KÈO BAN ĐẦU</th>
                             </tr>
                         </thead>
                         <tbody id="day-matches-body"></tbody>
@@ -655,7 +673,7 @@
             </div>
         </section>
 
-        <!-- BẢNG TỔNG HỢP CÁC NGÀY (CĂN CHỈNH MOBILE/PC TỐI ƯU & XỬ LÝ CHUYỂN TỔNG) -->
+        <!-- BẢNG TỔNG HỢP CÁC NGÀY (CĂN CHỈNH MOBILE/PC TỐI ƯU KÈM THANH TRUỢT KHI DỌC) -->
         <section id="tab-tonghop" class="tab-content hidden">
             <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 text-slate-800">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-3 border-b gap-2">
@@ -664,8 +682,8 @@
                     </h2>
                     <span class="text-[11px] md:text-xs text-slate-500 italic">Chỉ tổng hợp ngày có trạng thái NOTE = YES</span>
                 </div>
-                <!-- Container cuộn ngang tối ưu màn hình di động -->
-                <div id="tonghop-content-container" class="overflow-x-auto w-full"></div>
+                <!-- Container cuộn ngang tối ưu chuẩn responsive dọc/ngang máy tính & di động -->
+                <div id="tonghop-content-container" class="overflow-x-auto w-full border border-slate-200 rounded-lg shadow-inner"></div>
             </div>
         </section>
 
@@ -798,19 +816,19 @@
 
         window.matchesData = {
             "1/10/26": [
-                { id: 1, c1_p1: "Trí Đô", c1_p2: "Tiến Thọ", c2_p1: "Phú Mỗ", c2_p2: "Thành Đàm", score1: "8", score2: "11" },
-                { id: 2, c1_p1: "Phú Mỗ", c1_p2: "Thành Đàm", c2_p1: "Tiến Thọ", c2_p2: "Trí Đô", score1: "9", score2: "11" },
-                { id: 3, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "" },
-                { id: 4, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "" },
-                { id: 5, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "" },
-                { id: 6, c1_p1: "Tiến Thọ", c1_p2: "Trí Đô", c2_p1: "Thành Đàm", c2_p2: "Long Diễm", score1: "11", score2: "5" },
-                { id: 7, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "" },
-                { id: 8, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "" },
-                { id: 9, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "" },
-                { id: 10, c1_p1: "Long Diễm", c1_p2: "Thành Đàm", c2_p1: "Tiến Thọ", c2_p2: "Trí Đô", score1: "8", score2: "11" },
-                { id: 11, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "" },
-                { id: 12, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "" },
-                { id: 13, c1_p1: "Vân Đình", c1_p2: "Tiến Thọ", c2_p1: "Tuấn La", c2_p2: "Long Diễm", score1: "8", score2: "11" }
+                { id: 1, c1_p1: "Trí Đô", c1_p2: "Tiến Thọ", c2_p1: "Phú Mỗ", c2_p2: "Thành Đàm", score1: "8", score2: "11", keoMode: "default", customWin: 5, customLose: -15 },
+                { id: 2, c1_p1: "Phú Mỗ", c1_p2: "Thành Đàm", c2_p1: "Tiến Thọ", c2_p2: "Trí Đô", score1: "9", score2: "11", keoMode: "default", customWin: 5, customLose: -15 },
+                { id: 3, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "", keoMode: "default", customWin: 5, customLose: -15 },
+                { id: 4, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "", keoMode: "default", customWin: 5, customLose: -15 },
+                { id: 5, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "", keoMode: "default", customWin: 5, customLose: -15 },
+                { id: 6, c1_p1: "Tiến Thọ", c1_p2: "Trí Đô", c2_p1: "Thành Đàm", c2_p2: "Long Diễm", score1: "11", score2: "5", keoMode: "default", customWin: 5, customLose: -15 },
+                { id: 7, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "", keoMode: "default", customWin: 5, customLose: -15 },
+                { id: 8, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "", keoMode: "default", customWin: 5, customLose: -15 },
+                { id: 9, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "", keoMode: "default", customWin: 5, customLose: -15 },
+                { id: 10, c1_p1: "Long Diễm", c1_p2: "Thành Đàm", c2_p1: "Tiến Thọ", c2_p2: "Trí Đô", score1: "8", score2: "11", keoMode: "default", customWin: 5, customLose: -15 },
+                { id: 11, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "", keoMode: "default", customWin: 5, customLose: -15 },
+                { id: 12, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "", keoMode: "default", customWin: 5, customLose: -15 },
+                { id: 13, c1_p1: "Vân Đình", c1_p2: "Tiến Thọ", c2_p1: "Tuấn La", c2_p2: "Long Diễm", score1: "8", score2: "11", keoMode: "default", customWin: 5, customLose: -15 }
             ]
         };
 
@@ -857,7 +875,7 @@
             if (dateStr && !window.dates.includes(dateStr)) {
                 window.dates.push(dateStr);
                 window.matchesData[dateStr] = Array.from({ length: 5 }, (_, i) => ({
-                    id: i + 1, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: ""
+                    id: i + 1, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "", keoMode: "default", customWin: 5, customLose: -15
                 }));
                 window.dateKeoMode[dateStr] = "default";
                 selectDateView(dateStr);
@@ -928,7 +946,11 @@
             const dateStr = window.currentSelectedDate;
             if(!window.matchesData[dateStr]) window.matchesData[dateStr] = [];
             const nextId = window.matchesData[dateStr].length + 1;
-            window.matchesData[dateStr].push({ id: nextId, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "" });
+            const globalMode = window.dateKeoMode[dateStr] || 'default';
+            window.matchesData[dateStr].push({ 
+                id: nextId, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "",
+                keoMode: globalMode, customWin: globalMode === 'k25' ? 0 : 5, customLose: globalMode === 'k25' ? -25 : -15
+            });
             renderDayDetailView();
             autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
@@ -944,12 +966,33 @@
             }
         }
 
-        function changeKeoMode(val) {
+        // ÁP DỤNG LOẠI KÈO CHO TOÀN BỘ CÁC TRẬN TRONG NGÀY
+        function applyKeoToAllMatchesInDate(modeVal) {
             const dateStr = window.currentSelectedDate;
-            window.dateKeoMode[dateStr] = val;
+            window.dateKeoMode[dateStr] = modeVal;
+            const matches = window.matchesData[dateStr] || [];
+            matches.forEach(m => {
+                m.keoMode = modeVal;
+                if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
+                else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
+            });
             renderDayDetailView();
             autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        // ĐỔI KÈO RIÊNG TỪNG TRẬN
+        function updateMatchKeoMode(index, modeVal) {
+            const dateStr = window.currentSelectedDate;
+            if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
+                const m = window.matchesData[dateStr][index];
+                m.keoMode = modeVal;
+                if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
+                else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
+                renderDayDetailView();
+                autoBackupData();
+                if(window.syncToFirebase) window.syncToFirebase();
+            }
         }
 
         function togglePaymentStatus(payKey) {
@@ -995,10 +1038,17 @@
                 const s2 = parseInt(val2);
 
                 let keo1 = "", keo2 = "";
+                
+                // Xác định giá trị thắng/thua cho từng trận cụ thể
+                const mMode = m.keoMode || window.dateKeoMode[dateStr] || 'default';
                 let winAmt = 5, loseAmt = -15;
 
-                const currentMode = window.dateKeoMode[dateStr] || 'default';
-                if(currentMode === 'k25') { winAmt = 0; loseAmt = -25; }
+                if (mMode === 'k25') { winAmt = 0; loseAmt = -25; }
+                else if (mMode === 'free') {
+                    winAmt = parseFloat(m.customWin) || 0;
+                    loseAmt = parseFloat(m.customLose) || 0;
+                    if (loseAmt > 0) loseAmt = -loseAmt; // Đảm bảo mức thua là số âm
+                }
 
                 if(!isNaN(s1) && !isNaN(s2)) {
                     let isHam = (s1 === 0 || s2 === 0);
@@ -1042,6 +1092,26 @@
                     ? `<span class="ham-text">HẦM</span>` 
                     : `<input type="text" class="score-input" value="${m.score2 || ''}" onchange="updateMatchData(${idx}, 'score2', this.value)">`;
 
+                // Render giao diện chọn Kèo từng trận
+                let keoCellUI = `
+                    <select onchange="updateMatchKeoMode(${idx}, this.value)" class="text-[11px] font-bold p-1 border rounded bg-amber-50 outline-none w-full text-amber-900 border-amber-300">
+                        <option value="default" ${mMode==='default'?'selected':''}>Mặc định (+5k/-15k)</option>
+                        <option value="k25" ${mMode==='k25'?'selected':''}>Kèo 25k (0k/-25k)</option>
+                        <option value="free" ${mMode==='free'?'selected':''}>Kèo Tự Do</option>
+                    </select>
+                `;
+
+                if (mMode === 'free') {
+                    keoCellUI += `
+                        <div class="flex items-center justify-center gap-1 mt-1">
+                            <span class="text-[10px] text-emerald-700 font-bold">+</span>
+                            <input type="number" class="keo-custom-input text-emerald-700" value="${m.customWin !== undefined ? m.customWin : 5}" onchange="updateMatchData(${idx}, 'customWin', this.value)" title="Tiền thắng">
+                            <span class="text-[10px] text-red-600 font-bold">/</span>
+                            <input type="number" class="keo-custom-input text-red-600" value="${m.customLose !== undefined ? m.customLose : -15}" onchange="updateMatchData(${idx}, 'customLose', this.value)" title="Tiền thua">
+                        </div>
+                    `;
+                }
+
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
                         <td class="font-bold text-slate-700">Trận ${idx+1}</td>
@@ -1056,6 +1126,7 @@
                                 <div onclick="if(${isHam2}) updateMatchData(${idx}, 'score2', '')">${score2Inner}</div>
                             </div>
                         </td>
+                        <td class="p-1 bg-amber-50/50">${keoCellUI}</td>
                         <td class="p-1 font-extrabold ${keo1 > 0 ? 'txt-win' : (keo1 < 0 ? 'txt-lose' : '')}">${keo1}</td>
                         <td class="p-1 font-extrabold ${keo2 > 0 ? 'txt-win' : (keo2 < 0 ? 'txt-lose' : '')}">${keo2}</td>
                     </tr>
@@ -1131,7 +1202,7 @@
             `;
         }
 
-        // BẢNG TỔNG HỢP CÁC NGÀY (CĂN CHỈNH RESPONSIVE & XỬ LÝ ĐÚNG NOTE = YES / NO)
+        // BẢNG TỔNG HỢP CÁC NGÀY (OPTIMIZED FOR MOBILE DỌC/NGANG & PC - CÓ THANH TRUỢT NẾU TRÀN)
         function renderTongHopTab() {
             const container = document.getElementById('tonghop-content-container');
             if(!container) return;
@@ -1167,7 +1238,6 @@
 
             activeDates.forEach(d => {
                 const matches = window.matchesData[d] || [];
-                const currentMode = window.dateKeoMode[d] || "default";
 
                 // Kiểm tra trạng thái NOTE chuyển tổng ngày (Mặc định YES)
                 const pStatus = window.paymentStatus[d];
@@ -1179,8 +1249,16 @@
                 matches.forEach(m => {
                     const s1 = parseInt(m.score1);
                     const s2 = parseInt(m.score2);
+                    
+                    const mMode = m.keoMode || window.dateKeoMode[d] || 'default';
                     let winAmt = 5, loseAmt = -15;
-                    if (currentMode === "k25") { winAmt = 0; loseAmt = -25; } 
+
+                    if (mMode === "k25") { winAmt = 0; loseAmt = -25; } 
+                    else if (mMode === "free") {
+                        winAmt = parseFloat(m.customWin) || 0;
+                        loseAmt = parseFloat(m.customLose) || 0;
+                        if (loseAmt > 0) loseAmt = -loseAmt;
+                    }
 
                     if (!isNaN(s1) && !isNaN(s2)) {
                         const pair1 = [m.c1_p1, m.c1_p2].filter(Boolean);
@@ -1203,12 +1281,11 @@
                 vdvList.forEach(v => {
                     let st = statsDay[v];
                     if (st.played > 0) {
-                        // Nếu trạng thái NOTE là YES mới tính tổng kèo dòng và tổng ngày
                         if (isTransferYes) {
                             vdvDayTotals[v][d] = st.total;
                             vdvRowKeoSum[v] += st.total;
                         } else {
-                            vdvDayTotals[v][d] = 0; // Khi NO: Không chuyển vào bảng tổng hợp
+                            vdvDayTotals[v][d] = 0; // Khi NO: Không chuyển tổng vào bảng
                         }
 
                         if (st.total < 0) sumAmDay += st.total;
@@ -1216,7 +1293,6 @@
                     }
                 });
 
-                // Dòng TỔNG NGÀY (Cột tiền BTC thu về) chỉ tính khi NOTE là YES
                 dayTotalsSum[d] = isTransferYes ? (sumAmDay + sumBringBackDay) : 0;
             });
 
@@ -1225,9 +1301,9 @@
                 <table class="w-full text-center border-collapse border border-slate-300 text-xs">
                     <thead>
                         <tr class="bg-slate-100 text-slate-800">
-                            <th class="p-2 border font-bold min-w-[130px] sm:min-w-[150px] text-left pl-3">VĐV (PICK THỦ)</th>
-                            ${activeDates.map(d => `<th class="p-2 border font-bold whitespace-nowrap">NGÀY ${d}</th>`).join('')}
-                            <th class="p-2 border font-bold bg-yellow-200 text-amber-900 whitespace-nowrap">TỔNG KÈO</th>
+                            <th class="p-2 border font-bold min-w-[130px] sm:min-w-[150px] text-left pl-3 sticky left-0 bg-slate-100 z-10 shadow-sm">VĐV (PICK THỦ)</th>
+                            ${activeDates.map(d => `<th class="p-2 border font-bold min-w-[90px] whitespace-nowrap">NGÀY ${d}</th>`).join('')}
+                            <th class="p-2 border font-bold bg-yellow-200 text-amber-900 min-w-[100px] whitespace-nowrap">TỔNG KÈO</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1246,7 +1322,7 @@
 
                 html += `
                     <tr class="hover:bg-slate-50">
-                        <td class="p-2 border text-left font-bold pl-3" style="color: ${vdvColor};">${v}</td>
+                        <td class="p-2 border text-left font-bold pl-3 sticky left-0 bg-white z-10 shadow-sm" style="color: ${vdvColor};">${v}</td>
                         ${dayCells}
                         <td class="p-2 border font-bold bg-yellow-100 ${totalCls}">${rowSum !== 0 ? (rowSum > 0 ? '+' + rowSum + 'K' : rowSum + 'K') : '0K'}</td>
                     </tr>
@@ -1264,7 +1340,7 @@
 
             html += `
                         <tr class="bg-slate-100 font-extrabold">
-                            <td class="p-2 border text-left pl-3 text-red-600">TỔNG NGÀY (BTC THU VỀ)</td>
+                            <td class="p-2 border text-left pl-3 text-red-600 sticky left-0 bg-slate-100 z-10 shadow-sm">TỔNG NGÀY (BTC THU VỀ)</td>
                             ${daySumCells}
                             <td class="p-2 border font-extrabold bg-yellow-200 ${grandTotalCls}">${grandTotalAllDays !== 0 ? grandTotalAllDays + 'K' : '0K'}</td>
                         </tr>
