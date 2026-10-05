@@ -79,7 +79,7 @@
         .note-unpaid { color: #ef4444; font-weight: 800; }
 
         .score-input {
-            width: 36px !important;
+            width: 34px !important;
             height: 24px;
             padding: 0 !important;
             font-weight: 800;
@@ -93,7 +93,7 @@
             justify-content: center;
         }
         .keo-custom-input {
-            width: 42px !important;
+            width: 40px !important;
             height: 22px;
             padding: 0 2px !important;
             font-size: 11px;
@@ -113,6 +113,12 @@
             width: 100%;
             text-align: center;
             line-height: 1;
+        }
+
+        /* Hỗ trợ thanh trượt mượt trên thiết bị di động */
+        .smooth-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
@@ -164,7 +170,7 @@
                     </button>
                     <div class="dropdown-menu" id="menuSetting">
                         <div class="dropdown-item" onclick="addDateTab()"><i class="fa-solid fa-calendar-plus text-emerald-600"></i> 📅 ➕ Thêm Ngày Mới</div>
-                        <div class="dropdown-item" onclick="renameCurrentDate()"><i class="fa-solid fa-pen-to-square text-blue-600"></i> ✏️ Sửa Tên Ngày Hiện Tại</div>
+                        <div class="dropdown-item" onclick="renameCurrentDate()"><i class="fa-solid fa-pen-to-square text-blue-600"></i> ✏️️ Sửa Tên Ngày Hiện Tại</div>
                         <div class="dropdown-item text-red-600" onclick="deleteCurrentDate()"><i class="fa-solid fa-trash text-red-600"></i> 🗑 Xóa Ngày Hiện Tại</div>
                         <div class="dropdown-divider"></div>
                         <div class="dropdown-item" onclick="exportToExcel()"><i class="fa-solid fa-file-excel text-emerald-600"></i> 📥 Xuất Dữ Liệu Excel</div>
@@ -289,7 +295,7 @@
                     </button>
                 </div>
 
-                <div class="overflow-x-auto">
+                <div class="smooth-scroll">
                     <table class="w-full text-left border-collapse border border-slate-200">
                         <thead>
                             <tr class="bg-slate-100 text-slate-700 text-sm">
@@ -348,7 +354,7 @@
                     </button>
                 </div>
 
-                <div class="overflow-x-auto">
+                <div class="smooth-scroll">
                     <table class="w-full excel-table border-collapse">
                         <thead>
                             <tr>
@@ -380,7 +386,7 @@
                 <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
                     <i class="fa-solid fa-chart-pie text-indigo-600"></i> Bảng Tổng Hợp Chung Minigame 1
                 </h3>
-                <div class="overflow-x-auto">
+                <div class="smooth-scroll">
                     <table class="w-full text-center border-collapse border border-slate-300">
                         <thead>
                             <tr class="bg-slate-800 text-white text-sm">
@@ -433,7 +439,7 @@
                     <!-- BẢNG A -->
                     <div class="space-y-4">
                         <h3 class="font-extrabold text-blue-900 border-b-2 border-blue-900 pb-1">BẢNG A</h3>
-                        <div>
+                        <div class="smooth-scroll">
                             <p class="text-xs font-bold text-slate-700 mb-1">Bảng Xếp Hạng Bảng A</p>
                             <table class="w-full text-xs text-center border-collapse border border-slate-300">
                                 <thead class="bg-orange-500 text-white font-bold">
@@ -447,7 +453,7 @@
                                 <tbody id="m2-rank-A"></tbody>
                             </table>
                         </div>
-                        <div>
+                        <div class="smooth-scroll">
                             <p class="text-xs font-bold text-slate-700 mb-1">Lịch Thi Đấu Vòng Tròn Bảng A</p>
                             <table class="w-full text-xs text-center border-collapse border border-slate-300">
                                 <thead class="bg-blue-600 text-white font-bold">
@@ -467,7 +473,7 @@
                     <!-- BẢNG B -->
                     <div class="space-y-4">
                         <h3 class="font-extrabold text-orange-900 border-b-2 border-orange-900 pb-1">BẢNG B</h3>
-                        <div>
+                        <div class="smooth-scroll">
                             <p class="text-xs font-bold text-slate-700 mb-1">Bảng Xếp Hạng Bảng B</p>
                             <table class="w-full text-xs text-center border-collapse border border-slate-300">
                                 <thead class="bg-orange-500 text-white font-bold">
@@ -481,7 +487,7 @@
                                 <tbody id="m2-rank-B"></tbody>
                             </table>
                         </div>
-                        <div>
+                        <div class="smooth-scroll">
                             <p class="text-xs font-bold text-slate-700 mb-1">Lịch Thi Đấu Vòng Tròn Bảng B</p>
                             <table class="w-full text-xs text-center border-collapse border border-slate-300">
                                 <thead class="bg-blue-600 text-white font-bold">
@@ -505,78 +511,84 @@
 
                     <div class="border rounded overflow-hidden shadow-sm">
                         <div class="bg-blue-700 text-white text-xs font-bold p-1.5 text-center">VÒNG BÁN KẾT (BK1: Nhất A - Nhì B | BK2: Nhất B - Nhì A)</div>
-                        <table class="w-full text-xs text-center border-collapse">
-                            <thead class="bg-slate-100">
-                                <tr>
-                                    <th class="p-1 border w-16">Trận</th>
-                                    <th class="p-1 border">Đội 1</th>
-                                    <th class="p-1 border w-24">Kết quả</th>
-                                    <th class="p-1 border">Đội 2</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="border p-1.5 font-bold">BK1</td>
-                                    <td id="bk1-team1-name" class="border p-1.5 font-medium">Nhất A</td>
-                                    <td class="border p-1.5">
-                                        <div class="flex justify-center items-center gap-1">
-                                            <input type="number" id="bk1-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">-
-                                            <input type="number" id="bk1-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">
-                                        </div>
-                                    </td>
-                                    <td id="bk1-team2-name" class="border p-1.5 font-medium">Nhì B</td>
-                                </tr>
-                                <tr>
-                                    <td class="border p-1.5 font-bold">BK2</td>
-                                    <td id="bk2-team1-name" class="border p-1.5 font-medium">Nhất B</td>
-                                    <td class="border p-1.5">
-                                        <div class="flex justify-center items-center gap-1">
-                                            <input type="number" id="bk2-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">-
-                                            <input type="number" id="bk2-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">
-                                        </div>
-                                    </td>
-                                    <td id="bk2-team2-name" class="border p-1.5 font-medium">Nhì A</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="smooth-scroll">
+                            <table class="w-full text-xs text-center border-collapse">
+                                <thead class="bg-slate-100">
+                                    <tr>
+                                        <th class="p-1 border w-16">Trận</th>
+                                        <th class="p-1 border">Đội 1</th>
+                                        <th class="p-1 border w-24">Kết quả</th>
+                                        <th class="p-1 border">Đội 2</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="border p-1.5 font-bold">BK1</td>
+                                        <td id="bk1-team1-name" class="border p-1.5 font-medium">Nhất A</td>
+                                        <td class="border p-1.5">
+                                            <div class="flex justify-center items-center gap-1">
+                                                <input type="number" id="bk1-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">-
+                                                <input type="number" id="bk1-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">
+                                            </div>
+                                        </td>
+                                        <td id="bk1-team2-name" class="border p-1.5 font-medium">Nhì B</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border p-1.5 font-bold">BK2</td>
+                                        <td id="bk2-team1-name" class="border p-1.5 font-medium">Nhất B</td>
+                                        <td class="border p-1.5">
+                                            <div class="flex justify-center items-center gap-1">
+                                                <input type="number" id="bk2-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">-
+                                                <input type="number" id="bk2-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">
+                                            </div>
+                                        </td>
+                                        <td id="bk2-team2-name" class="border p-1.5 font-medium">Nhì A</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <div class="border rounded overflow-hidden shadow-sm">
                         <div class="bg-blue-700 text-white text-xs font-bold p-1.5 text-center">TRANH 3/4 (Thua BK1 vs Thua BK2)</div>
-                        <table class="w-full text-xs text-center border-collapse">
-                            <tbody>
-                                <tr>
-                                    <td class="border p-1.5 font-bold w-16">3/4</td>
-                                    <td id="t3-team1-name" class="border p-1.5 font-medium">Thua BK1</td>
-                                    <td class="border p-1.5 w-24">
-                                        <div class="flex justify-center items-center gap-1">
-                                            <input type="number" id="t3-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">-
-                                            <input type="number" id="t3-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">
-                                        </div>
-                                    </td>
-                                    <td id="t3-team2-name" class="border p-1.5 font-medium">Thua BK2</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="smooth-scroll">
+                            <table class="w-full text-xs text-center border-collapse">
+                                <tbody>
+                                    <tr>
+                                        <td class="border p-1.5 font-bold w-16">3/4</td>
+                                        <td id="t3-team1-name" class="border p-1.5 font-medium">Thua BK1</td>
+                                        <td class="border p-1.5 w-24">
+                                            <div class="flex justify-center items-center gap-1">
+                                                <input type="number" id="t3-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">-
+                                                <input type="number" id="t3-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">
+                                            </div>
+                                        </td>
+                                        <td id="t3-team2-name" class="border p-1.5 font-medium">Thua BK2</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <div class="border rounded overflow-hidden shadow-sm">
                         <div class="bg-blue-700 text-white text-xs font-bold p-1.5 text-center">TRANH CHUNG KẾT (Thắng BK1 vs Thắng BK2)</div>
-                        <table class="w-full text-xs text-center border-collapse">
-                            <tbody>
-                                <tr>
-                                    <td class="border p-1.5 font-bold w-16">CK</td>
-                                    <td id="ck-team1-name" class="border p-1.5 font-medium">Thắng BK1</td>
-                                    <td class="border p-1.5 w-24">
-                                        <div class="flex justify-center items-center gap-1">
-                                            <input type="number" id="ck-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">-
-                                            <input type="number" id="ck-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">
-                                        </div>
-                                    </td>
-                                    <td id="ck-team2-name" class="border p-1.5 font-medium">Thắng BK2</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="smooth-scroll">
+                            <table class="w-full text-xs text-center border-collapse">
+                                <tbody>
+                                    <tr>
+                                        <td class="border p-1.5 font-bold w-16">CK</td>
+                                        <td id="ck-team1-name" class="border p-1.5 font-medium">Thắng BK1</td>
+                                        <td class="border p-1.5 w-24">
+                                            <div class="flex justify-center items-center gap-1">
+                                                <input type="number" id="ck-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">-
+                                                <input type="number" id="ck-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">
+                                            </div>
+                                        </td>
+                                        <td id="ck-team2-name" class="border p-1.5 font-medium">Thắng BK2</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <div class="border rounded overflow-hidden bg-amber-100/90 border-amber-300 shadow-sm">
@@ -604,8 +616,8 @@
 
         <!-- BẢNG ĐẤU THEO NGÀY CỤ THỂ -->
         <section id="tab-day_detail" class="tab-content hidden space-y-6">
-            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
-                <div class="flex flex-wrap justify-between items-center mb-4 pb-3 border-b gap-2">
+            <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 text-slate-800">
+                <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b gap-2">
                     <h2 class="text-base md:text-lg font-black text-slate-800 uppercase flex items-center gap-2">
                         <i class="fa-solid fa-calendar-day text-blue-600"></i> BẢNG THỐNG KÊ TRẬN PICK - NGÀY <span id="current-date-title" class="text-blue-700">1/10/26</span>
                     </h2>
@@ -617,7 +629,7 @@
                 </div>
 
                 <!-- CHỌN KÈO ÁP DỤNG CHO TOÀN BỘ CÁC TRẬN CỦA NGÀY -->
-                <div class="mb-4 bg-amber-50 p-2.5 rounded-lg border border-amber-200 flex flex-wrap items-center justify-between gap-2">
+                <div class="mb-3 bg-amber-50 p-2.5 rounded-lg border border-amber-200 flex flex-wrap items-center justify-between gap-2">
                     <span class="text-xs font-bold text-amber-900 flex items-center gap-1">
                         <i class="fa-solid fa-coins"></i> KÈO ÁP DỤNG TOÀN NGÀY:
                     </span>
@@ -628,15 +640,16 @@
                     </select>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-center border-collapse border border-slate-300 text-xs">
+                <!-- Tối ưu hiển thị bảng bằng khung trượt mượt trên di động -->
+                <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner">
+                    <table class="w-full min-w-[650px] text-center border-collapse border border-slate-300 text-xs">
                         <thead>
                             <tr class="bg-slate-100 text-slate-700 font-bold">
                                 <th class="p-2 border w-12">STT</th>
                                 <th class="p-2 border bg-emerald-100 text-emerald-900" colspan="2">CẶP PICK 1</th>
                                 <th class="p-2 border bg-red-100 text-red-900" colspan="2">CẶP PICK 2</th>
-                                <th class="p-2 border w-24">TỶ SỐ</th>
-                                <th class="p-2 border bg-amber-100 text-amber-900 w-36">CHỌN KÈO TRẬN</th>
+                                <th class="p-2 border w-20">TỶ SỐ</th>
+                                <th class="p-2 border bg-amber-100 text-amber-900 w-32">CHỌN KÈO TRẬN</th>
                                 <th class="p-2 border bg-amber-100 text-amber-900" colspan="2">KÈO BAN ĐẦU</th>
                             </tr>
                         </thead>
@@ -646,25 +659,26 @@
             </div>
 
             <!-- BẢNG TỔNG HỢP THÀNH TIỀN & THU CHI TƯƠNG ỨNG TRONG NGÀY -->
-            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
-                <div class="flex justify-between items-center mb-4 pb-3 border-b">
+            <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 text-slate-800">
+                <div class="flex justify-between items-center mb-3 pb-2 border-b">
                     <h2 class="text-base md:text-lg font-black text-slate-800 uppercase flex items-center gap-2">
                         <i class="fa-solid fa-calculator text-indigo-600"></i> BẢNG TỔNG HỢP THÀNH TIỀN & THU CHI
                     </h2>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-center border-collapse border border-slate-300 text-xs">
+                <!-- Tối ưu hiển thị bảng bằng khung trượt mượt trên di động -->
+                <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner">
+                    <table class="w-full min-w-[700px] text-center border-collapse border border-slate-300 text-xs">
                         <thead>
                             <tr class="bg-slate-100 text-slate-700 font-bold">
-                                <th class="p-2 border">PICK THỦ</th>
-                                <th class="p-2 border">SỐ TRẬN</th>
-                                <th class="p-2 border">THẮNG/K</th>
-                                <th class="p-2 border">THUA/K</th>
-                                <th class="p-2 border">MANG VỀ</th>
-                                <th class="p-2 border">TỔNG</th>
-                                <th class="p-2 border">THỰC TẾ</th>
-                                <th class="p-2 border">NOTE</th>
+                                <th class="p-2 border w-28 text-left pl-3">PICK THỦ</th>
+                                <th class="p-2 border w-16">SỐ TRẬN</th>
+                                <th class="p-2 border w-20">THẮNG/K</th>
+                                <th class="p-2 border w-20">THUA/K</th>
+                                <th class="p-2 border w-24">MANG VỀ</th>
+                                <th class="p-2 border w-20">TỔNG</th>
+                                <th class="p-2 border w-20">THỰC TẾ</th>
+                                <th class="p-2 border w-28">NOTE</th>
                             </tr>
                         </thead>
                         <tbody id="day-summary-body" class="font-semibold"></tbody>
@@ -683,7 +697,7 @@
                     <span class="text-[11px] md:text-xs text-slate-500 italic">Chỉ tổng hợp ngày có trạng thái NOTE = YES</span>
                 </div>
                 <!-- Container cuộn ngang tối ưu chuẩn responsive dọc/ngang máy tính & di động -->
-                <div id="tonghop-content-container" class="overflow-x-auto w-full border border-slate-200 rounded-lg shadow-inner"></div>
+                <div id="tonghop-content-container" class="smooth-scroll w-full border border-slate-200 rounded-lg shadow-inner"></div>
             </div>
         </section>
 
@@ -1076,7 +1090,7 @@
                     window.players.forEach(p => {
                         opts += `<option value="${p.name}" ${p.name === val ? 'selected' : ''}>${p.name}</option>`;
                     });
-                    return `<select onchange="updateMatchData(${idx}, '${field}', this.value)" class="text-xs font-semibold border rounded p-0.5 outline-none w-full">
+                    return `<select onchange="updateMatchData(${idx}, '${field}', this.value)" class="text-[11px] font-semibold border rounded p-0.5 outline-none w-full max-w-[90px] sm:max-w-none">
                         ${opts}
                     </select>`;
                 };
@@ -1094,7 +1108,7 @@
 
                 // Render giao diện chọn Kèo từng trận
                 let keoCellUI = `
-                    <select onchange="updateMatchKeoMode(${idx}, this.value)" class="text-[11px] font-bold p-1 border rounded bg-amber-50 outline-none w-full text-amber-900 border-amber-300">
+                    <select onchange="updateMatchKeoMode(${idx}, this.value)" class="text-[10px] sm:text-[11px] font-bold p-0.5 border rounded bg-amber-50 outline-none w-full text-amber-900 border-amber-300">
                         <option value="default" ${mMode==='default'?'selected':''}>Mặc định (+5k/-15k)</option>
                         <option value="k25" ${mMode==='k25'?'selected':''}>Kèo 25k (0k/-25k)</option>
                         <option value="free" ${mMode==='free'?'selected':''}>Kèo Tự Do</option>
@@ -1114,13 +1128,13 @@
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
-                        <td class="font-bold text-slate-700">Trận ${idx+1}</td>
+                        <td class="font-bold text-slate-700 whitespace-nowrap px-1">Trận ${idx+1}</td>
                         <td class="p-1">${buildPlayerSelect(m.c1_p1, 'c1_p1')}</td>
                         <td class="p-1">${buildPlayerSelect(m.c1_p2, 'c1_p2')}</td>
                         <td class="p-1">${buildPlayerSelect(m.c2_p1, 'c2_p1')}</td>
                         <td class="p-1">${buildPlayerSelect(m.c2_p2, 'c2_p2')}</td>
                         <td class="p-1">
-                            <div class="flex items-center justify-center gap-1">
+                            <div class="flex items-center justify-center gap-0.5">
                                 <div onclick="if(${isHam1}) updateMatchData(${idx}, 'score1', '')">${score1Inner}</div>
                                 <span class="font-bold text-slate-400">-</span>
                                 <div onclick="if(${isHam2}) updateMatchData(${idx}, 'score2', '')">${score2Inner}</div>
@@ -1159,14 +1173,14 @@
 
                     sumBody.innerHTML += `
                         <tr class="hover:bg-slate-50">
-                            <td class="p-2 border text-left font-bold text-blue-900">${p.name}</td>
+                            <td class="p-2 border text-left font-bold text-blue-900 whitespace-nowrap pl-3">${p.name}</td>
                             <td class="p-2 border">${st.played}</td>
                             <td class="p-2 border txt-win">${st.winK > 0 ? st.winK : ''}</td>
                             <td class="p-2 border txt-lose">${st.loseK < 0 ? st.loseK : ''}</td>
                             <td class="p-2 border text-blue-600 font-bold">${bringBack > 0 ? bringBack : ''}</td>
                             <td class="p-2 border font-extrabold ${st.total < 0 ? 'txt-lose' : (st.total > 0 ? 'txt-win' : '')}">${st.total}</td>
                             <td class="p-2 border"><input type="checkbox" ${isPaid ? 'checked' : ''} onclick="togglePaymentStatus('${payKey}')" class="w-4 h-4 cursor-pointer"></td>
-                            <td class="p-2 border">${noteText}</td>
+                            <td class="p-2 border whitespace-nowrap">${noteText}</td>
                         </tr>
                     `;
                 }
@@ -1180,14 +1194,14 @@
 
             sumBody.innerHTML += `
                 <tr class="bg-slate-100 font-extrabold">
-                    <td class="p-2 border text-left text-red-600">Tổng Tiền BTC Thu Về</td>
+                    <td class="p-2 border text-left text-red-600 whitespace-nowrap pl-3">Tổng Tiền BTC Thu Về</td>
                     <td class="p-2 border"></td>
                     <td class="p-2 border"></td>
                     <td class="p-2 border"></td>
                     <td class="p-2 border text-blue-700">${sumBringBack}</td>
                     <td class="p-2 border text-red-600">${btcThuVe}</td>
                     <td class="p-2 border text-blue-700">${sumThucThu}</td>
-                    <td class="p-2 border">
+                    <td class="p-2 border whitespace-nowrap">
                         <select onchange="handleBtcNoteChange(this)" class="text-xs font-bold p-1 border rounded bg-white text-emerald-700 outline-none">
                             <option value="YES" ${currentOption==='YES'?'selected':''}>YES (Chuyển tổng ngày)</option>
                             <option value="NO" ${currentOption==='NO'?'selected':''}>NO (Không chuyển)</option>
@@ -1195,7 +1209,7 @@
                     </td>
                 </tr>
                 <tr class="bg-slate-100 font-extrabold">
-                    <td class="p-2 border text-left text-red-600" colspan="4">Quỹ Còn</td>
+                    <td class="p-2 border text-left text-red-600 pl-3" colspan="4">Quỹ Còn</td>
                     <td class="p-2 border text-red-600 text-sm" colspan="2">${quyCon}</td>
                     <td class="p-2 border" colspan="2"></td>
                 </tr>
