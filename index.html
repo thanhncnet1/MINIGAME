@@ -232,7 +232,7 @@
     <!-- MAIN CONTAINER -->
     <main class="max-w-7xl mx-auto w-full p-2 md:p-4 flex-grow">
 
-        <!-- TRANG CHỦ (HOME) - ĐÃ BỔ SUNG Ô "BẢNG TỔNG HỢP" THEO ẢNH MẪU -->
+        <!-- TRANG CHỦ (HOME) -->
         <section id="tab-home" class="tab-content">
             <div class="bg-white/90 backdrop-blur rounded-xl shadow-md p-6 md:p-8 text-center my-4 text-slate-800">
                 <h2 class="text-2xl font-bold mb-4">CHÀO MỪNG ĐẾN VỚI GIẢI ĐẤU CLB-PICKLEBALL-CMTD</h2>
@@ -277,7 +277,7 @@
                         </div>
                     </div>
 
-                    <!-- 5. BẢNG TỔNG HỢP CÁC NGÀY (THÊM MỚI THEO YÊU CẦU) -->
+                    <!-- 5. BẢNG TỔNG HỢP CÁC NGÀY -->
                     <div onclick="showTab('tonghop')" class="cursor-pointer bg-indigo-50/80 border border-indigo-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
                         <div class="my-auto">
                             <i class="fa-solid fa-table-list text-4xl text-indigo-600 mb-3 group-hover:scale-110 transition-transform block"></i>
@@ -692,10 +692,21 @@
 
             <!-- BẢNG TỔNG HỢP THÀNH TIỀN & THU CHI TƯƠNG ỨNG TRONG NGÀY -->
             <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 text-slate-800">
-                <div class="flex justify-between items-center mb-3 pb-2 border-b">
+                <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b gap-2">
                     <h2 class="text-base md:text-lg font-black text-slate-800 uppercase flex items-center gap-2">
                         <i class="fa-solid fa-calculator text-indigo-600"></i> BẢNG TỔNG HỢP THÀNH TIỀN & THU CHI
                     </h2>
+
+                    <!-- Ô XÁC NHẬN ADMIN ĐỂ ĐƯỢC TÍCH CỘT THỰC TẾ -->
+                    <div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-300">
+                        <span id="admin-status-badge" class="text-xs font-bold text-slate-600 flex items-center gap-1">
+                            <i class="fa-solid fa-lock text-red-500"></i> Mở Khóa Admin Tích Nộp:
+                        </span>
+                        <input type="password" id="admin-pass-input" placeholder="Nhập Pass..." class="w-24 text-xs p-1 border rounded outline-none focus:ring-1 focus:ring-blue-500">
+                        <button onclick="checkAdminPassword()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded font-bold shadow">
+                            Xác Nhận
+                        </button>
+                    </div>
                 </div>
 
                 <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner">
@@ -708,7 +719,7 @@
                                 <th class="p-2 border w-20">THUA/K</th>
                                 <th class="p-2 border w-24">MANG VỀ</th>
                                 <th class="p-2 border w-20">TỔNG</th>
-                                <th class="p-2 border w-20">THỰC TẾ</th>
+                                <th class="p-2 border w-20 bg-amber-100 text-amber-900">THỰC TẾ (ADMIN)</th>
                                 <th class="p-2 border w-28">NOTE</th>
                             </tr>
                         </thead>
@@ -854,6 +865,26 @@
 
     <!-- JAVASCRIPT LOGIC XỬ LÝ -->
     <script>
+        // TRẠNG THÁI QUYỀN ADMIN CHO CỘT THỰC TẾ (MẶC ĐỊNH LÀ FALSE)
+        window.isAdminUnlocked = false;
+        window.ADMIN_PASSWORD = "123456"; // Mật khẩu mặc định
+
+        function checkAdminPassword() {
+            const inputPass = document.getElementById('admin-pass-input').value;
+            if (inputPass === window.ADMIN_PASSWORD) {
+                window.isAdminUnlocked = true;
+                const badge = document.getElementById('admin-status-badge');
+                if(badge) {
+                    badge.innerHTML = `<i class="fa-solid fa-lock-open text-emerald-600"></i> Đã Mở Khóa Admin:`;
+                    badge.className = "text-xs font-bold text-emerald-700 flex items-center gap-1";
+                }
+                alert("🔑 Xác thực Admin thành công! Bạn có thể tích chọn cột Thực Tế.");
+                renderDayDetailView();
+            } else {
+                alert("❌ Mật khẩu Admin không đúng!");
+            }
+        }
+
         // STATE VẬN ĐỘNG VIÊN
         window.players = [
             { id: 1, name: "Tiến Thọ", gender: "Nam" },
@@ -1094,6 +1125,10 @@
         }
 
         function togglePaymentStatus(payKey) {
+            if (!window.isAdminUnlocked) {
+                alert("🔒 Bạn cần nhập Pass Admin ở phía trên để tích xác nhận nộp/chưa nộp!");
+                return;
+            }
             window.paymentStatus[payKey] = !window.paymentStatus[payKey];
             renderDayDetailView();
             autoBackupData();
@@ -1255,6 +1290,9 @@
                         noteText = isPaid ? `<span class="note-paid">Đã nhận</span>` : `<span class="note-unpaid">Chưa nhận</span>`;
                     }
 
+                    // TÍNH NĂNG ADMIN: NẾU CHƯA MỞ KHÓA ADMIN THÌ Bị DISABLED
+                    const disabledAttr = window.isAdminUnlocked ? '' : 'disabled title="Cần mật khẩu Admin để sửa"';
+
                     sumBody.innerHTML += `
                         <tr class="hover:bg-slate-50">
                             <td class="p-2 border text-left font-bold text-blue-900 whitespace-nowrap pl-3">${p.name}</td>
@@ -1263,7 +1301,9 @@
                             <td class="p-2 border txt-lose">${st.loseK < 0 ? st.loseK : ''}</td>
                             <td class="p-2 border text-blue-600 font-bold">${bringBack > 0 ? bringBack : ''}</td>
                             <td class="p-2 border font-extrabold ${st.total < 0 ? 'txt-lose' : (st.total > 0 ? 'txt-win' : '')}">${st.total}</td>
-                            <td class="p-2 border"><input type="checkbox" ${isPaid ? 'checked' : ''} onclick="togglePaymentStatus('${payKey}')" class="w-4 h-4 cursor-pointer"></td>
+                            <td class="p-2 border bg-amber-50/30">
+                                <input type="checkbox" ${isPaid ? 'checked' : ''} ${disabledAttr} onclick="togglePaymentStatus('${payKey}')" class="w-4 h-4 cursor-pointer accent-emerald-600">
+                            </td>
                             <td class="p-2 border whitespace-nowrap">${noteText}</td>
                         </tr>
                     `;
