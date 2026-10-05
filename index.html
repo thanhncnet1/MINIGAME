@@ -166,7 +166,7 @@
                     <i class="fa-solid fa-wallet"></i> <span>QUẢN LÝ THU CHI</span>
                 </button>
 
-                <!-- NÚT BẢNG TỔNG HỢP CÁC NGÀY TRÊN MÀN HÌNH CHÍNH (MỚI THÊM) -->
+                <!-- NÚT BẢNG TỔNG HỢP CÁC NGÀY TRÊN MENU -->
                 <button onclick="showTab('tonghop')" id="btn-tonghop" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-indigo-800 text-indigo-100 border border-indigo-400/40 font-bold shadow-sm">
                     <i class="fa-solid fa-table-list text-yellow-400"></i> <span>📊 TỔNG HỢP CÁC NGÀY</span>
                 </button>
@@ -232,33 +232,60 @@
     <!-- MAIN CONTAINER -->
     <main class="max-w-7xl mx-auto w-full p-2 md:p-4 flex-grow">
 
-        <!-- TRANG CHỦ (HOME) -->
+        <!-- TRANG CHỦ (HOME) - ĐÃ BỔ SUNG Ô "BẢNG TỔNG HỢP" THEO ẢNH MẪU -->
         <section id="tab-home" class="tab-content">
             <div class="bg-white/90 backdrop-blur rounded-xl shadow-md p-6 md:p-8 text-center my-4 text-slate-800">
                 <h2 class="text-2xl font-bold mb-4">CHÀO MỪNG ĐẾN VỚI GIẢI ĐẤU CLB-PICKLEBALL-CMTD</h2>
                 <p class="text-slate-600 mb-6 max-w-2xl mx-auto text-sm md:text-base">Vui lòng chọn một trong các mục bên dưới hoặc trên thanh menu để bắt đầu quản lý danh sách vận động viên, lịch thi đấu và bảng xếp hạng.</p>
                 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-5xl mx-auto">
-                    <div onclick="showTab('players')" class="cursor-pointer bg-blue-50 border border-blue-200 p-6 rounded-xl hover:shadow-lg transition text-center group">
-                        <i class="fa-solid fa-user-gear text-4xl text-blue-600 mb-3 group-hover:scale-110 transition-transform"></i>
-                        <h3 class="font-bold text-lg text-slate-800">Danh Sách Pick Thủ</h3>
-                        <p class="text-xs text-slate-500 mt-2">Thêm, xoá, sửa thông tin thành viên CLB</p>
+                <!-- LƯỚI 5 CỘT CHỨA CÁC Ô TÙY CHỌN TRÊN MÀN HÌNH CHÍNH -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 max-w-6xl mx-auto">
+                    
+                    <!-- 1. DANH SÁCH PICK THỦ -->
+                    <div onclick="showTab('players')" class="cursor-pointer bg-blue-50/80 border border-blue-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
+                        <div class="my-auto">
+                            <i class="fa-solid fa-user-gear text-4xl text-blue-600 mb-3 group-hover:scale-110 transition-transform block"></i>
+                            <h3 class="font-bold text-base md:text-lg text-slate-800">Danh Sách Pick Thủ</h3>
+                            <p class="text-xs text-slate-500 mt-2">Thêm, xoá, sửa thông tin thành viên CLB</p>
+                        </div>
                     </div>
-                    <div onclick="showTab('minigame1')" class="cursor-pointer bg-amber-50 border border-amber-200 p-6 rounded-xl hover:shadow-lg transition text-center group">
-                        <i class="fa-solid fa-people-group text-4xl text-amber-600 mb-3 group-hover:scale-110 transition-transform"></i>
-                        <h3 class="font-bold text-lg text-slate-800">MINIGAME 1</h3>
-                        <p class="text-xs text-slate-500 mt-2">Đấu Team A vs Team B (Lịch 24 trận & Tổng hợp)</p>
+
+                    <!-- 2. MINIGAME 1 -->
+                    <div onclick="showTab('minigame1')" class="cursor-pointer bg-amber-50/80 border border-amber-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
+                        <div class="my-auto">
+                            <i class="fa-solid fa-people-group text-4xl text-amber-600 mb-3 group-hover:scale-110 transition-transform block"></i>
+                            <h3 class="font-bold text-base md:text-lg text-slate-800">MINIGAME 1</h3>
+                            <p class="text-xs text-slate-500 mt-2">Đấu Team A vs Team B (Lịch 24 trận & Tổng hợp)</p>
+                        </div>
                     </div>
-                    <div onclick="showTab('minigame2')" class="cursor-pointer bg-emerald-50 border border-emerald-200 p-6 rounded-xl hover:shadow-lg transition text-center group">
-                        <i class="fa-solid fa-diagram-project text-4xl text-emerald-600 mb-3 group-hover:scale-110 transition-transform"></i>
-                        <h3 class="font-bold text-lg text-slate-800">MINIGAME 2</h3>
-                        <p class="text-xs text-slate-500 mt-2">Vòng Bảng A-B, Vòng Vòng Tròn, Bán Kết, Chung Kết</p>
+
+                    <!-- 3. MINIGAME 2 -->
+                    <div onclick="showTab('minigame2')" class="cursor-pointer bg-emerald-50/80 border border-emerald-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
+                        <div class="my-auto">
+                            <i class="fa-solid fa-diagram-project text-4xl text-emerald-600 mb-3 group-hover:scale-110 transition-transform block"></i>
+                            <h3 class="font-bold text-base md:text-lg text-slate-800">MINIGAME 2</h3>
+                            <p class="text-xs text-slate-500 mt-2">Vòng Bảng A-B, Vòng Vòng Tròn, Bán Kết, Chung Kết</p>
+                        </div>
                     </div>
-                    <div onclick="showTab('thuchi')" class="cursor-pointer bg-teal-50 border border-teal-200 p-6 rounded-xl hover:shadow-lg transition text-center group">
-                        <i class="fa-solid fa-wallet text-4xl text-teal-600 mb-3 group-hover:scale-110 transition-transform"></i>
-                        <h3 class="font-bold text-lg text-slate-800">Quản Lý Thu Chi</h3>
-                        <p class="text-xs text-slate-500 mt-2">Quản lý các khoản thu, chi và tổng quỹ tồn</p>
+
+                    <!-- 4. QUẢN LÝ THU CHI -->
+                    <div onclick="showTab('thuchi')" class="cursor-pointer bg-teal-50/80 border border-teal-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
+                        <div class="my-auto">
+                            <i class="fa-solid fa-wallet text-4xl text-teal-600 mb-3 group-hover:scale-110 transition-transform block"></i>
+                            <h3 class="font-bold text-base md:text-lg text-slate-800">Quản Lý Thu Chi</h3>
+                            <p class="text-xs text-slate-500 mt-2">Quản lý các khoản thu, chi và tổng quỹ tồn</p>
+                        </div>
                     </div>
+
+                    <!-- 5. BẢNG TỔNG HỢP CÁC NGÀY (THÊM MỚI THEO YÊU CẦU) -->
+                    <div onclick="showTab('tonghop')" class="cursor-pointer bg-indigo-50/80 border border-indigo-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
+                        <div class="my-auto">
+                            <i class="fa-solid fa-table-list text-4xl text-indigo-600 mb-3 group-hover:scale-110 transition-transform block"></i>
+                            <h3 class="font-bold text-base md:text-lg text-slate-800">Bảng Tổng Hợp</h3>
+                            <p class="text-xs text-slate-500 mt-2">Tổng hợp kết quả kèo & thưởng phạt tất cả các ngày</p>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- QUẢN LÝ SAO LƯU DỮ LIỆU -->
