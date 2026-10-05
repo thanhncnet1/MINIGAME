@@ -166,6 +166,11 @@
                     <i class="fa-solid fa-wallet"></i> <span>QUẢN LÝ THU CHI</span>
                 </button>
 
+                <!-- NÚT BẢNG TỔNG HỢP CÁC NGÀY TRÊN MÀN HÌNH CHÍNH (MỚI THÊM) -->
+                <button onclick="showTab('tonghop')" id="btn-tonghop" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-indigo-800 text-indigo-100 border border-indigo-400/40 font-bold shadow-sm">
+                    <i class="fa-solid fa-table-list text-yellow-400"></i> <span>📊 TỔNG HỢP CÁC NGÀY</span>
+                </button>
+
                 <!-- SETTING MENU -->
                 <div class="relative">
                     <button onclick="toggleMenu('menuSetting', event)" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-slate-700/80 text-amber-300 border border-amber-400/30">
@@ -183,17 +188,13 @@
                     </div>
                 </div>
 
-                <!-- TỔNG HỢP CÁC NGÀY MENU -->
+                <!-- MENU CHỌN XEM CHI TIẾT THEO NGÀY -->
                 <div class="relative">
-                    <button onclick="toggleMenu('menuTongHop', event)" id="btn-tonghop" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-indigo-900/80 text-indigo-200 border border-indigo-400/30">
-                        <i class="fa-solid fa-chart-column"></i> <span>📊 TỔNG HỢP ▾</span>
+                    <button onclick="toggleMenu('menuTongHop', event)" id="btn-dates" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-slate-700/80 text-blue-200 border border-blue-400/30">
+                        <i class="fa-solid fa-calendar-days"></i> <span>📅 CHI TIẾT NGÀY ▾</span>
                     </button>
                     <div class="dropdown-menu" id="menuTongHop">
                         <div id="datesMenuList"></div>
-                        <div class="dropdown-divider"></div>
-                        <div class="dropdown-item font-extrabold text-blue-600" onclick="showTab('tonghop')">
-                            <i class="fa-solid fa-table-list"></i> 📊 Bảng Tổng Hợp Tất Cả Ngày
-                        </div>
                     </div>
                 </div>
 
@@ -643,7 +644,7 @@
                     </select>
                 </div>
 
-                <!-- Tối ưu hiển thị bảng bằng khung trượt mượt trên di động KÈM NÚT SỬA & XÓA TRẬN -->
+                <!-- Khung bảng trận đấu với nút Xóa từng trận -->
                 <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner">
                     <table class="w-full min-w-[750px] text-center border-collapse border border-slate-300 text-xs">
                         <thead>
@@ -690,7 +691,7 @@
             </div>
         </section>
 
-        <!-- QUẢN LÝ THU CHI (TÍNH NĂNG MỚI THÊM) -->
+        <!-- QUẢN LÝ THU CHI -->
         <section id="tab-thuchi" class="tab-content hidden space-y-6">
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
                 <div class="flex flex-wrap justify-between items-center mb-4 pb-3 border-b gap-2">
@@ -705,7 +706,6 @@
                     </button>
                 </div>
 
-                <!-- BẢNG THU CHI CHUẨN ĐỦ CÁC CỘT THEO YÊU CẦU -->
                 <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner">
                     <table class="w-full min-w-[750px] text-center border-collapse border border-slate-300 text-xs">
                         <thead>
@@ -897,7 +897,7 @@
             "1/10/26": { btcNoteAdminOption: "YES" }
         };
 
-        // DỮ LIỆU THU CHI (STATE MỚI)
+        // DỮ LIỆU THU CHI
         window.thuChiData = [
             { id: 1, player: "Tiến Thọ", thu: 50, chi: 0, note: "Đóng tiền quỹ tháng 10" },
             { id: 2, player: "Quỹ CLB", thu: 0, chi: 30, note: "Mua nước ngọt & bóng đấu" }
@@ -1017,7 +1017,6 @@
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
-        // CHỨC NĂNG SỬA VÀ XÓA TRẬN ĐẤU CỤ THỂ CỦA BẢNG THỐNG KÊ TRẬN PICK
         function deleteMatchFromCurrentDate(index) {
             const dateStr = window.currentSelectedDate;
             if(confirm(`Bạn có chắc chắn muốn XÓA Trận ${index + 1}?`)) {
@@ -1086,7 +1085,6 @@
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
-        // RENDER BẢNG THỐNG KÊ TRẬN PICK (Bổ sung Nút Sửa & Nút Xóa)
         function renderDayDetailView() {
             const dateStr = window.currentSelectedDate;
             const titleEl = document.getElementById('current-date-title');
@@ -1207,7 +1205,6 @@
                 `;
             });
 
-            // BẢNG TỔNG HỢP THÀNH TIỀN & THU CHI
             const sumBody = document.getElementById('day-summary-body');
             if(!sumBody) return;
             sumBody.innerHTML = '';
@@ -1276,7 +1273,6 @@
             `;
         }
 
-        // LOGIC BẢNG QUẢN LÝ THU CHI MỚI
         function renderThuChiTable() {
             const tbody = document.getElementById('thuchi-table-body');
             const tfoot = document.getElementById('thuchi-table-foot');
@@ -1379,7 +1375,6 @@
             }
         }
 
-        // BẢNG TỔNG HỢP CÁC NGÀY
         function renderTongHopTab() {
             const container = document.getElementById('tonghop-content-container');
             if(!container) return;
@@ -1525,7 +1520,6 @@
             container.innerHTML = html;
         }
 
-        // MINIGAME 2
         function renderM2Pairs() {
             const boxA = document.getElementById('m2-pairs-A');
             const boxB = document.getElementById('m2-pairs-B');
