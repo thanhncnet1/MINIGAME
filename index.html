@@ -131,7 +131,7 @@
              class="w-full h-auto max-h-48 sm:max-h-64 md:max-h-80 object-cover object-center block">
     </div>
 
-    <!-- 2. THANH TIÊU ĐỀ & THANH ĐIỀU HƯỚNG TỐI ƯU RESPONSIVE PHONE & PC -->
+    <!-- 2. THANH TIÊU ĐỀ & THANH ĐIỀU HƯỚNG -->
     <nav class="bg-slate-800 text-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-2 sm:px-4 flex flex-col md:flex-row items-center justify-between py-2 md:py-0 md:h-16 gap-2">
             
@@ -162,6 +162,9 @@
                 <button onclick="showTab('minigame2')" id="btn-minigame2" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
                     <i class="fa-solid fa-medal"></i> <span>MINIGAME 2</span>
                 </button>
+                <button onclick="showTab('thuchi')" id="btn-thuchi" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-emerald-700/80 text-emerald-200 border border-emerald-400/30">
+                    <i class="fa-solid fa-wallet"></i> <span>QUẢN LÝ THU CHI</span>
+                </button>
 
                 <!-- SETTING MENU -->
                 <div class="relative">
@@ -170,7 +173,7 @@
                     </button>
                     <div class="dropdown-menu" id="menuSetting">
                         <div class="dropdown-item" onclick="addDateTab()"><i class="fa-solid fa-calendar-plus text-emerald-600"></i> 📅 ➕ Thêm Ngày Mới</div>
-                        <div class="dropdown-item" onclick="renameCurrentDate()"><i class="fa-solid fa-pen-to-square text-blue-600"></i> ✏️️ Sửa Tên Ngày Hiện Tại</div>
+                        <div class="dropdown-item" onclick="renameCurrentDate()"><i class="fa-solid fa-pen-to-square text-blue-600"></i> ✏ Sửa Tên Ngày Hiện Tại</div>
                         <div class="dropdown-item text-red-600" onclick="deleteCurrentDate()"><i class="fa-solid fa-trash text-red-600"></i> 🗑 Xóa Ngày Hiện Tại</div>
                         <div class="dropdown-divider"></div>
                         <div class="dropdown-item" onclick="exportToExcel()"><i class="fa-solid fa-file-excel text-emerald-600"></i> 📥 Xuất Dữ Liệu Excel</div>
@@ -250,10 +253,10 @@
                         <h3 class="font-bold text-lg text-slate-800">MINIGAME 2</h3>
                         <p class="text-xs text-slate-500 mt-2">Vòng Bảng A-B, Vòng Vòng Tròn, Bán Kết, Chung Kết</p>
                     </div>
-                    <div onclick="showTab('day_detail')" class="cursor-pointer bg-indigo-50 border border-indigo-200 p-6 rounded-xl hover:shadow-lg transition text-center group">
-                        <i class="fa-solid fa-table-list text-4xl text-indigo-600 mb-3 group-hover:scale-110 transition-transform"></i>
-                        <h3 class="font-bold text-lg text-slate-800">Bảng Đấu Từng Ngày</h3>
-                        <p class="text-xs text-slate-500 mt-2">Xem và nhập điểm trận đấu theo ngày cụ thể</p>
+                    <div onclick="showTab('thuchi')" class="cursor-pointer bg-teal-50 border border-teal-200 p-6 rounded-xl hover:shadow-lg transition text-center group">
+                        <i class="fa-solid fa-wallet text-4xl text-teal-600 mb-3 group-hover:scale-110 transition-transform"></i>
+                        <h3 class="font-bold text-lg text-slate-800">Quản Lý Thu Chi</h3>
+                        <p class="text-xs text-slate-500 mt-2">Quản lý các khoản thu, chi và tổng quỹ tồn</p>
                     </div>
                 </div>
 
@@ -403,7 +406,7 @@
             </div>
         </section>
 
-        <!-- MINIGAME 2 (HỖ TRỢ LINH HOẠT 4, 5 CẶP HOẶC NHIỀU HƠN) -->
+        <!-- MINIGAME 2 -->
         <section id="tab-minigame2" class="tab-content hidden">
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
                 <div class="flex flex-wrap justify-between items-center mb-4 border-b pb-3 gap-2">
@@ -640,9 +643,9 @@
                     </select>
                 </div>
 
-                <!-- Tối ưu hiển thị bảng bằng khung trượt mượt trên di động -->
+                <!-- Tối ưu hiển thị bảng bằng khung trượt mượt trên di động KÈM NÚT SỬA & XÓA TRẬN -->
                 <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner">
-                    <table class="w-full min-w-[650px] text-center border-collapse border border-slate-300 text-xs">
+                    <table class="w-full min-w-[750px] text-center border-collapse border border-slate-300 text-xs">
                         <thead>
                             <tr class="bg-slate-100 text-slate-700 font-bold">
                                 <th class="p-2 border w-12">STT</th>
@@ -651,6 +654,7 @@
                                 <th class="p-2 border w-20">TỶ SỐ</th>
                                 <th class="p-2 border bg-amber-100 text-amber-900 w-32">CHỌN KÈO TRẬN</th>
                                 <th class="p-2 border bg-amber-100 text-amber-900" colspan="2">KÈO BAN ĐẦU</th>
+                                <th class="p-2 border w-24 bg-slate-200 text-slate-800">THAO TÁC</th>
                             </tr>
                         </thead>
                         <tbody id="day-matches-body"></tbody>
@@ -666,7 +670,6 @@
                     </h2>
                 </div>
 
-                <!-- Tối ưu hiển thị bảng bằng khung trượt mượt trên di động -->
                 <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner">
                     <table class="w-full min-w-[700px] text-center border-collapse border border-slate-300 text-xs">
                         <thead>
@@ -687,7 +690,43 @@
             </div>
         </section>
 
-        <!-- BẢNG TỔNG HỢP CÁC NGÀY (CĂN CHỈNH MOBILE/PC TỐI ƯU KÈM THANH TRUỢT KHI DỌC) -->
+        <!-- QUẢN LÝ THU CHI (TÍNH NĂNG MỚI THÊM) -->
+        <section id="tab-thuchi" class="tab-content hidden space-y-6">
+            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
+                <div class="flex flex-wrap justify-between items-center mb-4 pb-3 border-b gap-2">
+                    <div>
+                        <h2 class="text-lg md:text-xl font-black text-slate-800 uppercase flex items-center gap-2">
+                            <i class="fa-solid fa-wallet text-emerald-600"></i> QUẢN LÝ THU CHI CLB
+                        </h2>
+                        <p class="text-xs text-slate-500">Theo dõi chi tiết các khoản thu, chi và quỹ tồn</p>
+                    </div>
+                    <button onclick="openThuChiModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-lg font-bold shadow flex items-center gap-1">
+                        <i class="fa-solid fa-plus"></i> Thêm Khoản Thu/Chi
+                    </button>
+                </div>
+
+                <!-- BẢNG THU CHI CHUẨN ĐỦ CÁC CỘT THEO YÊU CẦU -->
+                <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner">
+                    <table class="w-full min-w-[750px] text-center border-collapse border border-slate-300 text-xs">
+                        <thead>
+                            <tr class="bg-slate-800 text-white font-bold">
+                                <th class="p-2 border w-12">STT</th>
+                                <th class="p-2 border text-left pl-3">DANH SÁCH PICK THỦ</th>
+                                <th class="p-2 border w-28 text-emerald-300">THU (K)</th>
+                                <th class="p-2 border w-28 text-red-300">CHI (K)</th>
+                                <th class="p-2 border w-32 text-yellow-300">QUỸ CÒN (THU - CHI)</th>
+                                <th class="p-2 border text-left pl-3">GHI CHÚ</th>
+                                <th class="p-2 border w-24">THAO TÁC</th>
+                            </tr>
+                        </thead>
+                        <tbody id="thuchi-table-body" class="font-semibold"></tbody>
+                        <tfoot id="thuchi-table-foot" class="bg-slate-100 font-extrabold"></tfoot>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- BẢNG TỔNG HỢP CÁC NGÀY -->
         <section id="tab-tonghop" class="tab-content hidden">
             <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 text-slate-800">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-3 border-b gap-2">
@@ -696,7 +735,6 @@
                     </h2>
                     <span class="text-[11px] md:text-xs text-slate-500 italic">Chỉ tổng hợp ngày có trạng thái NOTE = YES</span>
                 </div>
-                <!-- Container cuộn ngang tối ưu chuẩn responsive dọc/ngang máy tính & di động -->
                 <div id="tonghop-content-container" class="smooth-scroll w-full border border-slate-200 rounded-lg shadow-inner"></div>
             </div>
         </section>
@@ -753,6 +791,40 @@
         </div>
     </div>
 
+    <!-- MODAL THÊM / SỬA KHOẢN THU CHI -->
+    <div id="thuchi-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 text-slate-800">
+            <h3 id="thuchi-modal-title" class="text-lg font-bold text-slate-800 mb-4">Thêm Khoản Thu / Chi</h3>
+            <input type="hidden" id="thuchi-id">
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Pick Thủ / Người thực hiện</label>
+                    <select id="thuchi-player" class="w-full border rounded-lg p-2 outline-none">
+                        <option value="Tất cả / Quỹ CLB">Tất cả / Quỹ CLB</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-emerald-700 mb-1">Số tiền Thu (K)</label>
+                        <input type="number" id="thuchi-thu" class="w-full border rounded-lg p-2 outline-none" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-red-600 mb-1">Số tiền Chi (K)</label>
+                        <input type="number" id="thuchi-chi" class="w-full border rounded-lg p-2 outline-none" placeholder="0">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Ghi Chú</label>
+                    <input type="text" id="thuchi-note" class="w-full border rounded-lg p-2 outline-none" placeholder="Nội dung thu/chi...">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-6">
+                <button onclick="closeThuChiModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-sm rounded-lg hover:bg-slate-300">Hủy</button>
+                <button onclick="saveThuChi()" class="px-4 py-2 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 font-semibold">Lưu Khoản Thu Chi</button>
+            </div>
+        </div>
+    </div>
+
     <!-- JAVASCRIPT LOGIC XỬ LÝ -->
     <script>
         // STATE VẬN ĐỘNG VIÊN
@@ -786,25 +858,7 @@
             { id:3, luot:1, san:3, content:"Nam xoay vòng", a1:"Phú Mỗ", a2:"Hà Giấy", scoreA:"", scoreB:"", b1:"Dũng Ngạc", b2:"Lợi Trì" },
             { id:4, luot:2, san:1, content:"Nam xoay vòng", a1:"Long Diễm", a2:"Châu Sĩ", scoreA:"", scoreB:"", b1:"Thành Đàm", b2:"Thành Sóc" },
             { id:5, luot:2, san:2, content:"Nam-Nữ không xoay vòng", a1:"Tuấn La", a2:"Ly", scoreA:"", scoreB:"", b1:"Điền Chèm", b2:"Hải Hà" },
-            { id:6, luot:2, san:3, content:"Nam-Nữ không xoay vòng", a1:"Hà Giấy", a2:"Vân Đình", scoreA:"", scoreB:"", b1:"Lợi Trì", b2:"Quỳnh Cool" },
-            { id:7, luot:3, san:1, content:"Nam xoay vòng", a1:"Tiến Thọ", a2:"Hà Giấy", scoreA:"", scoreB:"", b1:"Trí Đô", b2:"Lợi Trì" },
-            { id:8, luot:3, san:2, content:"Nam xoay vòng", a1:"Long Diễm", a2:"Phú Mỗ", scoreA:"", scoreB:"", b1:"Thành Đàm", b2:"Dũng Ngạc" },
-            { id:9, luot:3, san:3, content:"Đôi Nam-Nữ", a1:"Tuấn La", a2:"Hạnh", scoreA:"", scoreB:"", b1:"Minh Vương", b2:"Quỳnh Cool" },
-            { id:10, luot:4, san:1, content:"Nam xoay vòng", a1:"Tiến Thọ", a2:"Phú Mỗ", scoreA:"", scoreB:"", b1:"Trí Đô", b2:"Dũng Ngạc" },
-            { id:11, luot:4, san:2, content:"Nam-Nữ", a1:"Châu Sĩ", a2:"Vân Đình", scoreA:"", scoreB:"", b1:"Thành Sóc", b2:"Hải Hà" },
-            { id:12, luot:4, san:3, content:"Nam-Nữ", a1:"Long Diễm", a2:"Ly", scoreA:"", scoreB:"", b1:"Thành Đàm", b2:"Quỳnh Cool" },
-            { id:13, luot:5, san:1, content:"Nam xoay vòng", a1:"Tiến Thọ", a2:"Long Diễm", scoreA:"", scoreB:"", b1:"Trí Đô", b2:"Thành Đàm" },
-            { id:14, luot:5, san:2, content:"Nam xoay vòng", a1:"Phú Mỗ", a2:"Tuấn La", scoreA:"", scoreB:"", b1:"Dũng Ngạc", b2:"Điền Chèm" },
-            { id:15, luot:5, san:3, content:"Nữ xoay vòng", a1:"Vân Đình", a2:"Hạnh", scoreA:"", scoreB:"", b1:"Quỳnh Cool", b2:"Hải Hà" },
-            { id:16, luot:6, san:1, content:"Nam xoay vòng", a1:"Châu Sĩ", a2:"Phú Mỗ", scoreA:"", scoreB:"", b1:"Thành Sóc", b2:"Dũng Ngạc" },
-            { id:17, luot:6, san:2, content:"Nam-Nữ", a1:"Hà Giấy", a2:"Ly", scoreA:"", scoreB:"", b1:"Lợi Trì", b2:"Hải Hà" },
-            { id:18, luot:6, san:3, content:"Nam-Nữ", a1:"Tuấn La", a2:"Vân Đình", scoreA:"", scoreB:"", b1:"Điền Chèm", b2:"Quỳnh Cool" },
-            { id:19, luot:7, san:1, content:"Nam xoay vòng", a1:"Tiến Thọ", a2:"Tuấn La", scoreA:"", scoreB:"", b1:"Trí Đô", b2:"Điền Chèm" },
-            { id:20, luot:7, san:2, content:"Nam xoay vòng", a1:"Châu Sĩ", a2:"Hà Giấy", scoreA:"", scoreB:"", b1:"Thành Sóc", b2:"Lợi Trì" },
-            { id:21, luot:7, san:3, content:"Nam-Nữ", a1:"Long Diễm", a2:"Hạnh", scoreA:"", scoreB:"", b1:"Thành Đàm", b2:"Hải Hà" },
-            { id:22, luot:8, san:1, content:"Nam xoay vòng", a1:"Hà Giấy", a2:"Long Diễm", scoreA:"", scoreB:"", b1:"Lợi Trì", b2:"Thành Đàm" },
-            { id:23, luot:8, san:2, content:"Nam-Nữ", a1:"Phú Mỗ", a2:"Ly", scoreA:"", scoreB:"", b1:"Dũng Ngạc", b2:"Quỳnh Cool" },
-            { id:24, luot:8, san:3, content:"Đôi Nam-Nữ", a1:"Châu Sĩ", a2:"Hạnh", scoreA:"", scoreB:"", b1:"Thành Sóc", b2:"Hải Hà" }
+            { id:6, luot:2, san:3, content:"Nam-Nữ không xoay vòng", a1:"Hà Giấy", a2:"Vân Đình", scoreA:"", scoreB:"", b1:"Lợi Trì", b2:"Quỳnh Cool" }
         ];
 
         window.m2PairsA = [
@@ -832,17 +886,7 @@
             "1/10/26": [
                 { id: 1, c1_p1: "Trí Đô", c1_p2: "Tiến Thọ", c2_p1: "Phú Mỗ", c2_p2: "Thành Đàm", score1: "8", score2: "11", keoMode: "default", customWin: 5, customLose: -15 },
                 { id: 2, c1_p1: "Phú Mỗ", c1_p2: "Thành Đàm", c2_p1: "Tiến Thọ", c2_p2: "Trí Đô", score1: "9", score2: "11", keoMode: "default", customWin: 5, customLose: -15 },
-                { id: 3, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "", keoMode: "default", customWin: 5, customLose: -15 },
-                { id: 4, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "", keoMode: "default", customWin: 5, customLose: -15 },
-                { id: 5, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "", keoMode: "default", customWin: 5, customLose: -15 },
-                { id: 6, c1_p1: "Tiến Thọ", c1_p2: "Trí Đô", c2_p1: "Thành Đàm", c2_p2: "Long Diễm", score1: "11", score2: "5", keoMode: "default", customWin: 5, customLose: -15 },
-                { id: 7, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "", keoMode: "default", customWin: 5, customLose: -15 },
-                { id: 8, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "", keoMode: "default", customWin: 5, customLose: -15 },
-                { id: 9, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "", keoMode: "default", customWin: 5, customLose: -15 },
-                { id: 10, c1_p1: "Long Diễm", c1_p2: "Thành Đàm", c2_p1: "Tiến Thọ", c2_p2: "Trí Đô", score1: "8", score2: "11", keoMode: "default", customWin: 5, customLose: -15 },
-                { id: 11, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "", keoMode: "default", customWin: 5, customLose: -15 },
-                { id: 12, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "", keoMode: "default", customWin: 5, customLose: -15 },
-                { id: 13, c1_p1: "Vân Đình", c1_p2: "Tiến Thọ", c2_p1: "Tuấn La", c2_p2: "Long Diễm", score1: "8", score2: "11", keoMode: "default", customWin: 5, customLose: -15 }
+                { id: 3, c1_p1: "Tiến Thọ", c1_p2: "Trí Đô", c2_p1: "Thành Đàm", c2_p2: "Long Diễm", score1: "11", score2: "5", keoMode: "default", customWin: 5, customLose: -15 }
             ]
         };
 
@@ -850,10 +894,14 @@
         window.paymentStatus = {
             "1/10/26_Vân Đình": true,
             "1/10/26_Tiến Thọ": true,
-            "1/10/26_Tuấn La": true,
-            "1/10/26_Thành Đàm": true,
             "1/10/26": { btcNoteAdminOption: "YES" }
         };
+
+        // DỮ LIỆU THU CHI (STATE MỚI)
+        window.thuChiData = [
+            { id: 1, player: "Tiến Thọ", thu: 50, chi: 0, note: "Đóng tiền quỹ tháng 10" },
+            { id: 2, player: "Quỹ CLB", thu: 0, chi: 30, note: "Mua nước ngọt & bóng đấu" }
+        ];
 
         function toggleMenu(menuId, e) {
             e.stopPropagation();
@@ -954,7 +1002,6 @@
 
         function backupDataJSON() { exportBackupJSON(); }
         function triggerRestoreJSON() { triggerRestoreInput(); }
-        function handleRestoreJSON(e) { importBackupJSON(e); }
 
         function addMatchToCurrentDate() {
             const dateStr = window.currentSelectedDate;
@@ -970,6 +1017,19 @@
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
+        // CHỨC NĂNG SỬA VÀ XÓA TRẬN ĐẤU CỤ THỂ CỦA BẢNG THỐNG KÊ TRẬN PICK
+        function deleteMatchFromCurrentDate(index) {
+            const dateStr = window.currentSelectedDate;
+            if(confirm(`Bạn có chắc chắn muốn XÓA Trận ${index + 1}?`)) {
+                if(window.matchesData[dateStr]) {
+                    window.matchesData[dateStr].splice(index, 1);
+                    renderDayDetailView();
+                    autoBackupData();
+                    if(window.syncToFirebase) window.syncToFirebase();
+                }
+            }
+        }
+
         function updateMatchData(index, field, value) {
             const dateStr = window.currentSelectedDate;
             if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
@@ -980,7 +1040,6 @@
             }
         }
 
-        // ÁP DỤNG LOẠI KÈO CHO TOÀN BỘ CÁC TRẬN TRONG NGÀY
         function applyKeoToAllMatchesInDate(modeVal) {
             const dateStr = window.currentSelectedDate;
             window.dateKeoMode[dateStr] = modeVal;
@@ -995,7 +1054,6 @@
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
-        // ĐỔI KÈO RIÊNG TỪNG TRẬN
         function updateMatchKeoMode(index, modeVal) {
             const dateStr = window.currentSelectedDate;
             if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
@@ -1028,7 +1086,7 @@
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
-        // BẢNG THỐNG KÊ TRẬN PICK VÀ BẢNG THU CHI
+        // RENDER BẢNG THỐNG KÊ TRẬN PICK (Bổ sung Nút Sửa & Nút Xóa)
         function renderDayDetailView() {
             const dateStr = window.currentSelectedDate;
             const titleEl = document.getElementById('current-date-title');
@@ -1052,8 +1110,6 @@
                 const s2 = parseInt(val2);
 
                 let keo1 = "", keo2 = "";
-                
-                // Xác định giá trị thắng/thua cho từng trận cụ thể
                 const mMode = m.keoMode || window.dateKeoMode[dateStr] || 'default';
                 let winAmt = 5, loseAmt = -15;
 
@@ -1061,7 +1117,7 @@
                 else if (mMode === 'free') {
                     winAmt = parseFloat(m.customWin) || 0;
                     loseAmt = parseFloat(m.customLose) || 0;
-                    if (loseAmt > 0) loseAmt = -loseAmt; // Đảm bảo mức thua là số âm
+                    if (loseAmt > 0) loseAmt = -loseAmt;
                 }
 
                 if(!isNaN(s1) && !isNaN(s2)) {
@@ -1106,7 +1162,6 @@
                     ? `<span class="ham-text">HẦM</span>` 
                     : `<input type="text" class="score-input" value="${m.score2 || ''}" onchange="updateMatchData(${idx}, 'score2', this.value)">`;
 
-                // Render giao diện chọn Kèo từng trận
                 let keoCellUI = `
                     <select onchange="updateMatchKeoMode(${idx}, this.value)" class="text-[10px] sm:text-[11px] font-bold p-0.5 border rounded bg-amber-50 outline-none w-full text-amber-900 border-amber-300">
                         <option value="default" ${mMode==='default'?'selected':''}>Mặc định (+5k/-15k)</option>
@@ -1143,6 +1198,11 @@
                         <td class="p-1 bg-amber-50/50">${keoCellUI}</td>
                         <td class="p-1 font-extrabold ${keo1 > 0 ? 'txt-win' : (keo1 < 0 ? 'txt-lose' : '')}">${keo1}</td>
                         <td class="p-1 font-extrabold ${keo2 > 0 ? 'txt-win' : (keo2 < 0 ? 'txt-lose' : '')}">${keo2}</td>
+                        <td class="p-1 whitespace-nowrap">
+                            <button onclick="deleteMatchFromCurrentDate(${idx})" class="text-red-600 hover:text-red-800 font-bold text-xs px-2 py-1 bg-red-50 rounded border border-red-200">
+                                <i class="fa-solid fa-trash"></i> Xóa
+                            </button>
+                        </td>
                     </tr>
                 `;
             });
@@ -1216,7 +1276,110 @@
             `;
         }
 
-        // BẢNG TỔNG HỢP CÁC NGÀY (OPTIMIZED FOR MOBILE DỌC/NGANG & PC - CÓ THANH TRUỢT NẾU TRÀN)
+        // LOGIC BẢNG QUẢN LÝ THU CHI MỚI
+        function renderThuChiTable() {
+            const tbody = document.getElementById('thuchi-table-body');
+            const tfoot = document.getElementById('thuchi-table-foot');
+            if(!tbody || !tfoot) return;
+
+            tbody.innerHTML = '';
+            let totalThu = 0, totalChi = 0, runningBalance = 0;
+
+            window.thuChiData.forEach((item, idx) => {
+                const thu = parseFloat(item.thu) || 0;
+                const chi = parseFloat(item.chi) || 0;
+                totalThu += thu;
+                totalChi += chi;
+                runningBalance += (thu - chi);
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-2 border font-bold text-slate-700">${idx + 1}</td>
+                        <td class="p-2 border text-left pl-3 text-blue-900">${item.player}</td>
+                        <td class="p-2 border font-extrabold text-emerald-600">${thu > 0 ? thu + 'K' : '-'}</td>
+                        <td class="p-2 border font-extrabold text-red-600">${chi > 0 ? chi + 'K' : '-'}</td>
+                        <td class="p-2 border font-extrabold ${runningBalance >= 0 ? 'text-blue-700' : 'text-red-600'}">${runningBalance}K</td>
+                        <td class="p-2 border text-left pl-3 text-slate-600">${item.note || ''}</td>
+                        <td class="p-2 border whitespace-nowrap">
+                            <button onclick="editThuChi(${item.id})" class="text-blue-600 hover:text-blue-800 mr-2 font-bold text-xs"><i class="fa-solid fa-pen"></i> Sửa</button>
+                            <button onclick="deleteThuChi(${item.id})" class="text-red-600 hover:text-red-800 font-bold text-xs"><i class="fa-solid fa-trash"></i> Xóa</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            const netBalance = totalThu - totalChi;
+            tfoot.innerHTML = `
+                <tr>
+                    <td class="p-2 border text-left pl-3 text-slate-800" colspan="2">TỔNG CỘNG QUỸ THU CHI</td>
+                    <td class="p-2 border text-emerald-600 text-sm">${totalThu}K</td>
+                    <td class="p-2 border text-red-600 text-sm">${totalChi}K</td>
+                    <td class="p-2 border text-sm ${netBalance >= 0 ? 'text-blue-700' : 'text-red-600'}" colspan="3">QUỸ TỒN: ${netBalance}K</td>
+                </tr>
+            `;
+        }
+
+        function openThuChiModal(isEdit = false) {
+            const selectEl = document.getElementById('thuchi-player');
+            if(selectEl) {
+                selectEl.innerHTML = `<option value="Quỹ CLB / Chung">Quỹ CLB / Chung</option>` + 
+                    window.players.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
+            }
+            document.getElementById('thuchi-modal').classList.remove('hidden');
+            if(!isEdit) {
+                document.getElementById('thuchi-modal-title').innerText = "Thêm Khoản Thu / Chi";
+                document.getElementById('thuchi-id').value = "";
+                document.getElementById('thuchi-thu').value = "";
+                document.getElementById('thuchi-chi').value = "";
+                document.getElementById('thuchi-note').value = "";
+            }
+        }
+
+        function closeThuChiModal() { document.getElementById('thuchi-modal').classList.add('hidden'); }
+
+        function saveThuChi() {
+            const id = document.getElementById('thuchi-id').value;
+            const player = document.getElementById('thuchi-player').value;
+            const thu = parseFloat(document.getElementById('thuchi-thu').value) || 0;
+            const chi = parseFloat(document.getElementById('thuchi-chi').value) || 0;
+            const note = document.getElementById('thuchi-note').value.trim();
+
+            if(id) {
+                const item = window.thuChiData.find(x => x.id == id);
+                if(item) { item.player = player; item.thu = thu; item.chi = chi; item.note = note; }
+            } else {
+                window.thuChiData.push({ id: Date.now(), player, thu, chi, note });
+            }
+
+            closeThuChiModal();
+            renderThuChiTable();
+            autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function editThuChi(id) {
+            const item = window.thuChiData.find(x => x.id == id);
+            if(item) {
+                openThuChiModal(true);
+                document.getElementById('thuchi-modal-title').innerText = "Sửa Khoản Thu / Chi";
+                document.getElementById('thuchi-id').value = item.id;
+                document.getElementById('thuchi-player').value = item.player;
+                document.getElementById('thuchi-thu').value = item.thu;
+                document.getElementById('thuchi-chi').value = item.chi;
+                document.getElementById('thuchi-note').value = item.note;
+            }
+        }
+
+        function deleteThuChi(id) {
+            if(confirm("Bạn có chắc chắn muốn XÓA khoản thu chi này?")) {
+                window.thuChiData = window.thuChiData.filter(x => x.id != id);
+                renderThuChiTable();
+                autoBackupData();
+                if(window.syncToFirebase) window.syncToFirebase();
+            }
+        }
+
+        // BẢNG TỔNG HỢP CÁC NGÀY
         function renderTongHopTab() {
             const container = document.getElementById('tonghop-content-container');
             if(!container) return;
@@ -1252,8 +1415,6 @@
 
             activeDates.forEach(d => {
                 const matches = window.matchesData[d] || [];
-
-                // Kiểm tra trạng thái NOTE chuyển tổng ngày (Mặc định YES)
                 const pStatus = window.paymentStatus[d];
                 const isTransferYes = (!pStatus || typeof pStatus !== 'object' || pStatus.btcNoteAdminOption !== "NO");
 
@@ -1299,7 +1460,7 @@
                             vdvDayTotals[v][d] = st.total;
                             vdvRowKeoSum[v] += st.total;
                         } else {
-                            vdvDayTotals[v][d] = 0; // Khi NO: Không chuyển tổng vào bảng
+                            vdvDayTotals[v][d] = 0;
                         }
 
                         if (st.total < 0) sumAmDay += st.total;
@@ -1655,6 +1816,7 @@
                     matchesData: window.matchesData,
                     dateKeoMode: window.dateKeoMode,
                     paymentStatus: window.paymentStatus,
+                    thuChiData: window.thuChiData,
                     knockoutScores: {
                         bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
                         bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
@@ -1683,8 +1845,9 @@
                 if (data.matchesData) window.matchesData = data.matchesData;
                 if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
                 if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
+                if (data.thuChiData) window.thuChiData = data.thuChiData;
 
-                renderPlayers(); renderMinigame1(); renderM2(); renderDatesMenuList(); renderDayDetailView(); renderTongHopTab();
+                renderPlayers(); renderMinigame1(); renderM2(); renderDatesMenuList(); renderDayDetailView(); renderTongHopTab(); renderThuChiTable();
                 if (!silent) alert("Đã nạp thành công dữ liệu từ Auto-Backup!");
             } catch (err) { console.error("Lỗi restoreAutoBackup:", err); }
         }
@@ -1706,6 +1869,7 @@
                 matchesData: window.matchesData,
                 dateKeoMode: window.dateKeoMode,
                 paymentStatus: window.paymentStatus,
+                thuChiData: window.thuChiData,
                 knockoutScores: {
                     bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
                     bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
@@ -1742,8 +1906,9 @@
                     if (data.matchesData) window.matchesData = data.matchesData;
                     if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
                     if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
+                    if (data.thuChiData) window.thuChiData = data.thuChiData;
 
-                    renderPlayers(); renderMinigame1(); renderM2(); renderDatesMenuList(); renderDayDetailView(); renderTongHopTab();
+                    renderPlayers(); renderMinigame1(); renderM2(); renderDatesMenuList(); renderDayDetailView(); renderTongHopTab(); renderThuChiTable();
                     autoBackupData();
                     if (window.syncToFirebase) window.syncToFirebase();
                     alert("Phục hồi dữ liệu từ file backup thành công!");
@@ -1766,6 +1931,7 @@
 
             if(tabId === 'tonghop') renderTongHopTab();
             if(tabId === 'day_detail') renderDayDetailView();
+            if(tabId === 'thuchi') renderThuChiTable();
         }
 
         function renderPlayers() {
@@ -1975,6 +2141,7 @@
             renderDatesMenuList();
             renderDayDetailView();
             renderTongHopTab();
+            renderThuChiTable();
         };
     </script>
 
@@ -2021,6 +2188,7 @@
                     matchesData: window.matchesData,
                     dateKeoMode: window.dateKeoMode,
                     paymentStatus: window.paymentStatus,
+                    thuChiData: window.thuChiData,
                     knockoutScores: knockoutScores
                 }, { merge: true });
                 console.log("Đã đồng bộ Firestore thành công!");
@@ -2058,6 +2226,7 @@
                     if (data.matchesData) window.matchesData = data.matchesData;
                     if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
                     if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
+                    if (data.thuChiData) window.thuChiData = data.thuChiData;
 
                     if (data.knockoutScores) {
                         const s = data.knockoutScores;
@@ -2073,6 +2242,7 @@
                     if (typeof window.renderDatesMenuList === 'function') window.renderDatesMenuList();
                     if (typeof window.renderDayDetailView === 'function') window.renderDayDetailView();
                     if (typeof window.renderTongHopTab === 'function') window.renderTongHopTab();
+                    if (typeof window.renderThuChiTable === 'function') window.renderThuChiTable();
                     if (typeof window.autoBackupData === 'function') window.autoBackupData();
                 }
             },
