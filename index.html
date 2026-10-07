@@ -4,29 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Thu Chi Quỹ Pickleball</title>
-    <!-- Tích hợp Tailwind CSS để giao diện đẹp, chuẩn responsive -->
+    <!-- Tailwind CSS giao diện hiện đại -->
     <script src="https://tailwindcss.com"></script>
-    <!-- Tích hợp FontAwesome để sử dụng các icon trực quan -->
+    <!-- FontAwesome Icon trực quan -->
     <link rel="stylesheet" href="https://cloudflare.com">
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 antialiased pb-12">
 
-    <!-- Thanh điều hướng / Tiêu đề chính -->
+    <!-- HEADER BAR -->
     <header class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white shadow-md sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-2">
             <h1 class="text-xl font-black tracking-wide flex items-center gap-2">
-                <i class="fa-solid from-emerald-400 to-teal-500 fa-table-tennis-paddle-ball text-yellow-300 text-2xl animate-bounce"></i>
+                <i class="fa-solid fa-table-tennis-paddle-ball text-yellow-300 text-2xl animate-bounce"></i>
                 PICKLEBALL CLUB MANAGER
             </h1>
-            <p class="text-xs bg-emerald-800/50 px-3 py-1 rounded-full border border-emerald-500">
-                <i class="fa-solid fa-users mr-1"></i> Quy mô: 15 - 20 Thành viên
-            </p>
+            <div class="flex items-center gap-3">
+                <p class="text-xs bg-emerald-800/50 px-3 py-1 rounded-full border border-emerald-500">
+                    <i class="fa-solid fa-users mr-1"></i> Quy mô: 15 - 20 Thành viên
+                </p>
+                <button onclick="resetDuLieuGoc()" class="text-xs bg-rose-700/80 hover:bg-rose-700 px-3 py-1 rounded-full border border-rose-500 transition-all">
+                    <i class="fa-solid fa-trash-can mr-1"></i> Xóa toàn bộ dữ liệu
+                </button>
+            </div>
         </div>
     </header>
 
     <main class="max-w-6xl mx-auto px-4 mt-6 space-y-6">
 
-        <!-- ================= TAB 1: DASHBOARD TỔNG QUAN ================= -->
+        <!-- ================= DASHBOARD TỔNG QUAN ================= -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="bg-slate-900 px-6 py-4 text-white flex items-center gap-2">
                 <i class="fa-solid fa-chart-pie text-emerald-400"></i>
@@ -36,12 +41,11 @@
             <div class="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Quỹ đầu kỳ -->
                 <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
-                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">1. Quỹ đầu kỳ (Tồn cũ)</span>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">1. Quỹ đầu kỳ</span>
                     <div class="flex items-baseline justify-between mt-2">
-                        <span id="txt-dau-ky" class="text-2xl font-black text-slate-700">500,000</span>
-                        <span class="text-xs font-bold text-slate-400">VNĐ</span>
+                        <input type="number" id="input-dau-ky" onchange="capNhatQuyDauKy(this.value)" class="text-2xl font-black text-slate-700 bg-transparent border-b border-dashed border-slate-400 w-full focus:outline-none focus:border-emerald-500" value="500000">
                     </div>
-                    <span class="text-[10px] text-slate-400 mt-2 block"><i class="fa-solid fa-pen-to-square mr-1"></i>Số dư quý trước bàn giao</span>
+                    <span class="text-[10px] text-slate-400 mt-2 block"><i class="fa-solid fa-pen mr-1"></i>Sửa trực tiếp số dư gốc tại đây</span>
                 </div>
 
                 <!-- Tổng thu -->
@@ -66,7 +70,7 @@
 
                 <!-- Số dư hiện tại -->
                 <div class="bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl p-4 flex flex-col justify-between text-white shadow-md shadow-orange-500/10">
-                    <span class="text-xs font-bold text-amber-100 uppercase tracking-wider">4. Số dư quỹ hiện tại</span>
+                    <span class="text-xs font-bold text-amber-100 uppercase tracking-wider">4. Số dư quỹ thực tế</span>
                     <div class="flex items-baseline justify-between mt-2">
                         <span id="txt-so-du" class="text-2xl font-black">0</span>
                         <span class="text-xs font-bold text-amber-200">VNĐ</span>
@@ -76,84 +80,65 @@
             </div>
         </section>
 
+        <!-- ================= FORM THÊM GIAO DỊCH ================= -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
+                <i class="fa-solid fa-circle-plus text-teal-600 text-lg"></i>
+                <h2 class="font-bold text-sm tracking-wider uppercase text-slate-700">Thêm giao dịch mới nhanh</h2>
+            </div>
+            <form id="giao-dich-form" onsubmit="themGiaoDichMoi(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+                <div>
+                    <label class="block text-slate-500 font-semibold mb-1">Loại giao dịch</label>
+                    <select id="form-loai" class="w-full border border-slate-300 rounded-lg p-2.5 bg-slate-50 focus:ring-2 focus:ring-emerald-500 focus:outline-none font-medium">
+                        <option value="THU">🟢 Khoản THU (Tiền vào)</option>
+                        <option value="CHI">🔴 Khoản CHI (Tiền ra)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-slate-500 font-semibold mb-1">Hạng mục phân loại</label>
+                    <select id="form-phan-loai" class="w-full border border-slate-300 rounded-lg p-2.5 bg-slate-50 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <option value="Tiền sân định kỳ">Tiền sân theo Quý</option>
+                        <option value="Tiền kèo tuần">Tiền kèo hàng tuần</option>
+                        <option value="Tài trợ / Ủng hộ">Tài trợ / Ủng hộ</option>
+                        <option value="Mua bóng">Chi mua bóng mới</option>
+                        <option value="Tiền nước uống">Chi tiền nước / Đá viên</option>
+                        <option value="Tiền sân phát sinh">Chi tiền sân phát sinh</option>
+                        <option value="Chi phí khác">Các khoản chi khác</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-slate-500 font-semibold mb-1">Nội dung chi tiết</label>
+                    <input type="text" id="form-noi-dung" required placeholder="Tên thành viên hoặc lý do chi..." class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-slate-500 font-semibold mb-1">Số tiền (VNĐ)</label>
+                    <input type="number" id="form-so-tien" required placeholder="Nhập số tiền..." class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none font-bold">
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" class="w-full bg-slate-900 text-white hover:bg-emerald-600 p-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Ghi sổ quỹ
+                    </button>
+                </div>
+            </form>
+        </section>
 
+        <!-- ================= KHU VỰC SỔ NHẬT KÝ CHI TIẾT ================= -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- ================= TAB 2: CHI TIẾT CÁC KHOẢN THU ================= -->
+            
+            <!-- SỔ CHI TIẾT CÁC KHOẢN THU -->
             <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
                 <div class="bg-emerald-600 px-6 py-4 text-white flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-arrow-down-long text-emerald-300"></i>
-                        <h2 class="font-bold text-sm tracking-wider uppercase">Nhật ký chi tiết các khoản thu</h2>
+                        <h2 class="font-bold text-sm tracking-wider uppercase">Sổ chi tiết các khoản thu quý</h2>
                     </div>
                     <span class="text-xs bg-emerald-700 px-2 py-0.5 rounded font-mono" id="badge-count-thu">0 mục</span>
                 </div>
                 
-                <div class="overflow-x-auto flex-1">
+                <div class="overflow-x-auto flex-1 max-h-[450px] overflow-y-auto">
                     <table class="w-full text-left border-collapse text-xs">
                         <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider font-semibold">
-                                <th class="py-3 px-4 w-12 text-center">STT</th>
-                                <th class="py-3 px-3 w-24">Ngày</th>
-                                <th class="py-3 px-3">Nội dung / Nguồn thu</th>
-                                <th class="py-3 px-3 text-right w-28">Số tiền (VNĐ)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-thu-body" class="divide-y divide-slate-100 text-slate-600">
-                            <!-- Dữ liệu JS sẽ đổ vào đây -->
-                        </tbody>
-                        <tfoot>
-                            <tr class="bg-emerald-50/50 font-bold border-t border-emerald-100 text-emerald-800">
-                                <td colspan="3" class="py-3 px-4 text-center uppercase tracking-wide">Tổng cộng Thu</td>
-                                <td id="total-thu-cell" class="py-3 px-3 text-right text-sm">0</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </section>
-
-            <!-- ================= TAB 3: CHI TIẾT CÁC KHOẢN CHI ================= -->
-            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-                <div class="bg-rose-600 px-6 py-4 text-white flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-arrow-up-long text-rose-300"></i>
-                        <h2 class="font-bold text-sm tracking-wider uppercase">Nhật ký chi tiết các khoản chi</h2>
-                    </div>
-                    <span class="text-xs bg-rose-700 px-2 py-0.5 rounded font-mono" id="badge-count-chi">0 mục</span>
-                </div>
-                
-                <div class="overflow-x-auto flex-1">
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider font-semibold">
-                                <th class="py-3 px-4 w-12 text-center">STT</th>
-                                <th class="py-3 px-3 w-24">Ngày</th>
-                                <th class="py-3 px-3">Nội dung chi / Hạng mục</th>
-                                <th class="py-3 px-3 text-right w-28">Số tiền (VNĐ)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-chi-body" class="divide-y divide-slate-100 text-slate-600">
-                            <!-- Dữ liệu JS sẽ đổ vào đây -->
-                        </tbody>
-                        <tfoot>
-                            <tr class="bg-rose-50/50 font-bold border-t border-rose-100 text-rose-800">
-                                <td colspan="3" class="py-3 px-4 text-center uppercase tracking-wide">Tổng cộng Chi</td>
-                                <td id="total-chi-cell" class="py-3 px-3 text-right text-sm">0</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </section>
-        </div>
-
-    </main>
-
-    <!-- ================= HÀM XỬ LÝ DỮ LIỆU ĐỘNG (JAVASCRIPT) ================= -->
-    <script>
-        // 1. Khai báo số dư gốc ban đầu
-        const quyDauKy = 500000;
-
-        // 2. Mảng dữ liệu nguồn Thu (Dễ dàng thêm/bớt dòng tại đây)
-        const danhSachThu = [
-            { ngay: "05/01/2026", noiDung: "Thu tiền sân cố định Q1 - Bác Quý", phanLoai: "Tiền sân định kỳ", soTien: 600000 },
-            { ngay: "05/01/2026", noiDung: "Thu tiền sân cố định Q1 - Anh Hải", phanLoai: "Tiền sân định kỳ", soTien: 600000 },
-            { ngay: "07/01/2026", noiDung: "Tiền kèo giao lưu tối Thứ 4 (Sân số 2)", phanLoai: "Tiền kèo tuần", soTien: 350000 },
+                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider font-semibold sticky top-0 z-10">
+                                <th class="py-3 px-4 w-12 text-center bg-slate-50">STT</th>
+                                <th class="py-3 px-3 bg-slate-50">Nội dung / Nguồn thu</th>
+                                <th class="py-3 px-3 text-right w-32 bg-slate-50">Số tiền (VNĐ)</th>
