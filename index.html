@@ -794,26 +794,23 @@
                         <i class="fa-solid fa-file-excel"></i>
                         <span>Xuất File Excel Quỹ</span>
                     </button>
-                    <button onclick="resetFundData()" class="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg transition-all text-sm" title="Đặt lại dữ liệu gốc">
-                        <i class="fa-solid fa-rotate-right"></i>
-                    </button>
                 </div>
             </div>
 
             <!-- CARDS TỔNG QUAN -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Quỹ đầu kỳ -->
+                <!-- Quỹ đầu kỳ (Có thể tùy chỉnh) -->
                 <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm relative overflow-hidden group">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Quỹ Đầu Kỳ</p>
-                            <h3 id="stat-initial" class="text-2xl font-bold text-slate-800 mt-1">0 ₫</h3>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Quỹ Đầu Kỳ (VNĐ)</p>
+                            <input type="number" id="input-initial-fund" onchange="updateInitialFund(this.value)" class="text-xl font-bold text-slate-800 mt-1 w-full border-b border-slate-300 focus:border-brand-500 outline-none bg-transparent" placeholder="0">
                         </div>
                         <div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-600 group-hover:scale-110 transition-transform">
                             <i class="fa-solid fa-vault text-xl"></i>
                         </div>
                     </div>
-                    <div class="mt-3 text-xs text-slate-400">Số dư từ kỳ trước chuyển sang</div>
+                    <div class="mt-3 text-xs text-slate-400">Click để chỉnh sửa số dư đầu kỳ</div>
                 </div>
 
                 <!-- Tổng thu -->
@@ -865,49 +862,7 @@
                 </div>
             </div>
 
-            <!-- BẢNG THÀNH VIÊN & HỘI PHÍ -->
-            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-                <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div>
-                        <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-users text-brand-600"></i>
-                            <span>Danh Sách Thành Viên & Tiền Sân</span>
-                        </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Theo dõi hạn đóng quỹ Quý 1 & Quý 2 năm 2026</p>
-                    </div>
-
-                    <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <div class="relative flex-1 sm:w-64">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                            <input type="text" id="member-search" oninput="renderFundMembers()" placeholder="Tìm tên hoặc SĐT..." class="w-full pl-9 pr-3 py-1.5 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
-                        </div>
-                        <select id="member-filter" onchange="renderFundMembers()" class="py-1.5 px-3 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            <option value="all">Tất cả trạng thái</option>
-                            <option value="q1_pending">Nợ Q1</option>
-                            <option value="q2_pending">Nợ Q2</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="overflow-x-auto custom-scrollbar">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
-                            <tr>
-                                <th class="py-3 px-4 w-12 text-center">STT</th>
-                                <th class="py-3 px-4">Thành Viên</th>
-                                <th class="py-3 px-4">Số Điện Thoại</th>
-                                <th class="py-3 px-4 text-right">Mức Đóng/Quý</th>
-                                <th class="py-3 px-4 text-center">Quý 1</th>
-                                <th class="py-3 px-4 text-center">Quý 2</th>
-                                <th class="py-3 px-4">Ghi Chú</th>
-                            </tr>
-                        </thead>
-                        <tbody id="member-list" class="divide-y divide-slate-100"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- NHẬT KÝ THU / CHI -->
+            <!-- 1. NHẬT KÝ THU / CHI (ĐÃ ĐƯỢC ĐƯA LÊN TRÊN) -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 <!-- Nhật Ký Thu -->
@@ -933,7 +888,7 @@
                                     <th class="py-2.5 px-3">Ngày</th>
                                     <th class="py-2.5 px-3">Nội dung</th>
                                     <th class="py-2.5 px-3 text-right">Số tiền</th>
-                                    <th class="py-2.5 px-3">Nguồn thu</th>
+                                    <th class="py-2.5 px-3">Nguồn thu / Pick thủ</th>
                                     <th class="py-2.5 px-3 text-center">Thao tác</th>
                                 </tr>
                             </thead>
@@ -970,7 +925,7 @@
                                     <th class="py-2.5 px-3">Ngày</th>
                                     <th class="py-2.5 px-3">Nội dung</th>
                                     <th class="py-2.5 px-3 text-right">Số tiền</th>
-                                    <th class="py-2.5 px-3">Hạng mục</th>
+                                    <th class="py-2.5 px-3">Hạng mục / Pick thủ</th>
                                     <th class="py-2.5 px-3 text-center">Thao tác</th>
                                 </tr>
                             </thead>
@@ -985,6 +940,49 @@
                 </section>
 
             </div>
+
+            <!-- 2. BẢNG THÀNH VIÊN & HỘI PHÍ (ĐÃ CHUYỂN XUỐNG DƯỚI) -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-users text-brand-600"></i>
+                            <span>Danh Sách Pick Thủ CLB & Tiền Sân</span>
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Theo dõi hạn đóng quỹ Quý 1 & Quý 2 năm 2026 (Đồng bộ danh sách VĐV)</p>
+                    </div>
+
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <div class="relative flex-1 sm:w-64">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="text" id="member-search" oninput="renderFundMembers()" placeholder="Tìm tên Pick thủ..." class="w-full pl-9 pr-3 py-1.5 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <select id="member-filter" onchange="renderFundMembers()" class="py-1.5 px-3 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <option value="all">Tất cả trạng thái</option>
+                            <option value="q1_pending">Nợ Q1</option>
+                            <option value="q2_pending">Nợ Q2</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                            <tr>
+                                <th class="py-3 px-4 w-12 text-center">STT</th>
+                                <th class="py-3 px-4">Tên Pick Thủ</th>
+                                <th class="py-3 px-4 text-center">Giới Tính</th>
+                                <th class="py-3 px-4 text-right">Mức Đóng/Quý</th>
+                                <th class="py-3 px-4 text-center">Quý 1</th>
+                                <th class="py-3 px-4 text-center">Quý 2</th>
+                                <th class="py-3 px-4 text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="member-list" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+
         </section>
 
         <!-- BẢNG TỔNG HỢP CÁC NGÀY -->
@@ -1083,8 +1081,10 @@
                 </div>
 
                 <div>
-                    <label id="lbl-source" class="block text-xs font-semibold text-slate-600 mb-1">Người Đóng / Nguồn</label>
-                    <input type="text" id="tx-source" placeholder="Ví dụ: Nguyễn Văn A hoặc Vãng lai" required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    <label id="lbl-source" class="block text-xs font-semibold text-slate-600 mb-1">Nguồn Thu / Pick Thủ</label>
+                    <select id="tx-source-select" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none bg-white font-medium">
+                        <!-- Sẽ tự động đổ danh sách Pick thủ vào đây -->
+                    </select>
                 </div>
 
                 <div>
@@ -1197,60 +1197,38 @@
         };
 
         // --- STATE QUẢN LÝ QUỸ PICKLEBALL FUND MANAGER ---
-        const initialFund = 500000;
-
-        const defaultFundMembers = [
-            { id: 1, name: "Nguyễn Văn A", phone: "0901234567", fee: 500000, q1: true, q2: true, note: "Thành viên chính thức" },
-            { id: 2, name: "Trần Thị B", phone: "0912345678", fee: 500000, q1: true, q2: false, note: "Thành viên chính thức" },
-            { id: 3, name: "Lê Văn C", phone: "0923456789", fee: 500000, q1: true, q2: true, note: "Ban điều hành" },
-            { id: 4, name: "Phạm Minh D", phone: "0934567890", fee: 500000, q1: false, q2: false, note: "Thành viên mới" },
-            { id: 5, name: "Hoàng Anh E", phone: "0945678901", fee: 500000, q1: true, q2: true, note: "Thành viên chính thức" },
-            { id: 6, name: "Vũ Thị F", phone: "0956789012", fee: 500000, q1: true, q2: false, note: "Thành viên chính thức" },
-            { id: 7, name: "Đặng Văn G", phone: "0967890123", fee: 500000, q1: true, q2: true, note: "Thành viên chính thức" },
-            { id: 8, name: "Bùi Hoàng H", phone: "0978901234", fee: 500000, q1: false, q2: false, note: "Thành viên mới" },
-            { id: 9, name: "Đỗ Thị I", phone: "0989012345", fee: 500000, q1: true, q2: true, note: "Thành viên chính thức" },
-            { id: 10, name: "Ngo Văn K", phone: "0990123456", fee: 500000, q1: true, q2: false, note: "Thành viên chính thức" },
-            { id: 11, name: "Dương Minh L", phone: "0909876543", fee: 500000, q1: true, q2: true, note: "Thành viên chính thức" },
-            { id: 12, name: "Lý Thanh M", phone: "0918765432", fee: 500000, q1: true, q2: false, note: "Thành viên chính thức" },
-            { id: 13, name: "Trịnh Văn N", phone: "0927654321", fee: 500000, q1: false, q2: false, note: "Thành viên mới" },
-            { id: 14, name: "Mai Thị O", phone: "0936543210", fee: 500000, q1: true, q2: true, note: "Thành viên chính thức" },
-            { id: 15, name: "Đoàn Văn P", phone: "0945432109", fee: 500000, q1: true, q2: false, note: "Thành viên chính thức" }
-        ];
+        window.initialFund = Number(localStorage.getItem('pb_initial_fund')) || 500000;
 
         const defaultFundIncomes = [
-            { id: 1, date: "2026-01-05", desc: "Thu tiền quỹ Q1 - Nguyễn Văn A", amount: 500000, source: "Nguyễn Văn A", note: "Chuyển khoản" },
-            { id: 2, date: "2026-01-06", desc: "Thu tiền quỹ Q1 - Trần Thị B", amount: 500000, source: "Trần Thị B", note: "Tiền mặt" },
-            { id: 3, date: "2026-01-10", desc: "Thu tiền giao lưu vãng lai", amount: 200000, source: "Khách mời", note: "Thu theo buổi" },
-            { id: 4, date: "2026-04-01", desc: "Thu tiền quỹ Q2 - Lê Văn C", amount: 500000, source: "Lê Văn C", note: "Chuyển khoản" }
+            { id: 1, date: "2026-01-05", desc: "Thu tiền quỹ Q1 - Tiến Thọ", amount: 500000, source: "Tiến Thọ", note: "Chuyển khoản" },
+            { id: 2, date: "2026-01-06", desc: "Thu tiền quỹ Q1 - Châu Sĩ", amount: 500000, source: "Châu Sĩ", note: "Tiền mặt" },
+            { id: 3, date: "2026-01-10", desc: "Thu tiền giao lưu vãng lai", amount: 200000, source: "Khách vãng lai / Khác", note: "Thu theo buổi" }
         ];
 
         const defaultFundExpenses = [
-            { id: 1, date: "2026-01-02", desc: "Thanh toán tiền thuê sân Tháng 1", amount: 1200000, source: "Tiền sân", note: "Hóa đơn #01" },
-            { id: 2, date: "2026-01-15", desc: "Mua bóng Pickleball thi đấu (1 thùng)", amount: 450000, source: "Dụng cụ", note: "Chuyển khoản" },
-            { id: 3, date: "2026-01-20", desc: "Nước uống giao lưu đầu tháng", amount: 150000, source: "Nước uống", note: "Tiền mặt" },
-            { id: 4, date: "2026-02-02", desc: "Thanh toán tiền thuê sân Tháng 2", amount: 1200000, source: "Tiền sân", note: "Hóa đơn #02" }
+            { id: 1, date: "2026-01-02", desc: "Thanh toán tiền thuê sân Tháng 1", amount: 1200000, source: "Khách vãng lai / Khác", note: "Hóa đơn #01" },
+            { id: 2, date: "2026-01-15", desc: "Mua bóng Pickleball thi đấu", amount: 450000, source: "Khách vãng lai / Khác", note: "Chuyển khoản" }
         ];
 
-        window.fundMembers = JSON.parse(localStorage.getItem('pb_members')) || defaultFundMembers;
+        window.fundFeeStatus = JSON.parse(localStorage.getItem('pb_fee_status')) || {};
         window.fundIncomes = JSON.parse(localStorage.getItem('pb_incomes')) || defaultFundIncomes;
         window.fundExpenses = JSON.parse(localStorage.getItem('pb_expenses')) || defaultFundExpenses;
 
+        function updateInitialFund(val) {
+            window.initialFund = Number(val) || 0;
+            localStorage.setItem('pb_initial_fund', window.initialFund);
+            calculateFundSummary();
+            autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
+        }
+
         function saveFundData() {
-            localStorage.setItem('pb_members', JSON.stringify(window.fundMembers));
+            localStorage.setItem('pb_fee_status', JSON.stringify(window.fundFeeStatus));
             localStorage.setItem('pb_incomes', JSON.stringify(window.fundIncomes));
             localStorage.setItem('pb_expenses', JSON.stringify(window.fundExpenses));
             updateFundDashboard();
             autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
-        }
-
-        function resetFundData() {
-            if(confirm("Bạn có chắc chắn muốn khôi phục lại dữ liệu mẫu ban đầu của Quỹ Pick?")) {
-                window.fundMembers = [...defaultFundMembers];
-                window.fundIncomes = [...defaultFundIncomes];
-                window.fundExpenses = [...defaultFundExpenses];
-                saveFundData();
-            }
         }
 
         function formatVND(amount) {
@@ -1264,6 +1242,10 @@
         }
 
         function updateFundDashboard() {
+            const inputInit = document.getElementById('input-initial-fund');
+            if(inputInit && document.activeElement !== inputInit) {
+                inputInit.value = window.initialFund;
+            }
             renderFundMembers();
             renderFundIncomes();
             renderFundExpenses();
@@ -1273,14 +1255,12 @@
         function calculateFundSummary() {
             const totalIncome = window.fundIncomes.reduce((sum, item) => sum + Number(item.amount), 0);
             const totalExpense = window.fundExpenses.reduce((sum, item) => sum + Number(item.amount), 0);
-            const currentBalance = initialFund + totalIncome - totalExpense;
+            const currentBalance = window.initialFund + totalIncome - totalExpense;
 
-            const elInit = document.getElementById('stat-initial');
             const elInc = document.getElementById('stat-income');
             const elExp = document.getElementById('stat-expense');
             const elBal = document.getElementById('stat-balance');
 
-            if(elInit) elInit.innerText = formatVND(initialFund);
             if(elInc) elInc.innerText = formatVND(totalIncome);
             if(elExp) elExp.innerText = formatVND(totalExpense);
             if(elBal) elBal.innerText = formatVND(currentBalance);
@@ -1302,50 +1282,53 @@
             
             tbody.innerHTML = '';
 
-            const filtered = window.fundMembers.filter(m => {
-                const matchSearch = m.name.toLowerCase().includes(search) || m.phone.includes(search);
+            const filtered = window.players.filter(p => {
+                const matchSearch = p.name.toLowerCase().includes(search);
+                const q1Paid = window.fundFeeStatus[`${p.id}_q1`] || false;
+                const q2Paid = window.fundFeeStatus[`${p.id}_q2`] || false;
                 let matchFilter = true;
-                if(filter === 'q1_pending') matchFilter = !m.q1;
-                if(filter === 'q2_pending') matchFilter = !m.q2;
+                if(filter === 'q1_pending') matchFilter = !q1Paid;
+                if(filter === 'q2_pending') matchFilter = !q2Paid;
                 return matchSearch && matchFilter;
             });
 
             if(filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Không tìm thấy thành viên nào.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Không tìm thấy Pick thủ nào.</td></tr>`;
                 return;
             }
 
-            filtered.forEach((m, idx) => {
+            filtered.forEach((p, idx) => {
+                const q1 = window.fundFeeStatus[`${p.id}_q1`] || false;
+                const q2 = window.fundFeeStatus[`${p.id}_q2`] || false;
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors";
                 tr.innerHTML = `
                     <td class="py-3 px-4 text-center font-medium text-slate-500">${idx + 1}</td>
-                    <td class="py-3 px-4 font-semibold text-slate-800">${m.name}</td>
-                    <td class="py-3 px-4 text-slate-600">${m.phone}</td>
-                    <td class="py-3 px-4 text-right font-medium text-slate-700">${formatVND(m.fee)}</td>
+                    <td class="py-3 px-4 font-semibold text-slate-800">${p.name}</td>
+                    <td class="py-3 px-4 text-center text-slate-600">${p.gender}</td>
+                    <td class="py-3 px-4 text-right font-medium text-slate-700">500.000 ₫</td>
                     <td class="py-3 px-4 text-center">
-                        <button onclick="toggleFundFee(${m.id}, 'q1')" class="px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${m.q1 ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-rose-100 text-rose-700 hover:bg-rose-200'}">
-                            ${m.q1 ? '<i class="fa-solid fa-check mr-1"></i>Đã đóng' : '<i class="fa-solid fa-xmark mr-1"></i>Chưa đóng'}
+                        <button onclick="toggleFundFee(${p.id}, 'q1')" class="px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${q1 ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-rose-100 text-rose-700 hover:bg-rose-200'}">
+                            ${q1 ? '<i class="fa-solid fa-check mr-1"></i>Đã đóng' : '<i class="fa-solid fa-xmark mr-1"></i>Chưa đóng'}
                         </button>
                     </td>
                     <td class="py-3 px-4 text-center">
-                        <button onclick="toggleFundFee(${m.id}, 'q2')" class="px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${m.q2 ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-rose-100 text-rose-700 hover:bg-rose-200'}">
-                            ${m.q2 ? '<i class="fa-solid fa-check mr-1"></i>Đã đóng' : '<i class="fa-solid fa-xmark mr-1"></i>Chưa đóng'}
+                        <button onclick="toggleFundFee(${p.id}, 'q2')" class="px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${q2 ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-rose-100 text-rose-700 hover:bg-rose-200'}">
+                            ${q2 ? '<i class="fa-solid fa-check mr-1"></i>Đã đóng' : '<i class="fa-solid fa-xmark mr-1"></i>Chưa đóng'}
                         </button>
                     </td>
-                    <td class="py-3 px-4 text-slate-500 text-xs">${m.note}</td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="editPlayer(${p.id})" class="text-blue-600 hover:text-blue-800 mr-2 font-semibold text-xs"><i class="fa-solid fa-pen"></i> Sửa</button>
+                        <button onclick="deletePlayer(${p.id})" class="text-red-600 hover:text-red-800 font-semibold text-xs"><i class="fa-solid fa-trash"></i> Xóa</button>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function toggleFundFee(memberId, quarter) {
-            window.fundMembers = window.fundMembers.map(m => {
-                if(m.id === memberId) {
-                    return { ...m, [quarter]: !m[quarter] };
-                }
-                return m;
-            });
+        function toggleFundFee(playerId, quarter) {
+            const key = `${playerId}_${quarter}`;
+            window.fundFeeStatus[key] = !window.fundFeeStatus[key];
             saveFundData();
         }
 
@@ -1366,7 +1349,7 @@
                     <td class="py-2.5 px-3 text-xs text-slate-500 whitespace-nowrap">${formatDate(item.date)}</td>
                     <td class="py-2.5 px-3 font-medium text-slate-800">${item.desc}</td>
                     <td class="py-2.5 px-3 text-right font-semibold text-emerald-600 whitespace-nowrap">+${formatVND(item.amount)}</td>
-                    <td class="py-2.5 px-3 text-xs text-slate-600">${item.source}</td>
+                    <td class="py-2.5 px-3 text-xs text-slate-600 font-semibold">${item.source}</td>
                     <td class="py-2.5 px-3 text-center">
                         <button onclick="deleteFundTx(${item.id}, 'income')" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
                             <i class="fa-solid fa-trash-can"></i>
@@ -1394,7 +1377,7 @@
                     <td class="py-2.5 px-3 text-xs text-slate-500 whitespace-nowrap">${formatDate(item.date)}</td>
                     <td class="py-2.5 px-3 font-medium text-slate-800">${item.desc}</td>
                     <td class="py-2.5 px-3 text-right font-semibold text-rose-600 whitespace-nowrap">-${formatVND(item.amount)}</td>
-                    <td class="py-2.5 px-3 text-xs text-slate-600">${item.source}</td>
+                    <td class="py-2.5 px-3 text-xs text-slate-600 font-semibold">${item.source}</td>
                     <td class="py-2.5 px-3 text-center">
                         <button onclick="deleteFundTx(${item.id}, 'expense')" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
                             <i class="fa-solid fa-trash-can"></i>
@@ -1411,6 +1394,16 @@
             const title = document.getElementById('fund-modal-title');
             const btnSubmit = document.getElementById('fund-btn-submit');
             const lblSource = document.getElementById('lbl-source');
+            const sourceSelect = document.getElementById('tx-source-select');
+
+            // Đổ danh sách Pick thủ đồng bộ
+            if(sourceSelect) {
+                let optionsHtml = `<option value="Khách vãng lai / Khác">-- Khách vãng lai / Khác --</option>`;
+                window.players.forEach(p => {
+                    optionsHtml += `<option value="${p.name}">${p.name}</option>`;
+                });
+                sourceSelect.innerHTML = optionsHtml;
+            }
             
             const form = document.getElementById('fund-transaction-form');
             if(form) {
@@ -1418,7 +1411,6 @@
                 form.querySelector('#tx-date').value = new Date().toISOString().split('T')[0];
                 form.querySelector('#tx-desc').value = '';
                 form.querySelector('#tx-amount').value = '';
-                form.querySelector('#tx-source').value = '';
                 form.querySelector('#tx-note').value = '';
             }
 
@@ -1427,13 +1419,13 @@
                 title.innerHTML = '<i class="fa-solid fa-circle-arrow-down"></i> Thêm Khoản Thu Mới';
                 btnSubmit.className = "px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm";
                 btnSubmit.innerText = "Lưu Khoản Thu";
-                if(lblSource) lblSource.innerText = "Người Đóng / Nguồn Thu";
+                if(lblSource) lblSource.innerText = "Nguồn Thu / Pick Thủ";
             } else {
                 header.className = "p-4 bg-rose-600 text-white flex justify-between items-center";
                 title.innerHTML = '<i class="fa-solid fa-circle-arrow-up"></i> Thêm Khoản Chi Mới';
                 btnSubmit.className = "px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm";
                 btnSubmit.innerText = "Lưu Khoản Chi";
-                if(lblSource) lblSource.innerText = "Hạng Mục Chi / Nhận";
+                if(lblSource) lblSource.innerText = "Hạng Mục Chi / Pick Thủ Nhận";
             }
 
             backdrop.classList.remove('hidden');
@@ -1452,7 +1444,7 @@
                 date: form.querySelector('#tx-date').value,
                 desc: form.querySelector('#tx-desc').value,
                 amount: Number(form.querySelector('#tx-amount').value),
-                source: form.querySelector('#tx-source').value,
+                source: form.querySelector('#tx-source-select').value,
                 note: form.querySelector('#tx-note').value
             };
 
@@ -1480,31 +1472,38 @@
         function exportFundToExcel() {
             const totalIncome = window.fundIncomes.reduce((sum, item) => sum + Number(item.amount), 0);
             const totalExpense = window.fundExpenses.reduce((sum, item) => sum + Number(item.amount), 0);
-            const currentBalance = initialFund + totalIncome - totalExpense;
+            const currentBalance = window.initialFund + totalIncome - totalExpense;
 
             const summaryData = [
                 ["BÁO CÁO TỔNG QUAN QUỸ PICKLEBALL"],
                 [],
                 ["Hạng mục", "Số tiền (VNĐ)", "Ghi chú"],
-                ["Quỹ đầu kỳ", initialFund, "Tồn quỹ kỳ trước chuyển sang"],
+                ["Quỹ đầu kỳ", window.initialFund, "Tồn quỹ kỳ trước chuyển sang"],
                 ["Tổng thu trong kỳ", totalIncome, "Tự động tính từ Nhật ký Thu"],
                 ["Tổng chi trong kỳ", totalExpense, "Tự động tính từ Nhật ký Chi"],
                 ["SỐ DƯ QUỸ HIỆN TẠI", currentBalance, "Công thức: Đầu kỳ + Thu - Chi"]
             ];
 
             const memberData = [
-                ["STT", "Họ và tên", "Số điện thoại", "Mức đóng/quý", "Quý 1", "Quý 2", "Ghi chú"],
-                ...window.fundMembers.map((m, i) => [i + 1, m.name, m.phone, m.fee, m.q1 ? "Đã đóng" : "Chưa đóng", m.q2 ? "Đã đóng" : "Chưa đóng", m.note])
+                ["STT", "Tên Pick Thủ", "Giới tính", "Mức đóng/quý", "Quý 1", "Quý 2"],
+                ...window.players.map((p, i) => [
+                    i + 1, 
+                    p.name, 
+                    p.gender, 
+                    500000, 
+                    window.fundFeeStatus[`${p.id}_q1`] ? "Đã đóng" : "Chưa đóng", 
+                    window.fundFeeStatus[`${p.id}_q2`] ? "Đã đóng" : "Chưa đóng"
+                ])
             ];
 
             const incomeData = [
-                ["STT", "Ngày tháng", "Nội dung thu", "Số tiền (VNĐ)", "Nguồn/Người đóng", "Ghi chú"],
+                ["STT", "Ngày tháng", "Nội dung thu", "Số tiền (VNĐ)", "Nguồn/Pick thủ", "Ghi chú"],
                 ...window.fundIncomes.map((item, i) => [i + 1, formatDate(item.date), item.desc, item.amount, item.source, item.note]),
                 ["", "", "TỔNG CỘNG THU", totalIncome, "", ""]
             ];
 
             const expenseData = [
-                ["STT", "Ngày tháng", "Nội dung chi", "Số tiền (VNĐ)", "Hạng mục", "Ghi chú"],
+                ["STT", "Ngày tháng", "Nội dung chi", "Số tiền (VNĐ)", "Hạng mục/Pick thủ", "Ghi chú"],
                 ...window.fundExpenses.map((item, i) => [i + 1, formatDate(item.date), item.desc, item.amount, item.source, item.note]),
                 ["", "", "TỔNG CỘNG CHI", totalExpense, "", ""]
             ];
@@ -2338,7 +2337,8 @@
                     matchesData: window.matchesData,
                     dateKeoMode: window.dateKeoMode,
                     paymentStatus: window.paymentStatus,
-                    fundMembers: window.fundMembers,
+                    initialFund: window.initialFund,
+                    fundFeeStatus: window.fundFeeStatus,
                     fundIncomes: window.fundIncomes,
                     fundExpenses: window.fundExpenses,
                     knockoutScores: {
@@ -2369,7 +2369,8 @@
                 if (data.matchesData) window.matchesData = data.matchesData;
                 if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
                 if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
-                if (data.fundMembers) window.fundMembers = data.fundMembers;
+                if (data.initialFund !== undefined) window.initialFund = data.initialFund;
+                if (data.fundFeeStatus) window.fundFeeStatus = data.fundFeeStatus;
                 if (data.fundIncomes) window.fundIncomes = data.fundIncomes;
                 if (data.fundExpenses) window.fundExpenses = data.fundExpenses;
 
@@ -2395,7 +2396,8 @@
                 matchesData: window.matchesData,
                 dateKeoMode: window.dateKeoMode,
                 paymentStatus: window.paymentStatus,
-                fundMembers: window.fundMembers,
+                initialFund: window.initialFund,
+                fundFeeStatus: window.fundFeeStatus,
                 fundIncomes: window.fundIncomes,
                 fundExpenses: window.fundExpenses,
                 knockoutScores: {
@@ -2434,7 +2436,8 @@
                     if (data.matchesData) window.matchesData = data.matchesData;
                     if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
                     if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
-                    if (data.fundMembers) window.fundMembers = data.fundMembers;
+                    if (data.initialFund !== undefined) window.initialFund = data.initialFund;
+                    if (data.fundFeeStatus) window.fundFeeStatus = data.fundFeeStatus;
                     if (data.fundIncomes) window.fundIncomes = data.fundIncomes;
                     if (data.fundExpenses) window.fundExpenses = data.fundExpenses;
 
@@ -2507,7 +2510,7 @@
                 window.players.push({ id: Date.now(), name: name, gender: gender });
             }
 
-            closePlayerModal(); renderPlayers(); renderMinigame1(); autoBackupData();
+            closePlayerModal(); renderPlayers(); renderMinigame1(); updateFundDashboard(); autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
@@ -2525,7 +2528,7 @@
         function deletePlayer(id) {
             if(confirm('Bạn có chắc muốn xoá VĐV này khỏi danh sách?')) {
                 window.players = window.players.filter(p => p.id != id);
-                renderPlayers(); renderMinigame1(); autoBackupData();
+                renderPlayers(); renderMinigame1(); updateFundDashboard(); autoBackupData();
                 if(window.syncToFirebase) window.syncToFirebase();
             }
         }
@@ -2718,7 +2721,8 @@
                     matchesData: window.matchesData,
                     dateKeoMode: window.dateKeoMode,
                     paymentStatus: window.paymentStatus,
-                    fundMembers: window.fundMembers,
+                    initialFund: window.initialFund,
+                    fundFeeStatus: window.fundFeeStatus,
                     fundIncomes: window.fundIncomes,
                     fundExpenses: window.fundExpenses,
                     knockoutScores: knockoutScores
@@ -2758,7 +2762,8 @@
                     if (data.matchesData) window.matchesData = data.matchesData;
                     if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
                     if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
-                    if (data.fundMembers) window.fundMembers = data.fundMembers;
+                    if (data.initialFund !== undefined) window.initialFund = data.initialFund;
+                    if (data.fundFeeStatus) window.fundFeeStatus = data.fundFeeStatus;
                     if (data.fundIncomes) window.fundIncomes = data.fundIncomes;
                     if (data.fundExpenses) window.fundExpenses = data.fundExpenses;
 
