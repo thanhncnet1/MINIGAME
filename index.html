@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLB-PICKLEBALL-CMTD - Quản Lý Giải Đấu & Thu Chi Quỹ</title>
+    <title>CLB-PICKLEBALL-CMTD - Quản Lý Giải Đấu & Quỹ Thu Chi</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -273,7 +273,7 @@
                         <div class="my-auto">
                             <i class="fa-solid fa-wallet text-4xl text-teal-600 mb-3 group-hover:scale-110 transition-transform block"></i>
                             <h3 class="font-bold text-base md:text-lg text-slate-800">Quản Lý Thu Chi</h3>
-                            <p class="text-xs text-slate-500 mt-2">Quản lý các khoản thu, chi, hội phí và tổng quỹ tồn</p>
+                            <p class="text-xs text-slate-500 mt-2">Quản lý các khoản thu, chi và tổng quỹ tồn</p>
                         </div>
                     </div>
 
@@ -732,7 +732,7 @@
         <!-- QUẢN LÝ THU CHI -->
         <section id="tab-thuchi" class="tab-content hidden space-y-8">
             
-            <!-- BÁO CÁO TỔNG QUAN QUỸ PICKLEBALL -->
+            <!-- BÁO CÁO TỔNG QUAN QUỸ PICKLEBALL (TÍCH HỢP TỪ FILE 1) -->
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800 space-y-4">
                 <div class="border-b-2 border-blue-900 pb-3 flex items-center justify-between">
                     <h2 class="text-lg md:text-xl font-black text-blue-950 uppercase tracking-wide flex items-center gap-2">
@@ -754,19 +754,19 @@
                             <tr class="hover:bg-slate-50">
                                 <td class="p-2 border border-slate-300 font-semibold">1. Quỹ đầu kỳ</td>
                                 <td class="p-2 border border-slate-300 text-right">
-                                    <input type="number" id="input-dau-ky" value="500000" onchange="capNhatBaoCaoQuy(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();" class="w-full text-right font-bold text-slate-800 bg-transparent outline-none focus:ring-1 focus:ring-blue-500 rounded px-1">
+                                    <input type="number" id="input-dau-ky" value="500000" onchange="capNhatBaoCaoQuy()" class="w-full text-right font-bold text-slate-800 bg-transparent outline-none focus:ring-1 focus:ring-blue-500 rounded px-1">
                                 </td>
-                                <td class="p-2 border border-slate-300 text-slate-500 italic">Nhập tay số tiền còn dư</td>
+                                <td class="p-2 border border-slate-300 text-slate-500 italic">Nhập tay số tiền còn dư từ kỳ trước</td>
                             </tr>
                             <tr class="hover:bg-slate-50">
                                 <td class="p-2 border border-slate-300 font-semibold">2. Tổng thu</td>
                                 <td class="p-2 border border-slate-300 text-right font-bold text-emerald-600" id="txt-tong-thu">0</td>
-                                <td class="p-2 border border-slate-300 text-slate-500 italic">Tự động lấy tổng từ Bảng Thu</td>
+                                <td class="p-2 border border-slate-300 text-slate-500 italic">Tự động lấy tổng từ Bảng Thu Chi Nhật Ký</td>
                             </tr>
                             <tr class="hover:bg-slate-50">
                                 <td class="p-2 border border-slate-300 font-semibold">3. Tổng chi</td>
                                 <td class="p-2 border border-slate-300 text-right font-bold text-rose-600" id="txt-tong-chi">0</td>
-                                <td class="p-2 border border-slate-300 text-slate-500 italic">Tự động lấy tổng từ Bảng Chi</td>
+                                <td class="p-2 border border-slate-300 text-slate-500 italic">Tự động lấy tổng từ Bảng Thu Chi Nhật Ký</td>
                             </tr>
                             <tr class="bg-amber-100/80 font-bold">
                                 <td class="p-2 border border-slate-300 text-amber-950 uppercase">4. Số dư quỹ</td>
@@ -778,25 +778,11 @@
                 </div>
             </div>
 
-            <!-- BẢNG DANH SÁCH THÀNH VIÊN ĐÓNG TIỀN SÂN ĐỊNH KỲ -->
+            <!-- BẢNG DANH SÁCH THÀNH VIÊN ĐÓNG TIỀN SÂN ĐỊNH KỲ (TÍCH HỢP TỪ FILE 1) -->
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800 space-y-4">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <h2 class="text-base md:text-lg font-extrabold text-blue-900 uppercase tracking-wider flex items-center gap-2">
-                        <i class="fa-solid fa-users text-blue-700"></i> DANH SÁCH THÀNH VIÊN & ĐÓNG TIỀN SÂN ĐỊNH KỲ
-                    </h2>
-                    <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <div class="relative flex-1 sm:w-64">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                            <input type="text" id="member-search" oninput="renderBaoCaoQuy()" placeholder="Tìm tên hoặc SĐT..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
-                        </div>
-                        <select id="member-filter" onchange="renderBaoCaoQuy()" class="py-1.5 px-3 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
-                            <option value="all">Tất cả trạng thái</option>
-                            <option value="q1_pending">Nợ Q1</option>
-                            <option value="q2_pending">Nợ Q2</option>
-                        </select>
-                    </div>
-                </div>
-
+                <h2 class="text-base md:text-lg font-extrabold text-blue-900 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-users text-blue-700"></i> DANH SÁCH THÀNH VIÊN & ĐÓNG TIỀN SÂN ĐỊNH KỲ
+                </h2>
                 <div class="overflow-x-auto">
                     <table class="w-full border-collapse border border-slate-300 text-xs md:text-sm text-center">
                         <thead>
@@ -815,7 +801,7 @@
                 </div>
             </div>
 
-            <!-- BẢNG NHẬT KÝ THU CHI CLB (DẠNG K-ĐƠN VỊ THI ĐẤU) -->
+            <!-- BẢNG NHẬT KÝ THU CHI CLB (THEO ĐƠN VỊ K THI ĐẤU) -->
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800 space-y-4">
                 <div class="flex flex-wrap justify-between items-center pb-3 border-b gap-2">
                     <div>
@@ -1040,26 +1026,25 @@
             "1/10/26": { btcNoteAdminOption: "YES" }
         };
 
-        // DỮ LIỆU BÁO CÁO TỔNG QUAN QUỸ & THÀNH VIÊN
+        // DỮ LIỆU THÀNH VIÊN QUỸ & THU CHI TỪ FILE 1
         window.danhSachThanhVienQuy = [
-            { id: 1, ten: "Nguyễn Văn A", sdt: "0901234567", mucDong: 500000, q1: true, q2: true, note: "Thành viên chính thức" },
-            { id: 2, ten: "Trần Thị B", sdt: "0912345678", mucDong: 500000, q1: true, q2: false, note: "Thành viên chính thức" },
-            { id: 3, ten: "Lê Văn C", sdt: "0923456789", mucDong: 500000, q1: true, q2: true, note: "Ban điều hành" },
-            { id: 4, ten: "Phạm Minh D", sdt: "0934567890", mucDong: 500000, q1: false, q2: false, note: "Thành viên mới" },
-            { id: 5, ten: "Hoàng Anh E", sdt: "0945678901", mucDong: 500000, q1: true, q2: true, note: "Thành viên chính thức" },
-            { id: 6, ten: "Vũ Thị F", sdt: "0956789012", mucDong: 500000, q1: true, q2: false, note: "Thành viên chính thức" },
-            { id: 7, ten: "Đặng Văn G", sdt: "0967890123", mucDong: 500000, q1: true, q2: true, note: "Thành viên chính thức" },
-            { id: 8, ten: "Bùi Hoàng H", sdt: "0978901234", mucDong: 500000, q1: false, q2: false, note: "Thành viên mới" },
-            { id: 9, ten: "Đỗ Thị I", sdt: "0989012345", mucDong: 500000, q1: true, q2: true, note: "Thành viên chính thức" },
-            { id: 10, ten: "Ngo Văn K", sdt: "0990123456", mucDong: 500000, q1: true, q2: false, note: "Thành viên chính thức" },
-            { id: 11, ten: "Dương Minh L", sdt: "0909876543", mucDong: 500000, q1: true, q2: true, note: "Thành viên chính thức" },
-            { id: 12, ten: "Lý Thanh M", sdt: "0918765432", mucDong: 500000, q1: true, q2: false, note: "Thành viên chính thức" },
-            { id: 13, ten: "Trịnh Văn N", sdt: "0927654321", mucDong: 500000, q1: false, q2: false, note: "Thành viên mới" },
-            { id: 14, ten: "Mai Thị O", sdt: "0936543210", mucDong: 500000, q1: true, q2: true, note: "Thành viên chính thức" },
-            { id: 15, ten: "Đoàn Văn P", sdt: "0945432109", mucDong: 500000, q1: true, q2: false, note: "Thành viên chính thức" }
+            { stt: 1, ten: "Thành viên 1", sdt: "0901234501", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 2, ten: "Thành viên 2", sdt: "0901234502", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 3, ten: "Thành viên 3", sdt: "0901234503", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 4, ten: "Thành viên 4", sdt: "0901234504", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 5, ten: "Thành viên 5", sdt: "0901234505", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 6, ten: "Thành viên 6", sdt: "0901234506", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 7, ten: "Thành viên 7", sdt: "0901234507", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 8, ten: "Thành viên 8", sdt: "0901234508", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 9, ten: "Thành viên 9", sdt: "0901234509", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 10, ten: "Thành viên 10", sdt: "0901234510", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 11, ten: "Thành viên 11", sdt: "0901234511", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 12, ten: "Thành viên 12", sdt: "0901234512", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 13, ten: "Thành viên 13", sdt: "0901234513", mucDong: 600000, q1: false, q2: false, note: "" },
+            { stt: 14, ten: "Thành viên 14", sdt: "0901234514", mucDong: 600000, q1: false, q2: false, note: "" },
+            { stt: 15, ten: "Thành viên 15", sdt: "0901234515", mucDong: 600000, q1: false, q2: false, note: "" }
         ];
 
-        // DỮ LIỆU THU CHI CƠ BẢN
         window.thuChiData = [
             { id: 1, player: "Tiến Thọ", thu: 50, chi: 0, note: "Đóng tiền quỹ tháng 10" },
             { id: 2, player: "Quỹ CLB", thu: 0, chi: 30, note: "Mua nước ngọt & bóng đấu" }
@@ -1149,8 +1134,6 @@
             closeAllDropdowns();
             if(window.dates.length === 0) return alert("Chưa có ngày nào để xuất Excel!");
             let wb = XLSX.utils.book_new();
-
-            // Sheet cho từng ngày thi đấu
             window.dates.forEach(d => {
                 let matches = window.matchesData[d] || [];
                 let rows = matches.map((m, idx) => ({
@@ -1165,31 +1148,6 @@
                 let ws = XLSX.utils.json_to_sheet(rows);
                 XLSX.utils.book_append_sheet(wb, ws, d.replace(/\//g, "-"));
             });
-
-            // Sheet Thành Viên
-            const memberRows = window.danhSachThanhVienQuy.map((m, idx) => ({
-                "STT": idx + 1,
-                "Họ và Tên": m.ten,
-                "Số điện thoại": m.sdt,
-                "Mức đóng/Quý": m.mucDong,
-                "Quý 1": m.q1 ? "Đã đóng" : "Chưa đóng",
-                "Quý 2": m.q2 ? "Đã đóng" : "Chưa đóng",
-                "Ghi chú": m.note || ""
-            }));
-            let wsMembers = XLSX.utils.json_to_sheet(memberRows);
-            XLSX.utils.book_append_sheet(wb, wsMembers, "Thành Viên");
-
-            // Sheet Thu Chi
-            const thuChiRows = window.thuChiData.map((tc, idx) => ({
-                "STT": idx + 1,
-                "Người thực hiện / Nguồn": tc.player,
-                "Thu (K)": tc.thu,
-                "Chi (K)": tc.chi,
-                "Ghi chú": tc.note || ""
-            }));
-            let wsThuChi = XLSX.utils.json_to_sheet(thuChiRows);
-            XLSX.utils.book_append_sheet(wb, wsThuChi, "Thu Chi");
-
             XLSX.writeFile(wb, `CLB_Pickleball_CMTD_ThongKe.xlsx`);
         }
 
@@ -1474,56 +1432,23 @@
             `;
         }
 
-        // TÍNH TOÁN BÁO CÁO TỔNG QUAN QUỸ PICKLEBALL & DANH SÁCH THÀNH VIÊN
+        // TÍNH TOÁN BÁO CÁO TỔNG QUAN QUỸ PICKLEBALL (TÍCH HỢP TỪ FILE 1)
         function renderBaoCaoQuy() {
             const tbodyTV = document.getElementById('tb-thanh-vien-quy');
             if(tbodyTV) {
-                const search = (document.getElementById('member-search')?.value || '').toLowerCase();
-                const filter = document.getElementById('member-filter')?.value || 'all';
-
-                const filtered = window.danhSachThanhVienQuy.filter(m => {
-                    const matchSearch = (m.ten || '').toLowerCase().includes(search) || (m.sdt || '').includes(search);
-                    let matchFilter = true;
-                    if(filter === 'q1_pending') matchFilter = !m.q1;
-                    if(filter === 'q2_pending') matchFilter = !m.q2;
-                    return matchSearch && matchFilter;
-                });
-
-                if(filtered.length === 0) {
-                    tbodyTV.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Không tìm thấy thành viên nào.</td></tr>`;
-                } else {
-                    tbodyTV.innerHTML = filtered.map((tv, idx) => `
-                        <tr class="hover:bg-slate-50">
-                            <td class="p-2 border border-slate-300 font-bold">${idx + 1}</td>
-                            <td class="p-2 border border-slate-300 text-left font-semibold text-blue-950">${tv.ten}</td>
-                            <td class="p-2 border border-slate-300 font-mono text-slate-600">${tv.sdt}</td>
-                            <td class="p-2 border border-slate-300 text-right font-semibold">${formatVND(tv.mucDong)}</td>
-                            <td class="p-2 border border-slate-300 text-center">
-                                <button onclick="toggleFeeQuarter(${tv.id}, 'q1')" class="px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${tv.q1 ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-rose-100 text-rose-700 hover:bg-rose-200'}">
-                                    ${tv.q1 ? '<i class="fa-solid fa-check mr-1"></i>Đã đóng' : '<i class="fa-solid fa-xmark mr-1"></i>Chưa đóng'}
-                                </button>
-                            </td>
-                            <td class="p-2 border border-slate-300 text-center">
-                                <button onclick="toggleFeeQuarter(${tv.id}, 'q2')" class="px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${tv.q2 ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-rose-100 text-rose-700 hover:bg-rose-200'}">
-                                    ${tv.q2 ? '<i class="fa-solid fa-check mr-1"></i>Đã đóng' : '<i class="fa-solid fa-xmark mr-1"></i>Chưa đóng'}
-                                </button>
-                            </td>
-                            <td class="p-2 border border-slate-300 text-left text-slate-500">${tv.note || ''}</td>
-                        </tr>
-                    `).join('');
-                }
+                tbodyTV.innerHTML = window.danhSachThanhVienQuy.map(tv => `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-2 border border-slate-300 font-bold">${tv.stt}</td>
+                        <td class="p-2 border border-slate-300 text-left font-semibold text-blue-950">${tv.ten}</td>
+                        <td class="p-2 border border-slate-300 font-mono text-slate-600">${tv.sdt}</td>
+                        <td class="p-2 border border-slate-300 text-right font-semibold">${formatVND(tv.mucDong)} đ</td>
+                        <td class="p-2 border border-slate-300 font-bold ${tv.q1 ? 'text-emerald-600' : 'text-slate-400'}">${tv.q1 ? 'Đã đóng' : 'Chưa đóng'}</td>
+                        <td class="p-2 border border-slate-300 font-bold ${tv.q2 ? 'text-emerald-600' : 'text-slate-400'}">${tv.q2 ? 'Đã đóng' : 'Chưa đóng'}</td>
+                        <td class="p-2 border border-slate-300 text-left text-slate-500">${tv.note}</td>
+                    </tr>
+                `).join('');
             }
             capNhatBaoCaoQuy();
-        }
-
-        function toggleFeeQuarter(memberId, quarter) {
-            window.danhSachThanhVienQuy = window.danhSachThanhVienQuy.map(m => {
-                if(m.id === memberId) return { ...m, [quarter]: !m[quarter] };
-                return m;
-            });
-            renderBaoCaoQuy();
-            autoBackupData();
-            if(window.syncToFirebase) window.syncToFirebase();
         }
 
         function capNhatBaoCaoQuy() {
@@ -1538,9 +1463,9 @@
             const dauKy = parseFloat(document.getElementById('input-dau-ky')?.value) || 0;
             const soDu = dauKy + tongThu - tongChi;
 
-            if(document.getElementById('txt-tong-thu')) document.getElementById('txt-tong-thu').innerText = formatVND(tongThu);
-            if(document.getElementById('txt-tong-chi')) document.getElementById('txt-tong-chi').innerText = formatVND(tongChi);
-            if(document.getElementById('txt-so-du')) document.getElementById('txt-so-du').innerText = formatVND(soDu);
+            if(document.getElementById('txt-tong-thu')) document.getElementById('txt-tong-thu').innerText = formatVND(tongThu) + ' đ';
+            if(document.getElementById('txt-tong-chi')) document.getElementById('txt-tong-chi').innerText = formatVND(tongChi) + ' đ';
+            if(document.getElementById('txt-so-du')) document.getElementById('txt-so-du').innerText = formatVND(soDu) + ' đ';
         }
 
         function renderThuChiTable() {
@@ -2084,7 +2009,6 @@
                     paymentStatus: window.paymentStatus,
                     danhSachThanhVienQuy: window.danhSachThanhVienQuy,
                     thuChiData: window.thuChiData,
-                    quyDauKy: document.getElementById('input-dau-ky')?.value || 500000,
                     knockoutScores: {
                         bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
                         bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
@@ -2115,9 +2039,6 @@
                 if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
                 if (data.danhSachThanhVienQuy) window.danhSachThanhVienQuy = data.danhSachThanhVienQuy;
                 if (data.thuChiData) window.thuChiData = data.thuChiData;
-                if (data.quyDauKy && document.getElementById('input-dau-ky')) {
-                    document.getElementById('input-dau-ky').value = data.quyDauKy;
-                }
 
                 renderPlayers(); renderMinigame1(); renderM2(); renderDatesMenuList(); renderDayDetailView(); renderTongHopTab(); renderThuChiTable();
                 if (!silent) alert("Đã nạp thành công dữ liệu từ Auto-Backup!");
@@ -2143,7 +2064,6 @@
                 paymentStatus: window.paymentStatus,
                 danhSachThanhVienQuy: window.danhSachThanhVienQuy,
                 thuChiData: window.thuChiData,
-                quyDauKy: document.getElementById('input-dau-ky')?.value || 500000,
                 knockoutScores: {
                     bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
                     bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
@@ -2182,9 +2102,6 @@
                     if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
                     if (data.danhSachThanhVienQuy) window.danhSachThanhVienQuy = data.danhSachThanhVienQuy;
                     if (data.thuChiData) window.thuChiData = data.thuChiData;
-                    if (data.quyDauKy && document.getElementById('input-dau-ky')) {
-                        document.getElementById('input-dau-ky').value = data.quyDauKy;
-                    }
 
                     renderPlayers(); renderMinigame1(); renderM2(); renderDatesMenuList(); renderDayDetailView(); renderTongHopTab(); renderThuChiTable();
                     autoBackupData();
@@ -2468,7 +2385,6 @@
                     paymentStatus: window.paymentStatus,
                     danhSachThanhVienQuy: window.danhSachThanhVienQuy,
                     thuChiData: window.thuChiData,
-                    quyDauKy: document.getElementById('input-dau-ky')?.value || 500000,
                     knockoutScores: knockoutScores
                 }, { merge: true });
                 console.log("Đã đồng bộ Firestore thành công!");
@@ -2508,9 +2424,6 @@
                     if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
                     if (data.danhSachThanhVienQuy) window.danhSachThanhVienQuy = data.danhSachThanhVienQuy;
                     if (data.thuChiData) window.thuChiData = data.thuChiData;
-                    if (data.quyDauKy && document.getElementById('input-dau-ky')) {
-                        document.getElementById('input-dau-ky').value = data.quyDauKy;
-                    }
 
                     if (data.knockoutScores) {
                         const s = data.knockoutScores;
