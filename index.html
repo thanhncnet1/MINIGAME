@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLB-PICKLEBALL-CMTD - Quản Lý Giải Đấu & Quỹ Pickleball</title>
+    <title>CLB-PICKLEBALL-CMTD - Quản Lý Giải Đấu & Thu Chi Quỹ</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -124,22 +124,21 @@
 </head>
 <body id="app-body" class="bg-theme-slate min-h-screen flex flex-col font-sans transition-colors duration-300" onclick="closeAllDropdowns()">
 
-    <!-- BANNER TRÊN CÙNG -->
+    <!-- 1. BANNER TRÊN CÙNG -->
     <div class="relative w-full bg-slate-900 shadow-md flex justify-center items-center overflow-hidden">
         <img src="banner.jpg" 
              alt="Banner CLB Pickleball CMTD" 
-             class="w-full h-auto max-h-48 sm:max-h-64 md:max-h-80 object-cover object-center block"
-             onerror="this.style.display='none'">
+             class="w-full h-auto max-h-48 sm:max-h-64 md:max-h-80 object-cover object-center block">
     </div>
 
-    <!-- THANH TIÊU ĐỀ & THANH ĐIỀU HƯỚNG -->
+    <!-- 2. THANH TIÊU ĐỀ & THANH ĐIỀU HƯỚNG -->
     <nav class="bg-slate-800 text-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-2 sm:px-4 flex flex-col md:flex-row items-center justify-between py-2 md:py-0 md:h-16 gap-2">
             
             <!-- LOGO & BRAND -->
             <div class="flex items-center space-x-2 cursor-pointer w-full md:w-auto justify-between md:justify-start" onclick="showTab('home')">
                 <div class="flex items-center space-x-2">
-                    <img src="logo1.png" alt="Logo CMTD" class="w-8 h-8 md:w-10 md:h-10 object-contain bg-white/10 rounded-full p-0.5 border border-yellow-400/50 shadow-md" onerror="this.style.display='none'">
+                    <img src="logo1.png" alt="Logo CMTD" class="w-8 h-8 md:w-10 md:h-10 object-contain bg-white/10 rounded-full p-0.5 border border-yellow-400/50 shadow-md">
                     <span class="font-extrabold text-base md:text-xl tracking-tight text-yellow-400">CLB-PICKLEBALL-CMTD</span>
                 </div>
                 <!-- Status Dot Mobile -->
@@ -239,7 +238,10 @@
                 <h2 class="text-2xl font-bold mb-4">CHÀO MỪNG ĐẾN VỚI GIẢI ĐẤU CLB-PICKLEBALL-CMTD</h2>
                 <p class="text-slate-600 mb-6 max-w-2xl mx-auto text-sm md:text-base">Vui lòng chọn một trong các mục bên dưới hoặc trên thanh menu để bắt đầu quản lý danh sách vận động viên, lịch thi đấu và bảng xếp hạng.</p>
                 
+                <!-- LƯỚI 5 CỘT CHỨA CÁC Ô TÙY CHỌN TRÊN MÀN HÌNH CHÍNH -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 max-w-6xl mx-auto">
+                    
+                    <!-- 1. DANH SÁCH PICK THỦ -->
                     <div onclick="showTab('players')" class="cursor-pointer bg-blue-50/80 border border-blue-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
                         <div class="my-auto">
                             <i class="fa-solid fa-user-gear text-4xl text-blue-600 mb-3 group-hover:scale-110 transition-transform block"></i>
@@ -248,6 +250,7 @@
                         </div>
                     </div>
 
+                    <!-- 2. MINIGAME 1 -->
                     <div onclick="showTab('minigame1')" class="cursor-pointer bg-amber-50/80 border border-amber-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
                         <div class="my-auto">
                             <i class="fa-solid fa-people-group text-4xl text-amber-600 mb-3 group-hover:scale-110 transition-transform block"></i>
@@ -256,6 +259,7 @@
                         </div>
                     </div>
 
+                    <!-- 3. MINIGAME 2 -->
                     <div onclick="showTab('minigame2')" class="cursor-pointer bg-emerald-50/80 border border-emerald-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
                         <div class="my-auto">
                             <i class="fa-solid fa-diagram-project text-4xl text-emerald-600 mb-3 group-hover:scale-110 transition-transform block"></i>
@@ -264,6 +268,7 @@
                         </div>
                     </div>
 
+                    <!-- 4. QUẢN LÝ THU CHI -->
                     <div onclick="showTab('thuchi')" class="cursor-pointer bg-teal-50/80 border border-teal-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
                         <div class="my-auto">
                             <i class="fa-solid fa-wallet text-4xl text-teal-600 mb-3 group-hover:scale-110 transition-transform block"></i>
@@ -272,6 +277,7 @@
                         </div>
                     </div>
 
+                    <!-- 5. BẢNG TỔNG HỢP CÁC NGÀY -->
                     <div onclick="showTab('tonghop')" class="cursor-pointer bg-indigo-50/80 border border-indigo-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
                         <div class="my-auto">
                             <i class="fa-solid fa-table-list text-4xl text-indigo-600 mb-3 group-hover:scale-110 transition-transform block"></i>
@@ -279,6 +285,7 @@
                             <p class="text-xs text-slate-500 mt-2">Tổng hợp kết quả kèo & thưởng phạt tất cả các ngày</p>
                         </div>
                     </div>
+
                 </div>
 
                 <!-- QUẢN LÝ SAO LƯU DỮ LIỆU -->
@@ -723,111 +730,85 @@
         </section>
 
         <!-- QUẢN LÝ THU CHI -->
-        <section id="tab-thuchi" class="tab-content hidden space-y-6">
-            <!-- DASHBOARD TỔNG QUAN QUỸ PICKLEBALL -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="bg-slate-900 px-6 py-4 text-white flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-chart-pie text-emerald-400"></i>
-                        <h2 class="font-bold text-sm tracking-wider uppercase">Báo cáo tổng quan số dư quý</h2>
-                    </div>
-                    <button onclick="resetDuLieuGoc()" class="text-xs bg-rose-700/80 hover:bg-rose-700 px-3 py-1 rounded-full border border-rose-500 transition-all text-white">
-                        <i class="fa-solid fa-trash-can mr-1"></i> Xóa hết làm lại
-                    </button>
+        <section id="tab-thuchi" class="tab-content hidden space-y-8">
+            
+            <!-- BÁO CÁO TỔNG QUAN QUỸ PICKLEBALL -->
+            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800 space-y-4">
+                <div class="border-b-2 border-blue-900 pb-3 flex items-center justify-between">
+                    <h2 class="text-lg md:text-xl font-black text-blue-950 uppercase tracking-wide flex items-center gap-2">
+                        <i class="fa-solid fa-file-invoice-dollar text-emerald-600"></i>
+                        BÁO CÁO TỔNG QUAN QUỸ PICKLEBALL
+                    </h2>
                 </div>
                 
-                <div class="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- Quỹ đầu kỳ -->
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
-                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">1. Quỹ đầu kỳ</span>
-                        <div class="flex items-baseline justify-between mt-2">
-                            <input type="number" id="input-dau-ky" onchange="capNhatQuyDauKy(this.value)" class="text-2xl font-black text-slate-700 bg-transparent border-b border-dashed border-slate-400 w-full focus:outline-none focus:border-emerald-500" value="500000">
-                        </div>
-                        <span class="text-[10px] text-slate-400 mt-2 block"><i class="fa-solid fa-pen mr-1"></i>Nhấp vào số để sửa số dư gốc</span>
-                    </div>
-
-                    <!-- Tổng thu -->
-                    <div class="bg-emerald-50/50 border border-emerald-100 rounded-xl p-4 flex flex-col justify-between">
-                        <span class="text-xs font-semibold text-emerald-700 uppercase tracking-wider">2. Tổng thu trong quý (+)</span>
-                        <div class="flex items-baseline justify-between mt-2">
-                            <span id="txt-tong-thu" class="text-2xl font-black text-emerald-600">0</span>
-                            <span class="text-xs font-bold text-emerald-500">VNĐ</span>
-                        </div>
-                        <span class="text-[10px] text-emerald-500 mt-2 block"><i class="fa-solid fa-robot mr-1"></i>Tự động gom từ Nhật ký Thu</span>
-                    </div>
-
-                    <!-- Tổng chi -->
-                    <div class="bg-rose-50/50 border border-rose-100 rounded-xl p-4 flex flex-col justify-between">
-                        <span class="text-xs font-semibold text-rose-700 uppercase tracking-wider">3. Tổng chi trong quý (-)</span>
-                        <div class="flex items-baseline justify-between mt-2">
-                            <span id="txt-tong-chi" class="text-2xl font-black text-rose-600">0</span>
-                            <span class="text-xs font-bold text-rose-500">VNĐ</span>
-                        </div>
-                        <span class="text-[10px] text-rose-500 mt-2 block"><i class="fa-solid fa-robot mr-1"></i>Tự động gom từ Nhật ký Chi</span>
-                    </div>
-
-                    <!-- Số dư hiện tại -->
-                    <div class="bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl p-4 flex flex-col justify-between text-white shadow-md shadow-orange-500/10">
-                        <span class="text-xs font-bold text-amber-100 uppercase tracking-wider">4. Số dư quỹ thực tế</span>
-                        <div class="flex items-baseline justify-between mt-2">
-                            <span id="txt-so-du" class="text-2xl font-black">0</span>
-                            <span class="text-xs font-bold text-amber-200">VNĐ</span>
-                        </div>
-                        <span class="text-[10px] text-amber-100 mt-2 block"><i class="fa-solid fa-calculator mr-1"></i>[Đầu kỳ] + [Thu] - [Chi]</span>
-                    </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full md:w-2/3 border-collapse border border-slate-300 text-xs md:text-sm">
+                        <thead>
+                            <tr class="bg-blue-900 text-white font-bold">
+                                <th class="p-2 border border-slate-300 text-left w-1/3">Số tổng quỹ</th>
+                                <th class="p-2 border border-slate-300 text-right w-1/3">Số tiền (VNĐ)</th>
+                                <th class="p-2 border border-slate-300 text-left w-1/3">Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 font-medium">
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-2 border border-slate-300 font-semibold">1. Quỹ đầu kỳ</td>
+                                <td class="p-2 border border-slate-300 text-right">
+                                    <input type="number" id="input-dau-ky" value="500000" onchange="capNhatBaoCaoQuy()" class="w-full text-right font-bold text-slate-800 bg-transparent outline-none focus:ring-1 focus:ring-blue-500 rounded px-1">
+                                </td>
+                                <td class="p-2 border border-slate-300 text-slate-500 italic">Nhập tay số tiền còn dư</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-2 border border-slate-300 font-semibold">2. Tổng thu</td>
+                                <td class="p-2 border border-slate-300 text-right font-bold text-emerald-600" id="txt-tong-thu">0</td>
+                                <td class="p-2 border border-slate-300 text-slate-500 italic">Tự động lấy tổng từ Bảng Thu</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-2 border border-slate-300 font-semibold">3. Tổng chi</td>
+                                <td class="p-2 border border-slate-300 text-right font-bold text-rose-600" id="txt-tong-chi">0</td>
+                                <td class="p-2 border border-slate-300 text-slate-500 italic">Tự động lấy tổng từ Bảng Chi</td>
+                            </tr>
+                            <tr class="bg-amber-100/80 font-bold">
+                                <td class="p-2 border border-slate-300 text-amber-950 uppercase">4. Số dư quỹ</td>
+                                <td class="p-2 border border-slate-300 text-right text-base text-amber-900 font-extrabold" id="txt-so-du">0</td>
+                                <td class="p-2 border border-slate-300 text-amber-900 italic font-semibold">Công thức: Đầu kỳ + Thu - Chi</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- BỘ FORM NHẬP LIỆU NHANH -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
-                    <i class="fa-solid fa-circle-plus text-teal-600 text-lg"></i>
-                    <h2 class="font-bold text-sm tracking-wider uppercase text-slate-700">Thêm giao dịch mới nhanh</h2>
+            <!-- BẢNG DANH SÁCH THÀNH VIÊN ĐÓNG TIỀN SÂN ĐỊNH KỲ -->
+            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800 space-y-4">
+                <h2 class="text-base md:text-lg font-extrabold text-blue-900 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-users text-blue-700"></i> DANH SÁCH THÀNH VIÊN & ĐÓNG TIỀN SÂN ĐỊNH KỲ
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse border border-slate-300 text-xs md:text-sm text-center">
+                        <thead>
+                            <tr class="bg-blue-900 text-white font-bold">
+                                <th class="p-2 border border-slate-300 w-12">STT</th>
+                                <th class="p-2 border border-slate-300 text-left">Họ và Tên</th>
+                                <th class="p-2 border border-slate-300 w-36">Số điện thoại</th>
+                                <th class="p-2 border border-slate-300 w-36">Mức đóng/Quý</th>
+                                <th class="p-2 border border-slate-300 w-32">Trạng thái Quý 1</th>
+                                <th class="p-2 border border-slate-300 w-32">Trạng thái Quý 2</th>
+                                <th class="p-2 border border-slate-300 text-left">Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tb-thanh-vien-quy" class="divide-y divide-slate-200"></tbody>
+                    </table>
                 </div>
-                <form id="giao-dich-form" onsubmit="themGiaoDichMoi(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
-                    <div>
-                        <label class="block text-slate-500 font-semibold mb-1">Loại giao dịch</label>
-                        <select id="form-loai" class="w-full border border-slate-300 rounded-lg p-2.5 bg-slate-50 focus:ring-2 focus:ring-emerald-500 focus:outline-none font-medium">
-                            <option value="THU">🟢 Khoản THU (Tiền vào quỹ)</option>
-                            <option value="CHI">🔴 Khoản CHI (Tiền ra khỏi quỹ)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-slate-500 font-semibold mb-1">Hạng mục phân loại</label>
-                        <select id="form-phan-loai" class="w-full border border-slate-300 rounded-lg p-2.5 bg-slate-50 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-                            <option value="Tiền sân định kỳ">Tiền sân theo Quý</option>
-                            <option value="Tiền kèo tuần">Tiền kèo / Đấu giao lưu tuần</option>
-                            <option value="Tài trợ / Ủng hộ">Tài trợ / Ủng hộ</option>
-                            <option value="Mua bóng">Chi mua bóng mới</option>
-                            <option value="Tiền nước uống">Chi tiền nước / Đá viên</option>
-                            <option value="Tiền sân phát sinh">Chi tiền sân phát sinh thêm</option>
-                            <option value="Chi phí khác">Các khoản chi khác (Liên hoan...)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-slate-500 font-semibold mb-1">Nội dung chi tiết</label>
-                        <input type="text" id="form-noi-dung" required placeholder="Ví dụ: Thu tiền sân Q1 - Anh A, Mua bóng..." class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-slate-500 font-semibold mb-1">Số tiền (VNĐ)</label>
-                        <input type="number" id="form-so-tien" required placeholder="Nhập số tiền..." class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none font-bold">
-                    </div>
-                    <div class="flex items-end">
-                        <button type="submit" class="w-full bg-slate-900 text-white hover:bg-emerald-600 p-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 shadow-sm">
-                            <i class="fa-solid fa-cloud-arrow-up"></i> Ghi vào sổ quỹ
-                        </button>
-                    </div>
-                </form>
             </div>
 
-            <!-- KHU VỰC THỦ CHI CHI TIẾT DẠNG BẢNG -->
-            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
-                <div class="flex flex-wrap justify-between items-center mb-4 pb-3 border-b gap-2">
+            <!-- BẢNG NHẬT KÝ THU CHI CLB (DẠNG K-ĐƠN VỊ THI ĐẤU) -->
+            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800 space-y-4">
+                <div class="flex flex-wrap justify-between items-center pb-3 border-b gap-2">
                     <div>
                         <h2 class="text-lg md:text-xl font-black text-slate-800 uppercase flex items-center gap-2">
-                            <i class="fa-solid fa-wallet text-emerald-600"></i> BẢNG SỔ QUỸ CHI TIẾT
+                            <i class="fa-solid fa-wallet text-emerald-600"></i> NHẬT KÝ QUẢN LÝ THU CHI CLB
                         </h2>
-                        <p class="text-xs text-slate-500">Theo dõi chi tiết các khoản thu, chi và quỹ tồn</p>
+                        <p class="text-xs text-slate-500">Theo dõi chi tiết các khoản thu, chi theo đơn vị K</p>
                     </div>
                     <button onclick="openThuChiModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-lg font-bold shadow flex items-center gap-1">
                         <i class="fa-solid fa-plus"></i> Thêm Khoản Thu/Chi
@@ -839,7 +820,7 @@
                         <thead>
                             <tr class="bg-slate-800 text-white font-bold">
                                 <th class="p-2 border w-12">STT</th>
-                                <th class="p-2 border text-left pl-3">DANH SÁCH PICK THỦ / NỘI DUNG</th>
+                                <th class="p-2 border text-left pl-3">DANH SÁCH PICK THỦ</th>
                                 <th class="p-2 border w-28 text-emerald-300">THU (K)</th>
                                 <th class="p-2 border w-28 text-red-300">CHI (K)</th>
                                 <th class="p-2 border w-32 text-yellow-300">QUỸ CÒN (THU - CHI)</th>
@@ -928,7 +909,7 @@
                 <div>
                     <label class="block font-semibold text-slate-600 mb-1">Pick Thủ / Người thực hiện</label>
                     <select id="thuchi-player" class="w-full border rounded-lg p-2 outline-none">
-                        <option value="Quỹ CLB / Chung">Quỹ CLB / Chung</option>
+                        <option value="Tất cả / Quỹ CLB">Tất cả / Quỹ CLB</option>
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
@@ -1045,80 +1026,33 @@
             "1/10/26": { btcNoteAdminOption: "YES" }
         };
 
-        // DỮ LIỆU THU CHI GỐC CỦA QUỸ
-        window.quyDauKy = 500000;
+        // DỮ LIỆU BÁO CÁO TỔNG QUAN QUỸ & THÀNH VIÊN (TỪ FILE 1)
+        window.danhSachThanhVienQuy = [
+            { stt: 1, ten: "Thành viên 1", sdt: "0901234501", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 2, ten: "Thành viên 2", sdt: "0901234502", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 3, ten: "Thành viên 3", sdt: "0901234503", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 4, ten: "Thành viên 4", sdt: "0901234504", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 5, ten: "Thành viên 5", sdt: "0901234505", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 6, ten: "Thành viên 6", sdt: "0901234506", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 7, ten: "Thành viên 7", sdt: "0901234507", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 8, ten: "Thành viên 8", sdt: "0901234508", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 9, ten: "Thành viên 9", sdt: "0901234509", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 10, ten: "Thành viên 10", sdt: "0901234510", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 11, ten: "Thành viên 11", sdt: "0901234511", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 12, ten: "Thành viên 12", sdt: "0901234512", mucDong: 600000, q1: true, q2: false, note: "" },
+            { stt: 13, ten: "Thành viên 13", sdt: "0901234513", mucDong: 600000, q1: false, q2: false, note: "" },
+            { stt: 14, ten: "Thành viên 14", sdt: "0901234514", mucDong: 600000, q1: false, q2: false, note: "" },
+            { stt: 15, ten: "Thành viên 15", sdt: "0901234515", mucDong: 600000, q1: false, q2: false, note: "" }
+        ];
+
+        // DỮ LIỆU THU CHI CƠ BẢN
         window.thuChiData = [
             { id: 1, player: "Tiến Thọ", thu: 50, chi: 0, note: "Đóng tiền quỹ tháng 10" },
             { id: 2, player: "Quỹ CLB", thu: 0, chi: 30, note: "Mua nước ngọt & bóng đấu" }
         ];
 
-        function capNhatQuyDauKy(val) {
-            window.quyDauKy = parseFloat(val) || 0;
-            renderThuChiDashboard();
-            autoBackupData();
-            if(window.syncToFirebase) window.syncToFirebase();
-        }
-
-        function themGiaoDichMoi(e) {
-            e.preventDefault();
-            const loai = document.getElementById('form-loai').value;
-            const phanLoai = document.getElementById('form-phan-loai').value;
-            const noiDung = document.getElementById('form-noi-dung').value.trim();
-            const soTien = parseFloat(document.getElementById('form-so-tien').value) || 0;
-
-            if (soTien <= 0) return alert("Số tiền phải lớn hơn 0!");
-
-            const newItem = {
-                id: Date.now(),
-                player: phanLoai,
-                thu: loai === 'THU' ? (soTien / 1000) : 0,
-                chi: loai === 'CHI' ? (soTien / 1000) : 0,
-                note: noiDung
-            };
-
-            window.thuChiData.push(newItem);
-            document.getElementById('form-noi-dung').value = '';
-            document.getElementById('form-so-tien').value = '';
-
-            renderThuChiTable();
-            renderThuChiDashboard();
-            autoBackupData();
-            if(window.syncToFirebase) window.syncToFirebase();
-        }
-
-        function resetDuLieuGoc() {
-            if (confirm("⚠️ Bạn có chắc chắn muốn xóa tất cả dữ liệu thu chi làm lại từ đầu?")) {
-                window.thuChiData = [];
-                window.quyDauKy = 0;
-                document.getElementById('input-dau-ky').value = 0;
-                renderThuChiTable();
-                renderThuChiDashboard();
-                autoBackupData();
-                if(window.syncToFirebase) window.syncToFirebase();
-            }
-        }
-
-        function renderThuChiDashboard() {
-            let tongThu = 0;
-            let tongChi = 0;
-
-            window.thuChiData.forEach(item => {
-                tongThu += (parseFloat(item.thu) || 0) * 1000;
-                tongChi += (parseFloat(item.chi) || 0) * 1000;
-            });
-
-            const dauKy = parseFloat(window.quyDauKy) || 0;
-            const soDu = dauKy + tongThu - tongChi;
-
-            const txtTongThu = document.getElementById('txt-tong-thu');
-            const txtTongChi = document.getElementById('txt-tong-chi');
-            const txtSoDu = document.getElementById('txt-so-du');
-            const inputDauKy = document.getElementById('input-dau-ky');
-
-            if (txtTongThu) txtTongThu.innerText = tongThu.toLocaleString('vi-VN');
-            if (txtTongChi) txtTongChi.innerText = tongChi.toLocaleString('vi-VN');
-            if (txtSoDu) txtSoDu.innerText = soDu.toLocaleString('vi-VN');
-            if (inputDauKy && document.activeElement !== inputDauKy) inputDauKy.value = dauKy;
+        function formatVND(amount) {
+            return new Intl.NumberFormat('vi-VN').format(amount);
         }
 
         function toggleMenu(menuId, e) {
@@ -1499,6 +1433,42 @@
             `;
         }
 
+        // TÍNH TOÁN BÁO CÁO TỔNG QUAN QUỸ PICKLEBALL (TỪ FILE 1)
+        function renderBaoCaoQuy() {
+            const tbodyTV = document.getElementById('tb-thanh-vien-quy');
+            if(tbodyTV) {
+                tbodyTV.innerHTML = window.danhSachThanhVienQuy.map(tv => `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-2 border border-slate-300 font-bold">${tv.stt}</td>
+                        <td class="p-2 border border-slate-300 text-left font-semibold text-blue-950">${tv.ten}</td>
+                        <td class="p-2 border border-slate-300 font-mono text-slate-600">${tv.sdt}</td>
+                        <td class="p-2 border border-slate-300 text-right font-semibold">${formatVND(tv.mucDong)}</td>
+                        <td class="p-2 border border-slate-300 font-bold ${tv.q1 ? 'text-emerald-600' : 'text-slate-400'}">${tv.q1 ? 'Đã đóng' : 'Chưa đóng'}</td>
+                        <td class="p-2 border border-slate-300 font-bold ${tv.q2 ? 'text-emerald-600' : 'text-slate-400'}">${tv.q2 ? 'Đã đóng' : 'Chưa đóng'}</td>
+                        <td class="p-2 border border-slate-300 text-left text-slate-500">${tv.note}</td>
+                    </tr>
+                `).join('');
+            }
+            capNhatBaoCaoQuy();
+        }
+
+        function capNhatBaoCaoQuy() {
+            let tongThu = 0;
+            let tongChi = 0;
+
+            window.thuChiData.forEach(item => {
+                tongThu += (parseFloat(item.thu) || 0) * 1000;
+                tongChi += (parseFloat(item.chi) || 0) * 1000;
+            });
+
+            const dauKy = parseFloat(document.getElementById('input-dau-ky')?.value) || 0;
+            const soDu = dauKy + tongThu - tongChi;
+
+            if(document.getElementById('txt-tong-thu')) document.getElementById('txt-tong-thu').innerText = formatVND(tongThu);
+            if(document.getElementById('txt-tong-chi')) document.getElementById('txt-tong-chi').innerText = formatVND(tongChi);
+            if(document.getElementById('txt-so-du')) document.getElementById('txt-so-du').innerText = formatVND(soDu);
+        }
+
         function renderThuChiTable() {
             const tbody = document.getElementById('thuchi-table-body');
             const tfoot = document.getElementById('thuchi-table-foot');
@@ -1539,6 +1509,8 @@
                     <td class="p-2 border text-sm ${netBalance >= 0 ? 'text-blue-700' : 'text-red-600'}" colspan="3">QUỸ TỒN: ${netBalance}K</td>
                 </tr>
             `;
+
+            renderBaoCaoQuy();
         }
 
         function openThuChiModal(isEdit = false) {
@@ -1575,7 +1547,6 @@
 
             closeThuChiModal();
             renderThuChiTable();
-            renderThuChiDashboard();
             autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
@@ -1597,7 +1568,6 @@
             if(confirm("Bạn có chắc chắn muốn XÓA khoản thu chi này?")) {
                 window.thuChiData = window.thuChiData.filter(x => x.id != id);
                 renderThuChiTable();
-                renderThuChiDashboard();
                 autoBackupData();
                 if(window.syncToFirebase) window.syncToFirebase();
             }
@@ -2038,7 +2008,7 @@
                     matchesData: window.matchesData,
                     dateKeoMode: window.dateKeoMode,
                     paymentStatus: window.paymentStatus,
-                    quyDauKy: window.quyDauKy,
+                    danhSachThanhVienQuy: window.danhSachThanhVienQuy,
                     thuChiData: window.thuChiData,
                     knockoutScores: {
                         bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
@@ -2068,10 +2038,10 @@
                 if (data.matchesData) window.matchesData = data.matchesData;
                 if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
                 if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
-                if (data.quyDauKy !== undefined) window.quyDauKy = data.quyDauKy;
+                if (data.danhSachThanhVienQuy) window.danhSachThanhVienQuy = data.danhSachThanhVienQuy;
                 if (data.thuChiData) window.thuChiData = data.thuChiData;
 
-                renderPlayers(); renderMinigame1(); renderM2(); renderDatesMenuList(); renderDayDetailView(); renderTongHopTab(); renderThuChiTable(); renderThuChiDashboard();
+                renderPlayers(); renderMinigame1(); renderM2(); renderDatesMenuList(); renderDayDetailView(); renderTongHopTab(); renderThuChiTable();
                 if (!silent) alert("Đã nạp thành công dữ liệu từ Auto-Backup!");
             } catch (err) { console.error("Lỗi restoreAutoBackup:", err); }
         }
@@ -2093,7 +2063,7 @@
                 matchesData: window.matchesData,
                 dateKeoMode: window.dateKeoMode,
                 paymentStatus: window.paymentStatus,
-                quyDauKy: window.quyDauKy,
+                danhSachThanhVienQuy: window.danhSachThanhVienQuy,
                 thuChiData: window.thuChiData,
                 knockoutScores: {
                     bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
@@ -2131,10 +2101,10 @@
                     if (data.matchesData) window.matchesData = data.matchesData;
                     if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
                     if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
-                    if (data.quyDauKy !== undefined) window.quyDauKy = data.quyDauKy;
+                    if (data.danhSachThanhVienQuy) window.danhSachThanhVienQuy = data.danhSachThanhVienQuy;
                     if (data.thuChiData) window.thuChiData = data.thuChiData;
 
-                    renderPlayers(); renderMinigame1(); renderM2(); renderDatesMenuList(); renderDayDetailView(); renderTongHopTab(); renderThuChiTable(); renderThuChiDashboard();
+                    renderPlayers(); renderMinigame1(); renderM2(); renderDatesMenuList(); renderDayDetailView(); renderTongHopTab(); renderThuChiTable();
                     autoBackupData();
                     if (window.syncToFirebase) window.syncToFirebase();
                     alert("Phục hồi dữ liệu từ file backup thành công!");
@@ -2157,7 +2127,7 @@
 
             if(tabId === 'tonghop') renderTongHopTab();
             if(tabId === 'day_detail') renderDayDetailView();
-            if(tabId === 'thuchi') { renderThuChiTable(); renderThuChiDashboard(); }
+            if(tabId === 'thuchi') renderThuChiTable();
         }
 
         function renderPlayers() {
@@ -2368,7 +2338,6 @@
             renderDayDetailView();
             renderTongHopTab();
             renderThuChiTable();
-            renderThuChiDashboard();
         };
     </script>
 
@@ -2415,7 +2384,7 @@
                     matchesData: window.matchesData,
                     dateKeoMode: window.dateKeoMode,
                     paymentStatus: window.paymentStatus,
-                    quyDauKy: window.quyDauKy,
+                    danhSachThanhVienQuy: window.danhSachThanhVienQuy,
                     thuChiData: window.thuChiData,
                     knockoutScores: knockoutScores
                 }, { merge: true });
@@ -2454,7 +2423,7 @@
                     if (data.matchesData) window.matchesData = data.matchesData;
                     if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
                     if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
-                    if (data.quyDauKy !== undefined) window.quyDauKy = data.quyDauKy;
+                    if (data.danhSachThanhVienQuy) window.danhSachThanhVienQuy = data.danhSachThanhVienQuy;
                     if (data.thuChiData) window.thuChiData = data.thuChiData;
 
                     if (data.knockoutScores) {
@@ -2472,7 +2441,6 @@
                     if (typeof window.renderDayDetailView === 'function') window.renderDayDetailView();
                     if (typeof window.renderTongHopTab === 'function') window.renderTongHopTab();
                     if (typeof window.renderThuChiTable === 'function') window.renderThuChiTable();
-                    if (typeof window.renderThuChiDashboard === 'function') window.renderThuChiDashboard();
                     if (typeof window.autoBackupData === 'function') window.autoBackupData();
                 }
             },
