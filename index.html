@@ -206,11 +206,8 @@
                 <button onclick="showTab('minigame2')" id="btn-minigame2" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
                     <i class="fa-solid fa-medal"></i> <span>MINIGAME 2</span>
                 </button>
-                <button onclick="showTab('thuchi')" id="btn-thuchi" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-emerald-700/80 text-emerald-200 border border-emerald-400/30">
-                    <i class="fa-solid fa-wallet"></i> <span>QUẢN LÝ THU CHI</span>
-                </button>
 
-                <!-- NÚT MỚI: QUẢN LÝ QUỸ PCIK -->
+                <!-- NÚT: QUẢN LÝ QUỸ PCIK -->
                 <button onclick="showTab('fund_manager')" id="btn-fund_manager" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-teal-800 text-teal-100 border border-teal-400/40 font-bold shadow-sm">
                     <i class="fa-solid fa-vault text-yellow-300"></i> <span>QUẢN LÝ QUỸ PCIK</span>
                 </button>
@@ -287,8 +284,8 @@
                 <h2 class="text-2xl font-bold mb-4">CHÀO MỪNG ĐẾN VỚI GIẢI ĐẤU CLB-PICKLEBALL-CMTD</h2>
                 <p class="text-slate-600 mb-6 max-w-2xl mx-auto text-sm md:text-base">Vui lòng chọn một trong các mục bên dưới hoặc trên thanh menu để bắt đầu quản lý danh sách vận động viên, lịch thi đấu và bảng xếp hạng.</p>
                 
-                <!-- LƯỚI 6 CỘT CHỨA CÁC Ô TÙY CHỌN TRÊN MÀN HÌNH CHÍNH -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 max-w-7xl mx-auto">
+                <!-- LƯỚI 5 CỘT CHỨA CÁC Ô TÙY CHỌN TRÊN MÀN HÌNH CHÍNH -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 max-w-7xl mx-auto">
                     
                     <!-- 1. DANH SÁCH PICK THỦ -->
                     <div onclick="showTab('players')" class="cursor-pointer bg-blue-50/80 border border-blue-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
@@ -317,16 +314,7 @@
                         </div>
                     </div>
 
-                    <!-- 4. QUẢN LÝ THU CHI -->
-                    <div onclick="showTab('thuchi')" class="cursor-pointer bg-teal-50/80 border border-teal-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
-                        <div class="my-auto">
-                            <i class="fa-solid fa-wallet text-4xl text-teal-600 mb-3 group-hover:scale-110 transition-transform block"></i>
-                            <h3 class="font-bold text-base md:text-lg text-slate-800">Quản Lý Thu Chi</h3>
-                            <p class="text-xs text-slate-500 mt-2">Quản lý các khoản thu, chi và tổng quỹ tồn</p>
-                        </div>
-                    </div>
-
-                    <!-- 5. QUẢN LÝ QUỸ PCIK (MỚI) -->
+                    <!-- 4. QUẢN LÝ QUỸ PCIK -->
                     <div onclick="showTab('fund_manager')" class="cursor-pointer bg-green-50/80 border border-green-300 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
                         <div class="my-auto">
                             <i class="fa-solid fa-vault text-4xl text-green-700 mb-3 group-hover:scale-110 transition-transform block"></i>
@@ -335,7 +323,7 @@
                         </div>
                     </div>
 
-                    <!-- 6. BẢNG TỔNG HỢP CÁC NGÀY -->
+                    <!-- 5. BẢNG TỔNG HỢP CÁC NGÀY -->
                     <div onclick="showTab('tonghop')" class="cursor-pointer bg-indigo-50/80 border border-indigo-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
                         <div class="my-auto">
                             <i class="fa-solid fa-table-list text-4xl text-indigo-600 mb-3 group-hover:scale-110 transition-transform block"></i>
@@ -787,42 +775,7 @@
             </div>
         </section>
 
-        <!-- QUẢN LÝ THU CHI CLB -->
-        <section id="tab-thuchi" class="tab-content hidden space-y-6">
-            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
-                <div class="flex flex-wrap justify-between items-center mb-4 pb-3 border-b gap-2">
-                    <div>
-                        <h2 class="text-lg md:text-xl font-black text-slate-800 uppercase flex items-center gap-2">
-                            <i class="fa-solid fa-wallet text-emerald-600"></i> QUẢN LÝ THU CHI CLB
-                        </h2>
-                        <p class="text-xs text-slate-500">Theo dõi chi tiết các khoản thu, chi và quỹ tồn</p>
-                    </div>
-                    <button onclick="openThuChiModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-lg font-bold shadow flex items-center gap-1">
-                        <i class="fa-solid fa-plus"></i> Thêm Khoản Thu/Chi
-                    </button>
-                </div>
-
-                <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner">
-                    <table class="w-full min-w-[750px] text-center border-collapse border border-slate-300 text-xs">
-                        <thead>
-                            <tr class="bg-slate-800 text-white font-bold">
-                                <th class="p-2 border w-12">STT</th>
-                                <th class="p-2 border text-left pl-3">DANH SÁCH PICK THỦ</th>
-                                <th class="p-2 border w-28 text-emerald-300">THU (K)</th>
-                                <th class="p-2 border w-28 text-red-300">CHI (K)</th>
-                                <th class="p-2 border w-32 text-yellow-300">QUỸ CÒN (THU - CHI)</th>
-                                <th class="p-2 border text-left pl-3">GHI CHÚ</th>
-                                <th class="p-2 border w-24">THAO TÁC</th>
-                            </tr>
-                        </thead>
-                        <tbody id="thuchi-table-body" class="font-semibold"></tbody>
-                        <tfoot id="thuchi-table-foot" class="bg-slate-100 font-extrabold"></tfoot>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- QUẢN LÝ QUỸ PICK (NỘI DUNG TỪ PICKLEBALL_FUND_MANAGER) -->
+        <!-- QUẢN LÝ QUỸ PICK (TỪ PICKLEBALL_FUND_MANAGER) -->
         <section id="tab-fund_manager" class="tab-content hidden space-y-6">
             <!-- HEADER TRANG QUẢN LÝ QUỸ PICK -->
             <div class="bg-gradient-to-r from-brand-800 via-brand-700 to-court-600 text-white p-5 rounded-2xl shadow-md flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -1099,40 +1052,6 @@
         </div>
     </div>
 
-    <!-- MODAL THÊM / SỬA KHOẢN THU CHI (TRONG CÁC NGÀY) -->
-    <div id="thuchi-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 text-slate-800">
-            <h3 id="thuchi-modal-title" class="text-lg font-bold text-slate-800 mb-4">Thêm Khoản Thu / Chi</h3>
-            <input type="hidden" id="thuchi-id">
-            <div class="space-y-3 text-xs">
-                <div>
-                    <label class="block font-semibold text-slate-600 mb-1">Pick Thủ / Người thực hiện</label>
-                    <select id="thuchi-player" class="w-full border rounded-lg p-2 outline-none">
-                        <option value="Tất cả / Quỹ CLB">Tất cả / Quỹ CLB</option>
-                    </select>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-semibold text-emerald-700 mb-1">Số tiền Thu (K)</label>
-                        <input type="number" id="thuchi-thu" class="w-full border rounded-lg p-2 outline-none" placeholder="0">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-red-600 mb-1">Số tiền Chi (K)</label>
-                        <input type="number" id="thuchi-chi" class="w-full border rounded-lg p-2 outline-none" placeholder="0">
-                    </div>
-                </div>
-                <div>
-                    <label class="block font-semibold text-slate-600 mb-1">Ghi Chú</label>
-                    <input type="text" id="thuchi-note" class="w-full border rounded-lg p-2 outline-none" placeholder="Nội dung thu/chi...">
-                </div>
-            </div>
-            <div class="flex justify-end gap-2 mt-6">
-                <button onclick="closeThuChiModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-sm rounded-lg hover:bg-slate-300">Hủy</button>
-                <button onclick="saveThuChi()" class="px-4 py-2 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 font-semibold">Lưu Khoản Thu Chi</button>
-            </div>
-        </div>
-    </div>
-
     <!-- MODAL THÊM KHOẢN THU / CHI CỦA TAB QUẢN LÝ QUỸ PICK -->
     <div id="fund-modal-backdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-slate-100">
@@ -1276,12 +1195,6 @@
             "1/10/26_Tiến Thọ": true,
             "1/10/26": { btcNoteAdminOption: "YES" }
         };
-
-        // DỮ LIỆU THU CHI CƠ BẢN
-        window.thuChiData = [
-            { id: 1, player: "Tiến Thọ", thu: 50, chi: 0, note: "Đóng tiền quỹ tháng 10" },
-            { id: 2, player: "Quỹ CLB", thu: 0, chi: 30, note: "Mua nước ngọt & bóng đấu" }
-        ];
 
         // --- STATE QUẢN LÝ QUỸ PICKLEBALL FUND MANAGER ---
         const initialFund = 500000;
@@ -1990,108 +1903,6 @@
             `;
         }
 
-        function renderThuChiTable() {
-            const tbody = document.getElementById('thuchi-table-body');
-            const tfoot = document.getElementById('thuchi-table-foot');
-            if(!tbody || !tfoot) return;
-
-            tbody.innerHTML = '';
-            let totalThu = 0, totalChi = 0, runningBalance = 0;
-
-            window.thuChiData.forEach((item, idx) => {
-                const thu = parseFloat(item.thu) || 0;
-                const chi = parseFloat(item.chi) || 0;
-                totalThu += thu;
-                totalChi += chi;
-                runningBalance += (thu - chi);
-
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-2 border font-bold text-slate-700">${idx + 1}</td>
-                        <td class="p-2 border text-left pl-3 text-blue-900">${item.player}</td>
-                        <td class="p-2 border font-extrabold text-emerald-600">${thu > 0 ? thu + 'K' : '-'}</td>
-                        <td class="p-2 border font-extrabold text-red-600">${chi > 0 ? chi + 'K' : '-'}</td>
-                        <td class="p-2 border font-extrabold ${runningBalance >= 0 ? 'text-blue-700' : 'text-red-600'}">${runningBalance}K</td>
-                        <td class="p-2 border text-left pl-3 text-slate-600">${item.note || ''}</td>
-                        <td class="p-2 border whitespace-nowrap">
-                            <button onclick="editThuChi(${item.id})" class="text-blue-600 hover:text-blue-800 mr-2 font-bold text-xs"><i class="fa-solid fa-pen"></i> Sửa</button>
-                            <button onclick="deleteThuChi(${item.id})" class="text-red-600 hover:text-red-800 font-bold text-xs"><i class="fa-solid fa-trash"></i> Xóa</button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            const netBalance = totalThu - totalChi;
-            tfoot.innerHTML = `
-                <tr>
-                    <td class="p-2 border text-left pl-3 text-slate-800" colspan="2">TỔNG CỘNG QUỸ THU CHI</td>
-                    <td class="p-2 border text-emerald-600 text-sm">${totalThu}K</td>
-                    <td class="p-2 border text-red-600 text-sm">${totalChi}K</td>
-                    <td class="p-2 border text-sm ${netBalance >= 0 ? 'text-blue-700' : 'text-red-600'}" colspan="3">QUỸ TỒN: ${netBalance}K</td>
-                </tr>
-            `;
-        }
-
-        function openThuChiModal(isEdit = false) {
-            const selectEl = document.getElementById('thuchi-player');
-            if(selectEl) {
-                selectEl.innerHTML = `<option value="Quỹ CLB / Chung">Quỹ CLB / Chung</option>` + 
-                    window.players.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
-            }
-            document.getElementById('thuchi-modal').classList.remove('hidden');
-            if(!isEdit) {
-                document.getElementById('thuchi-modal-title').innerText = "Thêm Khoản Thu / Chi";
-                document.getElementById('thuchi-id').value = "";
-                document.getElementById('thuchi-thu').value = "";
-                document.getElementById('thuchi-chi').value = "";
-                document.getElementById('thuchi-note').value = "";
-            }
-        }
-
-        function closeThuChiModal() { document.getElementById('thuchi-modal').classList.add('hidden'); }
-
-        function saveThuChi() {
-            const id = document.getElementById('thuchi-id').value;
-            const player = document.getElementById('thuchi-player').value;
-            const thu = parseFloat(document.getElementById('thuchi-thu').value) || 0;
-            const chi = parseFloat(document.getElementById('thuchi-chi').value) || 0;
-            const note = document.getElementById('thuchi-note').value.trim();
-
-            if(id) {
-                const item = window.thuChiData.find(x => x.id == id);
-                if(item) { item.player = player; item.thu = thu; item.chi = chi; item.note = note; }
-            } else {
-                window.thuChiData.push({ id: Date.now(), player, thu, chi, note });
-            }
-
-            closeThuChiModal();
-            renderThuChiTable();
-            autoBackupData();
-            if(window.syncToFirebase) window.syncToFirebase();
-        }
-
-        function editThuChi(id) {
-            const item = window.thuChiData.find(x => x.id == id);
-            if(item) {
-                openThuChiModal(true);
-                document.getElementById('thuchi-modal-title').innerText = "Sửa Khoản Thu / Chi";
-                document.getElementById('thuchi-id').value = item.id;
-                document.getElementById('thuchi-player').value = item.player;
-                document.getElementById('thuchi-thu').value = item.thu;
-                document.getElementById('thuchi-chi').value = item.chi;
-                document.getElementById('thuchi-note').value = item.note;
-            }
-        }
-
-        function deleteThuChi(id) {
-            if(confirm("Bạn có chắc chắn muốn XÓA khoản thu chi này?")) {
-                window.thuChiData = window.thuChiData.filter(x => x.id != id);
-                renderThuChiTable();
-                autoBackupData();
-                if(window.syncToFirebase) window.syncToFirebase();
-            }
-        }
-
         function renderTongHopTab() {
             const container = document.getElementById('tonghop-content-container');
             if(!container) return;
@@ -2527,7 +2338,6 @@
                     matchesData: window.matchesData,
                     dateKeoMode: window.dateKeoMode,
                     paymentStatus: window.paymentStatus,
-                    thuChiData: window.thuChiData,
                     fundMembers: window.fundMembers,
                     fundIncomes: window.fundIncomes,
                     fundExpenses: window.fundExpenses,
@@ -2559,12 +2369,11 @@
                 if (data.matchesData) window.matchesData = data.matchesData;
                 if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
                 if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
-                if (data.thuChiData) window.thuChiData = data.thuChiData;
                 if (data.fundMembers) window.fundMembers = data.fundMembers;
                 if (data.fundIncomes) window.fundIncomes = data.fundIncomes;
                 if (data.fundExpenses) window.fundExpenses = data.fundExpenses;
 
-                renderPlayers(); renderMinigame1(); renderM2(); renderDatesMenuList(); renderDayDetailView(); renderTongHopTab(); renderThuChiTable(); updateFundDashboard();
+                renderPlayers(); renderMinigame1(); renderM2(); renderDatesMenuList(); renderDayDetailView(); renderTongHopTab(); updateFundDashboard();
                 if (!silent) alert("Đã nạp thành công dữ liệu từ Auto-Backup!");
             } catch (err) { console.error("Lỗi restoreAutoBackup:", err); }
         }
@@ -2586,7 +2395,6 @@
                 matchesData: window.matchesData,
                 dateKeoMode: window.dateKeoMode,
                 paymentStatus: window.paymentStatus,
-                thuChiData: window.thuChiData,
                 fundMembers: window.fundMembers,
                 fundIncomes: window.fundIncomes,
                 fundExpenses: window.fundExpenses,
@@ -2626,12 +2434,11 @@
                     if (data.matchesData) window.matchesData = data.matchesData;
                     if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
                     if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
-                    if (data.thuChiData) window.thuChiData = data.thuChiData;
                     if (data.fundMembers) window.fundMembers = data.fundMembers;
                     if (data.fundIncomes) window.fundIncomes = data.fundIncomes;
                     if (data.fundExpenses) window.fundExpenses = data.fundExpenses;
 
-                    renderPlayers(); renderMinigame1(); renderM2(); renderDatesMenuList(); renderDayDetailView(); renderTongHopTab(); renderThuChiTable(); updateFundDashboard();
+                    renderPlayers(); renderMinigame1(); renderM2(); renderDatesMenuList(); renderDayDetailView(); renderTongHopTab(); updateFundDashboard();
                     autoBackupData();
                     if (window.syncToFirebase) window.syncToFirebase();
                     alert("Phục hồi dữ liệu từ file backup thành công!");
@@ -2654,7 +2461,6 @@
 
             if(tabId === 'tonghop') renderTongHopTab();
             if(tabId === 'day_detail') renderDayDetailView();
-            if(tabId === 'thuchi') renderThuChiTable();
             if(tabId === 'fund_manager') updateFundDashboard();
         }
 
@@ -2865,7 +2671,6 @@
             renderDatesMenuList();
             renderDayDetailView();
             renderTongHopTab();
-            renderThuChiTable();
             updateFundDashboard();
         };
     </script>
@@ -2895,3 +2700,92 @@
             try {
                 const knockoutScores = {
                     bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
+                    bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
+                    t3:  [getVal('t3-s1'),  getVal('t3-s2')],
+                    ck:  [getVal('ck-s1'),  getVal('ck-s2')]
+                };
+
+                await setDoc(doc(db, "minigame", "app_state"), {
+                    players: window.players,
+                    m1TeamA: window.m1TeamA,
+                    m1TeamB: window.m1TeamB,
+                    m1Matches: window.m1Matches,
+                    m2PairsA: window.m2PairsA,
+                    m2PairsB: window.m2PairsB,
+                    m2ScoresA: window.m2ScoresA,
+                    m2ScoresB: window.m2ScoresB,
+                    dates: window.dates,
+                    matchesData: window.matchesData,
+                    dateKeoMode: window.dateKeoMode,
+                    paymentStatus: window.paymentStatus,
+                    fundMembers: window.fundMembers,
+                    fundIncomes: window.fundIncomes,
+                    fundExpenses: window.fundExpenses,
+                    knockoutScores: knockoutScores
+                }, { merge: true });
+                console.log("Đã đồng bộ Firestore thành công!");
+            } catch (error) {
+                console.error("Lỗi đồng bộ Firestore:", error);
+            }
+        };
+
+        onSnapshot(doc(db, "minigame", "app_state"), 
+            (docSnap) => {
+                const updateStatus = (text, cls, dotCls) => {
+                    ['status-element', 'status-element-mobile'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) { el.innerText = text; el.className = cls; }
+                    });
+                    ['status-dot', 'status-dot-mobile'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.className = dotCls;
+                    });
+                };
+
+                updateStatus("Firestore Online", "text-xs text-emerald-400 font-bold", "w-2 h-2 rounded-full bg-emerald-500 animate-ping");
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.players) window.players = data.players;
+                    if (data.m1TeamA) window.m1TeamA = data.m1TeamA;
+                    if (data.m1TeamB) window.m1TeamB = data.m1TeamB;
+                    if (data.m1Matches) window.m1Matches = data.m1Matches;
+                    if (data.m2PairsA) window.m2PairsA = data.m2PairsA;
+                    if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
+                    if (data.m2ScoresA) window.m2ScoresA = data.m2ScoresA;
+                    if (data.m2ScoresB) window.m2ScoresB = data.m2ScoresB;
+                    if (data.dates) window.dates = data.dates;
+                    if (data.matchesData) window.matchesData = data.matchesData;
+                    if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
+                    if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
+                    if (data.fundMembers) window.fundMembers = data.fundMembers;
+                    if (data.fundIncomes) window.fundIncomes = data.fundIncomes;
+                    if (data.fundExpenses) window.fundExpenses = data.fundExpenses;
+
+                    if (data.knockoutScores) {
+                        const s = data.knockoutScores;
+                        if (s.bk1) { setVal('bk1-s1', s.bk1[0]); setVal('bk1-s2', s.bk1[1]); }
+                        if (s.bk2) { setVal('bk2-s1', s.bk2[0]); setVal('bk2-s2', s.bk2[1]); }
+                        if (s.t3)  { setVal('t3-s1',  s.t3[0]);  setVal('t3-s2',  s.t3[1]); }
+                        if (s.ck)  { setVal('ck-s1',  s.ck[0]);  setVal('ck-s2',  s.ck[1]); }
+                    }
+
+                    if (typeof window.renderPlayers === 'function') window.renderPlayers();
+                    if (typeof window.renderMinigame1 === 'function') window.renderMinigame1();
+                    if (typeof window.renderM2 === 'function') window.renderM2();
+                    if (typeof window.renderDatesMenuList === 'function') window.renderDatesMenuList();
+                    if (typeof window.renderDayDetailView === 'function') window.renderDayDetailView();
+                    if (typeof window.renderTongHopTab === 'function') window.renderTongHopTab();
+                    if (typeof window.updateFundDashboard === 'function') window.updateFundDashboard();
+                    if (typeof window.autoBackupData === 'function') window.autoBackupData();
+                }
+            },
+            (error) => {
+                console.error("Lỗi Firestore:", error);
+                const el = document.getElementById('status-element');
+                if (el) { el.innerText = "Offline"; el.className = "text-xs text-red-400 font-bold"; }
+            }
+        );
+    </script>
+</body>
+</html>
