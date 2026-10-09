@@ -768,7 +768,7 @@
             </div>
         </section>
 
-        <!-- QUẢN LÝ QUỸ PICK (CẬP NHẬT TỰ ĐỘNG CÁC DÒNG THU KÈO VÀO NHẬT KÝ KHOẢN THU) -->
+        <!-- QUẢN LÝ QUỸ PICK -->
         <section id="tab-fund_manager" class="tab-content hidden space-y-6">
             <div class="bg-gradient-to-r from-brand-800 via-brand-700 to-court-600 text-white p-5 rounded-2xl shadow-md flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="flex items-center space-x-3">
@@ -1176,7 +1176,6 @@
             "1/10/26": { btcNoteAdminOption: "YES" }
         };
 
-        // --- CẤU TRÚC DANH SÁCH CỘT QUÝ DỘNG ---
         window.activeQuarterColumns = JSON.parse(localStorage.getItem('pb_active_quarter_cols')) || [
             { id: "q1", title: "Tiền Sân Quý 1", statusTitle: "Trạng Thái Q1", defaultAmt: 800000, bgColor: "teal" }
         ];
@@ -1252,7 +1251,6 @@
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
-        // --- CÁC THAO TÁC THÊM / XÓA CỘT QUÝ ---
         function addNewQuarterColumn() {
             const num = window.activeQuarterColumns.length + 1;
             const qId = `q_${Date.now()}`;
@@ -1369,7 +1367,11 @@
             let autoDailyIncomeTotal = 0;
             window.dates.forEach(d => {
                 const pStatus = window.paymentStatus[d];
-                const isTransferYes = (!pStatus || typeof pStatus !== 'object' || pStatus.btcNoteAdminOption !== "NO");
+                let isTransferYes = true;
+                if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
+                    isTransferYes = false;
+                }
+                
                 if (isTransferYes) {
                     let dayNetK = getBtcThuVeForDate(d);
                     if (dayNetK > 0) {
@@ -1524,16 +1526,20 @@
             }
         }
 
-        // --- RENDER BẢNG NHẬT KÝ KHOẢN THU (TỰ ĐỘNG CẬP NHẬT DÒNG THU TIỀN KÈO CÁC NGÀY) ---
+        /* 💥 ĐIỀU CHỈNH 1: CHUẨN HÓA RENDER BẢNG NHẬT KÝ KHOẢN THU TỰ ĐỘNG REALTIME 💥 */
         function renderFundIncomes() {
             const tbody = document.getElementById('income-list');
             if(!tbody) return;
             tbody.innerHTML = '';
 
-            // 1. Tự động thêm dòng "Thu tiền kèo Ngày X" trực tiếp vào Bảng Nhật Ký Khoản Thu
+            // 1. Tự động kiểm tra và tạo dòng "Thu tiền kèo Ngày X" trực tiếp vào Bảng Nhật Ký Khoản Thu
             window.dates.forEach(d => {
                 const pStatus = window.paymentStatus[d];
-                const isTransferYes = (!pStatus || typeof pStatus !== 'object' || pStatus.btcNoteAdminOption !== "NO");
+                let isTransferYes = true;
+                if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
+                    isTransferYes = false;
+                }
+
                 if (isTransferYes) {
                     let dayNetK = getBtcThuVeForDate(d);
                     if (dayNetK > 0) {
@@ -1725,7 +1731,11 @@
 
             window.dates.forEach(d => {
                 const pStatus = window.paymentStatus[d];
-                const isTransferYes = (!pStatus || typeof pStatus !== 'object' || pStatus.btcNoteAdminOption !== "NO");
+                let isTransferYes = true;
+                if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
+                    isTransferYes = false;
+                }
+
                 if (isTransferYes) {
                     let dayNetK = getBtcThuVeForDate(d);
                     if (dayNetK > 0) {
@@ -1838,6 +1848,7 @@
                 }));
                 window.dateKeoMode[dateStr] = "default";
                 selectDateView(dateStr);
+                updateFundDashboard();
                 autoBackupData();
                 if(window.syncToFirebase) window.syncToFirebase();
             }
@@ -1857,6 +1868,7 @@
                 delete window.matchesData[oldDate];
                 delete window.dateKeoMode[oldDate];
                 selectDateView(trimmed);
+                updateFundDashboard();
                 autoBackupData();
                 if(window.syncToFirebase) window.syncToFirebase();
             }
@@ -1871,6 +1883,7 @@
                 delete window.dateKeoMode[dateToDelete];
                 if (window.dates.length > 0) selectDateView(window.dates[0]);
                 else showTab('home');
+                updateFundDashboard();
                 autoBackupData();
                 if(window.syncToFirebase) window.syncToFirebase();
             }
@@ -1900,6 +1913,7 @@
         function backupDataJSON() { exportBackupJSON(); }
         function triggerRestoreJSON() { triggerRestoreInput(); }
 
+        /* 💥 ĐIỀU CHỈNH 2: TỰ ĐỘNG GỌI UPDATEFUNDDASHBOARD TRONG CÁC THAO TÁC NGÀY 💥 */
         function addMatchToCurrentDate() {
             const dateStr = window.currentSelectedDate;
             if(!window.matchesData[dateStr]) window.matchesData[dateStr] = [];
@@ -1910,7 +1924,7 @@
                 keoMode: globalMode, customWin: globalMode === 'k25' ? 0 : 5, customLose: globalMode === 'k25' ? -25 : -15
             });
             renderDayDetailView();
-            updateFundDashboard();
+            updateFundDashboard(); // 👈 Đồng bộ Nhật ký Thu
             autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
@@ -1921,7 +1935,7 @@
                 if(window.matchesData[dateStr]) {
                     window.matchesData[dateStr].splice(index, 1);
                     renderDayDetailView();
-                    updateFundDashboard();
+                    updateFundDashboard(); // 👈 Đồng bộ Nhật ký Thu
                     autoBackupData();
                     if(window.syncToFirebase) window.syncToFirebase();
                 }
@@ -1933,7 +1947,7 @@
             if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
                 window.matchesData[dateStr][index][field] = value;
                 renderDayDetailView();
-                updateFundDashboard();
+                updateFundDashboard(); // 👈 Đồng bộ Nhật ký Thu
                 autoBackupData();
                 if(window.syncToFirebase) window.syncToFirebase();
             }
@@ -1949,7 +1963,7 @@
                 else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
             });
             renderDayDetailView();
-            updateFundDashboard();
+            updateFundDashboard(); // 👈 Đồng bộ Nhật ký Thu
             autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
@@ -1962,7 +1976,7 @@
                 if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
                 else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
                 renderDayDetailView();
-                updateFundDashboard();
+                updateFundDashboard(); // 👈 Đồng bộ Nhật ký Thu
                 autoBackupData();
                 if(window.syncToFirebase) window.syncToFirebase();
             }
@@ -1975,7 +1989,7 @@
             }
             window.paymentStatus[payKey] = !window.paymentStatus[payKey];
             renderDayDetailView();
-            updateFundDashboard();
+            updateFundDashboard(); // 👈 Đồng bộ Nhật ký Thu
             autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
@@ -1988,7 +2002,7 @@
             window.paymentStatus[dateStr].btcNoteAdminOption = selectEl.value;
             renderDayDetailView();
             renderTongHopTab();
-            updateFundDashboard();
+            updateFundDashboard(); // 👈 Cập nhật Nhật ký Thu khi toggle YES/NO
             autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
@@ -2218,7 +2232,10 @@
             activeDates.forEach(d => {
                 const matches = window.matchesData[d] || [];
                 const pStatus = window.paymentStatus[d];
-                const isTransferYes = (!pStatus || typeof pStatus !== 'object' || pStatus.btcNoteAdminOption !== "NO");
+                let isTransferYes = true;
+                if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
+                    isTransferYes = false;
+                }
 
                 let statsDay = {};
                 vdvList.forEach(v => { statsDay[v] = { played: 0, total: 0 }; });
@@ -3027,6 +3044,7 @@
             }
         };
 
+        /* 💥 ĐIỀU CHỈNH 3: ĐỒNG BỘ REALTIME FIRESTORE ĐỒNG THỜI VỚI BẢNG QUỸ 💥 */
         onSnapshot(doc(db, "minigame", "app_state"), 
             (docSnap) => {
                 const updateStatus = (text, cls, dotCls) => {
