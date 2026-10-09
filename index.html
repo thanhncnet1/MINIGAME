@@ -207,9 +207,9 @@
                     <i class="fa-solid fa-medal"></i> <span>MINIGAME 2</span>
                 </button>
 
-                <!-- NÚT: QUẢN LÝ QUỸ PICK -->
+                <!-- NÚT: QUẢN LÝ QUỸ PCIK -->
                 <button onclick="showTab('fund_manager')" id="btn-fund_manager" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-teal-800 text-teal-100 border border-teal-400/40 font-bold shadow-sm">
-                    <i class="fa-solid fa-vault text-yellow-300"></i> <span>QUẢN LÝ QUỸ PICK</span>
+                    <i class="fa-solid fa-vault text-yellow-300"></i> <span>QUẢN LÝ QUỸ PCIK</span>
                 </button>
 
                 <!-- NÚT BẢNG TỔNG HỢP CÁC NGÀY TRÊN MENU -->
@@ -314,7 +314,7 @@
                         </div>
                     </div>
 
-                    <!-- 4. QUẢN LÝ QUỸ PICK -->
+                    <!-- 4. QUẢN LÝ QUỸ PCIK -->
                     <div onclick="showTab('fund_manager')" class="cursor-pointer bg-green-50/80 border border-green-300 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
                         <div class="my-auto">
                             <i class="fa-solid fa-vault text-4xl text-green-700 mb-3 group-hover:scale-110 transition-transform block"></i>
@@ -799,7 +799,7 @@
 
             <!-- CARDS TỔNG QUAN -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Quỹ đầu kỳ (Có thể tùy chỉnh) -->
+                <!-- Quỹ đầu kỳ -->
                 <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm relative overflow-hidden group">
                     <div class="flex items-center justify-between">
                         <div>
@@ -825,7 +825,7 @@
                         </div>
                     </div>
                     <div class="mt-3 text-xs text-slate-400 flex items-center gap-1">
-                        <i class="fa-solid fa-circle-info text-emerald-500"></i> Tự động cộng các ngày NOTE=YES
+                        <i class="fa-solid fa-circle-info text-emerald-500"></i> Tự động cộng từ dòng Tổng BTC Thu Về (NOTE=YES)
                     </div>
                 </div>
 
@@ -873,7 +873,7 @@
                                 <i class="fa-solid fa-circle-arrow-down text-emerald-600"></i>
                                 <span>Nhật Ký Khoản Thu</span>
                             </h2>
-                            <p class="text-xs text-slate-500 mt-0.5">Thu thủ công & Tự động từ các ngày NOTE=YES</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Thu thủ công & Đồng bộ tự động từ Tổng BTC Thu Về (NOTE=YES)</p>
                         </div>
                         <button onclick="openFundModal('income')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm">
                             <i class="fa-solid fa-plus"></i>
@@ -941,7 +941,7 @@
 
             </div>
 
-            <!-- 2. BẢNG THÀNH VIÊN & TIỀN SÂN (ĐỔI QUÝ 1 -> QUÝ 4, NÚT SỬA TOÀN HÀNG, DÒNG TỔNG & CHI) -->
+            <!-- 2. BẢNG THÀNH VIÊN & TIỀN SÂN (NÚT BÚT CHÌ SỬA TOÀN HÀNG, QUÝ 4 MẶC ĐỊNH 800K, DÒNG TỔNG & CHI) -->
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
                 <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
@@ -949,7 +949,7 @@
                             <i class="fa-solid fa-users text-brand-600"></i>
                             <span>Danh Sách Pick Thủ CLB & Tiền Sân</span>
                         </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Theo dõi tiền sân Quý 4 & Quý 2, tổng kết Thu - Chi tiền sân</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Theo dõi tiền sân Quý 4 (mặc định 800k) & Quý 2, tổng kết Thu - Chi tiền sân</p>
                     </div>
 
                     <div class="flex items-center gap-2 w-full sm:w-auto">
@@ -971,11 +971,11 @@
                             <tr>
                                 <th class="py-3 px-4 w-12 text-center">STT</th>
                                 <th class="py-3 px-4">Tên Pick Thủ</th>
-                                <th class="py-3 px-4 text-center bg-blue-50/50">Tiền Sân Quý 4</th>
+                                <th class="py-3 px-4 text-center bg-blue-50/50">Tiền Sân Quý 4 (800k)</th>
                                 <th class="py-3 px-4 text-center bg-blue-50/50">Trạng Thái Q4</th>
                                 <th class="py-3 px-4 text-center bg-amber-50/50">Tiền Sân Quý 2</th>
                                 <th class="py-3 px-4 text-center bg-amber-50/50">Trạng Thái Q2</th>
-                                <th class="py-3 px-4 text-center">Thao Tác</th>
+                                <th class="py-3 px-4 text-center">Sửa Hàng</th>
                             </tr>
                         </thead>
                         <tbody id="member-list" class="divide-y divide-slate-100"></tbody>
@@ -1028,11 +1028,11 @@
         </div>
     </div>
 
-    <!-- MODAL SỬA TOÀN BỘ HÀNG TIỀN SÂN QUỸ PICK -->
+    <!-- MODAL BÚT CHÌ SỬA TOÀN BỘ HÀNG TIỀN SÂN QUỸ PICK -->
     <div id="fund-member-edit-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 text-slate-800">
             <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-user-pen text-blue-600"></i> Sửa Thông Tin Tiền Sân Pick Thủ
+                <i class="fa-solid fa-pencil text-blue-600"></i> Sửa Chi Tiết Hàng Pick Thủ
             </h3>
             <input type="hidden" id="edit-row-player-id">
             <div class="space-y-4">
@@ -1252,8 +1252,8 @@
         window.initialFund = Number(localStorage.getItem('pb_initial_fund')) || 500000;
 
         const defaultFundIncomes = [
-            { id: 1, date: "2026-01-05", desc: "Thu tiền quỹ Q4 - Tiến Thọ", amount: 500000, source: "Tiến Thọ", note: "Chuyển khoản" },
-            { id: 2, date: "2026-01-06", desc: "Thu tiền quỹ Q4 - Châu Sĩ", amount: 500000, source: "Châu Sĩ", note: "Tiền mặt" },
+            { id: 1, date: "2026-01-05", desc: "Thu tiền quỹ Q4 - Tiến Thọ", amount: 800000, source: "Tiến Thọ", note: "Chuyển khoản" },
+            { id: 2, date: "2026-01-06", desc: "Thu tiền quỹ Q4 - Châu Sĩ", amount: 800000, source: "Châu Sĩ", note: "Tiền mặt" },
             { id: 3, date: "2026-01-10", desc: "Thu tiền giao lưu vãng lai", amount: 200000, source: "Khách vãng lai / Khác", note: "Thu theo buổi" }
         ];
 
@@ -1309,7 +1309,7 @@
         function calculateFundSummary() {
             let totalManualIncome = window.fundIncomes.reduce((sum, item) => sum + Number(item.amount), 0);
 
-            // Tự động đồng bộ từ các ngày đấu khi cột NOTE có trạng thái YES (btcNoteAdminOption !== "NO")
+            // Đồng bộ tự động từ dòng TỔNG BTC THU VỀ của các ngày có trạng thái NOTE = YES
             let autoDailyIncomeTotal = 0;
             window.dates.forEach(d => {
                 const pStatus = window.paymentStatus[d];
@@ -1357,7 +1357,7 @@
                         }
                     });
 
-                    // Cột Tổng Ngày (BTC Thu Về) = sumAmDay + sumBringBackDay (1K = 1000 VNĐ)
+                    // Tính dòng Tổng Tiền BTC Thu Về = sumAmDay + sumBringBackDay (Đơn vị K -> x1000)
                     let dayNetK = (sumAmDay + sumBringBackDay);
                     if (dayNetK > 0) {
                         autoDailyIncomeTotal += (dayNetK * 1000);
@@ -1383,7 +1383,7 @@
             if(elExpTot) elExpTot.innerText = formatVND(totalExpense);
         }
 
-        // --- XỬ LÝ SỬA HÀNG BẢNG TIỀN SÂN QUỸ PICK ---
+        // --- XỬ LÝ SỬA HÀNG BẢNG TIỀN SÂN QUỸ PICK QUA MÔ HÌNH BÚT CHÌ ---
         function openFundMemberEditModal(playerId) {
             const player = window.players.find(p => p.id === playerId);
             if(!player) return;
@@ -1394,7 +1394,8 @@
             const q4Paid = window.fundFeeStatus[`${player.id}_q4`] !== undefined ? window.fundFeeStatus[`${player.id}_q4`] : (window.fundFeeStatus[`${player.id}_q1`] || false);
             const q2Paid = window.fundFeeStatus[`${player.id}_q2`] || false;
 
-            const q4Amt = window.fundFeeStatus[`${player.id}_q4_amt`] !== undefined ? window.fundFeeStatus[`${player.id}_q4_amt`] : (window.fundFeeStatus[`${player.id}_q1_amt`] || 500000);
+            // Quý 4 mặc định là 800,000 VNĐ (800k)
+            const q4Amt = window.fundFeeStatus[`${player.id}_q4_amt`] !== undefined ? window.fundFeeStatus[`${player.id}_q4_amt`] : 800000;
             const q2Amt = window.fundFeeStatus[`${player.id}_q2_amt`] !== undefined ? window.fundFeeStatus[`${player.id}_q2_amt`] : 500000;
 
             document.getElementById('edit-row-q4-amt').value = q4Amt;
@@ -1469,7 +1470,8 @@
                 const q4Paid = window.fundFeeStatus[`${p.id}_q4`] !== undefined ? window.fundFeeStatus[`${p.id}_q4`] : (window.fundFeeStatus[`${p.id}_q1`] || false);
                 const q2Paid = window.fundFeeStatus[`${p.id}_q2`] || false;
 
-                const q4Amt = window.fundFeeStatus[`${p.id}_q4_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q4_amt`] : (window.fundFeeStatus[`${p.id}_q1_amt`] || 500000);
+                // Quý 4 số tiền mặc định là 800,000 VNĐ
+                const q4Amt = window.fundFeeStatus[`${p.id}_q4_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q4_amt`] : 800000;
                 const q2Amt = window.fundFeeStatus[`${p.id}_q2_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q2_amt`] : 500000;
 
                 if(q4Paid) sumQ4Collected += q4Amt;
@@ -1481,7 +1483,7 @@
                     <td class="py-3 px-4 text-center font-medium text-slate-500">${idx + 1}</td>
                     <td class="py-3 px-4 font-semibold text-slate-800">${p.name}</td>
                     
-                    <!-- TIỀN SÂN QUÝ 4 -->
+                    <!-- TIỀN SÂN QUÝ 4 (MẶC ĐỊNH 800K) -->
                     <td class="py-3 px-4 text-center font-bold text-blue-900 bg-blue-50/20">
                         ${formatVND(q4Amt)}
                     </td>
@@ -1501,16 +1503,18 @@
                         </button>
                     </td>
 
+                    <!-- NÚT BÚT CHÌ SỬA HÀNG -->
                     <td class="py-3 px-4 text-center">
-                        <button onclick="openFundMemberEditModal(${p.id})" class="text-blue-600 hover:text-blue-800 font-bold text-xs bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-md shadow-sm">
-                            <i class="fa-solid fa-pen-to-square"></i> Sửa Hàng
+                        <button onclick="openFundMemberEditModal(${p.id})" class="text-blue-600 hover:text-blue-800 font-bold text-xs bg-blue-50 border border-blue-200 px-3 py-1 rounded-lg shadow-sm hover:bg-blue-100 transition-colors flex items-center gap-1 mx-auto" title="Sửa chi tiết toàn bộ hàng">
+                            <i class="fa-solid fa-pencil text-blue-600"></i>
+                            <span>Sửa</span>
                         </button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            // TÍNH DÒNG TỔNG, CHI VÀ THU-CHI CHO BẢNG TIỀN SÂN
+            // TÍNH DÒNG TỔNG, CHI VÀ THU - CHI CHO BẢNG TIỀN SÂN
             const totalCourtIncome = sumQ4Collected + sumQ2Collected;
             const totalExpense = window.fundExpenses.reduce((sum, item) => sum + Number(item.amount), 0);
             const netCourt = totalCourtIncome - totalExpense;
@@ -1549,7 +1553,7 @@
             if(!tbody) return;
             tbody.innerHTML = '';
 
-            // 1. TỰ ĐỘNG ĐỒNG BỘ CÁC NGÀY ĐẤU CÓ NOTE=YES (TỰ ĐỘNG CHUYỂN CỘT TỔNG NGÀY VỀ TỔNG THU)
+            // 1. TỰ ĐỘNG ĐỒNG BỘ CÁC NGÀY ĐẤU CÓ NOTE=YES (TỰ ĐỘNG CHUYỂN DÒNG TỔNG BTC THU VỀ)
             window.dates.forEach(d => {
                 const pStatus = window.paymentStatus[d];
                 const isTransferYes = (!pStatus || typeof pStatus !== 'object' || pStatus.btcNoteAdminOption !== "NO");
@@ -1602,7 +1606,7 @@
                         trAuto.className = "bg-emerald-50/70 font-semibold text-xs border-b border-emerald-100";
                         trAuto.innerHTML = `
                             <td class="py-2.5 px-3 text-slate-600 whitespace-nowrap">${d}</td>
-                            <td class="py-2.5 px-3 text-emerald-900 font-bold">Tổng Thu Ngày ${d} (BTC Thu Về)</td>
+                            <td class="py-2.5 px-3 text-emerald-900 font-bold">Tổng BTC Thu Về Ngày ${d}</td>
                             <td class="py-2.5 px-3 text-right font-black text-emerald-700 whitespace-nowrap">+${formatVND(dayNetK * 1000)}</td>
                             <td class="py-2.5 px-3 text-slate-600">BTC Thu Về Từ Các Trận</td>
                             <td class="py-2.5 px-3 text-center"><span class="text-[10px] bg-emerald-200 text-emerald-800 px-1.5 py-0.5 rounded font-bold">TỰ ĐỘNG (NOTE=YES)</span></td>
@@ -1617,7 +1621,7 @@
                 return;
             }
 
-            // 2. CÁC KHOẢN THU THỦ CÔNG
+            // 2. CÁC KHOẢN THU THỦ CÔNG LẺ
             window.fundIncomes.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors";
@@ -1838,7 +1842,7 @@
                 [],
                 ["Hạng mục", "Số tiền (VNĐ)", "Ghi chú"],
                 ["Quỹ đầu kỳ", window.initialFund, "Tồn quỹ kỳ trước chuyển sang"],
-                ["Tổng thu trong kỳ", grandTotalIncome, "Bao gồm thu thủ công & đồng bộ các ngày NOTE=YES"],
+                ["Tổng thu trong kỳ", grandTotalIncome, "Bao gồm thu thủ công & tự động từ các ngày NOTE=YES"],
                 ["Tổng chi trong kỳ", totalExpense, "Tự động tính từ Nhật ký Chi"],
                 ["SỐ DƯ QUỸ HIỆN TẠI", currentBalance, "Công thức: Đầu kỳ + Thu - Chi"]
             ];
@@ -1848,7 +1852,7 @@
                 ...window.players.map((p, i) => [
                     i + 1, 
                     p.name, 
-                    window.fundFeeStatus[`${p.id}_q4_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q4_amt`] : (window.fundFeeStatus[`${p.id}_q1_amt`] || 500000), 
+                    window.fundFeeStatus[`${p.id}_q4_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q4_amt`] : 800000, 
                     (window.fundFeeStatus[`${p.id}_q4`] !== undefined ? window.fundFeeStatus[`${p.id}_q4`] : window.fundFeeStatus[`${p.id}_q1`]) ? "Đã đóng" : "Chưa đóng", 
                     window.fundFeeStatus[`${p.id}_q2_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q2_amt`] : 500000, 
                     window.fundFeeStatus[`${p.id}_q2`] ? "Đã đóng" : "Chưa đóng"
