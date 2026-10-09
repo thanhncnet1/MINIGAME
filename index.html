@@ -189,14 +189,12 @@
 </head>
 <body id="app-body" class="bg-theme-slate min-h-screen flex flex-col font-sans transition-colors duration-300 text-slate-800" onclick="closeAllDropdowns()">
 
-    <!-- 1. BANNER TRÊN CÙNG -->
+    <!-- BANNER -->
     <div class="relative w-full bg-slate-900 shadow-md flex justify-center items-center overflow-hidden">
-        <img src="banner.jpg" 
-             alt="Banner CLB Pickleball CMTD" 
-             class="w-full h-auto max-h-48 sm:max-h-64 md:max-h-80 object-cover object-center block">
+        <img src="banner.jpg" alt="Banner CLB Pickleball CMTD" class="w-full h-auto max-h-48 sm:max-h-64 md:max-h-80 object-cover object-center block">
     </div>
 
-    <!-- 2. THANH TIÊU ĐỀ & THANH ĐIỀU HƯỚNG -->
+    <!-- NAVBAR -->
     <nav class="bg-slate-800 text-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-2 sm:px-4 flex flex-col md:flex-row items-center justify-between py-2 md:py-0 md:h-16 gap-2">
             
@@ -289,7 +287,7 @@
     <!-- MAIN CONTAINER -->
     <main class="max-w-7xl mx-auto w-full p-2 md:p-4 flex-grow">
 
-        <!-- TRANG CHỦ (HOME) -->
+        <!-- TRANG CHỦ -->
         <section id="tab-home" class="tab-content">
             <div class="bg-white/90 backdrop-blur rounded-xl shadow-md p-6 md:p-8 text-center my-4 text-slate-800">
                 <h2 class="text-2xl font-bold mb-4">CHÀO MỪNG ĐẾN VỚI GIẢI ĐẤU CLB-PICKLEBALL-CMTD</h2>
@@ -770,7 +768,7 @@
             </div>
         </section>
 
-        <!-- QUẢN LÝ QUỸ PICK (ĐÃ CẬP NHẬT TỈ MỈ CHO PHÉP SỬA CHỮ VÀ SỐ TRỰC TIẾP TRÊN CỘT) -->
+        <!-- QUẢN LÝ QUỸ PICK (ĐÃ CẬP NHẬT TỈ MỈ SỬA TIÊU ĐỀ TRẠNG THÁI + OPTION "NO" & "TẠM NGHỈ" + THÊM XOÁ DÒNG) -->
         <section id="tab-fund_manager" class="tab-content hidden space-y-6">
             <div class="bg-gradient-to-r from-brand-800 via-brand-700 to-court-600 text-white p-5 rounded-2xl shadow-md flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="flex items-center space-x-3">
@@ -927,7 +925,7 @@
                 </section>
             </div>
 
-            <!-- BẢNG THÀNH VIÊN & TIỀN SÂN (CHO PHÉP SỬA TIÊU ĐỀ CỘT VÀ SỐ TIỀN TRỰC TIẾP TẠI BẢNG) -->
+            <!-- BẢNG QUẢN LÝ QUỸ: CẬP NHẬT TỰ ĐỔI CỘT TÊN TRẠNG THÁI + OPTION NO/TẠM NGHỈ + THÊM XOÁ DÒNG -->
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
                 <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
@@ -935,11 +933,16 @@
                             <i class="fa-solid fa-users text-brand-600"></i>
                             <span>Danh Sách Pick Thủ CLB & Tiền Sân Các Quý</span>
                         </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Click vào ô chữ tiêu đề hoặc ô số tiền trong bảng để tùy chỉnh trực tiếp</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Click vào tiêu đề để sửa chữ. Bấm nút Thêm Pick Thủ để tạo mới hoặc Xóa dòng trực tiếp.</p>
                     </div>
 
-                    <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <div class="relative flex-1 sm:w-64">
+                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                        <button onclick="addNewFundPlayerPrompt()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <span>➕ Thêm Pick Thủ Vào Quỹ</span>
+                        </button>
+
+                        <div class="relative flex-1 sm:w-48">
                             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                             <input type="text" id="member-search" oninput="renderFundMembers()" placeholder="Tìm tên Pick thủ..." class="w-full pl-9 pr-3 py-1.5 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
@@ -960,28 +963,39 @@
                                 <th class="py-3 px-3 w-10 text-center">STT</th>
                                 <th class="py-3 px-3">Tên Pick Thủ</th>
                                 
-                                <!-- TIÊU ĐỀ CỘT CÓ THỂ CHỈNH SỬA TÊN TRỰC TIẾP -->
-                                <th class="py-2 px-2 text-center bg-teal-50/80 border-x border-teal-100 min-w-[130px]">
+                                <!-- TIÊU ĐỀ SỐ TIỀN VÀ TRẠNG THÁI QUÝ 1 -->
+                                <th class="py-2 px-2 text-center bg-teal-50/80 border-x border-teal-100 min-w-[120px]">
                                     <input type="text" id="col-title-q1" onchange="updateQuarterTitle('q1', this.value)" class="w-full text-center bg-transparent border-b border-teal-300 font-bold text-teal-900 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột">
                                 </th>
-                                <th class="py-3 px-3 text-center bg-teal-50/50">Trạng Thái Q1</th>
+                                <th class="py-2 px-2 text-center bg-teal-50/50 min-w-[110px]">
+                                    <input type="text" id="col-status-title-q1" onchange="updateQuarterTitle('status_q1', this.value)" class="w-full text-center bg-transparent border-b border-teal-300 font-bold text-teal-800 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột Trạng Thái">
+                                </th>
 
-                                <th class="py-2 px-2 text-center bg-amber-50/80 border-x border-amber-100 min-w-[130px]">
+                                <!-- TIÊU ĐỀ SỐ TIỀN VÀ TRẠNG THÁI QUÝ 2 -->
+                                <th class="py-2 px-2 text-center bg-amber-50/80 border-x border-amber-100 min-w-[120px]">
                                     <input type="text" id="col-title-q2" onchange="updateQuarterTitle('q2', this.value)" class="w-full text-center bg-transparent border-b border-amber-300 font-bold text-amber-900 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột">
                                 </th>
-                                <th class="py-3 px-3 text-center bg-amber-50/50">Trạng Thái Q2</th>
+                                <th class="py-2 px-2 text-center bg-amber-50/50 min-w-[110px]">
+                                    <input type="text" id="col-status-title-q2" onchange="updateQuarterTitle('status_q2', this.value)" class="w-full text-center bg-transparent border-b border-amber-300 font-bold text-amber-800 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột Trạng Thái">
+                                </th>
 
-                                <th class="py-2 px-2 text-center bg-purple-50/80 border-x border-purple-100 min-w-[130px]">
+                                <!-- TIÊU ĐỀ SỐ TIỀN VÀ TRẠNG THÁI QUÝ 3 -->
+                                <th class="py-2 px-2 text-center bg-purple-50/80 border-x border-purple-100 min-w-[120px]">
                                     <input type="text" id="col-title-q3" onchange="updateQuarterTitle('q3', this.value)" class="w-full text-center bg-transparent border-b border-purple-300 font-bold text-purple-900 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột">
                                 </th>
-                                <th class="py-3 px-3 text-center bg-purple-50/50">Trạng Thái Q3</th>
+                                <th class="py-2 px-2 text-center bg-purple-50/50 min-w-[110px]">
+                                    <input type="text" id="col-status-title-q3" onchange="updateQuarterTitle('status_q3', this.value)" class="w-full text-center bg-transparent border-b border-purple-300 font-bold text-purple-800 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột Trạng Thái">
+                                </th>
 
-                                <th class="py-2 px-2 text-center bg-blue-50/80 border-x border-blue-100 min-w-[130px]">
+                                <!-- TIÊU ĐỀ SỐ TIỀN VÀ TRẠNG THÁI QUÝ 4 -->
+                                <th class="py-2 px-2 text-center bg-blue-50/80 border-x border-blue-100 min-w-[120px]">
                                     <input type="text" id="col-title-q4" onchange="updateQuarterTitle('q4', this.value)" class="w-full text-center bg-transparent border-b border-blue-300 font-bold text-blue-900 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột">
                                 </th>
-                                <th class="py-3 px-3 text-center bg-blue-50/50">Trạng Thái Q4</th>
+                                <th class="py-2 px-2 text-center bg-blue-50/50 min-w-[110px]">
+                                    <input type="text" id="col-status-title-q4" onchange="updateQuarterTitle('status_q4', this.value)" class="w-full text-center bg-transparent border-b border-blue-300 font-bold text-blue-800 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột Trạng Thái">
+                                </th>
                                 
-                                <th class="py-3 px-3 text-center">Sửa Hàng</th>
+                                <th class="py-3 px-3 text-center min-w-[100px]">Thao Tác Dòng</th>
                             </tr>
                         </thead>
                         <tbody id="member-list" class="divide-y divide-slate-100"></tbody>
@@ -1007,7 +1021,6 @@
     </main>
 
     <!-- MODALS -->
-    <!-- MODAL THÊM / SỬA PICK THỦ -->
     <div id="player-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 text-slate-800">
             <h3 id="modal-title" class="text-lg font-bold text-slate-800 mb-4">Thêm Pick Thủ Mới</h3>
@@ -1028,82 +1041,6 @@
             <div class="flex justify-end gap-2 mt-6">
                 <button onclick="closePlayerModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-sm rounded-lg hover:bg-slate-300">Hủy</button>
                 <button onclick="savePlayer()" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 font-semibold">Lưu Pick Thủ</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL BÚT CHÌ SỬA TOÀN BỘ HÀNG TIỀN SÂN QUỸ PICK -->
-    <div id="fund-member-edit-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 text-slate-800 max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-pencil text-blue-600"></i> Sửa Chi Tiết Hàng Pick Thủ
-            </h3>
-            <input type="hidden" id="edit-row-player-id">
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Tên Pick Thủ</label>
-                    <input type="text" id="edit-row-player-name" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none font-bold">
-                </div>
-
-                <div class="grid grid-cols-2 gap-3 bg-teal-50/50 p-3 rounded-lg border border-teal-200">
-                    <div>
-                        <label class="block text-xs font-semibold text-teal-900 mb-1" id="lbl-edit-q1">Tiền Sân Quý 1 (VNĐ)</label>
-                        <input type="number" id="edit-row-q1-amt" step="10000" class="w-full border rounded p-1.5 text-sm font-bold" placeholder="Nhập số tiền...">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-teal-900 mb-1">Trạng Thái Q1</label>
-                        <select id="edit-row-q1-status" class="w-full border rounded p-1.5 text-sm font-semibold">
-                            <option value="true">Đã đóng</option>
-                            <option value="false">Chưa đóng</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3 bg-amber-50/50 p-3 rounded-lg border border-amber-200">
-                    <div>
-                        <label class="block text-xs font-semibold text-amber-900 mb-1" id="lbl-edit-q2">Tiền Sân Quý 2 (VNĐ)</label>
-                        <input type="number" id="edit-row-q2-amt" step="10000" class="w-full border rounded p-1.5 text-sm font-bold" placeholder="Nhập số tiền...">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-amber-900 mb-1">Trạng Thái Q2</label>
-                        <select id="edit-row-q2-status" class="w-full border rounded p-1.5 text-sm font-semibold">
-                            <option value="true">Đã đóng</option>
-                            <option value="false">Chưa đóng</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3 bg-purple-50/50 p-3 rounded-lg border border-purple-200">
-                    <div>
-                        <label class="block text-xs font-semibold text-purple-900 mb-1" id="lbl-edit-q3">Tiền Sân Quý 3 (VNĐ)</label>
-                        <input type="number" id="edit-row-q3-amt" step="10000" class="w-full border rounded p-1.5 text-sm font-bold" placeholder="Nhập số tiền...">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-purple-900 mb-1">Trạng Thái Q3</label>
-                        <select id="edit-row-q3-status" class="w-full border rounded p-1.5 text-sm font-semibold">
-                            <option value="true">Đã đóng</option>
-                            <option value="false">Chưa đóng</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3 bg-blue-50/50 p-3 rounded-lg border border-blue-200">
-                    <div>
-                        <label class="block text-xs font-semibold text-blue-900 mb-1" id="lbl-edit-q4">Tiền Sân Quý 4 (VNĐ)</label>
-                        <input type="number" id="edit-row-q4-amt" step="10000" class="w-full border rounded p-1.5 text-sm font-bold">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-blue-900 mb-1">Trạng Thái Q4</label>
-                        <select id="edit-row-q4-status" class="w-full border rounded p-1.5 text-sm font-semibold">
-                            <option value="true">Đã đóng</option>
-                            <option value="false">Chưa đóng</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="flex justify-end gap-2 mt-6">
-                <button onclick="closeFundMemberEditModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-sm rounded-lg hover:bg-slate-300">Hủy</button>
-                <button onclick="saveFundMemberRowEdit()" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 font-semibold">Lưu Thay Đổi</button>
             </div>
         </div>
     </div>
@@ -1276,12 +1213,16 @@
             "1/10/26": { btcNoteAdminOption: "YES" }
         };
 
-        // --- TÙY CHỈNH TÊN TIÊU ĐỀ CỘT CÁC QUÝ ---
+        // --- TÙY CHỈNH TIÊU ĐỀ SỐ TIỀN & TRẠNG THÁI CÁC QUÝ ---
         window.quarterTitles = JSON.parse(localStorage.getItem('pb_quarter_titles')) || {
             q1: "Tiền Sân Quý 1",
+            status_q1: "Trạng Thái Q1",
             q2: "Tiền Sân Quý 2",
+            status_q2: "Trạng Thái Q2",
             q3: "Tiền Sân Quý 3",
-            q4: "Tiền Sân Quý 4 (800k)"
+            status_q3: "Trạng Thái Q3",
+            q4: "Tiền Sân Quý 4 (800k)",
+            status_q4: "Trạng Thái Q4"
         };
 
         window.initialFund = Number(localStorage.getItem('pb_initial_fund')) || 500000;
@@ -1372,6 +1313,36 @@
             saveFundData();
         }
 
+        function updateQuarterStatusDirect(playerId, qKey, val) {
+            window.fundFeeStatus[`${playerId}_${qKey}_status`] = val;
+            saveFundData();
+        }
+
+        function addNewFundPlayerPrompt() {
+            const name = prompt("Nhập tên Pick thủ mới muốn thêm vào danh sách Quỹ:");
+            if (name && name.trim() !== "") {
+                const trimmed = name.trim();
+                const existing = window.players.find(p => p.name.toLowerCase() === trimmed.toLowerCase());
+                if (existing) {
+                    alert("Pick thủ này đã có trong danh sách!");
+                } else {
+                    const newPlayer = { id: Date.now(), name: trimmed, gender: "Nam" };
+                    window.players.push(newPlayer);
+                    refreshAllViews();
+                    saveFundData();
+                }
+            }
+        }
+
+        function deleteFundPlayerRow(playerId) {
+            const p = window.players.find(item => item.id === playerId);
+            if (p && confirm(`Bạn có chắc chắn muốn XÓA Pick thủ "${p.name}" khỏi danh sách?`)) {
+                window.players = window.players.filter(item => item.id !== playerId);
+                refreshAllViews();
+                saveFundData();
+            }
+        }
+
         function saveFundData() {
             localStorage.setItem('pb_fee_status', JSON.stringify(window.fundFeeStatus));
             localStorage.setItem('pb_incomes', JSON.stringify(window.fundIncomes));
@@ -1436,87 +1407,6 @@
             if(elExpTot) elExpTot.innerText = formatVND(totalExpense);
         }
 
-        function openFundMemberEditModal(playerId) {
-            const player = window.players.find(p => p.id === playerId);
-            if(!player) return;
-
-            document.getElementById('edit-row-player-id').value = player.id;
-            document.getElementById('edit-row-player-name').value = player.name;
-
-            const q1Paid = window.fundFeeStatus[`${player.id}_q1`] || false;
-            const q2Paid = window.fundFeeStatus[`${player.id}_q2`] || false;
-            const q3Paid = window.fundFeeStatus[`${player.id}_q3`] || false;
-            const q4Paid = window.fundFeeStatus[`${player.id}_q4`] !== undefined ? window.fundFeeStatus[`${player.id}_q4`] : false;
-
-            const q1Amt = window.fundFeeStatus[`${player.id}_q1_amt`] !== undefined ? window.fundFeeStatus[`${player.id}_q1_amt`] : 0;
-            const q2Amt = window.fundFeeStatus[`${player.id}_q2_amt`] !== undefined ? window.fundFeeStatus[`${player.id}_q2_amt`] : 500000;
-            const q3Amt = window.fundFeeStatus[`${player.id}_q3_amt`] !== undefined ? window.fundFeeStatus[`${player.id}_q3_amt`] : 0;
-            const q4Amt = window.fundFeeStatus[`${player.id}_q4_amt`] !== undefined ? window.fundFeeStatus[`${player.id}_q4_amt`] : 800000;
-
-            document.getElementById('lbl-edit-q1').innerText = `${window.quarterTitles.q1} (VNĐ)`;
-            document.getElementById('lbl-edit-q2').innerText = `${window.quarterTitles.q2} (VNĐ)`;
-            document.getElementById('lbl-edit-q3').innerText = `${window.quarterTitles.q3} (VNĐ)`;
-            document.getElementById('lbl-edit-q4').innerText = `${window.quarterTitles.q4} (VNĐ)`;
-
-            document.getElementById('edit-row-q1-amt').value = q1Amt;
-            document.getElementById('edit-row-q1-status').value = q1Paid ? "true" : "false";
-
-            document.getElementById('edit-row-q2-amt').value = q2Amt;
-            document.getElementById('edit-row-q2-status').value = q2Paid ? "true" : "false";
-
-            document.getElementById('edit-row-q3-amt').value = q3Amt;
-            document.getElementById('edit-row-q3-status').value = q3Paid ? "true" : "false";
-
-            document.getElementById('edit-row-q4-amt').value = q4Amt;
-            document.getElementById('edit-row-q4-status').value = q4Paid ? "true" : "false";
-
-            document.getElementById('fund-member-edit-modal').classList.remove('hidden');
-        }
-
-        function closeFundMemberEditModal() {
-            document.getElementById('fund-member-edit-modal').classList.add('hidden');
-        }
-
-        function saveFundMemberRowEdit() {
-            const playerId = Number(document.getElementById('edit-row-player-id').value);
-            const newName = document.getElementById('edit-row-player-name').value.trim();
-
-            const q1Amt = Number(document.getElementById('edit-row-q1-amt').value) || 0;
-            const q1Status = document.getElementById('edit-row-q1-status').value === "true";
-
-            const q2Amt = Number(document.getElementById('edit-row-q2-amt').value) || 0;
-            const q2Status = document.getElementById('edit-row-q2-status').value === "true";
-
-            const q3Amt = Number(document.getElementById('edit-row-q3-amt').value) || 0;
-            const q3Status = document.getElementById('edit-row-q3-status').value === "true";
-
-            const q4Amt = Number(document.getElementById('edit-row-q4-amt').value) || 0;
-            const q4Status = document.getElementById('edit-row-q4-status').value === "true";
-
-            if(!newName) return alert("Vui lòng nhập tên Pick thủ!");
-
-            const player = window.players.find(p => p.id === playerId);
-            if(player) {
-                player.name = newName;
-            }
-
-            window.fundFeeStatus[`${playerId}_q1_amt`] = q1Amt;
-            window.fundFeeStatus[`${playerId}_q1`] = q1Status;
-
-            window.fundFeeStatus[`${playerId}_q2_amt`] = q2Amt;
-            window.fundFeeStatus[`${playerId}_q2`] = q2Status;
-
-            window.fundFeeStatus[`${playerId}_q3_amt`] = q3Amt;
-            window.fundFeeStatus[`${playerId}_q3`] = q3Status;
-
-            window.fundFeeStatus[`${playerId}_q4_amt`] = q4Amt;
-            window.fundFeeStatus[`${playerId}_q4`] = q4Status;
-
-            closeFundMemberEditModal();
-            refreshAllViews();
-            saveFundData();
-        }
-
         function renderFundMembers() {
             const searchEl = document.getElementById('member-search');
             const filterEl = document.getElementById('member-filter');
@@ -1529,10 +1419,20 @@
             const tq3 = document.getElementById('col-title-q3');
             const tq4 = document.getElementById('col-title-q4');
 
+            const stq1 = document.getElementById('col-status-title-q1');
+            const stq2 = document.getElementById('col-status-title-q2');
+            const stq3 = document.getElementById('col-status-title-q3');
+            const stq4 = document.getElementById('col-status-title-q4');
+
             if(tq1 && document.activeElement !== tq1) tq1.value = window.quarterTitles.q1;
             if(tq2 && document.activeElement !== tq2) tq2.value = window.quarterTitles.q2;
             if(tq3 && document.activeElement !== tq3) tq3.value = window.quarterTitles.q3;
             if(tq4 && document.activeElement !== tq4) tq4.value = window.quarterTitles.q4;
+
+            if(stq1 && document.activeElement !== stq1) stq1.value = window.quarterTitles.status_q1 || "Trạng Thái Q1";
+            if(stq2 && document.activeElement !== stq2) stq2.value = window.quarterTitles.status_q2 || "Trạng Thái Q2";
+            if(stq3 && document.activeElement !== stq3) stq3.value = window.quarterTitles.status_q3 || "Trạng Thái Q3";
+            if(stq4 && document.activeElement !== stq4) stq4.value = window.quarterTitles.status_q4 || "Trạng Thái Q4";
 
             const search = searchEl ? searchEl.value.toLowerCase() : '';
             const filter = filterEl ? filterEl.value : 'all';
@@ -1541,16 +1441,16 @@
 
             const filtered = window.players.filter(p => {
                 const matchSearch = p.name.toLowerCase().includes(search);
-                const q1Paid = window.fundFeeStatus[`${p.id}_q1`] || false;
-                const q2Paid = window.fundFeeStatus[`${p.id}_q2`] || false;
-                const q3Paid = window.fundFeeStatus[`${p.id}_q3`] || false;
-                const q4Paid = window.fundFeeStatus[`${p.id}_q4`] !== undefined ? window.fundFeeStatus[`${p.id}_q4`] : false;
+                const q1Status = window.fundFeeStatus[`${p.id}_q1_status`] || (window.fundFeeStatus[`${p.id}_q1`] ? "paid" : "unpaid");
+                const q2Status = window.fundFeeStatus[`${p.id}_q2_status`] || (window.fundFeeStatus[`${p.id}_q2`] ? "paid" : "unpaid");
+                const q3Status = window.fundFeeStatus[`${p.id}_q3_status`] || (window.fundFeeStatus[`${p.id}_q3`] ? "paid" : "unpaid");
+                const q4Status = window.fundFeeStatus[`${p.id}_q4_status`] || (window.fundFeeStatus[`${p.id}_q4`] ? "paid" : "unpaid");
 
                 let matchFilter = true;
-                if(filter === 'q1_pending') matchFilter = !q1Paid;
-                if(filter === 'q2_pending') matchFilter = !q2Paid;
-                if(filter === 'q3_pending') matchFilter = !q3Paid;
-                if(filter === 'q4_pending') matchFilter = !q4Paid;
+                if(filter === 'q1_pending') matchFilter = (q1Status === 'unpaid');
+                if(filter === 'q2_pending') matchFilter = (q2Status === 'unpaid');
+                if(filter === 'q3_pending') matchFilter = (q3Status === 'unpaid');
+                if(filter === 'q4_pending') matchFilter = (q4Status === 'unpaid');
 
                 return matchSearch && matchFilter;
             });
@@ -1567,20 +1467,36 @@
             let sumQ4Collected = 0;
 
             filtered.forEach((p, idx) => {
-                const q1Paid = window.fundFeeStatus[`${p.id}_q1`] || false;
-                const q2Paid = window.fundFeeStatus[`${p.id}_q2`] || false;
-                const q3Paid = window.fundFeeStatus[`${p.id}_q3`] || false;
-                const q4Paid = window.fundFeeStatus[`${p.id}_q4`] !== undefined ? window.fundFeeStatus[`${p.id}_q4`] : false;
+                const q1Status = window.fundFeeStatus[`${p.id}_q1_status`] || (window.fundFeeStatus[`${p.id}_q1`] ? "paid" : "unpaid");
+                const q2Status = window.fundFeeStatus[`${p.id}_q2_status`] || (window.fundFeeStatus[`${p.id}_q2`] ? "paid" : "unpaid");
+                const q3Status = window.fundFeeStatus[`${p.id}_q3_status`] || (window.fundFeeStatus[`${p.id}_q3`] ? "paid" : "unpaid");
+                const q4Status = window.fundFeeStatus[`${p.id}_q4_status`] || (window.fundFeeStatus[`${p.id}_q4`] ? "paid" : "unpaid");
 
                 const q1Amt = window.fundFeeStatus[`${p.id}_q1_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q1_amt`] : 0;
                 const q2Amt = window.fundFeeStatus[`${p.id}_q2_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q2_amt`] : 500000;
                 const q3Amt = window.fundFeeStatus[`${p.id}_q3_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q3_amt`] : 0;
                 const q4Amt = window.fundFeeStatus[`${p.id}_q4_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q4_amt`] : 800000;
 
-                if(q1Paid) sumQ1Collected += q1Amt;
-                if(q2Paid) sumQ2Collected += q2Amt;
-                if(q3Paid) sumQ3Collected += q3Amt;
-                if(q4Paid) sumQ4Collected += q4Amt;
+                if(q1Status === "paid") sumQ1Collected += q1Amt;
+                if(q2Status === "paid") sumQ2Collected += q2Amt;
+                if(q3Status === "paid") sumQ3Collected += q3Amt;
+                if(q4Status === "paid") sumQ4Collected += q4Amt;
+
+                const buildStatusSelect = (qKey, currentStatus) => {
+                    return `
+                        <select onchange="updateQuarterStatusDirect(${p.id}, '${qKey}', this.value)" class="text-xs font-bold p-1 rounded-full border outline-none cursor-pointer ${
+                            currentStatus === 'paid' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
+                            currentStatus === 'unpaid' ? 'bg-rose-100 text-rose-800 border-rose-300' :
+                            currentStatus === 'pause' ? 'bg-amber-100 text-amber-800 border-amber-300' :
+                            'bg-slate-200 text-slate-700 border-slate-300'
+                        }">
+                            <option value="no" ${currentStatus === 'no' ? 'selected' : ''}>NO (Chưa đến)</option>
+                            <option value="unpaid" ${currentStatus === 'unpaid' ? 'selected' : ''}>Chưa đóng</option>
+                            <option value="paid" ${currentStatus === 'paid' ? 'selected' : ''}>Đã đóng</option>
+                            <option value="pause" ${currentStatus === 'pause' ? 'selected' : ''}>Tạm nghỉ</option>
+                        </select>
+                    `;
+                };
 
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors";
@@ -1588,51 +1504,38 @@
                     <td class="py-3 px-3 text-center font-medium text-slate-500">${idx + 1}</td>
                     <td class="py-3 px-3"><span class="player-tag">${p.name}</span></td>
                     
-                    <!-- QUÝ 1: SỐ TIỀN CÓ THỂ CHỈNH SỬA TRỰC TIẾP -->
                     <td class="py-2 px-2 text-center bg-teal-50/20">
-                        <input type="number" step="10000" value="${q1Amt}" onchange="updateQuarterAmountDirect(${p.id}, 'q1', this.value)" class="w-24 text-center font-bold text-teal-900 border rounded px-1 py-0.5 bg-white focus:ring-1 focus:ring-teal-500 outline-none text-xs" title="Nhập số tiền">
+                        <input type="number" step="10000" value="${q1Amt}" onchange="updateQuarterAmountDirect(${p.id}, 'q1', this.value)" class="w-24 text-center font-bold text-teal-900 border rounded px-1 py-0.5 bg-white focus:ring-1 focus:ring-teal-500 outline-none text-xs">
                     </td>
-                    <td class="py-3 px-3 text-center bg-teal-50/20">
-                        <button onclick="toggleFundFee(${p.id}, 'q1')" class="px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${q1Paid ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-rose-100 text-rose-700 hover:bg-rose-200'}">
-                            ${q1Paid ? '<i class="fa-solid fa-check mr-1"></i>Đã đóng' : '<i class="fa-solid fa-xmark mr-1"></i>Chưa đóng'}
-                        </button>
+                    <td class="py-2 px-2 text-center bg-teal-50/20">
+                        ${buildStatusSelect('q1', q1Status)}
                     </td>
 
-                    <!-- QUÝ 2: SỐ TIỀN CÓ THỂ CHỈNH SỬA TRỰC TIẾP -->
                     <td class="py-2 px-2 text-center bg-amber-50/20">
-                        <input type="number" step="10000" value="${q2Amt}" onchange="updateQuarterAmountDirect(${p.id}, 'q2', this.value)" class="w-24 text-center font-bold text-amber-900 border rounded px-1 py-0.5 bg-white focus:ring-1 focus:ring-amber-500 outline-none text-xs" title="Nhập số tiền">
+                        <input type="number" step="10000" value="${q2Amt}" onchange="updateQuarterAmountDirect(${p.id}, 'q2', this.value)" class="w-24 text-center font-bold text-amber-900 border rounded px-1 py-0.5 bg-white focus:ring-1 focus:ring-amber-500 outline-none text-xs">
                     </td>
-                    <td class="py-3 px-3 text-center bg-amber-50/20">
-                        <button onclick="toggleFundFee(${p.id}, 'q2')" class="px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${q2Paid ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-rose-100 text-rose-700 hover:bg-rose-200'}">
-                            ${q2Paid ? '<i class="fa-solid fa-check mr-1"></i>Đã đóng' : '<i class="fa-solid fa-xmark mr-1"></i>Chưa đóng'}
-                        </button>
+                    <td class="py-2 px-2 text-center bg-amber-50/20">
+                        ${buildStatusSelect('q2', q2Status)}
                     </td>
 
-                    <!-- QUÝ 3: SỐ TIỀN CÓ THỂ CHỈNH SỬA TRỰC TIẾP -->
                     <td class="py-2 px-2 text-center bg-purple-50/20">
-                        <input type="number" step="10000" value="${q3Amt}" onchange="updateQuarterAmountDirect(${p.id}, 'q3', this.value)" class="w-24 text-center font-bold text-purple-900 border rounded px-1 py-0.5 bg-white focus:ring-1 focus:ring-purple-500 outline-none text-xs" title="Nhập số tiền">
+                        <input type="number" step="10000" value="${q3Amt}" onchange="updateQuarterAmountDirect(${p.id}, 'q3', this.value)" class="w-24 text-center font-bold text-purple-900 border rounded px-1 py-0.5 bg-white focus:ring-1 focus:ring-purple-500 outline-none text-xs">
                     </td>
-                    <td class="py-3 px-3 text-center bg-purple-50/20">
-                        <button onclick="toggleFundFee(${p.id}, 'q3')" class="px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${q3Paid ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-rose-100 text-rose-700 hover:bg-rose-200'}">
-                            ${q3Paid ? '<i class="fa-solid fa-check mr-1"></i>Đã đóng' : '<i class="fa-solid fa-xmark mr-1"></i>Chưa đóng'}
-                        </button>
+                    <td class="py-2 px-2 text-center bg-purple-50/20">
+                        ${buildStatusSelect('q3', q3Status)}
                     </td>
 
-                    <!-- QUÝ 4: SỐ TIỀN CÓ THỂ CHỈNH SỬA TRỰC TIẾP -->
                     <td class="py-2 px-2 text-center bg-blue-50/20">
-                        <input type="number" step="10000" value="${q4Amt}" onchange="updateQuarterAmountDirect(${p.id}, 'q4', this.value)" class="w-24 text-center font-bold text-blue-900 border rounded px-1 py-0.5 bg-white focus:ring-1 focus:ring-blue-500 outline-none text-xs" title="Nhập số tiền">
+                        <input type="number" step="10000" value="${q4Amt}" onchange="updateQuarterAmountDirect(${p.id}, 'q4', this.value)" class="w-24 text-center font-bold text-blue-900 border rounded px-1 py-0.5 bg-white focus:ring-1 focus:ring-blue-500 outline-none text-xs">
                     </td>
-                    <td class="py-3 px-3 text-center bg-blue-50/20">
-                        <button onclick="toggleFundFee(${p.id}, 'q4')" class="px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${q4Paid ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-rose-100 text-rose-700 hover:bg-rose-200'}">
-                            ${q4Paid ? '<i class="fa-solid fa-check mr-1"></i>Đã đóng' : '<i class="fa-solid fa-xmark mr-1"></i>Chưa đóng'}
-                        </button>
+                    <td class="py-2 px-2 text-center bg-blue-50/20">
+                        ${buildStatusSelect('q4', q4Status)}
                     </td>
 
-                    <!-- THAO TÁC SỬA HÀNG -->
                     <td class="py-3 px-3 text-center">
-                        <button onclick="openFundMemberEditModal(${p.id})" class="text-blue-600 hover:text-blue-800 font-bold text-xs bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-lg shadow-sm hover:bg-blue-100 transition-colors flex items-center gap-1 mx-auto" title="Sửa chi tiết toàn bộ hàng">
-                            <i class="fa-solid fa-pencil text-blue-600"></i>
-                            <span>Sửa</span>
+                        <button onclick="deleteFundPlayerRow(${p.id})" class="text-red-600 hover:text-red-800 font-bold text-xs bg-red-50 border border-red-200 px-2 py-1 rounded-lg shadow-sm hover:bg-red-100 transition-colors flex items-center gap-1 mx-auto" title="Xóa Pick thủ này khỏi Quỹ">
+                            <i class="fa-solid fa-trash-can"></i>
+                            <span>Xóa</span>
                         </button>
                     </td>
                 `;
@@ -1646,7 +1549,7 @@
             if(tfoot) {
                 tfoot.innerHTML = `
                     <tr class="bg-emerald-50/80 text-emerald-900">
-                        <td class="py-2.5 px-3 text-center font-bold" colspan="2">TỔNG THU THEO QUÝ:</td>
+                        <td class="py-2.5 px-3 text-center font-bold" colspan="2">TỔNG THU THỰC TẾ:</td>
                         <td class="py-2.5 px-3 text-center text-teal-800 font-extrabold" colspan="2">Q1: ${formatVND(sumQ1Collected)}</td>
                         <td class="py-2.5 px-3 text-center text-amber-800 font-extrabold" colspan="2">Q2: ${formatVND(sumQ2Collected)}</td>
                         <td class="py-2.5 px-3 text-center text-purple-800 font-extrabold" colspan="2">Q3: ${formatVND(sumQ3Collected)}</td>
@@ -1654,24 +1557,18 @@
                         <td class="py-2.5 px-3 text-center text-emerald-700 font-black">${formatVND(totalCourtIncome)}</td>
                     </tr>
                     <tr class="bg-rose-50/80 text-rose-900">
-                        <td class="py-2.5 px-3 text-center font-bold" colspan="2">DÒNG CHI (NHẬT KÝ CHI QUỸ):</td>
+                        <td class="py-2.5 px-3 text-center font-bold" colspan="2">DÒNG CHI QUỸ:</td>
                         <td class="py-2.5 px-3 text-right font-extrabold" colspan="8">Tổng Các Khoản Chi Tiền Sân & Sinh Hoạt:</td>
                         <td class="py-2.5 px-3 text-center text-rose-600 font-black">-${formatVND(totalExpense)}</td>
                     </tr>
                     <tr class="bg-slate-200/80 text-slate-900">
-                        <td class="py-3 px-3 text-center font-black" colspan="2">THU - CHI TIỀN SÂN (CÒN LẠI):</td>
+                        <td class="py-3 px-3 text-center font-black" colspan="2">THU - CHI CÒN LẠI:</td>
                         <td class="py-3 px-3 text-center font-black text-base ${netCourt >= 0 ? 'text-emerald-700' : 'text-rose-700'}" colspan="9">
                             ${formatVND(netCourt)}
                         </td>
                     </tr>
                 `;
             }
-        }
-
-        function toggleFundFee(playerId, quarter) {
-            const key = `${playerId}_${quarter}`;
-            window.fundFeeStatus[key] = !window.fundFeeStatus[key];
-            saveFundData();
         }
 
         function renderFundIncomes() {
@@ -1887,19 +1784,21 @@
                 ["SỐ DƯ QUỸ HIỆN TẠI", currentBalance, "Công thức: Đầu kỳ + Thu - Chi"]
             ];
 
+            const statusMap = { paid: "Đã đóng", unpaid: "Chưa đóng", pause: "Tạm nghỉ", no: "NO (Chưa đến)" };
+
             const memberData = [
-                ["STT", "Tên Pick Thủ", `${window.quarterTitles.q1} (VNĐ)`, "Trạng thái Q1", `${window.quarterTitles.q2} (VNĐ)`, "Trạng thái Q2", `${window.quarterTitles.q3} (VNĐ)`, "Trạng thái Q3", `${window.quarterTitles.q4} (VNĐ)`, "Trạng thái Q4"],
+                ["STT", "Tên Pick Thủ", `${window.quarterTitles.q1} (VNĐ)`, window.quarterTitles.status_q1 || "Trạng thái Q1", `${window.quarterTitles.q2} (VNĐ)`, window.quarterTitles.status_q2 || "Trạng thái Q2", `${window.quarterTitles.q3} (VNĐ)`, window.quarterTitles.status_q3 || "Trạng thái Q3", `${window.quarterTitles.q4} (VNĐ)`, window.quarterTitles.status_q4 || "Trạng thái Q4"],
                 ...window.players.map((p, i) => [
                     i + 1, 
                     p.name, 
                     window.fundFeeStatus[`${p.id}_q1_amt`] || 0,
-                    window.fundFeeStatus[`${p.id}_q1`] ? "Đã đóng" : "Chưa đóng",
+                    statusMap[window.fundFeeStatus[`${p.id}_q1_status`] || (window.fundFeeStatus[`${p.id}_q1`] ? "paid" : "unpaid")],
                     window.fundFeeStatus[`${p.id}_q2_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q2_amt`] : 500000, 
-                    window.fundFeeStatus[`${p.id}_q2`] ? "Đã đóng" : "Chưa đóng",
+                    statusMap[window.fundFeeStatus[`${p.id}_q2_status`] || (window.fundFeeStatus[`${p.id}_q2`] ? "paid" : "unpaid")],
                     window.fundFeeStatus[`${p.id}_q3_amt`] || 0,
-                    window.fundFeeStatus[`${p.id}_q3`] ? "Đã đóng" : "Chưa đóng",
+                    statusMap[window.fundFeeStatus[`${p.id}_q3_status`] || (window.fundFeeStatus[`${p.id}_q3`] ? "paid" : "unpaid")],
                     window.fundFeeStatus[`${p.id}_q4_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q4_amt`] : 800000, 
-                    window.fundFeeStatus[`${p.id}_q4`] ? "Đã đóng" : "Chưa đóng"
+                    statusMap[window.fundFeeStatus[`${p.id}_q4_status`] || (window.fundFeeStatus[`${p.id}_q4`] ? "paid" : "unpaid")]
                 ])
             ];
 
