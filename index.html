@@ -768,7 +768,7 @@
             </div>
         </section>
 
-        <!-- QUẢN LÝ QUỸ PICK (ĐÃ CẬP NHẬT TỈ MỈ SỬA TIÊU ĐỀ TRẠNG THÁI + OPTION "NO" & "TẠM NGHỈ" + THÊM XOÁ DÒNG) -->
+        <!-- QUẢN LÝ QUỸ PICK (BỎ CÁC CỘT QUÝ CHƯA ĐẾN & THÊM TÍNH NĂNG TỰ THÊM CỘT QUÝ MỚI) -->
         <section id="tab-fund_manager" class="tab-content hidden space-y-6">
             <div class="bg-gradient-to-r from-brand-800 via-brand-700 to-court-600 text-white p-5 rounded-2xl shadow-md flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="flex items-center space-x-3">
@@ -925,7 +925,7 @@
                 </section>
             </div>
 
-            <!-- BẢNG QUẢN LÝ QUỸ: CẬP NHẬT TỰ ĐỔI CỘT TÊN TRẠNG THÁI + OPTION NO/TẠM NGHỈ + THÊM XOÁ DÒNG -->
+            <!-- BẢNG QUẢN LÝ QUỸ: TỰ DỘNG ẨN CÁC QUÝ CHƯA ĐẾN & CHO PHÉP TỰ THÊM CỘT QUÝ MỚI -->
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
                 <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
@@ -933,69 +933,32 @@
                             <i class="fa-solid fa-users text-brand-600"></i>
                             <span>Danh Sách Pick Thủ CLB & Tiền Sân Các Quý</span>
                         </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Click vào tiêu đề để sửa chữ. Bấm nút Thêm Pick Thủ để tạo mới hoặc Xóa dòng trực tiếp.</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Click tên cột để sửa. Dùng nút "➕ Thêm Cột Quý Mới" nếu cần mở rộng thêm các Quý tiếp theo.</p>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                        <button onclick="addNewFundPlayerPrompt()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow flex items-center gap-1.5">
-                            <i class="fa-solid fa-user-plus"></i>
-                            <span>➕ Thêm Pick Thủ Vào Quỹ</span>
+                        <button onclick="addNewQuarterColumn()" class="bg-teal-700 hover:bg-teal-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow flex items-center gap-1.5">
+                            <i class="fa-solid fa-folder-plus text-yellow-300"></i>
+                            <span>➕ Thêm Cột Quý Mới</span>
                         </button>
 
-                        <div class="relative flex-1 sm:w-48">
+                        <button onclick="addNewFundPlayerPrompt()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <span>➕ Thêm Pick Thủ</span>
+                        </button>
+
+                        <div class="relative flex-1 sm:w-44">
                             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                            <input type="text" id="member-search" oninput="renderFundMembers()" placeholder="Tìm tên Pick thủ..." class="w-full pl-9 pr-3 py-1.5 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <input type="text" id="member-search" oninput="renderFundMembers()" placeholder="Tìm Pick thủ..." class="w-full pl-9 pr-3 py-1.5 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
-                        <select id="member-filter" onchange="renderFundMembers()" class="py-1.5 px-3 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            <option value="all">Tất cả trạng thái</option>
-                            <option value="q1_pending">Chưa đóng Quý 1</option>
-                            <option value="q2_pending">Chưa đóng Quý 2</option>
-                            <option value="q3_pending">Chưa đóng Quý 3</option>
-                            <option value="q4_pending">Chưa đóng Quý 4</option>
-                        </select>
                     </div>
                 </div>
 
                 <div class="overflow-x-auto custom-scrollbar">
                     <table class="w-full text-left text-sm">
                         <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
-                            <tr>
-                                <th class="py-3 px-3 w-10 text-center">STT</th>
-                                <th class="py-3 px-3">Tên Pick Thủ</th>
-                                
-                                <!-- TIÊU ĐỀ SỐ TIỀN VÀ TRẠNG THÁI QUÝ 1 -->
-                                <th class="py-2 px-2 text-center bg-teal-50/80 border-x border-teal-100 min-w-[120px]">
-                                    <input type="text" id="col-title-q1" onchange="updateQuarterTitle('q1', this.value)" class="w-full text-center bg-transparent border-b border-teal-300 font-bold text-teal-900 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột">
-                                </th>
-                                <th class="py-2 px-2 text-center bg-teal-50/50 min-w-[110px]">
-                                    <input type="text" id="col-status-title-q1" onchange="updateQuarterTitle('status_q1', this.value)" class="w-full text-center bg-transparent border-b border-teal-300 font-bold text-teal-800 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột Trạng Thái">
-                                </th>
-
-                                <!-- TIÊU ĐỀ SỐ TIỀN VÀ TRẠNG THÁI QUÝ 2 -->
-                                <th class="py-2 px-2 text-center bg-amber-50/80 border-x border-amber-100 min-w-[120px]">
-                                    <input type="text" id="col-title-q2" onchange="updateQuarterTitle('q2', this.value)" class="w-full text-center bg-transparent border-b border-amber-300 font-bold text-amber-900 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột">
-                                </th>
-                                <th class="py-2 px-2 text-center bg-amber-50/50 min-w-[110px]">
-                                    <input type="text" id="col-status-title-q2" onchange="updateQuarterTitle('status_q2', this.value)" class="w-full text-center bg-transparent border-b border-amber-300 font-bold text-amber-800 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột Trạng Thái">
-                                </th>
-
-                                <!-- TIÊU ĐỀ SỐ TIỀN VÀ TRẠNG THÁI QUÝ 3 -->
-                                <th class="py-2 px-2 text-center bg-purple-50/80 border-x border-purple-100 min-w-[120px]">
-                                    <input type="text" id="col-title-q3" onchange="updateQuarterTitle('q3', this.value)" class="w-full text-center bg-transparent border-b border-purple-300 font-bold text-purple-900 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột">
-                                </th>
-                                <th class="py-2 px-2 text-center bg-purple-50/50 min-w-[110px]">
-                                    <input type="text" id="col-status-title-q3" onchange="updateQuarterTitle('status_q3', this.value)" class="w-full text-center bg-transparent border-b border-purple-300 font-bold text-purple-800 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột Trạng Thái">
-                                </th>
-
-                                <!-- TIÊU ĐỀ SỐ TIỀN VÀ TRẠNG THÁI QUÝ 4 -->
-                                <th class="py-2 px-2 text-center bg-blue-50/80 border-x border-blue-100 min-w-[120px]">
-                                    <input type="text" id="col-title-q4" onchange="updateQuarterTitle('q4', this.value)" class="w-full text-center bg-transparent border-b border-blue-300 font-bold text-blue-900 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột">
-                                </th>
-                                <th class="py-2 px-2 text-center bg-blue-50/50 min-w-[110px]">
-                                    <input type="text" id="col-status-title-q4" onchange="updateQuarterTitle('status_q4', this.value)" class="w-full text-center bg-transparent border-b border-blue-300 font-bold text-blue-800 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột Trạng Thái">
-                                </th>
-                                
-                                <th class="py-3 px-3 text-center min-w-[100px]">Thao Tác Dòng</th>
+                            <tr id="member-list-thead-tr">
+                                <!-- DYNAMIC HEADERS RENDER HERE -->
                             </tr>
                         </thead>
                         <tbody id="member-list" class="divide-y divide-slate-100"></tbody>
@@ -1213,23 +1176,16 @@
             "1/10/26": { btcNoteAdminOption: "YES" }
         };
 
-        // --- TÙY CHỈNH TIÊU ĐỀ SỐ TIỀN & TRẠNG THÁI CÁC QUÝ ---
-        window.quarterTitles = JSON.parse(localStorage.getItem('pb_quarter_titles')) || {
-            q1: "Tiền Sân Quý 1",
-            status_q1: "Trạng Thái Q1",
-            q2: "Tiền Sân Quý 2",
-            status_q2: "Trạng Thái Q2",
-            q3: "Tiền Sân Quý 3",
-            status_q3: "Trạng Thái Q3",
-            q4: "Tiền Sân Quý 4 (800k)",
-            status_q4: "Trạng Thái Q4"
-        };
+        // --- CẤU TRÚC DANH SÁCH CỘT QUÝ DỘNG (ĐÃ BỎ CÁC CỘT CHƯA ĐẾN, MẶC ĐỊNH CHỈ CÓ QUÝ 1) ---
+        window.activeQuarterColumns = JSON.parse(localStorage.getItem('pb_active_quarter_cols')) || [
+            { id: "q1", title: "Tiền Sân Quý 1", statusTitle: "Trạng Thái Q1", defaultAmt: 800000, bgColor: "teal" }
+        ];
 
         window.initialFund = Number(localStorage.getItem('pb_initial_fund')) || 500000;
 
         const defaultFundIncomes = [
-            { id: 1, date: "2026-01-05", desc: "Thu tiền quỹ Q4 - Tiến Thọ", amount: 800000, source: "Tiến Thọ", note: "Chuyển khoản" },
-            { id: 2, date: "2026-01-06", desc: "Thu tiền quỹ Q4 - Châu Sĩ", amount: 800000, source: "Châu Sĩ", note: "Tiền mặt" },
+            { id: 1, date: "2026-01-05", desc: "Thu tiền quỹ Q1 - Tiến Thọ", amount: 800000, source: "Tiến Thọ", note: "Chuyển khoản" },
+            { id: 2, date: "2026-01-06", desc: "Thu tiền quỹ Q1 - Châu Sĩ", amount: 800000, source: "Châu Sĩ", note: "Tiền mặt" },
             { id: 3, date: "2026-01-10", desc: "Thu tiền giao lưu vãng lai", amount: 200000, source: "Khách vãng lai / Khác", note: "Thu theo buổi" }
         ];
 
@@ -1296,15 +1252,48 @@
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
-        function updateQuarterTitle(qKey, val) {
-            const newTitle = val.trim();
-            if(newTitle) {
-                window.quarterTitles[qKey] = newTitle;
-                localStorage.setItem('pb_quarter_titles', JSON.stringify(window.quarterTitles));
-                autoBackupData();
-                if(window.syncToFirebase) window.syncToFirebase();
+        // --- TÍNH NĂNG THÊM & XOÁ CỘT QUÝ DỘNG ---
+        function addNewQuarterColumn() {
+            const num = window.activeQuarterColumns.length + 1;
+            const qId = `q_${Date.now()}`;
+            const colors = ["amber", "purple", "blue", "teal", "emerald", "indigo", "rose"];
+            const chosenColor = colors[(num - 1) % colors.length];
+
+            const qTitle = prompt(`Nhập tên hiển thị cho Cột Quý Mới (VD: Tiền Sân Quý ${num}):`, `Tiền Sân Quý ${num}`);
+            if (!qTitle) return;
+
+            window.activeQuarterColumns.push({
+                id: qId,
+                title: qTitle.trim(),
+                statusTitle: `Trạng Thái Q${num}`,
+                defaultAmt: 800000,
+                bgColor: chosenColor
+            });
+
+            saveQuarterColsConfig();
+            renderFundMembers();
+        }
+
+        function deleteQuarterColumn(qId, title) {
+            if (confirm(`Bạn có chắc chắn muốn XÓA cột "${title}" này khỏi Bảng Quỹ?`)) {
+                window.activeQuarterColumns = window.activeQuarterColumns.filter(col => col.id !== qId);
+                saveQuarterColsConfig();
                 renderFundMembers();
             }
+        }
+
+        function updateDynamicQuarterTitle(qId, field, value) {
+            const col = window.activeQuarterColumns.find(c => c.id === qId);
+            if (col) {
+                col[field] = value.trim();
+                saveQuarterColsConfig();
+            }
+        }
+
+        function saveQuarterColsConfig() {
+            localStorage.setItem('pb_active_quarter_cols', JSON.stringify(window.activeQuarterColumns));
+            autoBackupData();
+            if (window.syncToFirebase) window.syncToFirebase();
         }
 
         function updateQuarterAmountDirect(playerId, qKey, val) {
@@ -1409,129 +1398,86 @@
 
         function renderFundMembers() {
             const searchEl = document.getElementById('member-search');
-            const filterEl = document.getElementById('member-filter');
             const tbody = document.getElementById('member-list');
+            const theadTr = document.getElementById('member-list-thead-tr');
             const tfoot = document.getElementById('member-list-foot');
-            if(!tbody) return;
+            if(!tbody || !theadTr) return;
 
-            const tq1 = document.getElementById('col-title-q1');
-            const tq2 = document.getElementById('col-title-q2');
-            const tq3 = document.getElementById('col-title-q3');
-            const tq4 = document.getElementById('col-title-q4');
+            // RENDER HEADER TỰ ĐỘNG THEO CÁC CỘT QUÝ ĐỘNG
+            let headerHtml = `
+                <th class="py-3 px-3 w-10 text-center">STT</th>
+                <th class="py-3 px-3 min-w-[140px]">Tên Pick Thủ</th>
+            `;
 
-            const stq1 = document.getElementById('col-status-title-q1');
-            const stq2 = document.getElementById('col-status-title-q2');
-            const stq3 = document.getElementById('col-status-title-q3');
-            const stq4 = document.getElementById('col-status-title-q4');
-
-            if(tq1 && document.activeElement !== tq1) tq1.value = window.quarterTitles.q1;
-            if(tq2 && document.activeElement !== tq2) tq2.value = window.quarterTitles.q2;
-            if(tq3 && document.activeElement !== tq3) tq3.value = window.quarterTitles.q3;
-            if(tq4 && document.activeElement !== tq4) tq4.value = window.quarterTitles.q4;
-
-            if(stq1 && document.activeElement !== stq1) stq1.value = window.quarterTitles.status_q1 || "Trạng Thái Q1";
-            if(stq2 && document.activeElement !== stq2) stq2.value = window.quarterTitles.status_q2 || "Trạng Thái Q2";
-            if(stq3 && document.activeElement !== stq3) stq3.value = window.quarterTitles.status_q3 || "Trạng Thái Q3";
-            if(stq4 && document.activeElement !== stq4) stq4.value = window.quarterTitles.status_q4 || "Trạng Thái Q4";
-
-            const search = searchEl ? searchEl.value.toLowerCase() : '';
-            const filter = filterEl ? filterEl.value : 'all';
-            
-            tbody.innerHTML = '';
-
-            const filtered = window.players.filter(p => {
-                const matchSearch = p.name.toLowerCase().includes(search);
-                const q1Status = window.fundFeeStatus[`${p.id}_q1_status`] || (window.fundFeeStatus[`${p.id}_q1`] ? "paid" : "unpaid");
-                const q2Status = window.fundFeeStatus[`${p.id}_q2_status`] || (window.fundFeeStatus[`${p.id}_q2`] ? "paid" : "unpaid");
-                const q3Status = window.fundFeeStatus[`${p.id}_q3_status`] || (window.fundFeeStatus[`${p.id}_q3`] ? "paid" : "unpaid");
-                const q4Status = window.fundFeeStatus[`${p.id}_q4_status`] || (window.fundFeeStatus[`${p.id}_q4`] ? "paid" : "unpaid");
-
-                let matchFilter = true;
-                if(filter === 'q1_pending') matchFilter = (q1Status === 'unpaid');
-                if(filter === 'q2_pending') matchFilter = (q2Status === 'unpaid');
-                if(filter === 'q3_pending') matchFilter = (q3Status === 'unpaid');
-                if(filter === 'q4_pending') matchFilter = (q4Status === 'unpaid');
-
-                return matchSearch && matchFilter;
+            window.activeQuarterColumns.forEach(col => {
+                const c = col.bgColor || "teal";
+                headerHtml += `
+                    <th class="py-2 px-2 text-center bg-${c}-50/80 border-x border-${c}-100 min-w-[130px]">
+                        <div class="flex items-center justify-between gap-1">
+                            <input type="text" value="${col.title}" onchange="updateDynamicQuarterTitle('${col.id}', 'title', this.value)" class="w-full text-center bg-transparent border-b border-${c}-300 font-bold text-${c}-900 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Sửa tên cột">
+                            ${window.activeQuarterColumns.length > 1 ? `<button onclick="deleteQuarterColumn('${col.id}', '${col.title}')" class="text-rose-500 hover:text-rose-700 text-[10px] p-0.5" title="Xóa cột này"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        </div>
+                    </th>
+                    <th class="py-2 px-2 text-center bg-${c}-50/50 min-w-[110px]">
+                        <input type="text" value="${col.statusTitle}" onchange="updateDynamicQuarterTitle('${col.id}', 'statusTitle', this.value)" class="w-full text-center bg-transparent border-b border-${c}-300 font-bold text-${c}-800 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Sửa tên Trạng Thái">
+                    </th>
+                `;
             });
 
+            headerHtml += `<th class="py-3 px-3 text-center min-w-[90px]">Thao Tác</th>`;
+            theadTr.innerHTML = headerHtml;
+
+            const search = searchEl ? searchEl.value.toLowerCase() : '';
+            tbody.innerHTML = '';
+
+            const filtered = window.players.filter(p => p.name.toLowerCase().includes(search));
+
             if(filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="11" class="text-center py-6 text-slate-400">Không tìm thấy Pick thủ nào.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="${3 + window.activeQuarterColumns.length * 2}" class="text-center py-6 text-slate-400">Không tìm thấy Pick thủ nào.</td></tr>`;
                 if(tfoot) tfoot.innerHTML = '';
                 return;
             }
 
-            let sumQ1Collected = 0;
-            let sumQ2Collected = 0;
-            let sumQ3Collected = 0;
-            let sumQ4Collected = 0;
+            let collectedTotals = {};
+            window.activeQuarterColumns.forEach(col => { collectedTotals[col.id] = 0; });
 
             filtered.forEach((p, idx) => {
-                const q1Status = window.fundFeeStatus[`${p.id}_q1_status`] || (window.fundFeeStatus[`${p.id}_q1`] ? "paid" : "unpaid");
-                const q2Status = window.fundFeeStatus[`${p.id}_q2_status`] || (window.fundFeeStatus[`${p.id}_q2`] ? "paid" : "unpaid");
-                const q3Status = window.fundFeeStatus[`${p.id}_q3_status`] || (window.fundFeeStatus[`${p.id}_q3`] ? "paid" : "unpaid");
-                const q4Status = window.fundFeeStatus[`${p.id}_q4_status`] || (window.fundFeeStatus[`${p.id}_q4`] ? "paid" : "unpaid");
-
-                const q1Amt = window.fundFeeStatus[`${p.id}_q1_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q1_amt`] : 0;
-                const q2Amt = window.fundFeeStatus[`${p.id}_q2_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q2_amt`] : 500000;
-                const q3Amt = window.fundFeeStatus[`${p.id}_q3_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q3_amt`] : 0;
-                const q4Amt = window.fundFeeStatus[`${p.id}_q4_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q4_amt`] : 800000;
-
-                if(q1Status === "paid") sumQ1Collected += q1Amt;
-                if(q2Status === "paid") sumQ2Collected += q2Amt;
-                if(q3Status === "paid") sumQ3Collected += q3Amt;
-                if(q4Status === "paid") sumQ4Collected += q4Amt;
-
-                const buildStatusSelect = (qKey, currentStatus) => {
-                    return `
-                        <select onchange="updateQuarterStatusDirect(${p.id}, '${qKey}', this.value)" class="text-xs font-bold p-1 rounded-full border outline-none cursor-pointer ${
-                            currentStatus === 'paid' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
-                            currentStatus === 'unpaid' ? 'bg-rose-100 text-rose-800 border-rose-300' :
-                            currentStatus === 'pause' ? 'bg-amber-100 text-amber-800 border-amber-300' :
-                            'bg-slate-200 text-slate-700 border-slate-300'
-                        }">
-                            <option value="no" ${currentStatus === 'no' ? 'selected' : ''}>NO (Chưa đến)</option>
-                            <option value="unpaid" ${currentStatus === 'unpaid' ? 'selected' : ''}>Chưa đóng</option>
-                            <option value="paid" ${currentStatus === 'paid' ? 'selected' : ''}>Đã đóng</option>
-                            <option value="pause" ${currentStatus === 'pause' ? 'selected' : ''}>Tạm nghỉ</option>
-                        </select>
-                    `;
-                };
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 transition-colors";
-                tr.innerHTML = `
+                let rowHtml = `
                     <td class="py-3 px-3 text-center font-medium text-slate-500">${idx + 1}</td>
                     <td class="py-3 px-3"><span class="player-tag">${p.name}</span></td>
-                    
-                    <td class="py-2 px-2 text-center bg-teal-50/20">
-                        <input type="number" step="10000" value="${q1Amt}" onchange="updateQuarterAmountDirect(${p.id}, 'q1', this.value)" class="w-24 text-center font-bold text-teal-900 border rounded px-1 py-0.5 bg-white focus:ring-1 focus:ring-teal-500 outline-none text-xs">
-                    </td>
-                    <td class="py-2 px-2 text-center bg-teal-50/20">
-                        ${buildStatusSelect('q1', q1Status)}
-                    </td>
+                `;
 
-                    <td class="py-2 px-2 text-center bg-amber-50/20">
-                        <input type="number" step="10000" value="${q2Amt}" onchange="updateQuarterAmountDirect(${p.id}, 'q2', this.value)" class="w-24 text-center font-bold text-amber-900 border rounded px-1 py-0.5 bg-white focus:ring-1 focus:ring-amber-500 outline-none text-xs">
-                    </td>
-                    <td class="py-2 px-2 text-center bg-amber-50/20">
-                        ${buildStatusSelect('q2', q2Status)}
-                    </td>
+                window.activeQuarterColumns.forEach(col => {
+                    const qKey = col.id;
+                    const c = col.bgColor || "teal";
+                    const currentStatus = window.fundFeeStatus[`${p.id}_${qKey}_status`] || (window.fundFeeStatus[`${p.id}_${qKey}`] ? "paid" : "unpaid");
+                    const currentAmt = window.fundFeeStatus[`${p.id}_${qKey}_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_${qKey}_amt`] : col.defaultAmt;
 
-                    <td class="py-2 px-2 text-center bg-purple-50/20">
-                        <input type="number" step="10000" value="${q3Amt}" onchange="updateQuarterAmountDirect(${p.id}, 'q3', this.value)" class="w-24 text-center font-bold text-purple-900 border rounded px-1 py-0.5 bg-white focus:ring-1 focus:ring-purple-500 outline-none text-xs">
-                    </td>
-                    <td class="py-2 px-2 text-center bg-purple-50/20">
-                        ${buildStatusSelect('q3', q3Status)}
-                    </td>
+                    if(currentStatus === "paid") {
+                        collectedTotals[qKey] += currentAmt;
+                    }
 
-                    <td class="py-2 px-2 text-center bg-blue-50/20">
-                        <input type="number" step="10000" value="${q4Amt}" onchange="updateQuarterAmountDirect(${p.id}, 'q4', this.value)" class="w-24 text-center font-bold text-blue-900 border rounded px-1 py-0.5 bg-white focus:ring-1 focus:ring-blue-500 outline-none text-xs">
-                    </td>
-                    <td class="py-2 px-2 text-center bg-blue-50/20">
-                        ${buildStatusSelect('q4', q4Status)}
-                    </td>
+                    rowHtml += `
+                        <td class="py-2 px-2 text-center bg-${c}-50/20">
+                            <input type="number" step="10000" value="${currentAmt}" onchange="updateQuarterAmountDirect(${p.id}, '${qKey}', this.value)" class="w-24 text-center font-bold text-${c}-900 border rounded px-1 py-0.5 bg-white focus:ring-1 focus:ring-${c}-500 outline-none text-xs">
+                        </td>
+                        <td class="py-2 px-2 text-center bg-${c}-50/20">
+                            <select onchange="updateQuarterStatusDirect(${p.id}, '${qKey}', this.value)" class="text-xs font-bold p-1 rounded-full border outline-none cursor-pointer ${
+                                currentStatus === 'paid' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
+                                currentStatus === 'unpaid' ? 'bg-rose-100 text-rose-800 border-rose-300' :
+                                currentStatus === 'pause' ? 'bg-amber-100 text-amber-800 border-amber-300' :
+                                'bg-slate-200 text-slate-700 border-slate-300'
+                            }">
+                                <option value="no" ${currentStatus === 'no' ? 'selected' : ''}>NO (Chưa đến)</option>
+                                <option value="unpaid" ${currentStatus === 'unpaid' ? 'selected' : ''}>Chưa đóng</option>
+                                <option value="paid" ${currentStatus === 'paid' ? 'selected' : ''}>Đã đóng</option>
+                                <option value="pause" ${currentStatus === 'pause' ? 'selected' : ''}>Tạm nghỉ</option>
+                            </select>
+                        </td>
+                    `;
+                });
 
+                rowHtml += `
                     <td class="py-3 px-3 text-center">
                         <button onclick="deleteFundPlayerRow(${p.id})" class="text-red-600 hover:text-red-800 font-bold text-xs bg-red-50 border border-red-200 px-2 py-1 rounded-lg shadow-sm hover:bg-red-100 transition-colors flex items-center gap-1 mx-auto" title="Xóa Pick thủ này khỏi Quỹ">
                             <i class="fa-solid fa-trash-can"></i>
@@ -1539,31 +1485,39 @@
                         </button>
                     </td>
                 `;
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors";
+                tr.innerHTML = rowHtml;
                 tbody.appendChild(tr);
             });
 
-            const totalCourtIncome = sumQ1Collected + sumQ2Collected + sumQ3Collected + sumQ4Collected;
+            let grandTotalCollected = Object.values(collectedTotals).reduce((a, b) => a + b, 0);
             const totalExpense = window.fundExpenses.reduce((sum, item) => sum + Number(item.amount), 0);
-            const netCourt = totalCourtIncome - totalExpense;
+            const netCourt = grandTotalCollected - totalExpense;
 
             if(tfoot) {
+                let footQuarterCells = window.activeQuarterColumns.map(col => {
+                    const c = col.bgColor || "teal";
+                    return `<td class="py-2.5 px-3 text-center text-${c}-800 font-extrabold" colspan="2">${col.title}: ${formatVND(collectedTotals[col.id])}</td>`;
+                }).join('');
+
+                const colSpanCount = 1 + window.activeQuarterColumns.length * 2;
+
                 tfoot.innerHTML = `
                     <tr class="bg-emerald-50/80 text-emerald-900">
                         <td class="py-2.5 px-3 text-center font-bold" colspan="2">TỔNG THU THỰC TẾ:</td>
-                        <td class="py-2.5 px-3 text-center text-teal-800 font-extrabold" colspan="2">Q1: ${formatVND(sumQ1Collected)}</td>
-                        <td class="py-2.5 px-3 text-center text-amber-800 font-extrabold" colspan="2">Q2: ${formatVND(sumQ2Collected)}</td>
-                        <td class="py-2.5 px-3 text-center text-purple-800 font-extrabold" colspan="2">Q3: ${formatVND(sumQ3Collected)}</td>
-                        <td class="py-2.5 px-3 text-center text-blue-800 font-extrabold" colspan="2">Q4: ${formatVND(sumQ4Collected)}</td>
-                        <td class="py-2.5 px-3 text-center text-emerald-700 font-black">${formatVND(totalCourtIncome)}</td>
+                        ${footQuarterCells}
+                        <td class="py-2.5 px-3 text-center text-emerald-700 font-black">${formatVND(grandTotalCollected)}</td>
                     </tr>
                     <tr class="bg-rose-50/80 text-rose-900">
                         <td class="py-2.5 px-3 text-center font-bold" colspan="2">DÒNG CHI QUỸ:</td>
-                        <td class="py-2.5 px-3 text-right font-extrabold" colspan="8">Tổng Các Khoản Chi Tiền Sân & Sinh Hoạt:</td>
+                        <td class="py-2.5 px-3 text-right font-extrabold" colspan="${colSpanCount - 1}">Tổng Các Khoản Chi Tiền Sân & Sinh Hoạt:</td>
                         <td class="py-2.5 px-3 text-center text-rose-600 font-black">-${formatVND(totalExpense)}</td>
                     </tr>
                     <tr class="bg-slate-200/80 text-slate-900">
                         <td class="py-3 px-3 text-center font-black" colspan="2">THU - CHI CÒN LẠI:</td>
-                        <td class="py-3 px-3 text-center font-black text-base ${netCourt >= 0 ? 'text-emerald-700' : 'text-rose-700'}" colspan="9">
+                        <td class="py-3 px-3 text-center font-black text-base ${netCourt >= 0 ? 'text-emerald-700' : 'text-rose-700'}" colspan="${colSpanCount}">
                             ${formatVND(netCourt)}
                         </td>
                     </tr>
@@ -1786,20 +1740,24 @@
 
             const statusMap = { paid: "Đã đóng", unpaid: "Chưa đóng", pause: "Tạm nghỉ", no: "NO (Chưa đến)" };
 
+            let dynamicHeaderExcel = ["STT", "Tên Pick Thủ"];
+            window.activeQuarterColumns.forEach(col => {
+                dynamicHeaderExcel.push(`${col.title} (VNĐ)`);
+                dynamicHeaderExcel.push(col.statusTitle);
+            });
+
             const memberData = [
-                ["STT", "Tên Pick Thủ", `${window.quarterTitles.q1} (VNĐ)`, window.quarterTitles.status_q1 || "Trạng thái Q1", `${window.quarterTitles.q2} (VNĐ)`, window.quarterTitles.status_q2 || "Trạng thái Q2", `${window.quarterTitles.q3} (VNĐ)`, window.quarterTitles.status_q3 || "Trạng thái Q3", `${window.quarterTitles.q4} (VNĐ)`, window.quarterTitles.status_q4 || "Trạng thái Q4"],
-                ...window.players.map((p, i) => [
-                    i + 1, 
-                    p.name, 
-                    window.fundFeeStatus[`${p.id}_q1_amt`] || 0,
-                    statusMap[window.fundFeeStatus[`${p.id}_q1_status`] || (window.fundFeeStatus[`${p.id}_q1`] ? "paid" : "unpaid")],
-                    window.fundFeeStatus[`${p.id}_q2_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q2_amt`] : 500000, 
-                    statusMap[window.fundFeeStatus[`${p.id}_q2_status`] || (window.fundFeeStatus[`${p.id}_q2`] ? "paid" : "unpaid")],
-                    window.fundFeeStatus[`${p.id}_q3_amt`] || 0,
-                    statusMap[window.fundFeeStatus[`${p.id}_q3_status`] || (window.fundFeeStatus[`${p.id}_q3`] ? "paid" : "unpaid")],
-                    window.fundFeeStatus[`${p.id}_q4_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q4_amt`] : 800000, 
-                    statusMap[window.fundFeeStatus[`${p.id}_q4_status`] || (window.fundFeeStatus[`${p.id}_q4`] ? "paid" : "unpaid")]
-                ])
+                dynamicHeaderExcel,
+                ...window.players.map((p, i) => {
+                    let row = [i + 1, p.name];
+                    window.activeQuarterColumns.forEach(col => {
+                        const qKey = col.id;
+                        const amt = window.fundFeeStatus[`${p.id}_${qKey}_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_${qKey}_amt`] : col.defaultAmt;
+                        const st = statusMap[window.fundFeeStatus[`${p.id}_${qKey}_status`] || (window.fundFeeStatus[`${p.id}_${qKey}`] ? "paid" : "unpaid")];
+                        row.push(amt, st);
+                    });
+                    return row;
+                })
             ];
 
             const incomeData = [
@@ -2648,7 +2606,7 @@
                     matchesData: window.matchesData,
                     dateKeoMode: window.dateKeoMode,
                     paymentStatus: window.paymentStatus,
-                    quarterTitles: window.quarterTitles,
+                    activeQuarterColumns: window.activeQuarterColumns,
                     initialFund: window.initialFund,
                     fundFeeStatus: window.fundFeeStatus,
                     fundIncomes: window.fundIncomes,
@@ -2681,7 +2639,7 @@
                 if (data.matchesData) window.matchesData = data.matchesData;
                 if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
                 if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
-                if (data.quarterTitles) window.quarterTitles = data.quarterTitles;
+                if (data.activeQuarterColumns) window.activeQuarterColumns = data.activeQuarterColumns;
                 if (data.initialFund !== undefined) window.initialFund = data.initialFund;
                 if (data.fundFeeStatus) window.fundFeeStatus = data.fundFeeStatus;
                 if (data.fundIncomes) window.fundIncomes = data.fundIncomes;
@@ -2709,7 +2667,7 @@
                 matchesData: window.matchesData,
                 dateKeoMode: window.dateKeoMode,
                 paymentStatus: window.paymentStatus,
-                quarterTitles: window.quarterTitles,
+                activeQuarterColumns: window.activeQuarterColumns,
                 initialFund: window.initialFund,
                 fundFeeStatus: window.fundFeeStatus,
                 fundIncomes: window.fundIncomes,
@@ -2750,7 +2708,7 @@
                     if (data.matchesData) window.matchesData = data.matchesData;
                     if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
                     if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
-                    if (data.quarterTitles) window.quarterTitles = data.quarterTitles;
+                    if (data.activeQuarterColumns) window.activeQuarterColumns = data.activeQuarterColumns;
                     if (data.initialFund !== undefined) window.initialFund = data.initialFund;
                     if (data.fundFeeStatus) window.fundFeeStatus = data.fundFeeStatus;
                     if (data.fundIncomes) window.fundIncomes = data.fundIncomes;
@@ -3043,7 +3001,7 @@
                     matchesData: window.matchesData,
                     dateKeoMode: window.dateKeoMode,
                     paymentStatus: window.paymentStatus,
-                    quarterTitles: window.quarterTitles,
+                    activeQuarterColumns: window.activeQuarterColumns,
                     initialFund: window.initialFund,
                     fundFeeStatus: window.fundFeeStatus,
                     fundIncomes: window.fundIncomes,
@@ -3085,7 +3043,7 @@
                     if (data.matchesData) window.matchesData = data.matchesData;
                     if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
                     if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
-                    if (data.quarterTitles) window.quarterTitles = data.quarterTitles;
+                    if (data.activeQuarterColumns) window.activeQuarterColumns = data.activeQuarterColumns;
                     if (data.initialFund !== undefined) window.initialFund = data.initialFund;
                     if (data.fundFeeStatus) window.fundFeeStatus = data.fundFeeStatus;
                     if (data.fundIncomes) window.fundIncomes = data.fundIncomes;
