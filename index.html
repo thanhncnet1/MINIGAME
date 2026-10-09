@@ -224,7 +224,7 @@
                 </button>
 
                 <button onclick="showTab('fund_manager')" id="btn-fund_manager" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-teal-800 text-teal-100 border border-teal-400/40 font-bold shadow-sm">
-                    <i class="fa-solid fa-vault text-yellow-300"></i> <span>QUẢN LÝ QUỸ PICK</span>
+                    <i class="fa-solid fa-vault text-yellow-300"></i> <span>QUẢN LÝ QUẤY PICK</span>
                 </button>
 
                 <button onclick="showTab('tonghop')" id="btn-tonghop" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-indigo-800 text-indigo-100 border border-indigo-400/40 font-bold shadow-sm">
@@ -768,7 +768,7 @@
             </div>
         </section>
 
-        <!-- QUẢN LÝ QUỸ PICK -->
+        <!-- QUẢN LÝ QUẤY PICK -->
         <section id="tab-fund_manager" class="tab-content hidden space-y-6">
             <div class="bg-gradient-to-r from-brand-800 via-brand-700 to-court-600 text-white p-5 rounded-2xl shadow-md flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="flex items-center space-x-3">
@@ -925,7 +925,7 @@
                 </section>
             </div>
 
-            <!-- BẢNG QUẢN LÝ QUỸ CÁC QUÝ -->
+            <!-- BẢNG QUẢN LÝ QUẤY CÁC QUÝ -->
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
                 <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
@@ -1033,7 +1033,7 @@
         </div>
     </div>
 
-    <!-- MODAL THÊM / SỬA KHOẢN THU CHI QUỸ -->
+    <!-- MODAL THÊM / SỬA KHOẢN THU CHI QUẤY -->
     <div id="fund-modal-backdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-slate-100">
             <div id="fund-modal-header" class="p-4 bg-emerald-600 text-white flex justify-between items-center">
@@ -1197,15 +1197,21 @@
         window.fundIncomes = JSON.parse(localStorage.getItem('pb_incomes')) || defaultFundIncomes;
         window.fundExpenses = JSON.parse(localStorage.getItem('pb_expenses')) || defaultFundExpenses;
 
+        /* 🛠 HÀM ĐÃ SỬA LỖI 1: TÍNH CHÍNH XÁC SỐ TIỀN BTC THU VỀ MỖI NGÀY 🛠 */
         function getBtcThuVeForDate(dateStr) {
             const matches = window.matchesData[dateStr] || [];
+            if (!matches || matches.length === 0) return 0;
+
             let statsDay = {};
-            window.players.forEach(p => { statsDay[p.name] = { played: 0, total: 0 }; });
+            (window.players || []).forEach(p => { 
+                if (p && p.name) statsDay[p.name.trim()] = { played: 0, total: 0 }; 
+            });
 
             matches.forEach(m => {
                 const s1 = parseInt(m.score1);
                 const s2 = parseInt(m.score2);
-                const mMode = m.keoMode || window.dateKeoMode[dateStr] || 'default';
+                const mMode = m.keoMode || (window.dateKeoMode ? window.dateKeoMode[dateStr] : 'default') || 'default';
+                
                 let winAmt = 5, loseAmt = -15;
                 if (mMode === "k25") { winAmt = 0; loseAmt = -25; }
                 else if (mMode === "free") {
@@ -1215,25 +1221,25 @@
                 }
 
                 if (!isNaN(s1) && !isNaN(s2)) {
-                    const pair1 = [m.c1_p1, m.c1_p2].filter(Boolean);
-                    const pair2 = [m.c2_p1, m.c2_p2].filter(Boolean);
+                    const pair1 = [m.c1_p1, m.c1_p2].filter(Boolean).map(x => x.trim());
+                    const pair2 = [m.c2_p1, m.c2_p2].filter(Boolean).map(x => x.trim());
                     let isHam = (s1 === 0 || s2 === 0);
                     let effWin = isHam ? (winAmt > 0 ? winAmt * 2 : 0) : winAmt;
                     let effLose = isHam ? loseAmt * 2 : loseAmt;
 
                     if (s1 > s2) {
-                        pair1.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effWin; } });
-                        pair2.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effLose; } });
+                        pair1.forEach(v => { if (!statsDay[v]) statsDay[v] = { played: 0, total: 0 }; statsDay[v].played++; statsDay[v].total += effWin; });
+                        pair2.forEach(v => { if (!statsDay[v]) statsDay[v] = { played: 0, total: 0 }; statsDay[v].played++; statsDay[v].total += effLose; });
                     } else if (s2 > s1) {
-                        pair2.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effWin; } });
-                        pair1.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effLose; } });
+                        pair2.forEach(v => { if (!statsDay[v]) statsDay[v] = { played: 0, total: 0 }; statsDay[v].played++; statsDay[v].total += effWin; });
+                        pair1.forEach(v => { if (!statsDay[v]) statsDay[v] = { played: 0, total: 0 }; statsDay[v].played++; statsDay[v].total += effLose; });
                     }
                 }
             });
 
             let sumAmDay = 0, sumBringBackDay = 0;
-            window.players.forEach(p => {
-                let st = statsDay[p.name];
+            Object.keys(statsDay).forEach(pName => {
+                let st = statsDay[pName];
                 if (st.played > 0) {
                     if (st.total < 0) sumAmDay += st.total;
                     else if (st.played >= 4 && st.total > 0) sumBringBackDay += st.total;
@@ -1365,8 +1371,8 @@
             let totalManualIncome = window.fundIncomes.reduce((sum, item) => sum + Number(item.amount), 0);
 
             let autoDailyIncomeTotal = 0;
-            window.dates.forEach(d => {
-                const pStatus = window.paymentStatus[d];
+            (window.dates || []).forEach(d => {
+                const pStatus = window.paymentStatus ? window.paymentStatus[d] : null;
                 let isTransferYes = true;
                 if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
                     isTransferYes = false;
@@ -1512,7 +1518,7 @@
                         <td class="py-2.5 px-3 text-center text-emerald-700 font-black">${formatVND(grandTotalCollected)}</td>
                     </tr>
                     <tr class="bg-rose-50/80 text-rose-900">
-                        <td class="py-2.5 px-3 text-center font-bold" colspan="2">DÒNG CHI QUỸ:</td>
+                        <td class="py-2.5 px-3 text-center font-bold" colspan="2">DÒNG CHI QUẤY:</td>
                         <td class="py-2.5 px-3 text-right font-extrabold" colspan="${colSpanCount - 1}">Tổng Các Khoản Chi Tiền Sân & Sinh Hoạt:</td>
                         <td class="py-2.5 px-3 text-center text-rose-600 font-black">-${formatVND(totalExpense)}</td>
                     </tr>
@@ -1526,16 +1532,17 @@
             }
         }
 
-        /* 💥 ĐIỀU CHỈNH 1: CHUẨN HÓA RENDER BẢNG NHẬT KÝ KHOẢN THU TỰ ĐỘNG REALTIME 💥 */
+        /* 🛠 HÀM ĐÃ SỬA LỖI 2: TỰ ĐỘNG TẠO DÒNG THU TIỀN KÈO VÀO BẢNG NHẬT KÝ KHOẢN THU 🛠 */
         function renderFundIncomes() {
             const tbody = document.getElementById('income-list');
-            if(!tbody) return;
+            if (!tbody) return;
             tbody.innerHTML = '';
 
-            // 1. Tự động kiểm tra và tạo dòng "Thu tiền kèo Ngày X" trực tiếp vào Bảng Nhật Ký Khoản Thu
-            window.dates.forEach(d => {
-                const pStatus = window.paymentStatus[d];
+            // 1. Tự động thêm dòng "Thu tiền kèo Ngày X" vào Bảng Nhật Ký Khoản Thu
+            (window.dates || []).forEach(d => {
+                const pStatus = window.paymentStatus ? window.paymentStatus[d] : null;
                 let isTransferYes = true;
+                
                 if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
                     isTransferYes = false;
                 }
@@ -1562,8 +1569,8 @@
                 }
             });
 
-            // 2. Render thêm các khoản Thu thủ công khác
-            window.fundIncomes.forEach(item => {
+            // 2. Render các khoản Thu thủ công
+            (window.fundIncomes || []).forEach(item => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors";
                 tr.innerHTML = `
@@ -1583,7 +1590,7 @@
                 tbody.appendChild(tr);
             });
 
-            if(tbody.children.length === 0) {
+            if (tbody.children.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">Chưa có khoản thu nào.</td></tr>`;
             }
         }
@@ -1729,8 +1736,8 @@
             let autoDailyIncomeTotal = 0;
             let autoIncomeRows = [];
 
-            window.dates.forEach(d => {
-                const pStatus = window.paymentStatus[d];
+            (window.dates || []).forEach(d => {
+                const pStatus = window.paymentStatus ? window.paymentStatus[d] : null;
                 let isTransferYes = true;
                 if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
                     isTransferYes = false;
@@ -1751,13 +1758,13 @@
             const currentBalance = window.initialFund + grandTotalIncome - totalExpense;
 
             const summaryData = [
-                ["BÁO CÁO TỔNG QUAN QUỸ PICKLEBALL"],
+                ["BÁO CÁO TỔNG QUAN QUẤY PICKLEBALL"],
                 [],
                 ["Hạng mục", "Số tiền (VNĐ)", "Ghi chú"],
                 ["Quỹ đầu kỳ", window.initialFund, "Tồn quỹ kỳ trước chuyển sang"],
                 ["Tổng thu trong kỳ", grandTotalIncome, "Bao gồm thu thủ công & thu tiền kèo tự động các ngày"],
                 ["Tổng chi trong kỳ", totalExpense, "Tự động tính từ Nhật ký Chi"],
-                ["SỐ DƯ QUỸ HIỆN TẠI", currentBalance, "Công thức: Đầu kỳ + Thu - Chi"]
+                ["SỐ DƯ QUẤY HIỆN TẠI", currentBalance, "Công thức: Đầu kỳ + Thu - Chi"]
             ];
 
             const statusMap = { paid: "Đã đóng", unpaid: "Chưa đóng", pause: "Tạm nghỉ", no: "NO (Chưa đến)" };
@@ -1786,7 +1793,7 @@
                 ["STT", "Ngày tháng", "Nội dung thu", "Số tiền (VNĐ)", "Nguồn/Pick thủ", "Ghi chú"],
                 ...autoIncomeRows,
                 ...window.fundIncomes.map((item, i) => [autoIncomeRows.length + i + 1, formatDate(item.date), item.desc, item.amount, item.source, item.note]),
-                ["", "", "TỔNG CỘNG THU QUỸ", grandTotalIncome, "", ""]
+                ["", "", "TỔNG CỘNG THU QUẤY", grandTotalIncome, "", ""]
             ];
 
             const expenseData = [
@@ -1913,7 +1920,6 @@
         function backupDataJSON() { exportBackupJSON(); }
         function triggerRestoreJSON() { triggerRestoreInput(); }
 
-        /* 💥 ĐIỀU CHỈNH 2: TỰ ĐỘNG GỌI UPDATEFUNDDASHBOARD TRONG CÁC THAO TÁC NGÀY 💥 */
         function addMatchToCurrentDate() {
             const dateStr = window.currentSelectedDate;
             if(!window.matchesData[dateStr]) window.matchesData[dateStr] = [];
@@ -1924,7 +1930,7 @@
                 keoMode: globalMode, customWin: globalMode === 'k25' ? 0 : 5, customLose: globalMode === 'k25' ? -25 : -15
             });
             renderDayDetailView();
-            updateFundDashboard(); // 👈 Đồng bộ Nhật ký Thu
+            updateFundDashboard();
             autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
@@ -1935,7 +1941,7 @@
                 if(window.matchesData[dateStr]) {
                     window.matchesData[dateStr].splice(index, 1);
                     renderDayDetailView();
-                    updateFundDashboard(); // 👈 Đồng bộ Nhật ký Thu
+                    updateFundDashboard();
                     autoBackupData();
                     if(window.syncToFirebase) window.syncToFirebase();
                 }
@@ -1947,7 +1953,7 @@
             if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
                 window.matchesData[dateStr][index][field] = value;
                 renderDayDetailView();
-                updateFundDashboard(); // 👈 Đồng bộ Nhật ký Thu
+                updateFundDashboard();
                 autoBackupData();
                 if(window.syncToFirebase) window.syncToFirebase();
             }
@@ -1963,7 +1969,7 @@
                 else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
             });
             renderDayDetailView();
-            updateFundDashboard(); // 👈 Đồng bộ Nhật ký Thu
+            updateFundDashboard();
             autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
@@ -1976,7 +1982,7 @@
                 if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
                 else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
                 renderDayDetailView();
-                updateFundDashboard(); // 👈 Đồng bộ Nhật ký Thu
+                updateFundDashboard();
                 autoBackupData();
                 if(window.syncToFirebase) window.syncToFirebase();
             }
@@ -1989,22 +1995,25 @@
             }
             window.paymentStatus[payKey] = !window.paymentStatus[payKey];
             renderDayDetailView();
-            updateFundDashboard(); // 👈 Đồng bộ Nhật ký Thu
+            updateFundDashboard();
             autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
+        /* 🛠 HÀM ĐÃ SỬA LỖI 3: CẬP NHẬT TRẠNG THÁI NOTE VA LÀM MỚI TOÀN BỘ GIAO DIỆN QUẤY 🛠 */
         function handleBtcNoteChange(selectEl) {
             const dateStr = window.currentSelectedDate;
-            if(!window.paymentStatus[dateStr] || typeof window.paymentStatus[dateStr] !== 'object') {
+            if (!window.paymentStatus) window.paymentStatus = {};
+            
+            if (!window.paymentStatus[dateStr] || typeof window.paymentStatus[dateStr] !== 'object') {
                 window.paymentStatus[dateStr] = {};
             }
+            
             window.paymentStatus[dateStr].btcNoteAdminOption = selectEl.value;
-            renderDayDetailView();
-            renderTongHopTab();
-            updateFundDashboard(); // 👈 Cập nhật Nhật ký Thu khi toggle YES/NO
+            
+            refreshAllViews();
             autoBackupData();
-            if(window.syncToFirebase) window.syncToFirebase();
+            if (window.syncToFirebase) window.syncToFirebase();
         }
 
         function renderDayDetailView() {
@@ -3044,7 +3053,6 @@
             }
         };
 
-        /* 💥 ĐIỀU CHỈNH 3: ĐỒNG BỘ REALTIME FIRESTORE ĐỒNG THỜI VỚI BẢNG QUỸ 💥 */
         onSnapshot(doc(db, "minigame", "app_state"), 
             (docSnap) => {
                 const updateStatus = (text, cls, dotCls) => {
