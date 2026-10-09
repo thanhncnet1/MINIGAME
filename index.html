@@ -825,7 +825,7 @@
                         </div>
                     </div>
                     <div class="mt-3 text-xs text-slate-400 flex items-center gap-1">
-                        <i class="fa-solid fa-circle-info text-emerald-500"></i> Bao gồm hội phí & thu khác
+                        <i class="fa-solid fa-circle-info text-emerald-500"></i> Bao gồm hội phí & đồng bộ các ngày NOTE=YES
                     </div>
                 </div>
 
@@ -862,7 +862,7 @@
                 </div>
             </div>
 
-            <!-- 1. NHẬT KÝ THU / CHI (ĐÃ ĐƯỢC ĐƯA LÊN TRÊN) -->
+            <!-- 1. NHẬT KÝ THU / CHI -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 <!-- Nhật Ký Thu -->
@@ -873,7 +873,7 @@
                                 <i class="fa-solid fa-circle-arrow-down text-emerald-600"></i>
                                 <span>Nhật Ký Khoản Thu</span>
                             </h2>
-                            <p class="text-xs text-slate-500 mt-0.5">Các khoản thu quỹ, vãng lai & tài trợ</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Khoản thu lẻ, vãng lai & đồng bộ tự động từ các ngày NOTE=YES</p>
                         </div>
                         <button onclick="openFundModal('income')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm">
                             <i class="fa-solid fa-plus"></i>
@@ -897,7 +897,7 @@
                     </div>
 
                     <div class="p-3 bg-slate-50 border-t border-slate-100 rounded-b-2xl flex justify-between items-center px-4 font-semibold text-slate-700 text-sm">
-                        <span>Tổng Thu Khoản Lẻ:</span>
+                        <span>Tổng Thu Quỹ:</span>
                         <span id="income-total" class="text-emerald-600 font-bold">0 ₫</span>
                     </div>
                 </section>
@@ -941,7 +941,7 @@
 
             </div>
 
-            <!-- 2. BẢNG THÀNH VIÊN & HỘI PHÍ (ĐÃ CHUYỂN XUỐNG DƯỚI) -->
+            <!-- 2. BẢNG THÀNH VIÊN & TIỀN SÂN QUÝ (BỎ GIỚI TÍNH, TÙY CHỈNH TIỀN TỪNG QUÝ & XÁC NHẬN) -->
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
                 <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
@@ -949,7 +949,7 @@
                             <i class="fa-solid fa-users text-brand-600"></i>
                             <span>Danh Sách Pick Thủ CLB & Tiền Sân</span>
                         </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Theo dõi hạn đóng quỹ Quý 1 & Quý 2 năm 2026 (Đồng bộ danh sách VĐV)</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Tùy chỉnh số tiền sân từng Quý độc lập & Xác nhận trạng thái đã nộp</p>
                     </div>
 
                     <div class="flex items-center gap-2 w-full sm:w-auto">
@@ -959,8 +959,8 @@
                         </div>
                         <select id="member-filter" onchange="renderFundMembers()" class="py-1.5 px-3 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
                             <option value="all">Tất cả trạng thái</option>
-                            <option value="q1_pending">Nợ Q1</option>
-                            <option value="q2_pending">Nợ Q2</option>
+                            <option value="q1_pending">Nợ Quý 1</option>
+                            <option value="q2_pending">Nợ Quý 2</option>
                         </select>
                     </div>
                 </div>
@@ -971,10 +971,10 @@
                             <tr>
                                 <th class="py-3 px-4 w-12 text-center">STT</th>
                                 <th class="py-3 px-4">Tên Pick Thủ</th>
-                                <th class="py-3 px-4 text-center">Giới Tính</th>
-                                <th class="py-3 px-4 text-right">Mức Đóng/Quý</th>
-                                <th class="py-3 px-4 text-center">Quý 1</th>
-                                <th class="py-3 px-4 text-center">Quý 2</th>
+                                <th class="py-3 px-4 text-center bg-blue-50/50">Tiền Sân Quý 1 (VNĐ)</th>
+                                <th class="py-3 px-4 text-center bg-blue-50/50">Xác Nhận Q1</th>
+                                <th class="py-3 px-4 text-center bg-amber-50/50">Tiền Sân Quý 2 (VNĐ)</th>
+                                <th class="py-3 px-4 text-center bg-amber-50/50">Xác Nhận Q2</th>
                                 <th class="py-3 px-4 text-center">Thao tác</th>
                             </tr>
                         </thead>
@@ -1050,7 +1050,7 @@
         </div>
     </div>
 
-    <!-- MODAL THÊM KHOẢN THU / CHI CỦA TAB QUẢN LÝ QUỸ PICK -->
+    <!-- MODAL THÊM / SỬA KHOẢN THU CHI CỦA TAB QUẢN LÝ QUỸ PICK -->
     <div id="fund-modal-backdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-slate-100">
             <div id="fund-modal-header" class="p-4 bg-emerald-600 text-white flex justify-between items-center">
@@ -1063,6 +1063,7 @@
             </div>
 
             <form id="fund-transaction-form" onsubmit="handleFundFormSubmit(event)" class="p-5 space-y-4">
+                <input type="hidden" id="tx-id" value="">
                 <input type="hidden" id="tx-type" value="income">
 
                 <div>
@@ -1237,6 +1238,7 @@
 
         function formatDate(dateStr) {
             if(!dateStr) return '';
+            if(dateStr.includes('/')) return dateStr;
             const [y, m, d] = dateStr.split('-');
             return `${d}/${m}/${y}`;
         }
@@ -1252,23 +1254,89 @@
             calculateFundSummary();
         }
 
+        // TÍNH TOÁN TỔNG QUAN QUỸ (KÈM ĐỒNG BỘ CÁC NGÀY CÓ NOTE = YES)
         function calculateFundSummary() {
-            const totalIncome = window.fundIncomes.reduce((sum, item) => sum + Number(item.amount), 0);
+            let totalManualIncome = window.fundIncomes.reduce((sum, item) => sum + Number(item.amount), 0);
+
+            // Đồng bộ tự động các ngày có trạng thái NOTE = YES
+            let autoDailyIncomeTotal = 0;
+            window.dates.forEach(d => {
+                const pStatus = window.paymentStatus[d];
+                const isTransferYes = (!pStatus || typeof pStatus !== 'object' || pStatus.btcNoteAdminOption !== "NO");
+                if (isTransferYes) {
+                    const matches = window.matchesData[d] || [];
+                    let statsDay = {};
+                    window.players.forEach(p => { statsDay[p.name] = { played: 0, total: 0 }; });
+
+                    matches.forEach(m => {
+                        const s1 = parseInt(m.score1);
+                        const s2 = parseInt(m.score2);
+                        const mMode = m.keoMode || window.dateKeoMode[d] || 'default';
+                        let winAmt = 5, loseAmt = -15;
+                        if (mMode === "k25") { winAmt = 0; loseAmt = -25; }
+                        else if (mMode === "free") {
+                            winAmt = parseFloat(m.customWin) || 0;
+                            loseAmt = parseFloat(m.customLose) || 0;
+                            if (loseAmt > 0) loseAmt = -loseAmt;
+                        }
+
+                        if (!isNaN(s1) && !isNaN(s2)) {
+                            const pair1 = [m.c1_p1, m.c1_p2].filter(Boolean);
+                            const pair2 = [m.c2_p1, m.c2_p2].filter(Boolean);
+                            let isHam = (s1 === 0 || s2 === 0);
+                            let effWin = isHam ? (winAmt > 0 ? winAmt * 2 : 0) : winAmt;
+                            let effLose = isHam ? loseAmt * 2 : loseAmt;
+
+                            if (s1 > s2) {
+                                pair1.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effWin; } });
+                                pair2.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effLose; } });
+                            } else if (s2 > s1) {
+                                pair2.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effWin; } });
+                                pair1.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effLose; } });
+                            }
+                        }
+                    });
+
+                    let sumAmDay = 0, sumBringBackDay = 0;
+                    window.players.forEach(p => {
+                        let st = statsDay[p.name];
+                        if (st.played > 0) {
+                            if (st.total < 0) sumAmDay += st.total;
+                            else if (st.played >= 4 && st.total > 0) sumBringBackDay += st.total;
+                        }
+                    });
+
+                    // Tổng thu về tính theo K (1K = 1000 VNĐ)
+                    let dayNetK = (sumAmDay + sumBringBackDay);
+                    if (dayNetK > 0) {
+                        autoDailyIncomeTotal += (dayNetK * 1000);
+                    }
+                }
+            });
+
+            const grandTotalIncome = totalManualIncome + autoDailyIncomeTotal;
             const totalExpense = window.fundExpenses.reduce((sum, item) => sum + Number(item.amount), 0);
-            const currentBalance = window.initialFund + totalIncome - totalExpense;
+            const currentBalance = window.initialFund + grandTotalIncome - totalExpense;
 
             const elInc = document.getElementById('stat-income');
             const elExp = document.getElementById('stat-expense');
             const elBal = document.getElementById('stat-balance');
 
-            if(elInc) elInc.innerText = formatVND(totalIncome);
+            if(elInc) elInc.innerText = formatVND(grandTotalIncome);
             if(elExp) elExp.innerText = formatVND(totalExpense);
             if(elBal) elBal.innerText = formatVND(currentBalance);
 
             const elIncTot = document.getElementById('income-total');
             const elExpTot = document.getElementById('expense-total');
-            if(elIncTot) elIncTot.innerText = formatVND(totalIncome);
+            if(elIncTot) elIncTot.innerText = formatVND(grandTotalIncome);
             if(elExpTot) elExpTot.innerText = formatVND(totalExpense);
+        }
+
+        // CẬP NHẬT TIỀN SÂN TỪNG QUÝ
+        function updatePlayerQuarterAmount(playerId, quarter, val) {
+            const key = `${playerId}_${quarter}_amt`;
+            window.fundFeeStatus[key] = Number(val) || 0;
+            saveFundData();
         }
 
         function renderFundMembers() {
@@ -1298,25 +1366,37 @@
             }
 
             filtered.forEach((p, idx) => {
-                const q1 = window.fundFeeStatus[`${p.id}_q1`] || false;
-                const q2 = window.fundFeeStatus[`${p.id}_q2`] || false;
+                const q1Paid = window.fundFeeStatus[`${p.id}_q1`] || false;
+                const q2Paid = window.fundFeeStatus[`${p.id}_q2`] || false;
+                const q1Amt = window.fundFeeStatus[`${p.id}_q1_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q1_amt`] : 500000;
+                const q2Amt = window.fundFeeStatus[`${p.id}_q2_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q2_amt`] : 500000;
+
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors";
                 tr.innerHTML = `
                     <td class="py-3 px-4 text-center font-medium text-slate-500">${idx + 1}</td>
                     <td class="py-3 px-4 font-semibold text-slate-800">${p.name}</td>
-                    <td class="py-3 px-4 text-center text-slate-600">${p.gender}</td>
-                    <td class="py-3 px-4 text-right font-medium text-slate-700">500.000 ₫</td>
-                    <td class="py-3 px-4 text-center">
-                        <button onclick="toggleFundFee(${p.id}, 'q1')" class="px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${q1 ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-rose-100 text-rose-700 hover:bg-rose-200'}">
-                            ${q1 ? '<i class="fa-solid fa-check mr-1"></i>Đã đóng' : '<i class="fa-solid fa-xmark mr-1"></i>Chưa đóng'}
+                    
+                    <!-- TIỀN SÂN QUÝ 1 -->
+                    <td class="py-3 px-4 text-center bg-blue-50/20">
+                        <input type="number" value="${q1Amt}" step="10000" onchange="updatePlayerQuarterAmount(${p.id}, 'q1', this.value)" class="w-28 text-center text-xs font-bold border rounded p-1 text-slate-800 focus:ring-1 focus:ring-blue-500 outline-none">
+                    </td>
+                    <td class="py-3 px-4 text-center bg-blue-50/20">
+                        <button onclick="toggleFundFee(${p.id}, 'q1')" class="px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${q1Paid ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-rose-100 text-rose-700 hover:bg-rose-200'}">
+                            ${q1Paid ? '<i class="fa-solid fa-check mr-1"></i>Đã đóng' : '<i class="fa-solid fa-xmark mr-1"></i>Chưa đóng'}
                         </button>
                     </td>
-                    <td class="py-3 px-4 text-center">
-                        <button onclick="toggleFundFee(${p.id}, 'q2')" class="px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${q2 ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-rose-100 text-rose-700 hover:bg-rose-200'}">
-                            ${q2 ? '<i class="fa-solid fa-check mr-1"></i>Đã đóng' : '<i class="fa-solid fa-xmark mr-1"></i>Chưa đóng'}
+
+                    <!-- TIỀN SÂN QUÝ 2 -->
+                    <td class="py-3 px-4 text-center bg-amber-50/20">
+                        <input type="number" value="${q2Amt}" step="10000" onchange="updatePlayerQuarterAmount(${p.id}, 'q2', this.value)" class="w-28 text-center text-xs font-bold border rounded p-1 text-slate-800 focus:ring-1 focus:ring-amber-500 outline-none">
+                    </td>
+                    <td class="py-3 px-4 text-center bg-amber-50/20">
+                        <button onclick="toggleFundFee(${p.id}, 'q2')" class="px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${q2Paid ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-rose-100 text-rose-700 hover:bg-rose-200'}">
+                            ${q2Paid ? '<i class="fa-solid fa-check mr-1"></i>Đã đóng' : '<i class="fa-solid fa-xmark mr-1"></i>Chưa đóng'}
                         </button>
                     </td>
+
                     <td class="py-3 px-4 text-center">
                         <button onclick="editPlayer(${p.id})" class="text-blue-600 hover:text-blue-800 mr-2 font-semibold text-xs"><i class="fa-solid fa-pen"></i> Sửa</button>
                         <button onclick="deletePlayer(${p.id})" class="text-red-600 hover:text-red-800 font-semibold text-xs"><i class="fa-solid fa-trash"></i> Xóa</button>
@@ -1337,7 +1417,70 @@
             if(!tbody) return;
             tbody.innerHTML = '';
 
-            if(window.fundIncomes.length === 0) {
+            // Hiển thị các khoản thu tự động từ các ngày đấu có NOTE=YES trước
+            window.dates.forEach(d => {
+                const pStatus = window.paymentStatus[d];
+                const isTransferYes = (!pStatus || typeof pStatus !== 'object' || pStatus.btcNoteAdminOption !== "NO");
+                if (isTransferYes) {
+                    const matches = window.matchesData[d] || [];
+                    let statsDay = {};
+                    window.players.forEach(p => { statsDay[p.name] = { played: 0, total: 0 }; });
+
+                    matches.forEach(m => {
+                        const s1 = parseInt(m.score1);
+                        const s2 = parseInt(m.score2);
+                        const mMode = m.keoMode || window.dateKeoMode[d] || 'default';
+                        let winAmt = 5, loseAmt = -15;
+                        if (mMode === "k25") { winAmt = 0; loseAmt = -25; }
+                        else if (mMode === "free") {
+                            winAmt = parseFloat(m.customWin) || 0;
+                            loseAmt = parseFloat(m.customLose) || 0;
+                            if (loseAmt > 0) loseAmt = -loseAmt;
+                        }
+
+                        if (!isNaN(s1) && !isNaN(s2)) {
+                            const pair1 = [m.c1_p1, m.c1_p2].filter(Boolean);
+                            const pair2 = [m.c2_p1, m.c2_p2].filter(Boolean);
+                            let isHam = (s1 === 0 || s2 === 0);
+                            let effWin = isHam ? (winAmt > 0 ? winAmt * 2 : 0) : winAmt;
+                            let effLose = isHam ? loseAmt * 2 : loseAmt;
+
+                            if (s1 > s2) {
+                                pair1.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effWin; } });
+                                pair2.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effLose; } });
+                            } else if (s2 > s1) {
+                                pair2.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effWin; } });
+                                pair1.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effLose; } });
+                            }
+                        }
+                    });
+
+                    let sumAmDay = 0, sumBringBackDay = 0;
+                    window.players.forEach(p => {
+                        let st = statsDay[p.name];
+                        if (st.played > 0) {
+                            if (st.total < 0) sumAmDay += st.total;
+                            else if (st.played >= 4 && st.total > 0) sumBringBackDay += st.total;
+                        }
+                    });
+
+                    let dayNetK = (sumAmDay + sumBringBackDay);
+                    if (dayNetK > 0) {
+                        const trAuto = document.createElement('tr');
+                        trAuto.className = "bg-emerald-50/60 font-semibold text-xs border-b border-emerald-100";
+                        trAuto.innerHTML = `
+                            <td class="py-2.5 px-3 text-slate-600 whitespace-nowrap">${d}</td>
+                            <td class="py-2.5 px-3 text-emerald-900 font-bold">Tổng Thu Ngày ${d} (Tự động)</td>
+                            <td class="py-2.5 px-3 text-right font-black text-emerald-700 whitespace-nowrap">+${formatVND(dayNetK * 1000)}</td>
+                            <td class="py-2.5 px-3 text-slate-600">BTC Thu Về từ các Trận</td>
+                            <td class="py-2.5 px-3 text-center"><span class="text-[10px] bg-emerald-200 text-emerald-800 px-1.5 py-0.5 rounded font-bold">TỰ ĐỘNG</span></td>
+                        `;
+                        tbody.appendChild(trAuto);
+                    }
+                }
+            });
+
+            if(window.fundIncomes.length === 0 && tbody.children.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">Chưa có khoản thu nào.</td></tr>`;
                 return;
             }
@@ -1350,8 +1493,11 @@
                     <td class="py-2.5 px-3 font-medium text-slate-800">${item.desc}</td>
                     <td class="py-2.5 px-3 text-right font-semibold text-emerald-600 whitespace-nowrap">+${formatVND(item.amount)}</td>
                     <td class="py-2.5 px-3 text-xs text-slate-600 font-semibold">${item.source}</td>
-                    <td class="py-2.5 px-3 text-center">
-                        <button onclick="deleteFundTx(${item.id}, 'income')" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
+                    <td class="py-2.5 px-3 text-center whitespace-nowrap">
+                        <button onclick="openEditFundModal(${item.id}, 'income')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors" title="Chỉnh sửa">
+                            <i class="fa-solid fa-pencil"></i>
+                        </button>
+                        <button onclick="deleteFundTx(${item.id}, 'income')" class="text-slate-400 hover:text-rose-500 p-1 transition-colors" title="Xóa">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </td>
@@ -1378,8 +1524,11 @@
                     <td class="py-2.5 px-3 font-medium text-slate-800">${item.desc}</td>
                     <td class="py-2.5 px-3 text-right font-semibold text-rose-600 whitespace-nowrap">-${formatVND(item.amount)}</td>
                     <td class="py-2.5 px-3 text-xs text-slate-600 font-semibold">${item.source}</td>
-                    <td class="py-2.5 px-3 text-center">
-                        <button onclick="deleteFundTx(${item.id}, 'expense')" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
+                    <td class="py-2.5 px-3 text-center whitespace-nowrap">
+                        <button onclick="openEditFundModal(${item.id}, 'expense')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors" title="Chỉnh sửa">
+                            <i class="fa-solid fa-pencil"></i>
+                        </button>
+                        <button onclick="deleteFundTx(${item.id}, 'expense')" class="text-slate-400 hover:text-rose-500 p-1 transition-colors" title="Xóa">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </td>
@@ -1396,7 +1545,6 @@
             const lblSource = document.getElementById('lbl-source');
             const sourceSelect = document.getElementById('tx-source-select');
 
-            // Đổ danh sách Pick thủ đồng bộ
             if(sourceSelect) {
                 let optionsHtml = `<option value="Khách vãng lai / Khác">-- Khách vãng lai / Khác --</option>`;
                 window.players.forEach(p => {
@@ -1407,6 +1555,7 @@
             
             const form = document.getElementById('fund-transaction-form');
             if(form) {
+                form.querySelector('#tx-id').value = '';
                 form.querySelector('#tx-type').value = type;
                 form.querySelector('#tx-date').value = new Date().toISOString().split('T')[0];
                 form.querySelector('#tx-desc').value = '';
@@ -1431,6 +1580,25 @@
             backdrop.classList.remove('hidden');
         }
 
+        function openEditFundModal(id, type) {
+            const list = type === 'income' ? window.fundIncomes : window.fundExpenses;
+            const item = list.find(x => x.id === id);
+            if(!item) return;
+
+            openFundModal(type);
+
+            const form = document.getElementById('fund-transaction-form');
+            form.querySelector('#tx-id').value = item.id;
+            form.querySelector('#tx-date').value = item.date;
+            form.querySelector('#tx-desc').value = item.desc;
+            form.querySelector('#tx-amount').value = item.amount;
+            form.querySelector('#tx-source-select').value = item.source || "Khách vãng lai / Khác";
+            form.querySelector('#tx-note').value = item.note || "";
+
+            const title = document.getElementById('fund-modal-title');
+            title.innerHTML = type === 'income' ? '<i class="fa-solid fa-pen-to-square"></i> Sửa Khoản Thu' : '<i class="fa-solid fa-pen-to-square"></i> Sửa Khoản Chi';
+        }
+
         function closeFundModal() {
             document.getElementById('fund-modal-backdrop').classList.add('hidden');
         }
@@ -1438,9 +1606,11 @@
         function handleFundFormSubmit(e) {
             e.preventDefault();
             const form = document.getElementById('fund-transaction-form');
+            const txId = form.querySelector('#tx-id').value;
             const type = form.querySelector('#tx-type').value;
+
             const newItem = {
-                id: Date.now(),
+                id: txId ? Number(txId) : Date.now(),
                 date: form.querySelector('#tx-date').value,
                 desc: form.querySelector('#tx-desc').value,
                 amount: Number(form.querySelector('#tx-amount').value),
@@ -1448,10 +1618,13 @@
                 note: form.querySelector('#tx-note').value
             };
 
-            if(type === 'income') {
-                window.fundIncomes.unshift(newItem);
+            const list = type === 'income' ? window.fundIncomes : window.fundExpenses;
+
+            if(txId) {
+                const idx = list.findIndex(x => x.id === Number(txId));
+                if(idx !== -1) list[idx] = newItem;
             } else {
-                window.fundExpenses.unshift(newItem);
+                list.unshift(newItem);
             }
 
             saveFundData();
@@ -1470,28 +1643,81 @@
         }
 
         function exportFundToExcel() {
-            const totalIncome = window.fundIncomes.reduce((sum, item) => sum + Number(item.amount), 0);
+            let totalManualIncome = window.fundIncomes.reduce((sum, item) => sum + Number(item.amount), 0);
+            let autoDailyIncomeTotal = 0;
+            window.dates.forEach(d => {
+                const pStatus = window.paymentStatus[d];
+                const isTransferYes = (!pStatus || typeof pStatus !== 'object' || pStatus.btcNoteAdminOption !== "NO");
+                if (isTransferYes) {
+                    const matches = window.matchesData[d] || [];
+                    let statsDay = {};
+                    window.players.forEach(p => { statsDay[p.name] = { played: 0, total: 0 }; });
+
+                    matches.forEach(m => {
+                        const s1 = parseInt(m.score1);
+                        const s2 = parseInt(m.score2);
+                        const mMode = m.keoMode || window.dateKeoMode[d] || 'default';
+                        let winAmt = 5, loseAmt = -15;
+                        if (mMode === "k25") { winAmt = 0; loseAmt = -25; }
+                        else if (mMode === "free") {
+                            winAmt = parseFloat(m.customWin) || 0;
+                            loseAmt = parseFloat(m.customLose) || 0;
+                            if (loseAmt > 0) loseAmt = -loseAmt;
+                        }
+
+                        if (!isNaN(s1) && !isNaN(s2)) {
+                            const pair1 = [m.c1_p1, m.c1_p2].filter(Boolean);
+                            const pair2 = [m.c2_p1, m.c2_p2].filter(Boolean);
+                            let isHam = (s1 === 0 || s2 === 0);
+                            let effWin = isHam ? (winAmt > 0 ? winAmt * 2 : 0) : winAmt;
+                            let effLose = isHam ? loseAmt * 2 : loseAmt;
+
+                            if (s1 > s2) {
+                                pair1.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effWin; } });
+                                pair2.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effLose; } });
+                            } else if (s2 > s1) {
+                                pair2.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effWin; } });
+                                pair1.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effLose; } });
+                            }
+                        }
+                    });
+
+                    let sumAmDay = 0, sumBringBackDay = 0;
+                    window.players.forEach(p => {
+                        let st = statsDay[p.name];
+                        if (st.played > 0) {
+                            if (st.total < 0) sumAmDay += st.total;
+                            else if (st.played >= 4 && st.total > 0) sumBringBackDay += st.total;
+                        }
+                    });
+
+                    let dayNetK = (sumAmDay + sumBringBackDay);
+                    if (dayNetK > 0) autoDailyIncomeTotal += (dayNetK * 1000);
+                }
+            });
+
+            const grandTotalIncome = totalManualIncome + autoDailyIncomeTotal;
             const totalExpense = window.fundExpenses.reduce((sum, item) => sum + Number(item.amount), 0);
-            const currentBalance = window.initialFund + totalIncome - totalExpense;
+            const currentBalance = window.initialFund + grandTotalIncome - totalExpense;
 
             const summaryData = [
                 ["BÁO CÁO TỔNG QUAN QUỸ PICKLEBALL"],
                 [],
                 ["Hạng mục", "Số tiền (VNĐ)", "Ghi chú"],
                 ["Quỹ đầu kỳ", window.initialFund, "Tồn quỹ kỳ trước chuyển sang"],
-                ["Tổng thu trong kỳ", totalIncome, "Tự động tính từ Nhật ký Thu"],
+                ["Tổng thu trong kỳ", grandTotalIncome, "Bao gồm thu lẻ & đồng bộ các ngày NOTE=YES"],
                 ["Tổng chi trong kỳ", totalExpense, "Tự động tính từ Nhật ký Chi"],
                 ["SỐ DƯ QUỸ HIỆN TẠI", currentBalance, "Công thức: Đầu kỳ + Thu - Chi"]
             ];
 
             const memberData = [
-                ["STT", "Tên Pick Thủ", "Giới tính", "Mức đóng/quý", "Quý 1", "Quý 2"],
+                ["STT", "Tên Pick Thủ", "Mức đóng Q1 (VNĐ)", "Trạng thái Q1", "Mức đóng Q2 (VNĐ)", "Trạng thái Q2"],
                 ...window.players.map((p, i) => [
                     i + 1, 
                     p.name, 
-                    p.gender, 
-                    500000, 
+                    window.fundFeeStatus[`${p.id}_q1_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q1_amt`] : 500000, 
                     window.fundFeeStatus[`${p.id}_q1`] ? "Đã đóng" : "Chưa đóng", 
+                    window.fundFeeStatus[`${p.id}_q2_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q2_amt`] : 500000, 
                     window.fundFeeStatus[`${p.id}_q2`] ? "Đã đóng" : "Chưa đóng"
                 ])
             ];
@@ -1499,7 +1725,7 @@
             const incomeData = [
                 ["STT", "Ngày tháng", "Nội dung thu", "Số tiền (VNĐ)", "Nguồn/Pick thủ", "Ghi chú"],
                 ...window.fundIncomes.map((item, i) => [i + 1, formatDate(item.date), item.desc, item.amount, item.source, item.note]),
-                ["", "", "TỔNG CỘNG THU", totalIncome, "", ""]
+                ["", "", "TỔNG CỘNG THU LẺ", totalManualIncome, "", ""]
             ];
 
             const expenseData = [
@@ -1706,6 +1932,7 @@
             window.paymentStatus[dateStr].btcNoteAdminOption = selectEl.value;
             renderDayDetailView();
             renderTongHopTab();
+            updateFundDashboard();
             autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
