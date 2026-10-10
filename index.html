@@ -185,6 +185,13 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+
+        /* Định dạng nội dung dài cho Nhật ký Thu Chi */
+        .wrap-content-cell {
+            white-space: normal !important;
+            word-break: break-word !important;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body id="app-body" class="bg-theme-slate min-h-screen flex flex-col font-sans transition-colors duration-300 text-slate-800" onclick="closeAllDropdowns()">
@@ -850,7 +857,7 @@
                 </div>
             </div>
 
-            <!-- NHẬT KÝ THU / CHI (BẢNG KHOẢN THU LÊN TRÊN, BẢNG KHOẢN CHI XUỐNG DƯỚI) -->
+            <!-- NHẬT KÝ THU / CHI (BẢNG CĂN CHỈNH NỘI DUNG VÀ GHI CHÚ RỘNG RÃI, CHO PHÉP NHẬP NHIỀU KÝ TỰ) -->
             <div class="flex flex-col gap-6">
                 <!-- BẢNG NHẬT KÝ KHOẢN THU -->
                 <section class="bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col">
@@ -869,15 +876,15 @@
                     </div>
 
                     <div class="flex-1 overflow-x-auto custom-scrollbar max-h-96">
-                        <table class="w-full text-left text-sm">
+                        <table class="w-full text-left text-sm border-collapse">
                             <thead class="bg-slate-50 text-slate-600 font-semibold sticky top-0 border-b border-slate-200">
                                 <tr>
-                                    <th class="py-2.5 px-3">Ngày</th>
-                                    <th class="py-2.5 px-3">Nội dung</th>
-                                    <th class="py-2.5 px-3 text-right">Số tiền</th>
-                                    <th class="py-2.5 px-3">Nguồn thu / Pick thủ</th>
-                                    <th class="py-2.5 px-3">Ghi chú</th>
-                                    <th class="py-2.5 px-3 text-center">Thao tác</th>
+                                    <th class="py-2.5 px-3 w-28 whitespace-nowrap">Ngày</th>
+                                    <th class="py-2.5 px-3 min-w-[220px]">Nội dung</th>
+                                    <th class="py-2.5 px-3 text-right w-32 whitespace-nowrap">Số tiền</th>
+                                    <th class="py-2.5 px-3 w-36 whitespace-nowrap">Nguồn thu / Pick thủ</th>
+                                    <th class="py-2.5 px-3 min-w-[200px]">Ghi chú</th>
+                                    <th class="py-2.5 px-3 text-center w-24 whitespace-nowrap">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody id="income-list" class="divide-y divide-slate-100"></tbody>
@@ -907,15 +914,15 @@
                     </div>
 
                     <div class="flex-1 overflow-x-auto custom-scrollbar max-h-96">
-                        <table class="w-full text-left text-sm">
+                        <table class="w-full text-left text-sm border-collapse">
                             <thead class="bg-slate-50 text-slate-600 font-semibold sticky top-0 border-b border-slate-200">
                                 <tr>
-                                    <th class="py-2.5 px-3">Ngày</th>
-                                    <th class="py-2.5 px-3">Nội dung</th>
-                                    <th class="py-2.5 px-3 text-right">Số tiền</th>
-                                    <th class="py-2.5 px-3">Hạng mục / Pick thủ</th>
-                                    <th class="py-2.5 px-3">Ghi chú</th>
-                                    <th class="py-2.5 px-3 text-center">Thao tác</th>
+                                    <th class="py-2.5 px-3 w-28 whitespace-nowrap">Ngày</th>
+                                    <th class="py-2.5 px-3 min-w-[220px]">Nội dung</th>
+                                    <th class="py-2.5 px-3 text-right w-32 whitespace-nowrap">Số tiền</th>
+                                    <th class="py-2.5 px-3 w-36 whitespace-nowrap">Hạng mục / Pick thủ</th>
+                                    <th class="py-2.5 px-3 min-w-[200px]">Ghi chú</th>
+                                    <th class="py-2.5 px-3 text-center w-24 whitespace-nowrap">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody id="expense-list" class="divide-y divide-slate-100"></tbody>
@@ -1060,7 +1067,7 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Nội Dung Chi Tiết</label>
-                    <input type="text" id="tx-desc" placeholder="Ví dụ: Thu tiền kèo ngày 1/10/26..." required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    <textarea id="tx-desc" rows="2" placeholder="Ví dụ: Thu tiền kèo ngày 1/10/26..." required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
                 </div>
 
                 <div>
@@ -1076,7 +1083,7 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Ghi Chú</label>
-                    <input type="text" id="tx-note" placeholder="Chuyển khoản / Tiền mặt / Hóa đơn / Nội dung thay đổi" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    <textarea id="tx-note" rows="2" placeholder="Chuyển khoản / Tiền mặt / Hóa đơn / Nội dung ghi chú chi tiết..." class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
                 </div>
 
                 <div class="flex justify-end gap-2 pt-2">
@@ -1142,7 +1149,7 @@
             { id:3, luot:1, san:3, content:"Nam xoay vòng", a1:"Phú Mỗ", a2:"Hà Giấy", scoreA:"", scoreB:"", b1:"Dũng Ngạc", b2:"Lợi Trì" },
             { id:4, luot:2, san:1, content:"Nam xoay vòng", a1:"Long Diễm", a2:"Châu Sĩ", scoreA:"", scoreB:"", b1:"Thành Đàm", b2:"Thành Sóc" },
             { id:5, luot:2, san:2, content:"Nam-Nữ không xoay vòng", a1:"Tuấn La", a2:"Ly", scoreA:"", scoreB:"", b1:"Điền Chèm", b2:"Hải Hà" },
-            { id:6, luot:2, san:3, content:"Nam-Nữ tidak xoay vòng", a1:"Hà Giấy", a2:"Vân Đình", scoreA:"", scoreB:"", b1:"Lợi Trì", b2:"Quỳnh Cool" }
+            { id:6, luot:2, san:3, content:"Nam-Nữ không xoay vòng", a1:"Hà Giấy", a2:"Vân Đình", scoreA:"", scoreB:"", b1:"Lợi Trì", b2:"Quỳnh Cool" }
         ];
 
         window.m2PairsA = [
@@ -1187,14 +1194,14 @@
         window.initialFund = Number(localStorage.getItem('pb_initial_fund')) || 500000;
 
         const defaultFundIncomes = [
-            { id: 1, date: "2026-01-05", desc: "Thu tiền quỹ Q1 - Tiến Thọ", amount: 800000, source: "Tiến Thọ", note: "Chuyển khoản" },
-            { id: 2, date: "2026-01-06", desc: "Thu tiền quỹ Q1 - Châu Sĩ", amount: 800000, source: "Châu Sĩ", note: "Tiền mặt" },
-            { id: 3, date: "2026-01-10", desc: "Thu tiền giao lưu vãng lai", amount: 200000, source: "Khách vãng lai / Khác", note: "Thu theo buổi" }
+            { id: 1, date: "2026-01-05", desc: "Thu tiền quỹ Q1 - Tiến Thọ", amount: 800000, source: "Tiến Thọ", note: "Chuyển khoản ngân hàng VPBank" },
+            { id: 2, date: "2026-01-06", desc: "Thu tiền quỹ Q1 - Châu Sĩ", amount: 800000, source: "Châu Sĩ", note: "Thanh toán bằng tiền mặt trực tiếp tại sân" },
+            { id: 3, date: "2026-01-10", desc: "Thu tiền giao lưu vãng lai", amount: 200000, source: "Khách vãng lai / Khác", note: "Thu theo buổi giao lưu cuối tuần" }
         ];
 
         const defaultFundExpenses = [
-            { id: 1, date: "2026-01-02", desc: "Thanh toán tiền thuê sân Tháng 1", amount: 1200000, source: "Khách vãng lai / Khác", note: "Hóa đơn #01" },
-            { id: 2, date: "2026-01-15", desc: "Mua bóng Pickleball thi đấu", amount: 450000, source: "Khách vãng lai / Khác", note: "Chuyển khoản" }
+            { id: 1, date: "2026-01-02", desc: "Thanh toán tiền thuê sân Tháng 1", amount: 1200000, source: "Khách vãng lai / Khác", note: "Hóa đơn thanh toán tiền sân định kỳ" },
+            { id: 2, date: "2026-01-15", desc: "Mua bóng Pickleball thi đấu", amount: 450000, source: "Khách vãng lai / Khác", note: "Mua 2 hộp bóng Pickleball chuyên dụng 40 lỗ" }
         ];
 
         window.fundFeeStatus = JSON.parse(localStorage.getItem('pb_fee_status')) || {};
@@ -1544,7 +1551,7 @@
             }
         }
 
-        /* 🛠 RENDER KHOẢN THU TỰ ĐỘNG & THỦ CÔNG (ĐÃ CHỈNH GHI CHÚ CÓ THỂ SỬA TRỰC TIẾP) 🛠 */
+        /* 🛠 RENDER KHOẢN THU TỰ ĐỘNG & THỦ CÔNG (ĐÃ ĐỔI TÊN NỘI DUNG & CĂN CHỈNH Ô GHI CHÚ RỘNG RÃI) 🛠 */
         function renderFundIncomes() {
             const tbody = document.getElementById('income-list');
             if (!tbody) return;
@@ -1568,14 +1575,16 @@
                         trAuto.className = "bg-emerald-50/80 font-semibold text-xs border-b border-emerald-200/80 hover:bg-emerald-100/80 transition-colors";
                         trAuto.innerHTML = `
                             <td class="py-2.5 px-3 text-slate-600 whitespace-nowrap">${d}</td>
-                            <td class="py-2.5 px-3 text-emerald-950 font-bold flex items-center gap-1.5">
-                                <i class="fa-solid fa-coins text-amber-500"></i>
-                                <span>Thu tiền kèo Ngày ${d} (Quy đổi dương)</span>
+                            <td class="py-2.5 px-3 text-emerald-950 font-bold wrap-content-cell min-w-[220px]">
+                                <div class="flex items-center gap-1.5">
+                                    <i class="fa-solid fa-coins text-amber-500 flex-shrink-0"></i>
+                                    <span>Thu tiền kèo Ngày ${d}</span>
+                                </div>
                             </td>
                             <td class="py-2.5 px-3 text-right font-black text-emerald-700 whitespace-nowrap">+${formatVND(positiveAmount)}</td>
-                            <td class="py-2.5 px-3 text-slate-600"><span class="player-tag">BTC CLB</span></td>
-                            <td class="py-2.5 px-3">
-                                <input type="text" value="${currentCustomNote}" onchange="updateAutoIncomeNote('${d}', this.value)" class="w-full bg-white border border-emerald-300 rounded px-2 py-1 text-xs text-slate-700 font-medium focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="Nhập ghi chú thay đổi...">
+                            <td class="py-2.5 px-3 text-slate-600 whitespace-nowrap"><span class="player-tag">BTC CLB</span></td>
+                            <td class="py-2.5 px-3 min-w-[200px]">
+                                <textarea onchange="updateAutoIncomeNote('${d}', this.value)" rows="1" class="w-full bg-white border border-emerald-300 rounded px-2 py-1 text-xs text-slate-700 font-medium focus:outline-none focus:ring-1 focus:ring-emerald-500 shadow-sm" placeholder="Nhập ghi chú chi tiết...">${currentCustomNote}</textarea>
                             </td>
                             <td class="py-2.5 px-3 text-center whitespace-nowrap">
                                 <button onclick="alert('Dòng này tự động cập nhật số tiền từ Bảng Chi Tiết Ngày ${d}. Bạn có thể chỉnh sửa ghi chú ngay tại cột ghi chú hoặc thay đổi kết quả tại ngày tương ứng!')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors" title="Chỉnh sửa">
@@ -1596,10 +1605,10 @@
                 tr.className = "hover:bg-slate-50 transition-colors";
                 tr.innerHTML = `
                     <td class="py-2.5 px-3 text-xs text-slate-500 whitespace-nowrap">${formatDate(item.date)}</td>
-                    <td class="py-2.5 px-3 font-medium text-slate-800">${item.desc}</td>
+                    <td class="py-2.5 px-3 font-medium text-slate-800 wrap-content-cell min-w-[220px]">${item.desc}</td>
                     <td class="py-2.5 px-3 text-right font-semibold text-emerald-600 whitespace-nowrap">+${formatVND(item.amount)}</td>
-                    <td class="py-2.5 px-3 text-xs"><span class="player-tag">${item.source}</span></td>
-                    <td class="py-2.5 px-3 text-xs text-slate-600">${item.note || '---'}</td>
+                    <td class="py-2.5 px-3 text-xs whitespace-nowrap"><span class="player-tag">${item.source}</span></td>
+                    <td class="py-2.5 px-3 text-xs text-slate-600 wrap-content-cell min-w-[200px]">${item.note || '---'}</td>
                     <td class="py-2.5 px-3 text-center whitespace-nowrap">
                         <button onclick="openEditFundModal(${item.id}, 'income')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors" title="Chỉnh sửa">
                             <i class="fa-solid fa-pencil"></i>
@@ -1632,10 +1641,10 @@
                 tr.className = "hover:bg-slate-50 transition-colors";
                 tr.innerHTML = `
                     <td class="py-2.5 px-3 text-xs text-slate-500 whitespace-nowrap">${formatDate(item.date)}</td>
-                    <td class="py-2.5 px-3 font-medium text-slate-800">${item.desc}</td>
+                    <td class="py-2.5 px-3 font-medium text-slate-800 wrap-content-cell min-w-[220px]">${item.desc}</td>
                     <td class="py-2.5 px-3 text-right font-semibold text-rose-600 whitespace-nowrap">-${formatVND(item.amount)}</td>
-                    <td class="py-2.5 px-3 text-xs"><span class="player-tag">${item.source}</span></td>
-                    <td class="py-2.5 px-3 text-xs text-slate-600">${item.note || '---'}</td>
+                    <td class="py-2.5 px-3 text-xs whitespace-nowrap"><span class="player-tag">${item.source}</span></td>
+                    <td class="py-2.5 px-3 text-xs text-slate-600 wrap-content-cell min-w-[200px]">${item.note || '---'}</td>
                     <td class="py-2.5 px-3 text-center whitespace-nowrap">
                         <button onclick="openEditFundModal(${item.id}, 'expense')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors" title="Chỉnh sửa">
                             <i class="fa-solid fa-pencil"></i>
