@@ -815,7 +815,7 @@
                         </div>
                     </div>
                     <div class="mt-3 text-xs text-slate-400 flex items-center gap-1">
-                        <i class="fa-solid fa-circle-info text-emerald-500"></i> Tự động cộng từ dòng TỔNG BTC THU VỀ của các ngày
+                        <i class="fa-solid fa-circle-info text-emerald-500"></i> Tự động cộng giá trị tuyệt đối từ dòng TỔNG BTC THU VỀ
                     </div>
                 </div>
 
@@ -859,7 +859,7 @@
                                 <i class="fa-solid fa-circle-arrow-down text-emerald-600"></i>
                                 <span>Nhật Ký Khoản Thu</span>
                             </h2>
-                            <p class="text-xs text-slate-500 mt-0.5">Thu thủ công & Tự động đồng bộ từ dòng TỔNG BTC THU VỀ</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Thu thủ công & Tự động đồng bộ số dương từ dòng TỔNG BTC THU VỀ</p>
                         </div>
                         <button onclick="openFundModal('income')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm">
                             <i class="fa-solid fa-plus"></i>
@@ -1138,7 +1138,7 @@
             { id:3, luot:1, san:3, content:"Nam xoay vòng", a1:"Phú Mỗ", a2:"Hà Giấy", scoreA:"", scoreB:"", b1:"Dũng Ngạc", b2:"Lợi Trì" },
             { id:4, luot:2, san:1, content:"Nam xoay vòng", a1:"Long Diễm", a2:"Châu Sĩ", scoreA:"", scoreB:"", b1:"Thành Đàm", b2:"Thành Sóc" },
             { id:5, luot:2, san:2, content:"Nam-Nữ không xoay vòng", a1:"Tuấn La", a2:"Ly", scoreA:"", scoreB:"", b1:"Điền Chèm", b2:"Hải Hà" },
-            { id:6, luot:2, san:3, content:"Nam-Nữ không xoay vòng", a1:"Hà Giấy", a2:"Vân Đình", scoreA:"", scoreB:"", b1:"Lợi Trì", b2:"Quỳnh Cool" }
+            { id:6, luot:2, san:3, content:"Nam-Nữ tidak xoay vòng", a1:"Hà Giấy", a2:"Vân Đình", scoreA:"", scoreB:"", b1:"Lợi Trì", b2:"Quỳnh Cool" }
         ];
 
         window.m2PairsA = [
@@ -1197,7 +1197,6 @@
         window.fundIncomes = JSON.parse(localStorage.getItem('pb_incomes')) || defaultFundIncomes;
         window.fundExpenses = JSON.parse(localStorage.getItem('pb_expenses')) || defaultFundExpenses;
 
-        /* 🛠 HÀM TÍNH TOÁN BTC THU VỀ ĐÃ ĐƯỢC CHUẨN HÓA TUYỆT ĐỐI 🛠 */
         function getBtcThuVeForDate(dateStr) {
             const matches = window.matchesData[dateStr] || [];
             if (!matches || matches.length === 0) return 0;
@@ -1367,6 +1366,7 @@
             calculateFundSummary();
         }
 
+        /* 🛠 HÀM TÍNH TOÁN TỔNG THU & QUỸ (ĐÃ CHUYỂN SỐ ÂM THÀNH DƯƠNG TUYỆT ĐỐI) 🛠 */
         function calculateFundSummary() {
             let totalManualIncome = window.fundIncomes.reduce((sum, item) => sum + Number(item.amount), 0);
 
@@ -1380,8 +1380,9 @@
                 
                 if (isTransferYes) {
                     let dayNetK = getBtcThuVeForDate(d);
-                    if (dayNetK > 0) {
-                        autoDailyIncomeTotal += (dayNetK * 1000);
+                    // Dùng Math.abs để chuyển số âm thành số dương khi cộng vào tổng thu quỹ
+                    if (dayNetK !== 0) {
+                        autoDailyIncomeTotal += Math.abs(dayNetK * 1000);
                     }
                 }
             });
@@ -1532,18 +1533,16 @@
             }
         }
 
-        /* 🛠 HÀM RENDER NHẬT KÝ THU TỰ ĐỘNG ĐÃ KHẮC PHỤC HOÀN TOÀN 🛠 */
+        /* 🛠 HÀM HIỂN THỊ KHOẢN THU TỰ ĐỘNG (CHUYỂN SỐ TIỀN THÀNH DƯƠNG TRÊN BẢNG NHẬT KÝ THU) 🛠 */
         function renderFundIncomes() {
             const tbody = document.getElementById('income-list');
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            // 1. Tự động thêm dòng "Thu tiền kèo Ngày X" vào Bảng Nhật Ký Khoản Thu
             (window.dates || []).forEach(d => {
                 const pStatus = window.paymentStatus ? window.paymentStatus[d] : null;
                 let isTransferYes = true;
                 
-                // Mặc định là YES, chỉ ẩn khi có cấu hình rõ ràng là "NO"
                 if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
                     isTransferYes = false;
                 }
@@ -1551,18 +1550,21 @@
                 if (isTransferYes) {
                     let dayNetK = getBtcThuVeForDate(d);
                     if (dayNetK !== 0) {
+                        // Lấy giá trị tuyệt đối để hiển thị số dương (+ tiền)
+                        const positiveAmount = Math.abs(dayNetK) * 1000;
+
                         const trAuto = document.createElement('tr');
                         trAuto.className = "bg-emerald-50/80 font-semibold text-xs border-b border-emerald-200/80 hover:bg-emerald-100/80 transition-colors";
                         trAuto.innerHTML = `
                             <td class="py-2.5 px-3 text-slate-600 whitespace-nowrap">${d}</td>
                             <td class="py-2.5 px-3 text-emerald-950 font-bold flex items-center gap-1.5">
                                 <i class="fa-solid fa-coins text-amber-500"></i>
-                                <span>Thu tiền kèo Ngày ${d}</span>
+                                <span>Thu tiền kèo Ngày ${d} (Quy đổi dương)</span>
                             </td>
-                            <td class="py-2.5 px-3 text-right font-black ${dayNetK > 0 ? 'text-emerald-700' : 'text-rose-600'} whitespace-nowrap">${dayNetK > 0 ? '+' : ''}${formatVND(dayNetK * 1000)}</td>
+                            <td class="py-2.5 px-3 text-right font-black text-emerald-700 whitespace-nowrap">+${formatVND(positiveAmount)}</td>
                             <td class="py-2.5 px-3 text-slate-600"><span class="player-tag">BTC CLB</span></td>
                             <td class="py-2.5 px-3 text-center whitespace-nowrap">
-                                <span class="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full font-extrabold shadow-sm border border-emerald-300">TỰ ĐỘNG</span>
+                                <span class="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full font-extrabold shadow-sm border border-emerald-300">TỰ ĐỘNG (+ Dương)</span>
                             </td>
                         `;
                         tbody.appendChild(trAuto);
@@ -1570,7 +1572,6 @@
                 }
             });
 
-            // 2. Render các khoản Thu thủ công
             (window.fundIncomes || []).forEach(item => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors";
@@ -1747,9 +1748,9 @@
                 if (isTransferYes) {
                     let dayNetK = getBtcThuVeForDate(d);
                     if (dayNetK !== 0) {
-                        const amt = dayNetK * 1000;
+                        const amt = Math.abs(dayNetK) * 1000;
                         autoDailyIncomeTotal += amt;
-                        autoIncomeRows.push([autoIncomeRows.length + 1, d, `Thu tiền kèo Ngày ${d}`, amt, "BTC CLB", "Tự động"]);
+                        autoIncomeRows.push([autoIncomeRows.length + 1, d, `Thu tiền kèo Ngày ${d}`, amt, "BTC CLB", "Tự động dương"]);
                     }
                 }
             });
@@ -1763,7 +1764,7 @@
                 [],
                 ["Hạng mục", "Số tiền (VNĐ)", "Ghi chú"],
                 ["Quỹ đầu kỳ", window.initialFund, "Tồn quỹ kỳ trước chuyển sang"],
-                ["Tổng thu trong kỳ", grandTotalIncome, "Bao gồm thu thủ công & thu tiền kèo tự động các ngày"],
+                ["Tổng thu trong kỳ", grandTotalIncome, "Bao gồm thu thủ công & quy đổi tuyệt đối số tiền kèo tự động"],
                 ["Tổng chi trong kỳ", totalExpense, "Tự động tính từ Nhật ký Chi"],
                 ["SỐ DƯ QUỸ HIỆN TẠI", currentBalance, "Công thức: Đầu kỳ + Thu - Chi"]
             ];
