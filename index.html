@@ -850,8 +850,9 @@
                 </div>
             </div>
 
-            <!-- NHẬT KÝ THU / CHI -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- NHẬT KÝ THU / CHI (BẢNG KHOẢN THU LÊN TRÊN, BẢNG KHOẢN CHI XUỐNG DƯỚI) -->
+            <div class="flex flex-col gap-6">
+                <!-- BẢNG NHẬT KÝ KHOẢN THU -->
                 <section class="bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col">
                     <div class="p-5 border-b border-slate-100 flex justify-between items-center">
                         <div>
@@ -875,6 +876,7 @@
                                     <th class="py-2.5 px-3">Nội dung</th>
                                     <th class="py-2.5 px-3 text-right">Số tiền</th>
                                     <th class="py-2.5 px-3">Nguồn thu / Pick thủ</th>
+                                    <th class="py-2.5 px-3">Ghi chú</th>
                                     <th class="py-2.5 px-3 text-center">Thao tác</th>
                                 </tr>
                             </thead>
@@ -888,6 +890,7 @@
                     </div>
                 </section>
 
+                <!-- BẢNG NHẬT KÝ KHOẢN CHI -->
                 <section class="bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col">
                     <div class="p-5 border-b border-slate-100 flex justify-between items-center">
                         <div>
@@ -911,6 +914,7 @@
                                     <th class="py-2.5 px-3">Nội dung</th>
                                     <th class="py-2.5 px-3 text-right">Số tiền</th>
                                     <th class="py-2.5 px-3">Hạng mục / Pick thủ</th>
+                                    <th class="py-2.5 px-3">Ghi chú</th>
                                     <th class="py-2.5 px-3 text-center">Thao tác</th>
                                 </tr>
                             </thead>
@@ -1072,7 +1076,7 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Ghi Chú</label>
-                    <input type="text" id="tx-note" placeholder="Chuyển khoản / Tiền mặt / Hóa đơn" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    <input type="text" id="tx-note" placeholder="Chuyển khoản / Tiền mặt / Hóa đơn / Nội dung thay đổi" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
                 </div>
 
                 <div class="flex justify-end gap-2 pt-2">
@@ -1138,7 +1142,7 @@
             { id:3, luot:1, san:3, content:"Nam xoay vòng", a1:"Phú Mỗ", a2:"Hà Giấy", scoreA:"", scoreB:"", b1:"Dũng Ngạc", b2:"Lợi Trì" },
             { id:4, luot:2, san:1, content:"Nam xoay vòng", a1:"Long Diễm", a2:"Châu Sĩ", scoreA:"", scoreB:"", b1:"Thành Đàm", b2:"Thành Sóc" },
             { id:5, luot:2, san:2, content:"Nam-Nữ không xoay vòng", a1:"Tuấn La", a2:"Ly", scoreA:"", scoreB:"", b1:"Điền Chèm", b2:"Hải Hà" },
-            { id:6, luot:2, san:3, content:"Nam-Nữ tidak xoay vòng", a1:"Hà Giấy", a2:"Vân Đình", scoreA:"", scoreB:"", b1:"Lợi Trì", b2:"Quỳnh Cool" }
+            { id:6, luot:2, san:3, content:"Nam-Nữ không xoay vòng", a1:"Hà Giấy", a2:"Vân Đình", scoreA:"", scoreB:"", b1:"Lợi Trì", b2:"Quỳnh Cool" }
         ];
 
         window.m2PairsA = [
@@ -1366,7 +1370,6 @@
             calculateFundSummary();
         }
 
-        /* 🛠 HÀM TÍNH TOÁN TỔNG THU & QUỸ (ĐÃ CHUYỂN SỐ ÂM THÀNH DƯƠNG TUYỆT ĐỐI) 🛠 */
         function calculateFundSummary() {
             let totalManualIncome = window.fundIncomes.reduce((sum, item) => sum + Number(item.amount), 0);
 
@@ -1380,7 +1383,6 @@
                 
                 if (isTransferYes) {
                     let dayNetK = getBtcThuVeForDate(d);
-                    // Dùng Math.abs để chuyển số âm thành số dương khi cộng vào tổng thu quỹ
                     if (dayNetK !== 0) {
                         autoDailyIncomeTotal += Math.abs(dayNetK * 1000);
                     }
@@ -1533,7 +1535,7 @@
             }
         }
 
-        /* 🛠 HÀM HIỂN THỊ KHOẢN THU TỰ ĐỘNG (CHUYỂN SỐ TIỀN THÀNH DƯƠNG TRÊN BẢNG NHẬT KÝ THU) 🛠 */
+        /* 🛠 HÀM RENDER KHOẢN THU TỰ ĐỘNG & THỦ CÔNG (ĐÃ CHỈNH THÃO TÁC VÀ THÊM CỘT GHI CHÚ) 🛠 */
         function renderFundIncomes() {
             const tbody = document.getElementById('income-list');
             if (!tbody) return;
@@ -1550,7 +1552,6 @@
                 if (isTransferYes) {
                     let dayNetK = getBtcThuVeForDate(d);
                     if (dayNetK !== 0) {
-                        // Lấy giá trị tuyệt đối để hiển thị số dương (+ tiền)
                         const positiveAmount = Math.abs(dayNetK) * 1000;
 
                         const trAuto = document.createElement('tr');
@@ -1563,8 +1564,14 @@
                             </td>
                             <td class="py-2.5 px-3 text-right font-black text-emerald-700 whitespace-nowrap">+${formatVND(positiveAmount)}</td>
                             <td class="py-2.5 px-3 text-slate-600"><span class="player-tag">BTC CLB</span></td>
+                            <td class="py-2.5 px-3 text-slate-500 italic">Đồng bộ tự động từ trận đấu</td>
                             <td class="py-2.5 px-3 text-center whitespace-nowrap">
-                                <span class="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full font-extrabold shadow-sm border border-emerald-300">TỰ ĐỘNG (+ Dương)</span>
+                                <button onclick="alert('Dòng này được hệ thống đồng bộ tự động từ Bảng Chi Tiết Ngày ${d}. Để điều chỉnh, vui lòng sửa kết quả tại ngày tương ứng!')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors" title="Chỉnh sửa">
+                                    <i class="fa-solid fa-pencil"></i>
+                                </button>
+                                <button onclick="if(confirm('Để ẩn khoản thu tự động Ngày ${d}, bạn có muốn đổi trạng thái NOTE của ngày này thành NO?')) { if(!window.paymentStatus[ '${d}' ]) window.paymentStatus[ '${d}' ] = {}; window.paymentStatus[ '${d}' ].btcNoteAdminOption = 'NO'; refreshAllViews(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase(); }" class="text-slate-400 hover:text-rose-500 p-1 transition-colors" title="Bỏ chuyển về Quỹ">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
                             </td>
                         `;
                         tbody.appendChild(trAuto);
@@ -1580,6 +1587,7 @@
                     <td class="py-2.5 px-3 font-medium text-slate-800">${item.desc}</td>
                     <td class="py-2.5 px-3 text-right font-semibold text-emerald-600 whitespace-nowrap">+${formatVND(item.amount)}</td>
                     <td class="py-2.5 px-3 text-xs"><span class="player-tag">${item.source}</span></td>
+                    <td class="py-2.5 px-3 text-xs text-slate-600">${item.note || '---'}</td>
                     <td class="py-2.5 px-3 text-center whitespace-nowrap">
                         <button onclick="openEditFundModal(${item.id}, 'income')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors" title="Chỉnh sửa">
                             <i class="fa-solid fa-pencil"></i>
@@ -1593,7 +1601,7 @@
             });
 
             if (tbody.children.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">Chưa có khoản thu nào.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Chưa có khoản thu nào.</td></tr>`;
             }
         }
 
@@ -1603,7 +1611,7 @@
             tbody.innerHTML = '';
 
             if(window.fundExpenses.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">Chưa có khoản chi nào.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Chưa có khoản chi nào.</td></tr>`;
                 return;
             }
 
@@ -1615,6 +1623,7 @@
                     <td class="py-2.5 px-3 font-medium text-slate-800">${item.desc}</td>
                     <td class="py-2.5 px-3 text-right font-semibold text-rose-600 whitespace-nowrap">-${formatVND(item.amount)}</td>
                     <td class="py-2.5 px-3 text-xs"><span class="player-tag">${item.source}</span></td>
+                    <td class="py-2.5 px-3 text-xs text-slate-600">${item.note || '---'}</td>
                     <td class="py-2.5 px-3 text-center whitespace-nowrap">
                         <button onclick="openEditFundModal(${item.id}, 'expense')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors" title="Chỉnh sửa">
                             <i class="fa-solid fa-pencil"></i>
@@ -1750,7 +1759,7 @@
                     if (dayNetK !== 0) {
                         const amt = Math.abs(dayNetK) * 1000;
                         autoDailyIncomeTotal += amt;
-                        autoIncomeRows.push([autoIncomeRows.length + 1, d, `Thu tiền kèo Ngày ${d}`, amt, "BTC CLB", "Tự động dương"]);
+                        autoIncomeRows.push([autoIncomeRows.length + 1, d, `Thu tiền kèo Ngày ${d}`, amt, "BTC CLB", "Đồng bộ tự động"]);
                     }
                 }
             });
