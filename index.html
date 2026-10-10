@@ -1142,7 +1142,7 @@
             { id:3, luot:1, san:3, content:"Nam xoay vòng", a1:"Phú Mỗ", a2:"Hà Giấy", scoreA:"", scoreB:"", b1:"Dũng Ngạc", b2:"Lợi Trì" },
             { id:4, luot:2, san:1, content:"Nam xoay vòng", a1:"Long Diễm", a2:"Châu Sĩ", scoreA:"", scoreB:"", b1:"Thành Đàm", b2:"Thành Sóc" },
             { id:5, luot:2, san:2, content:"Nam-Nữ không xoay vòng", a1:"Tuấn La", a2:"Ly", scoreA:"", scoreB:"", b1:"Điền Chèm", b2:"Hải Hà" },
-            { id:6, luot:2, san:3, content:"Nam-Nữ không xoay vòng", a1:"Hà Giấy", a2:"Vân Đình", scoreA:"", scoreB:"", b1:"Lợi Trì", b2:"Quỳnh Cool" }
+            { id:6, luot:2, san:3, content:"Nam-Nữ tidak xoay vòng", a1:"Hà Giấy", a2:"Vân Đình", scoreA:"", scoreB:"", b1:"Lợi Trì", b2:"Quỳnh Cool" }
         ];
 
         window.m2PairsA = [
@@ -1200,6 +1200,14 @@
         window.fundFeeStatus = JSON.parse(localStorage.getItem('pb_fee_status')) || {};
         window.fundIncomes = JSON.parse(localStorage.getItem('pb_incomes')) || defaultFundIncomes;
         window.fundExpenses = JSON.parse(localStorage.getItem('pb_expenses')) || defaultFundExpenses;
+        window.autoIncomeNotes = JSON.parse(localStorage.getItem('pb_auto_income_notes')) || {};
+
+        function updateAutoIncomeNote(dateStr, noteVal) {
+            window.autoIncomeNotes[dateStr] = noteVal;
+            localStorage.setItem('pb_auto_income_notes', JSON.stringify(window.autoIncomeNotes));
+            autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
+        }
 
         function getBtcThuVeForDate(dateStr) {
             const matches = window.matchesData[dateStr] || [];
@@ -1343,6 +1351,7 @@
             localStorage.setItem('pb_fee_status', JSON.stringify(window.fundFeeStatus));
             localStorage.setItem('pb_incomes', JSON.stringify(window.fundIncomes));
             localStorage.setItem('pb_expenses', JSON.stringify(window.fundExpenses));
+            localStorage.setItem('pb_auto_income_notes', JSON.stringify(window.autoIncomeNotes));
             updateFundDashboard();
             autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
@@ -1535,7 +1544,7 @@
             }
         }
 
-        /* 🛠 HÀM RENDER KHOẢN THU TỰ ĐỘNG & THỦ CÔNG (ĐÃ CHỈNH THÃO TÁC VÀ THÊM CỘT GHI CHÚ) 🛠 */
+        /* 🛠 RENDER KHOẢN THU TỰ ĐỘNG & THỦ CÔNG (ĐÃ CHỈNH GHI CHÚ CÓ THỂ SỬA TRỰC TIẾP) 🛠 */
         function renderFundIncomes() {
             const tbody = document.getElementById('income-list');
             if (!tbody) return;
@@ -1553,6 +1562,7 @@
                     let dayNetK = getBtcThuVeForDate(d);
                     if (dayNetK !== 0) {
                         const positiveAmount = Math.abs(dayNetK) * 1000;
+                        const currentCustomNote = window.autoIncomeNotes[d] !== undefined ? window.autoIncomeNotes[d] : "Đồng bộ tự động từ trận đấu";
 
                         const trAuto = document.createElement('tr');
                         trAuto.className = "bg-emerald-50/80 font-semibold text-xs border-b border-emerald-200/80 hover:bg-emerald-100/80 transition-colors";
@@ -1564,9 +1574,11 @@
                             </td>
                             <td class="py-2.5 px-3 text-right font-black text-emerald-700 whitespace-nowrap">+${formatVND(positiveAmount)}</td>
                             <td class="py-2.5 px-3 text-slate-600"><span class="player-tag">BTC CLB</span></td>
-                            <td class="py-2.5 px-3 text-slate-500 italic">Đồng bộ tự động từ trận đấu</td>
+                            <td class="py-2.5 px-3">
+                                <input type="text" value="${currentCustomNote}" onchange="updateAutoIncomeNote('${d}', this.value)" class="w-full bg-white border border-emerald-300 rounded px-2 py-1 text-xs text-slate-700 font-medium focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="Nhập ghi chú thay đổi...">
+                            </td>
                             <td class="py-2.5 px-3 text-center whitespace-nowrap">
-                                <button onclick="alert('Dòng này được hệ thống đồng bộ tự động từ Bảng Chi Tiết Ngày ${d}. Để điều chỉnh, vui lòng sửa kết quả tại ngày tương ứng!')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors" title="Chỉnh sửa">
+                                <button onclick="alert('Dòng này tự động cập nhật số tiền từ Bảng Chi Tiết Ngày ${d}. Bạn có thể chỉnh sửa ghi chú ngay tại cột ghi chú hoặc thay đổi kết quả tại ngày tương ứng!')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors" title="Chỉnh sửa">
                                     <i class="fa-solid fa-pencil"></i>
                                 </button>
                                 <button onclick="if(confirm('Để ẩn khoản thu tự động Ngày ${d}, bạn có muốn đổi trạng thái NOTE của ngày này thành NO?')) { if(!window.paymentStatus[ '${d}' ]) window.paymentStatus[ '${d}' ] = {}; window.paymentStatus[ '${d}' ].btcNoteAdminOption = 'NO'; refreshAllViews(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase(); }" class="text-slate-400 hover:text-rose-500 p-1 transition-colors" title="Bỏ chuyển về Quỹ">
@@ -1759,7 +1771,8 @@
                     if (dayNetK !== 0) {
                         const amt = Math.abs(dayNetK) * 1000;
                         autoDailyIncomeTotal += amt;
-                        autoIncomeRows.push([autoIncomeRows.length + 1, d, `Thu tiền kèo Ngày ${d}`, amt, "BTC CLB", "Đồng bộ tự động"]);
+                        const noteVal = window.autoIncomeNotes[d] !== undefined ? window.autoIncomeNotes[d] : "Đồng bộ tự động từ trận đấu";
+                        autoIncomeRows.push([autoIncomeRows.length + 1, d, `Thu tiền kèo Ngày ${d}`, amt, "BTC CLB", noteVal]);
                     }
                 }
             });
@@ -2660,6 +2673,7 @@
                     fundFeeStatus: window.fundFeeStatus,
                     fundIncomes: window.fundIncomes,
                     fundExpenses: window.fundExpenses,
+                    autoIncomeNotes: window.autoIncomeNotes,
                     knockoutScores: {
                         bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
                         bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
@@ -2693,6 +2707,7 @@
                 if (data.fundFeeStatus) window.fundFeeStatus = data.fundFeeStatus;
                 if (data.fundIncomes) window.fundIncomes = data.fundIncomes;
                 if (data.fundExpenses) window.fundExpenses = data.fundExpenses;
+                if (data.autoIncomeNotes) window.autoIncomeNotes = data.autoIncomeNotes;
 
                 refreshAllViews();
                 if (!silent) alert("Đã nạp thành công dữ liệu từ Auto-Backup!");
@@ -2721,6 +2736,7 @@
                 fundFeeStatus: window.fundFeeStatus,
                 fundIncomes: window.fundIncomes,
                 fundExpenses: window.fundExpenses,
+                autoIncomeNotes: window.autoIncomeNotes,
                 knockoutScores: {
                     bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
                     bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
@@ -2762,6 +2778,7 @@
                     if (data.fundFeeStatus) window.fundFeeStatus = data.fundFeeStatus;
                     if (data.fundIncomes) window.fundIncomes = data.fundIncomes;
                     if (data.fundExpenses) window.fundExpenses = data.fundExpenses;
+                    if (data.autoIncomeNotes) window.autoIncomeNotes = data.autoIncomeNotes;
 
                     refreshAllViews();
                     autoBackupData();
@@ -3055,6 +3072,7 @@
                     fundFeeStatus: window.fundFeeStatus,
                     fundIncomes: window.fundIncomes,
                     fundExpenses: window.fundExpenses,
+                    autoIncomeNotes: window.autoIncomeNotes,
                     knockoutScores: knockoutScores
                 }, { merge: true });
                 console.log("Đã đồng bộ Firestore thành công!");
@@ -3097,6 +3115,7 @@
                     if (data.fundFeeStatus) window.fundFeeStatus = data.fundFeeStatus;
                     if (data.fundIncomes) window.fundIncomes = data.fundIncomes;
                     if (data.fundExpenses) window.fundExpenses = data.fundExpenses;
+                    if (data.autoIncomeNotes) window.autoIncomeNotes = data.autoIncomeNotes;
 
                     if (data.knockoutScores) {
                         const s = data.knockoutScores;
