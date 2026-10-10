@@ -224,7 +224,7 @@
                 </button>
 
                 <button onclick="showTab('fund_manager')" id="btn-fund_manager" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-teal-800 text-teal-100 border border-teal-400/40 font-bold shadow-sm">
-                    <i class="fa-solid fa-vault text-yellow-300"></i> <span>QUẢN LÝ QUẤY PICK</span>
+                    <i class="fa-solid fa-vault text-yellow-300"></i> <span>QUẢN LÝ QUỸ PICK</span>
                 </button>
 
                 <button onclick="showTab('tonghop')" id="btn-tonghop" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-indigo-800 text-indigo-100 border border-indigo-400/40 font-bold shadow-sm">
@@ -768,7 +768,7 @@
             </div>
         </section>
 
-        <!-- QUẢN LÝ QUẤY PICK -->
+        <!-- QUẢN LÝ QUỸ PICK -->
         <section id="tab-fund_manager" class="tab-content hidden space-y-6">
             <div class="bg-gradient-to-r from-brand-800 via-brand-700 to-court-600 text-white p-5 rounded-2xl shadow-md flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="flex items-center space-x-3">
@@ -925,7 +925,7 @@
                 </section>
             </div>
 
-            <!-- BẢNG QUẢN LÝ QUẤY CÁC QUÝ -->
+            <!-- BẢNG QUẢN LÝ QUỸ CÁC QUÝ -->
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
                 <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
@@ -1033,7 +1033,7 @@
         </div>
     </div>
 
-    <!-- MODAL THÊM / SỬA KHOẢN THU CHI QUẤY -->
+    <!-- MODAL THÊM / SỬA KHOẢN THU CHI QUỸ -->
     <div id="fund-modal-backdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-slate-100">
             <div id="fund-modal-header" class="p-4 bg-emerald-600 text-white flex justify-between items-center">
@@ -1197,7 +1197,7 @@
         window.fundIncomes = JSON.parse(localStorage.getItem('pb_incomes')) || defaultFundIncomes;
         window.fundExpenses = JSON.parse(localStorage.getItem('pb_expenses')) || defaultFundExpenses;
 
-        /* 🛠 HÀM ĐÃ SỬA LỖI 1: TÍNH CHÍNH XÁC SỐ TIỀN BTC THU VỀ MỖI NGÀY 🛠 */
+        /* 🛠 HÀM TÍNH TOÁN BTC THU VỀ ĐÃ ĐƯỢC CHUẨN HÓA TUYỆT ĐỐI 🛠 */
         function getBtcThuVeForDate(dateStr) {
             const matches = window.matchesData[dateStr] || [];
             if (!matches || matches.length === 0) return 0;
@@ -1518,7 +1518,7 @@
                         <td class="py-2.5 px-3 text-center text-emerald-700 font-black">${formatVND(grandTotalCollected)}</td>
                     </tr>
                     <tr class="bg-rose-50/80 text-rose-900">
-                        <td class="py-2.5 px-3 text-center font-bold" colspan="2">DÒNG CHI QUẤY:</td>
+                        <td class="py-2.5 px-3 text-center font-bold" colspan="2">DÒNG CHI QUỸ:</td>
                         <td class="py-2.5 px-3 text-right font-extrabold" colspan="${colSpanCount - 1}">Tổng Các Khoản Chi Tiền Sân & Sinh Hoạt:</td>
                         <td class="py-2.5 px-3 text-center text-rose-600 font-black">-${formatVND(totalExpense)}</td>
                     </tr>
@@ -1532,7 +1532,7 @@
             }
         }
 
-        /* 🛠 HÀM ĐÃ SỬA LỖI 2: TỰ ĐỘNG TẠO DÒNG THU TIỀN KÈO VÀO BẢNG NHẬT KÝ KHOẢN THU 🛠 */
+        /* 🛠 HÀM RENDER NHẬT KÝ THU TỰ ĐỘNG ĐÃ KHẮC PHỤC HOÀN TOÀN 🛠 */
         function renderFundIncomes() {
             const tbody = document.getElementById('income-list');
             if (!tbody) return;
@@ -1543,13 +1543,14 @@
                 const pStatus = window.paymentStatus ? window.paymentStatus[d] : null;
                 let isTransferYes = true;
                 
+                // Mặc định là YES, chỉ ẩn khi có cấu hình rõ ràng là "NO"
                 if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
                     isTransferYes = false;
                 }
 
                 if (isTransferYes) {
                     let dayNetK = getBtcThuVeForDate(d);
-                    if (dayNetK > 0) {
+                    if (dayNetK !== 0) {
                         const trAuto = document.createElement('tr');
                         trAuto.className = "bg-emerald-50/80 font-semibold text-xs border-b border-emerald-200/80 hover:bg-emerald-100/80 transition-colors";
                         trAuto.innerHTML = `
@@ -1558,7 +1559,7 @@
                                 <i class="fa-solid fa-coins text-amber-500"></i>
                                 <span>Thu tiền kèo Ngày ${d}</span>
                             </td>
-                            <td class="py-2.5 px-3 text-right font-black text-emerald-700 whitespace-nowrap">+${formatVND(dayNetK * 1000)}</td>
+                            <td class="py-2.5 px-3 text-right font-black ${dayNetK > 0 ? 'text-emerald-700' : 'text-rose-600'} whitespace-nowrap">${dayNetK > 0 ? '+' : ''}${formatVND(dayNetK * 1000)}</td>
                             <td class="py-2.5 px-3 text-slate-600"><span class="player-tag">BTC CLB</span></td>
                             <td class="py-2.5 px-3 text-center whitespace-nowrap">
                                 <span class="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full font-extrabold shadow-sm border border-emerald-300">TỰ ĐỘNG</span>
@@ -1745,7 +1746,7 @@
 
                 if (isTransferYes) {
                     let dayNetK = getBtcThuVeForDate(d);
-                    if (dayNetK > 0) {
+                    if (dayNetK !== 0) {
                         const amt = dayNetK * 1000;
                         autoDailyIncomeTotal += amt;
                         autoIncomeRows.push([autoIncomeRows.length + 1, d, `Thu tiền kèo Ngày ${d}`, amt, "BTC CLB", "Tự động"]);
@@ -1758,13 +1759,13 @@
             const currentBalance = window.initialFund + grandTotalIncome - totalExpense;
 
             const summaryData = [
-                ["BÁO CÁO TỔNG QUAN QUẤY PICKLEBALL"],
+                ["BÁO CÁO TỔNG QUAN QUỸ PICKLEBALL"],
                 [],
                 ["Hạng mục", "Số tiền (VNĐ)", "Ghi chú"],
                 ["Quỹ đầu kỳ", window.initialFund, "Tồn quỹ kỳ trước chuyển sang"],
                 ["Tổng thu trong kỳ", grandTotalIncome, "Bao gồm thu thủ công & thu tiền kèo tự động các ngày"],
                 ["Tổng chi trong kỳ", totalExpense, "Tự động tính từ Nhật ký Chi"],
-                ["SỐ DƯ QUẤY HIỆN TẠI", currentBalance, "Công thức: Đầu kỳ + Thu - Chi"]
+                ["SỐ DƯ QUỸ HIỆN TẠI", currentBalance, "Công thức: Đầu kỳ + Thu - Chi"]
             ];
 
             const statusMap = { paid: "Đã đóng", unpaid: "Chưa đóng", pause: "Tạm nghỉ", no: "NO (Chưa đến)" };
@@ -1793,7 +1794,7 @@
                 ["STT", "Ngày tháng", "Nội dung thu", "Số tiền (VNĐ)", "Nguồn/Pick thủ", "Ghi chú"],
                 ...autoIncomeRows,
                 ...window.fundIncomes.map((item, i) => [autoIncomeRows.length + i + 1, formatDate(item.date), item.desc, item.amount, item.source, item.note]),
-                ["", "", "TỔNG CỘNG THU QUẤY", grandTotalIncome, "", ""]
+                ["", "", "TỔNG CỘNG THU QUỸ", grandTotalIncome, "", ""]
             ];
 
             const expenseData = [
@@ -2000,7 +2001,6 @@
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
-        /* 🛠 HÀM ĐÃ SỬA LỖI 3: CẬP NHẬT TRẠNG THÁI NOTE VA LÀM MỚI TOÀN BỘ GIAO DIỆN QUẤY 🛠 */
         function handleBtcNoteChange(selectEl) {
             const dateStr = window.currentSelectedDate;
             if (!window.paymentStatus) window.paymentStatus = {};
