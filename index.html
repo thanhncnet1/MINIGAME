@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Quản Lý Quỹ Pickleball</title>
+    <title>CLB-PICKLEBALL-CMTD - Quản Lý Giải Đấu & Quỹ</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -42,13 +42,134 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     
     <style>
-        .player-tag {
+        .excel-table th {
+            background-color: #1e3a8a;
+            color: white;
+            text-align: center;
+            font-size: 0.8rem;
+            padding: 6px 4px;
+            white-space: nowrap;
+        }
+        .excel-table td {
+            padding: 4px 4px;
+            font-size: 0.8rem;
+            border: 1px solid #e5e7eb;
+        }
+        .excel-table input, .excel-table select {
+            width: 100%;
+            padding: 2px 4px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .player-cell {
+            min-width: 110px;
+            font-weight: 600;
+        }
+
+        .player-tag, .player-select-btn {
             font-weight: 800 !important;
             color: #1e40af !important;
-            background-color: #eff6ff;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
             border-radius: 6px;
             padding: 2px 6px;
             display: inline-block;
+        }
+        .player-tag:hover, .player-select-btn:hover {
+            background-color: #fef08a !important;
+            color: #0369a1 !important;
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        }
+
+        .bg-theme-slate { background-color: #f1f5f9; }
+        .bg-theme-dark { background-color: #0f172a; color: #f8fafc; }
+        .bg-theme-emerald { background-color: #ecfdf5; }
+        .bg-theme-blue { background-color: #eff6ff; }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border: 1px solid #cbd5e1;
+            z-index: 9999 !important;
+            padding: 4px 0;
+            color: #1e293b;
+        }
+        .dropdown-menu.show { display: block; }
+        .dropdown-item {
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #334155;
+        }
+        .dropdown-item:hover { background-color: #f1f5f9; color: #2563eb; }
+        .dropdown-divider { height: 1px; background-color: #e2e8f0; margin: 3px 0; }
+        
+        .txt-win { color: #16a34a; font-weight: 800; }
+        .txt-lose { color: #dc2626; font-weight: 800; }
+        .note-paid { color: #16a34a; font-weight: 800; }
+        .note-unpaid { color: #ef4444; font-weight: 800; }
+
+        .score-input {
+            width: 36px !important;
+            height: 26px;
+            padding: 0 !important;
+            font-weight: 800;
+            text-align: center;
+            font-size: 12px;
+            border: 1.5px solid #a855f7 !important;
+            border-radius: 4px;
+            background: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+        .score-input:focus {
+            outline: none;
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+
+        .keo-custom-input {
+            width: 40px !important;
+            height: 22px;
+            padding: 0 2px !important;
+            font-size: 11px;
+            font-weight: 800;
+            text-align: center;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+        }
+        .ham-text {
+            background-color: #ef4444;
+            color: white;
+            font-weight: 900;
+            font-size: 9px;
+            padding: 2px 0;
+            border-radius: 3px;
+            display: block;
+            width: 100%;
+            text-align: center;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .smooth-scroll, .custom-scrollbar {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
@@ -64,232 +185,859 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
-        .wrap-content-cell {
-            white-space: normal !important;
-            word-break: break-word !important;
-            line-height: 1.4;
-        }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen flex flex-col font-sans text-slate-800">
+<body id="app-body" class="bg-theme-slate min-h-screen flex flex-col font-sans transition-colors duration-300 text-slate-800" onclick="closeAllDropdowns()">
 
-    <!-- NAVBAR / HEADER ĐIỀU KHIỂN -->
-    <nav class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center border border-yellow-400 shadow-md">
-                    <i class="fa-solid fa-vault text-yellow-300 text-lg"></i>
+    <!-- BANNER -->
+    <div class="relative w-full bg-slate-900 shadow-md flex justify-center items-center overflow-hidden">
+        <img src="banner.jpg" alt="Banner CLB Pickleball CMTD" class="w-full h-auto max-h-48 sm:max-h-64 md:max-h-80 object-cover object-center block">
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="bg-slate-800 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-2 sm:px-4 flex flex-col md:flex-row items-center justify-between py-2 md:py-0 md:h-16 gap-2">
+            
+            <div class="flex items-center space-x-2 cursor-pointer w-full md:w-auto justify-between md:justify-start" onclick="showTab('home')">
+                <div class="flex items-center space-x-2">
+                    <img src="logo1.png" alt="Logo CMTD" class="w-8 h-8 md:w-10 md:h-10 object-contain bg-white/10 rounded-full p-0.5 border border-yellow-400/50 shadow-md">
+                    <span class="font-extrabold text-base md:text-xl tracking-tight text-yellow-400">CLB-PICKLEBALL-CMTD</span>
                 </div>
-                <div>
-                    <span class="font-extrabold text-lg tracking-tight text-yellow-400 block">QUẢN LÝ QUỸ PICKLEBALL</span>
-                    <span class="text-[11px] text-slate-400">Độc lập - Lưu tự động - Xuất Excel & Backup</span>
+                <div class="flex items-center gap-1.5 md:hidden bg-slate-900/80 px-2 py-1 rounded-lg border border-slate-700">
+                    <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" id="status-dot-mobile"></span>
+                    <span id="status-element-mobile" class="text-[10px] text-yellow-400 font-medium">Online</span>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2">
-                <button onclick="exportFundToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow">
-                    <i class="fa-solid fa-file-excel"></i> <span>Xuất Excel</span>
+            <div class="flex flex-wrap items-center justify-center md:justify-end gap-1.5 sm:gap-2 text-xs md:text-sm font-semibold w-full md:w-auto">
+                <button onclick="showTab('home')" id="btn-home" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 text-yellow-400">
+                    <i class="fa-solid fa-house"></i> <span>HOME</span>
                 </button>
-                <button onclick="exportBackupJSON()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow">
-                    <i class="fa-solid fa-download"></i> <span>Backup JSON</span>
+                <button onclick="showTab('players')" id="btn-players" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
+                    <i class="fa-solid fa-users"></i> <span>Pick Thủ</span>
                 </button>
-                <button onclick="triggerRestoreInput()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow">
-                    <i class="fa-solid fa-upload"></i> <span>Restore JSON</span>
+                <button onclick="showTab('minigame1')" id="btn-minigame1" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
+                    <i class="fa-solid fa-trophy"></i> <span>MINIGAME 1</span>
                 </button>
-                <input type="file" id="restore-file-input" accept=".json" class="hidden" onchange="importBackupJSON(event)">
+                <button onclick="showTab('minigame2')" id="btn-minigame2" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
+                    <i class="fa-solid fa-medal"></i> <span>MINIGAME 2</span>
+                </button>
+
+                <button onclick="showTab('fund_manager')" id="btn-fund_manager" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-teal-800 text-teal-100 border border-teal-400/40 font-bold shadow-sm">
+                    <i class="fa-solid fa-vault text-yellow-300"></i> <span>QUẢN LÝ QUỸ PICK</span>
+                </button>
+
+                <button onclick="showTab('tonghop')" id="btn-tonghop" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-indigo-800 text-indigo-100 border border-indigo-400/40 font-bold shadow-sm">
+                    <i class="fa-solid fa-table-list text-yellow-400"></i> <span>📊 TỔNG HỢP CÁC NGÀY</span>
+                </button>
+
+                <div class="relative">
+                    <button onclick="toggleMenu('menuSetting', event)" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-slate-700/80 text-amber-300 border border-amber-400/30">
+                        <i class="fa-solid fa-gear"></i> <span>SETTING ▾</span>
+                    </button>
+                    <div class="dropdown-menu" id="menuSetting">
+                        <div class="dropdown-item" onclick="addDateTab()"><i class="fa-solid fa-calendar-plus text-emerald-600"></i> 📅 ➕ Thêm Ngày Mới</div>
+                        <div class="dropdown-item" onclick="renameCurrentDate()"><i class="fa-solid fa-pen-to-square text-blue-600"></i> ✏ Sửa Tên Ngày Hiện Tại</div>
+                        <div class="dropdown-item text-red-600" onclick="deleteCurrentDate()"><i class="fa-solid fa-trash text-red-600"></i> 🗑 Xóa Ngày Hiện Tại</div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item" onclick="exportToExcel()"><i class="fa-solid fa-file-excel text-emerald-600"></i> 📥 Xuất Dữ Liệu Excel</div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item" onclick="backupDataJSON()"><i class="fa-solid fa-floppy-disk text-indigo-600"></i> 💾 Sao Lưu (Backup JSON)</div>
+                        <div class="dropdown-item" onclick="triggerRestoreJSON()"><i class="fa-solid fa-file-import text-amber-600"></i> 📤 Phục Hồi (Restore JSON)</div>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <button onclick="toggleMenu('menuTongHop', event)" id="btn-dates" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-slate-700/80 text-blue-200 border border-blue-400/30">
+                        <i class="fa-solid fa-calendar-days"></i> <span>📅 CHI TIẾT NGÀY ▾</span>
+                    </button>
+                    <div class="dropdown-menu" id="menuTongHop">
+                        <div id="datesMenuList"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-1 bg-slate-900/90 px-1.5 py-1 rounded-lg border border-slate-700">
+                    <button onclick="exportBackupJSON()" title="Xuất file Sao Lưu" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] px-2 py-0.5 rounded transition flex items-center gap-1">
+                        <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">Backup</span>
+                    </button>
+                    <button onclick="triggerRestoreInput()" title="Phục Hồi Dữ Liệu" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] px-2 py-0.5 rounded transition flex items-center gap-1">
+                        <i class="fa-solid fa-upload"></i> <span class="hidden sm:inline">Restore</span>
+                    </button>
+                    <input type="file" id="restore-file-input" accept=".json" class="hidden" onchange="importBackupJSON(event)">
+                </div>
+
+                <div class="hidden md:flex items-center gap-1.5 bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-700">
+                    <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" id="status-dot"></span>
+                    <span id="status-element" class="text-xs text-yellow-400 font-medium">Đang kết nối...</span>
+                </div>
+
+                <div class="flex items-center bg-slate-900/60 p-1 rounded-lg border border-slate-700">
+                    <i class="fa-solid fa-palette text-amber-400 text-xs px-1"></i>
+                    <select onchange="changeTheme(this.value)" class="bg-transparent text-xs text-slate-200 outline-none cursor-pointer">
+                        <option value="bg-theme-slate" class="text-slate-900">Sáng</option>
+                        <option value="bg-theme-dark" class="text-slate-900">Tối</option>
+                        <option value="bg-theme-blue" class="text-slate-900">Xanh</option>
+                        <option value="bg-theme-emerald" class="text-slate-900">Ngọc</option>
+                    </select>
+                </div>
             </div>
         </div>
     </nav>
 
     <!-- MAIN CONTAINER -->
-    <main class="max-w-7xl mx-auto w-full p-4 flex-grow space-y-6">
+    <main class="max-w-7xl mx-auto w-full p-2 md:p-4 flex-grow">
 
-        <!-- BANNER TIÊU ĐỀ -->
-        <div class="bg-gradient-to-r from-brand-800 via-brand-700 to-court-600 text-white p-6 rounded-2xl shadow-md flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div class="flex items-center space-x-3">
-                <div class="p-3 bg-white/10 rounded-xl backdrop-blur-md border border-white/20">
-                    <i class="fa-solid fa-table-tennis-paddle-ball text-3xl text-yellow-300"></i>
+        <!-- TRANG CHỦ -->
+        <section id="tab-home" class="tab-content">
+            <div class="bg-white/90 backdrop-blur rounded-xl shadow-md p-6 md:p-8 text-center my-4 text-slate-800">
+                <h2 class="text-2xl font-bold mb-4">CHÀO MỪNG ĐẾN VỚI GIẢI ĐẤU CLB-PICKLEBALL-CMTD</h2>
+                <p class="text-slate-600 mb-6 max-w-2xl mx-auto text-sm md:text-base">Vui lòng chọn một trong các mục bên dưới hoặc trên thanh menu để bắt đầu quản lý danh sách vận động viên, lịch thi đấu và bảng xếp hạng.</p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 max-w-7xl mx-auto">
+                    <div onclick="showTab('players')" class="cursor-pointer bg-blue-50/80 border border-blue-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
+                        <div class="my-auto">
+                            <i class="fa-solid fa-user-gear text-4xl text-blue-600 mb-3 group-hover:scale-110 transition-transform block"></i>
+                            <h3 class="font-bold text-base md:text-lg text-slate-800">Danh Sách Pick Thủ</h3>
+                            <p class="text-xs text-slate-500 mt-2">Thêm, xoá, sửa thông tin thành viên CLB</p>
+                        </div>
+                    </div>
+
+                    <div onclick="showTab('minigame1')" class="cursor-pointer bg-amber-50/80 border border-amber-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
+                        <div class="my-auto">
+                            <i class="fa-solid fa-people-group text-4xl text-amber-600 mb-3 group-hover:scale-110 transition-transform block"></i>
+                            <h3 class="font-bold text-base md:text-lg text-slate-800">MINIGAME 1</h3>
+                            <p class="text-xs text-slate-500 mt-2">Đấu Team A vs Team B (Lịch 24 trận & Tổng hợp)</p>
+                        </div>
+                    </div>
+
+                    <div onclick="showTab('minigame2')" class="cursor-pointer bg-emerald-50/80 border border-emerald-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
+                        <div class="my-auto">
+                            <i class="fa-solid fa-diagram-project text-4xl text-emerald-600 mb-3 group-hover:scale-110 transition-transform block"></i>
+                            <h3 class="font-bold text-base md:text-lg text-slate-800">MINIGAME 2</h3>
+                            <p class="text-xs text-slate-500 mt-2">Vòng Bảng A-B, Vòng Vòng Tròn, Bán Kết, Chung Kết</p>
+                        </div>
+                    </div>
+
+                    <div onclick="showTab('fund_manager')" class="cursor-pointer bg-green-50/80 border border-green-300 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
+                        <div class="my-auto">
+                            <i class="fa-solid fa-vault text-4xl text-green-700 mb-3 group-hover:scale-110 transition-transform block"></i>
+                            <h3 class="font-bold text-base md:text-lg text-slate-800">Quản Lý Quỹ Pick</h3>
+                            <p class="text-xs text-slate-500 mt-2">Theo dõi Hội Phí Các Quý, Sân Pickleball & Số dư tự động</p>
+                        </div>
+                    </div>
+
+                    <div onclick="showTab('tonghop')" class="cursor-pointer bg-indigo-50/80 border border-indigo-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
+                        <div class="my-auto">
+                            <i class="fa-solid fa-table-list text-4xl text-indigo-600 mb-3 group-hover:scale-110 transition-transform block"></i>
+                            <h3 class="font-bold text-base md:text-lg text-slate-800">Bảng Tổng Hợp</h3>
+                            <p class="text-xs text-slate-500 mt-2">Tổng hợp kết quả kèo & thưởng phạt tất cả các ngày</p>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Hệ Thống Quỹ CLB Pickleball</h1>
-                    <p class="text-xs text-brand-100">Theo dõi hội phí các quý, khoản thu/chi thực tế & số dư tự động</p>
+
+                <div class="mt-8 pt-6 border-t border-slate-200 max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50 p-4 rounded-xl border">
+                    <div class="text-left">
+                        <h4 class="font-bold text-sm text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-database text-blue-600"></i> Quản Lý Dữ Liệu An Toàn
+                        </h4>
+                        <p class="text-xs text-slate-500">Tự động sao lưu bộ nhớ hoặc xuất/nạp file JSON để khôi phục.</p>
+                    </div>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <button onclick="restoreAutoBackup()" class="flex-1 sm:flex-none bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-2 rounded-lg font-semibold flex items-center justify-center gap-1.5 shadow">
+                            <i class="fa-solid fa-rotate-left"></i> Nạp Auto-Backup
+                        </button>
+                        <button onclick="exportBackupJSON()" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-lg font-semibold flex items-center justify-center gap-1.5 shadow">
+                            <i class="fa-solid fa-file-export"></i> Tải Backup
+                        </button>
+                        <button onclick="triggerRestoreInput()" class="flex-1 sm:flex-none bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-2 rounded-lg font-semibold flex items-center justify-center gap-1.5 shadow">
+                            <i class="fa-solid fa-file-import"></i> Nạp Backup
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
-                <button onclick="addNewFundPlayerPrompt()" class="bg-white text-brand-800 hover:bg-brand-50 px-4 py-2 rounded-xl font-bold text-xs transition shadow flex items-center gap-1.5">
-                    <i class="fa-solid fa-user-plus text-brand-600"></i> <span>Thêm Pick Thủ</span>
-                </button>
-            </div>
-        </div>
+        </section>
 
-        <!-- CARDS TỔNG QUAN -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm relative group">
-                <div class="flex items-center justify-between">
+        <!-- DANH SÁCH PICK THỦ -->
+        <section id="tab-players" class="tab-content hidden">
+            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
+                <div class="flex justify-between items-center mb-6 pb-4 border-b">
                     <div>
-                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Quỹ Đầu Kỳ (VNĐ)</p>
-                        <input type="number" id="input-initial-fund" onchange="updateInitialFund(this.value)" class="text-xl font-bold text-slate-800 mt-1 w-full border-b border-slate-300 focus:border-brand-500 outline-none bg-transparent" placeholder="0">
-                    </div>
-                    <div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-600">
-                        <i class="fa-solid fa-vault text-xl"></i>
-                    </div>
-                </div>
-                <div class="mt-3 text-xs text-slate-400">Click để chỉnh sửa số dư đầu kỳ</div>
-            </div>
-
-            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm relative group">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Tổng Thu</p>
-                        <h3 id="stat-income" class="text-2xl font-bold text-emerald-600 mt-1">0 ₫</h3>
-                    </div>
-                    <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
-                        <i class="fa-solid fa-arrow-down-left text-xl"></i>
-                    </div>
-                </div>
-                <div class="mt-3 text-xs text-slate-400">Hội phí & Các khoản thu thủ công</div>
-            </div>
-
-            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm relative group">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-wider text-rose-600">Tổng Chi</p>
-                        <h3 id="stat-expense" class="text-2xl font-bold text-rose-600 mt-1">0 ₫</h3>
-                    </div>
-                    <div class="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center text-rose-600">
-                        <i class="fa-solid fa-arrow-up-right text-xl"></i>
-                    </div>
-                </div>
-                <div class="mt-3 text-xs text-slate-400">Chi sân, bóng & sinh hoạt CLB</div>
-            </div>
-
-            <div class="bg-gradient-to-br from-brand-700 to-brand-900 rounded-2xl p-5 text-white shadow-md relative group">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-wider text-brand-200">Số Dư Quỹ Hiện Tại</p>
-                        <h3 id="stat-balance" class="text-2xl font-bold text-white mt-1">0 ₫</h3>
-                    </div>
-                    <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-yellow-300 backdrop-blur-sm">
-                        <i class="fa-solid fa-wallet text-xl"></i>
-                    </div>
-                </div>
-                <div class="mt-3 text-xs text-brand-200 flex items-center gap-1">
-                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Cập nhật tự động tức thì
-                </div>
-            </div>
-        </div>
-
-        <!-- NHẬT KÝ THU / CHI -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- KHOẢN THU -->
-            <section class="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col">
-                <div class="p-5 border-b border-slate-100 flex justify-between items-center">
-                    <div>
-                        <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-circle-arrow-down text-emerald-600"></i>
-                            <span>Nhật Ký Khoản Thu</span>
+                        <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-users text-blue-600"></i> Danh Sách Pick Thủ CLB
                         </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Quản lý các khoản tiền thu quỹ ngoài hội phí</p>
+                        <p class="text-xs text-slate-500">Quản lý danh sách thành viên tham gia giải đấu (Đồng bộ toàn bộ giao diện)</p>
                     </div>
-                    <button onclick="openFundModal('income')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-sm">
-                        <i class="fa-solid fa-plus"></i> <span>Thêm Thu</span>
+                    <button onclick="openPlayerModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 shadow">
+                        <i class="fa-solid fa-plus"></i> Thêm Pick Thủ
                     </button>
                 </div>
 
-                <div class="flex-1 overflow-x-auto custom-scrollbar max-h-80">
-                    <table class="w-full text-left text-sm border-collapse">
-                        <thead class="bg-slate-50 text-slate-600 font-semibold sticky top-0 border-b border-slate-200">
-                            <tr>
-                                <th class="py-2.5 px-3 w-28 whitespace-nowrap">Ngày</th>
-                                <th class="py-2.5 px-3 min-w-[180px]">Nội dung</th>
-                                <th class="py-2.5 px-3 text-right w-28 whitespace-nowrap">Số tiền</th>
-                                <th class="py-2.5 px-3 min-w-[150px]">Ghi chú</th>
-                                <th class="py-2.5 px-3 text-center w-20 whitespace-nowrap">Thao tác</th>
+                <div class="smooth-scroll">
+                    <table class="w-full text-left border-collapse border border-slate-200">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 text-sm">
+                                <th class="p-3 border w-16 text-center">STT</th>
+                                <th class="p-3 border">Tên Pick Thủ</th>
+                                <th class="p-3 border w-28 text-center">Giới tính</th>
+                                <th class="p-3 border text-center w-40">Thao Tác</th>
                             </tr>
                         </thead>
-                        <tbody id="income-list" class="divide-y divide-slate-100"></tbody>
+                        <tbody id="player-table-body" class="text-sm divide-y divide-slate-200"></tbody>
                     </table>
                 </div>
+            </div>
+        </section>
 
-                <div class="p-3 bg-slate-50 border-t border-slate-100 rounded-b-2xl flex justify-between items-center px-4 font-semibold text-slate-700 text-sm">
-                    <span>Tổng Thu Khác:</span>
-                    <span id="income-total" class="text-emerald-600 font-bold">0 ₫</span>
-                </div>
-            </section>
-
-            <!-- KHOẢN CHI -->
-            <section class="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col">
-                <div class="p-5 border-b border-slate-100 flex justify-between items-center">
-                    <div>
-                        <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-circle-arrow-up text-rose-600"></i>
-                            <span>Nhật Ký Khoản Chi</span>
-                        </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Tiền thuê sân, bóng, giải thưởng & sinh hoạt</p>
+        <!-- MINIGAME 1 -->
+        <section id="tab-minigame1" class="tab-content hidden">
+            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
+                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
+                    <i class="fa-solid fa-users-rectangle text-amber-600"></i> Danh Sách Pick Thủ Chia 2 Team (A & B)
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border border-blue-200 bg-blue-50/50 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <h4 class="font-bold text-blue-800 uppercase flex items-center gap-2">
+                                <i class="fa-solid fa-shield-halved"></i> Team A (<span id="team-A-count">0</span> VĐV)
+                            </h4>
+                            <button onclick="addTeamMember('A')" class="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700">
+                                <i class="fa-solid fa-plus"></i> Thêm VĐV
+                            </button>
+                        </div>
+                        <div id="team-A-list" class="space-y-2"></div>
                     </div>
-                    <button onclick="openFundModal('expense')" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-sm">
-                        <i class="fa-solid fa-plus"></i> <span>Thêm Chi</span>
+                    <div class="border border-orange-200 bg-orange-50/50 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <h4 class="font-bold text-orange-800 uppercase flex items-center gap-2">
+                                <i class="fa-solid fa-shield-halved"></i> Team B (<span id="team-B-count">0</span> VĐV)
+                            </h4>
+                            <button onclick="addTeamMember('B')" class="text-xs bg-orange-600 text-white px-2 py-1 rounded hover:bg-orange-700">
+                                <i class="fa-solid fa-plus"></i> Thêm VĐV
+                            </button>
+                        </div>
+                        <div id="team-B-list" class="space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
+                <div class="flex justify-between items-center mb-3">
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-black text-blue-900 tracking-wide uppercase">LỊCH THI ĐẤU MINIGAME 1 (<span id="m1-match-count">24</span> TRẬN)</h2>
+                        <p class="text-xs italic text-slate-500">Tên Pick Thủ được cập nhật đồng bộ từ Danh sách Pick Thủ.</p>
+                    </div>
+                    <button onclick="addM1Match()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded shadow flex items-center gap-1 font-bold">
+                        <i class="fa-solid fa-plus"></i> Thêm Trận
                     </button>
                 </div>
 
-                <div class="flex-1 overflow-x-auto custom-scrollbar max-h-80">
-                    <table class="w-full text-left text-sm border-collapse">
-                        <thead class="bg-slate-50 text-slate-600 font-semibold sticky top-0 border-b border-slate-200">
+                <div class="smooth-scroll">
+                    <table class="w-full excel-table border-collapse">
+                        <thead>
                             <tr>
-                                <th class="py-2.5 px-3 w-28 whitespace-nowrap">Ngày</th>
-                                <th class="py-2.5 px-3 min-w-[180px]">Nội dung</th>
-                                <th class="py-2.5 px-3 text-right w-28 whitespace-nowrap">Số tiền</th>
-                                <th class="py-2.5 px-3 min-w-[150px]">Ghi chú</th>
-                                <th class="py-2.5 px-3 text-center w-20 whitespace-nowrap">Thao tác</th>
+                                <th class="w-10">STT</th>
+                                <th class="w-12">Lượt</th>
+                                <th class="w-12">Sân</th>
+                                <th class="w-36">Nội dung</th>
+                                <th class="player-cell">Đội A - VĐV 1</th>
+                                <th class="player-cell">Đội A - VĐV 2</th>
+                                <th class="w-12">Tỷ số A</th>
+                                <th class="w-8">VS</th>
+                                <th class="w-12">Tỷ số B</th>
+                                <th class="player-cell">Đội B - VĐV 1</th>
+                                <th class="player-cell">Đội B - VĐV 2</th>
+                                <th class="w-20">Đội thắng</th>
+                                <th class="w-16">Hiệu số A-B</th>
+                                <th class="w-12">Điểm A</th>
+                                <th class="w-12">Điểm B</th>
+                                <th class="w-20">Trạng thái</th>
+                                <th class="w-12">Thao tác</th>
                             </tr>
                         </thead>
-                        <tbody id="expense-list" class="divide-y divide-slate-100"></tbody>
+                        <tbody id="m1-schedule-body"></tbody>
                     </table>
                 </div>
+            </div>
 
-                <div class="p-3 bg-slate-50 border-t border-slate-100 rounded-b-2xl flex justify-between items-center px-4 font-semibold text-slate-700 text-sm">
-                    <span>Tổng Khoản Chi:</span>
-                    <span id="expense-total" class="text-rose-600 font-bold">0 ₫</span>
+            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
+                <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-pie text-indigo-600"></i> Bảng Tổng Hợp Chung Minigame 1
+                </h3>
+                <div class="smooth-scroll">
+                    <table class="w-full text-center border-collapse border border-slate-300">
+                        <thead>
+                            <tr class="bg-slate-800 text-white text-sm">
+                                <th class="p-2 border">Team</th>
+                                <th class="p-2 border">Số Trận Đã Đánh</th>
+                                <th class="p-2 border">Điểm Số</th>
+                                <th class="p-2 border">Hiệu Số Tổng</th>
+                                <th class="p-2 border">Trạng Thái Hiện Tại</th>
+                            </tr>
+                        </thead>
+                        <tbody id="m1-summary-body" class="text-sm font-semibold"></tbody>
+                    </table>
                 </div>
-            </section>
-        </div>
+            </div>
+        </section>
 
-        <!-- BẢNG HỘI PHÍ CÁC QUÝ & THÀNH VIÊN -->
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                        <i class="fa-solid fa-users text-brand-600"></i>
-                        <span>Danh Sách Pick Thủ & Hội Phí Các Quý</span>
+        <!-- MINIGAME 2 -->
+        <section id="tab-minigame2" class="tab-content hidden">
+            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
+                <div class="flex flex-wrap justify-between items-center mb-4 border-b pb-3 gap-2">
+                    <h2 class="text-xl font-bold text-slate-800 uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-trophy text-yellow-500"></i> Lịch Thi Đấu Giải Phú Thọ Open (Minigame 2)
                     </h2>
-                    <p class="text-xs text-slate-500 mt-0.5">Click tiêu đề cột để sửa tên Quý. Dùng nút "➕ Thêm Cột Quý Mới" để mở rộng thời gian.</p>
+                    <div class="flex gap-2">
+                        <button onclick="addPairM2('A')" class="bg-blue-600 text-white text-xs px-3 py-1.5 rounded hover:bg-blue-700 flex items-center gap-1 font-semibold">
+                            <i class="fa-solid fa-plus"></i> Thêm Cặp Bảng A
+                        </button>
+                        <button onclick="addPairM2('B')" class="bg-orange-600 text-white text-xs px-3 py-1.5 rounded hover:bg-orange-700 flex items-center gap-1 font-semibold">
+                            <i class="fa-solid fa-plus"></i> Thêm Cặp Bảng B
+                        </button>
+                    </div>
                 </div>
 
-                <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                    <button onclick="addNewQuarterColumn()" class="bg-teal-700 hover:bg-teal-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition shadow flex items-center gap-1.5">
-                        <i class="fa-solid fa-folder-plus text-yellow-300"></i> <span>➕ Thêm Cột Quý Mới</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="border rounded-lg p-3 bg-blue-50/40 border-blue-200">
+                        <h4 class="font-bold text-sm text-blue-900 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-user-group text-blue-600"></i> Cặp VĐV Bảng A (<span id="count-m2-A">0</span> cặp)
+                        </h4>
+                        <div id="m2-pairs-A" class="space-y-2"></div>
+                    </div>
+                    <div class="border rounded-lg p-3 bg-orange-50/40 border-orange-200">
+                        <h4 class="font-bold text-sm text-orange-900 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-user-group text-orange-600"></i> Cặp VĐV Bảng B (<span id="count-m2-B">0</span> cặp)
+                        </h4>
+                        <div id="m2-pairs-B" class="space-y-2"></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <div class="space-y-4">
+                        <h3 class="font-extrabold text-blue-900 border-b-2 border-blue-900 pb-1">BẢNG A</h3>
+                        <div class="smooth-scroll">
+                            <p class="text-xs font-bold text-slate-700 mb-1">Bảng Xếp Hạng Bảng A</p>
+                            <table class="w-full text-xs text-center border-collapse border border-slate-300">
+                                <thead class="bg-orange-500 text-white font-bold">
+                                    <tr>
+                                        <th class="p-1 border w-8">HẠNG</th>
+                                        <th class="p-1 border">Pickleball - Bảng A</th>
+                                        <th class="p-1 border w-12">Điểm</th>
+                                        <th class="p-1 border w-12">Hiệu số</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="m2-rank-A"></tbody>
+                            </table>
+                        </div>
+                        <div class="smooth-scroll">
+                            <p class="text-xs font-bold text-slate-700 mb-1">Lịch Thi Đấu Vòng Tròn Bảng A</p>
+                            <table class="w-full text-xs text-center border-collapse border border-slate-300">
+                                <thead class="bg-blue-600 text-white font-bold">
+                                    <tr>
+                                        <th class="p-1 border w-12">Trận</th>
+                                        <th class="p-1 border">Đội 1</th>
+                                        <th class="p-1 border w-12">KQ 1</th>
+                                        <th class="p-1 border w-12">KQ 2</th>
+                                        <th class="p-1 border">Đội 2</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="m2-schedule-A"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h3 class="font-extrabold text-orange-900 border-b-2 border-orange-900 pb-1">BẢNG B</h3>
+                        <div class="smooth-scroll">
+                            <p class="text-xs font-bold text-slate-700 mb-1">Bảng Xếp Hạng Bảng B</p>
+                            <table class="w-full text-xs text-center border-collapse border border-slate-300">
+                                <thead class="bg-orange-500 text-white font-bold">
+                                    <tr>
+                                        <th class="p-1 border w-8">HẠNG</th>
+                                        <th class="p-1 border">Pickleball - Bảng B</th>
+                                        <th class="p-1 border w-12">Điểm</th>
+                                        <th class="p-1 border w-12">Hiệu số</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="m2-rank-B"></tbody>
+                            </table>
+                        </div>
+                        <div class="smooth-scroll">
+                            <p class="text-xs font-bold text-slate-700 mb-1">Lịch Thi Đấu Vòng Tròn Bảng B</p>
+                            <table class="w-full text-xs text-center border-collapse border border-slate-300">
+                                <thead class="bg-blue-600 text-white font-bold">
+                                    <tr>
+                                        <th class="p-1 border w-12">Trận</th>
+                                        <th class="p-1 border">Đội 1</th>
+                                        <th class="p-1 border w-12">KQ 1</th>
+                                        <th class="p-1 border w-12">KQ 2</th>
+                                        <th class="p-1 border">Đội 2</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="m2-schedule-B"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="max-w-2xl mx-auto space-y-6 pt-4 border-t">
+                    <h3 class="text-center font-extrabold text-slate-800 text-lg uppercase">VÒNG KNOCKOUT (BÁN KẾT & CHUNG KẾT)</h3>
+
+                    <div class="border rounded overflow-hidden shadow-sm">
+                        <div class="bg-blue-700 text-white text-xs font-bold p-1.5 text-center">VÒNG BÁN KẾT (BK1: Nhất A - Nhì B | BK2: Nhất B - Nhì A)</div>
+                        <div class="smooth-scroll">
+                            <table class="w-full text-xs text-center border-collapse">
+                                <thead class="bg-slate-100">
+                                    <tr>
+                                        <th class="p-1 border w-16">Trận</th>
+                                        <th class="p-1 border">Đội 1</th>
+                                        <th class="p-1 border w-24">Kết quả</th>
+                                        <th class="p-1 border">Đội 2</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="border p-1.5 font-bold">BK1</td>
+                                        <td id="bk1-team1-name" class="border p-1.5 font-medium">Nhất A</td>
+                                        <td class="border p-1.5">
+                                            <div class="flex justify-center items-center gap-1">
+                                                <input type="number" id="bk1-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">-
+                                                <input type="number" id="bk1-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">
+                                            </div>
+                                        </td>
+                                        <td id="bk1-team2-name" class="border p-1.5 font-medium">Nhì B</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border p-1.5 font-bold">BK2</td>
+                                        <td id="bk2-team1-name" class="border p-1.5 font-medium">Nhất B</td>
+                                        <td class="border p-1.5">
+                                            <div class="flex justify-center items-center gap-1">
+                                                <input type="number" id="bk2-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">-
+                                                <input type="number" id="bk2-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">
+                                            </div>
+                                        </td>
+                                        <td id="bk2-team2-name" class="border p-1.5 font-medium">Nhì A</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="border rounded overflow-hidden shadow-sm">
+                        <div class="bg-blue-700 text-white text-xs font-bold p-1.5 text-center">TRANH 3/4 (Thua BK1 vs Thua BK2)</div>
+                        <div class="smooth-scroll">
+                            <table class="w-full text-xs text-center border-collapse">
+                                <tbody>
+                                    <tr>
+                                        <td class="border p-1.5 font-bold w-16">3/4</td>
+                                        <td id="t3-team1-name" class="border p-1.5 font-medium">Thua BK1</td>
+                                        <td class="border p-1.5 w-24">
+                                            <div class="flex justify-center items-center gap-1">
+                                                <input type="number" id="t3-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">-
+                                                <input type="number" id="t3-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">
+                                            </div>
+                                        </td>
+                                        <td id="t3-team2-name" class="border p-1.5 font-medium">Thua BK2</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="border rounded overflow-hidden shadow-sm">
+                        <div class="bg-blue-700 text-white text-xs font-bold p-1.5 text-center">TRANH CHUNG KẾT (Thắng BK1 vs Thắng BK2)</div>
+                        <div class="smooth-scroll">
+                            <table class="w-full text-xs text-center border-collapse">
+                                <tbody>
+                                    <tr>
+                                        <td class="border p-1.5 font-bold w-16">CK</td>
+                                        <td id="ck-team1-name" class="border p-1.5 font-medium">Thắng BK1</td>
+                                        <td class="border p-1.5 w-24">
+                                            <div class="flex justify-center items-center gap-1">
+                                                <input type="number" id="ck-s1" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">-
+                                                <input type="number" id="ck-s2" class="w-8 border text-center rounded" onchange="renderM2(); window.syncToFirebase(); autoBackupData();">
+                                            </div>
+                                        </td>
+                                        <td id="ck-team2-name" class="border p-1.5 font-medium">Thắng BK2</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="border rounded overflow-hidden bg-amber-100/90 border-amber-300 shadow-sm">
+                        <div class="bg-amber-600 text-white text-xs font-bold p-1.5 text-center">BẢNG CHUNG CUỘC MINIGAME 2</div>
+                        <table class="w-full text-xs border-collapse">
+                            <tbody>
+                                <tr class="border-b border-amber-200">
+                                    <td class="p-2 font-bold w-32 flex items-center gap-1"><i class="fa-solid fa-trophy text-yellow-600"></i> Đội Vô Địch:</td>
+                                    <td id="winner-1" class="p-2 font-extrabold text-blue-900">---</td>
+                                </tr>
+                                <tr class="border-b border-amber-200">
+                                    <td class="p-2 font-bold flex items-center gap-1"><i class="fa-solid fa-medal text-slate-400"></i> Đội Nhì:</td>
+                                    <td id="winner-2" class="p-2 font-bold text-slate-800">---</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-bold flex items-center gap-1"><i class="fa-solid fa-award text-amber-700"></i> Đội Về 3:</td>
+                                    <td id="winner-3" class="p-2 font-bold text-slate-800">---</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BẢNG ĐẤU THEO NGÀY CỤ THỂ -->
+        <section id="tab-day_detail" class="tab-content hidden space-y-6">
+            <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 text-slate-800">
+                <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b gap-2">
+                    <h2 class="text-base md:text-lg font-black text-slate-800 uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-day text-blue-600"></i> BẢNG THỐNG KÊ TRẬN PICK - NGÀY <span id="current-date-title" class="text-blue-700">1/10/26</span>
+                    </h2>
+                    <div class="flex items-center gap-2">
+                        <button onclick="addMatchToCurrentDate()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg shadow font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-plus"></i> Thêm Trận
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-3 bg-amber-50 p-2.5 rounded-lg border border-amber-200 flex flex-wrap items-center justify-between gap-2">
+                    <span class="text-xs font-bold text-amber-900 flex items-center gap-1">
+                        <i class="fa-solid fa-coins"></i> KÈO ÁP DỤNG TOÀN NGÀY:
+                    </span>
+                    <select id="keo-mode-select" onchange="applyKeoToAllMatchesInDate(this.value)" class="text-xs p-1.5 border rounded bg-white font-bold outline-none border-amber-400 text-slate-800 cursor-pointer">
+                        <option value="default">Kèo Mặc Định (Thắng +5k / Thua -15k)</option>
+                        <option value="k25">Kèo 25k (Thắng 0k / Thua -25k)</option>
+                        <option value="free">Kèo Tự Do (Tùy chỉnh riêng từng trận)</option>
+                    </select>
+                </div>
+
+                <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner">
+                    <table class="w-full min-w-[780px] text-center border-collapse border border-slate-300 text-xs">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 font-bold">
+                                <th class="p-2 border w-12">STT</th>
+                                <th class="p-2 border bg-emerald-100 text-emerald-900" colspan="2">CẶP PICK 1</th>
+                                <th class="p-2 border bg-purple-100 text-purple-900 w-24">TỶ SỐ</th>
+                                <th class="p-2 border bg-red-100 text-red-900" colspan="2">CẶP PICK 2</th>
+                                <th class="p-2 border bg-amber-100 text-amber-900 w-32">CHỌN KÈO TRẬN</th>
+                                <th class="p-2 border bg-amber-100 text-amber-900" colspan="2">KÈO BAN ĐẦU</th>
+                                <th class="p-2 border w-20 bg-slate-200 text-slate-800">THAO TÁC</th>
+                            </tr>
+                        </thead>
+                        <tbody id="day-matches-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 text-slate-800">
+                <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b gap-2">
+                    <h2 class="text-base md:text-lg font-black text-slate-800 uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-calculator text-indigo-600"></i> BẢNG TỔNG HỢP THÀNH TIỀN & THU CHI
+                    </h2>
+
+                    <div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-300">
+                        <span id="admin-status-badge" class="text-xs font-bold text-slate-600 flex items-center gap-1">
+                            <i class="fa-solid fa-lock text-red-500"></i> Mở Khóa Admin Tích Nộp:
+                        </span>
+                        <input type="password" id="admin-pass-input" placeholder="Nhập Pass..." class="w-24 text-xs p-1 border rounded outline-none focus:ring-1 focus:ring-blue-500">
+                        <button onclick="checkAdminPassword()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded font-bold shadow">
+                            Xác Nhận
+                        </button>
+                    </div>
+                </div>
+
+                <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner">
+                    <table class="w-full min-w-[700px] text-center border-collapse border border-slate-300 text-xs">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 font-bold">
+                                <th class="p-2 border w-28 text-left pl-3">PICK THỦ</th>
+                                <th class="p-2 border w-16">SỐ TRẬN</th>
+                                <th class="p-2 border w-20">THẮNG/K</th>
+                                <th class="p-2 border w-20">THUA/K</th>
+                                <th class="p-2 border w-24">MANG VỀ</th>
+                                <th class="p-2 border w-20">TỔNG</th>
+                                <th class="p-2 border w-20 bg-amber-100 text-amber-900">THỰC TẾ (ADMIN)</th>
+                                <th class="p-2 border w-28">NOTE</th>
+                            </tr>
+                        </thead>
+                        <tbody id="day-summary-body" class="font-semibold"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- QUẢN LÝ QUỸ PICK -->
+        <section id="tab-fund_manager" class="tab-content hidden space-y-6">
+            <div class="bg-gradient-to-r from-brand-800 via-brand-700 to-court-600 text-white p-5 rounded-2xl shadow-md flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2.5 bg-white/10 rounded-xl backdrop-blur-md border border-white/20">
+                        <i class="fa-solid fa-table-tennis-paddle-ball text-2xl text-yellow-300"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Quản Lý Quỹ Pickleball</h1>
+                        <p class="text-xs text-brand-100">Hệ thống theo dõi Thu Chi & Hội Phí Tự Động</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                    <button onclick="exportFundToExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-medium text-sm transition-all shadow-sm flex items-center gap-2 border border-emerald-400/30">
+                        <i class="fa-solid fa-file-excel"></i>
+                        <span>Xuất File Excel Quỹ</span>
                     </button>
-                    <div class="relative flex-1 sm:w-44">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <input type="text" id="member-search" oninput="renderFundMembers()" placeholder="Tìm Pick thủ..." class="w-full pl-9 pr-3 py-1.5 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+            </div>
+
+            <!-- CARDS TỔNG QUAN -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm relative overflow-hidden group">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Quỹ Đầu Kỳ (VNĐ)</p>
+                            <input type="number" id="input-initial-fund" onchange="updateInitialFund(this.value)" class="text-xl font-bold text-slate-800 mt-1 w-full border-b border-slate-300 focus:border-brand-500 outline-none bg-transparent" placeholder="0">
+                        </div>
+                        <div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-600 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-vault text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-xs text-slate-400">Click để chỉnh sửa số dư đầu kỳ</div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm relative overflow-hidden group">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Tổng Thu</p>
+                            <h3 id="stat-income" class="text-2xl font-bold text-emerald-600 mt-1">0 ₫</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-arrow-down-left text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-xs text-slate-400 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-info text-emerald-500"></i> Tự động cộng giá trị tuyệt đối từ dòng TỔNG BTC THU VỀ
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm relative overflow-hidden group">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-rose-600">Tổng Chi</p>
+                            <h3 id="stat-expense" class="text-2xl font-bold text-rose-600 mt-1">0 ₫</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center text-rose-600 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-arrow-up-right text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-xs text-slate-400 flex items-center gap-1">
+                        <i class="fa-solid fa-receipt text-rose-500"></i> Chi sân, bóng & sinh hoạt
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-brand-700 to-brand-900 rounded-2xl p-5 text-white shadow-md relative overflow-hidden group">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-brand-200">Số Dư Quỹ Hiện Tại</p>
+                            <h3 id="stat-balance" class="text-2xl font-bold text-white mt-1">0 ₫</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-yellow-300 group-hover:scale-110 transition-transform backdrop-blur-sm">
+                            <i class="fa-solid fa-wallet text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-xs text-brand-200 flex items-center gap-1">
+                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Tự động cập nhật tức thì
                     </div>
                 </div>
             </div>
 
-            <div class="overflow-x-auto custom-scrollbar">
-                <table class="w-full text-left text-sm">
-                    <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
-                        <tr id="member-list-thead-tr"></tr>
-                    </thead>
-                    <tbody id="member-list" class="divide-y divide-slate-100"></tbody>
-                    <tfoot id="member-list-foot" class="bg-slate-50 font-bold border-t-2 border-slate-300"></tfoot>
-                </table>
+            <!-- NHẬT KÝ THU / CHI (BẢNG KHOẢN THU LÊN TRÊN, BẢNG KHOẢN CHI XUỐNG DƯỚI) -->
+            <div class="flex flex-col gap-6">
+                <!-- BẢNG NHẬT KÝ KHOẢN THU -->
+                <section class="bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col">
+                    <div class="p-5 border-b border-slate-100 flex justify-between items-center">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-circle-arrow-down text-emerald-600"></i>
+                                <span>Nhật Ký Khoản Thu</span>
+                            </h2>
+                            <p class="text-xs text-slate-500 mt-0.5">Thu thủ công & Tự động đồng bộ số dương từ dòng TỔNG BTC THU VỀ</p>
+                        </div>
+                        <button onclick="openFundModal('income')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Thêm Thu</span>
+                        </button>
+                    </div>
+
+                    <div class="flex-1 overflow-x-auto custom-scrollbar max-h-96">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 text-slate-600 font-semibold sticky top-0 border-b border-slate-200">
+                                <tr>
+                                    <th class="py-2.5 px-3">Ngày</th>
+                                    <th class="py-2.5 px-3">Nội dung</th>
+                                    <th class="py-2.5 px-3 text-right">Số tiền</th>
+                                    <th class="py-2.5 px-3">Nguồn thu / Pick thủ</th>
+                                    <th class="py-2.5 px-3">Ghi chú</th>
+                                    <th class="py-2.5 px-3 text-center">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="income-list" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 border-t border-slate-100 rounded-b-2xl flex justify-between items-center px-4 font-semibold text-slate-700 text-sm">
+                        <span>Tổng Thu Quỹ:</span>
+                        <span id="income-total" class="text-emerald-600 font-bold">0 ₫</span>
+                    </div>
+                </section>
+
+                <!-- BẢNG NHẬT KÝ KHOẢN CHI -->
+                <section class="bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col">
+                    <div class="p-5 border-b border-slate-100 flex justify-between items-center">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-circle-arrow-up text-rose-600"></i>
+                                <span>Nhật Ký Khoản Chi</span>
+                            </h2>
+                            <p class="text-xs text-slate-500 mt-0.5">Tiền thuê sân, bóng, giải thưởng & giao lưu</p>
+                        </div>
+                        <button onclick="openFundModal('expense')" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Thêm Chi</span>
+                        </button>
+                    </div>
+
+                    <div class="flex-1 overflow-x-auto custom-scrollbar max-h-96">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 text-slate-600 font-semibold sticky top-0 border-b border-slate-200">
+                                <tr>
+                                    <th class="py-2.5 px-3">Ngày</th>
+                                    <th class="py-2.5 px-3">Nội dung</th>
+                                    <th class="py-2.5 px-3 text-right">Số tiền</th>
+                                    <th class="py-2.5 px-3">Hạng mục / Pick thủ</th>
+                                    <th class="py-2.5 px-3">Ghi chú</th>
+                                    <th class="py-2.5 px-3 text-center">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expense-list" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 border-t border-slate-100 rounded-b-2xl flex justify-between items-center px-4 font-semibold text-slate-700 text-sm">
+                        <span>Tổng Khoản Chi:</span>
+                        <span id="expense-total" class="text-rose-600 font-bold">0 ₫</span>
+                    </div>
+                </section>
             </div>
-        </div>
+
+            <!-- BẢNG QUẢN LÝ QUỸ CÁC QUÝ -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-users text-brand-600"></i>
+                            <span>Danh Sách Pick Thủ CLB & Tiền Sân Các Quý</span>
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Click tên cột để sửa. Dùng nút "➕ Thêm Cột Quý Mới" nếu cần mở rộng thêm các Quý tiếp theo.</p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                        <button onclick="addNewQuarterColumn()" class="bg-teal-700 hover:bg-teal-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow flex items-center gap-1.5">
+                            <i class="fa-solid fa-folder-plus text-yellow-300"></i>
+                            <span>➕ Thêm Cột Quý Mới</span>
+                        </button>
+
+                        <button onclick="addNewFundPlayerPrompt()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <span>➕ Thêm Pick Thủ</span>
+                        </button>
+
+                        <div class="relative flex-1 sm:w-44">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="text" id="member-search" oninput="renderFundMembers()" placeholder="Tìm Pick thủ..." class="w-full pl-9 pr-3 py-1.5 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                            <tr id="member-list-thead-tr">
+                                <!-- DYNAMIC HEADERS RENDER HERE -->
+                            </tr>
+                        </thead>
+                        <tbody id="member-list" class="divide-y divide-slate-100"></tbody>
+                        <tfoot id="member-list-foot" class="bg-slate-50 font-bold border-t-2 border-slate-300"></tfoot>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- BẢNG TỔNG HỢP CÁC NGÀY -->
+        <section id="tab-tonghop" class="tab-content hidden">
+            <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 text-slate-800">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-3 border-b gap-2">
+                    <h2 class="text-base md:text-xl font-extrabold text-slate-800 flex items-center gap-2 uppercase">
+                        <i class="fa-solid fa-chart-column text-indigo-600"></i> BẢNG TỔNG HỢP CÁC NGÀY
+                    </h2>
+                    <span class="text-[11px] md:text-xs text-slate-500 italic">Chỉ tổng hợp ngày có trạng thái NOTE = YES</span>
+                </div>
+                <div id="tonghop-content-container" class="smooth-scroll w-full border border-slate-200 rounded-lg shadow-inner"></div>
+            </div>
+        </section>
 
     </main>
 
-    <!-- MODAL THÊM / SỬA GIAO DỊCH THU CHI -->
+    <!-- MODALS -->
+    <div id="player-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 text-slate-800">
+            <h3 id="modal-title" class="text-lg font-bold text-slate-800 mb-4">Thêm Pick Thủ Mới</h3>
+            <input type="hidden" id="player-id">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Họ & Tên VĐV</label>
+                    <input type="text" id="player-name" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Nhập tên VĐV...">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Giới Tính</label>
+                    <select id="player-gender" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-6">
+                <button onclick="closePlayerModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-sm rounded-lg hover:bg-slate-300">Hủy</button>
+                <button onclick="savePlayer()" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 font-semibold">Lưu Pick Thủ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SỬA CẶP VĐV MINIGAME 2 -->
+    <div id="m2-edit-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 text-slate-800">
+            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square text-blue-600"></i> Chỉnh Sửa Tên Cặp VĐV
+            </h3>
+            <input type="hidden" id="m2-edit-group">
+            <input type="hidden" id="m2-edit-index">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Tên VĐV 1</label>
+                    <input type="text" id="m2-p1-input" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Tên VĐV 2</label>
+                    <input type="text" id="m2-p2-input" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-6">
+                <button onclick="closeM2EditModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-sm rounded-lg hover:bg-slate-300">Hủy</button>
+                <button onclick="saveM2PairEdit()" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 font-semibold">Lưu Thay Đổi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL THÊM / SỬA KHOẢN THU CHI QUỸ -->
     <div id="fund-modal-backdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-slate-100">
             <div id="fund-modal-header" class="p-4 bg-emerald-600 text-white flex justify-between items-center">
@@ -312,7 +1060,7 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Nội Dung Chi Tiết</label>
-                    <textarea id="tx-desc" rows="2" placeholder="Ví dụ: Ủng hộ quỹ CLB..." required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
+                    <input type="text" id="tx-desc" placeholder="Ví dụ: Thu tiền kèo ngày 1/10/26..." required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
                 </div>
 
                 <div>
@@ -321,21 +1069,50 @@
                 </div>
 
                 <div>
+                    <label id="lbl-source" class="block text-xs font-semibold text-slate-600 mb-1">Nguồn Thu / Pick Thủ</label>
+                    <select id="tx-source-select" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none bg-white font-medium">
+                    </select>
+                </div>
+
+                <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Ghi Chú</label>
-                    <textarea id="tx-note" rows="2" placeholder="Chuyển khoản / Tiền mặt..." class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
+                    <input type="text" id="tx-note" placeholder="Chuyển khoản / Tiền mặt / Hóa đơn / Nội dung thay đổi" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
                 </div>
 
                 <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" onclick="closeFundModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium text-sm rounded-lg transition">Hủy</button>
-                    <button type="submit" id="fund-btn-submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg transition shadow-sm">Lưu Giao Dịch</button>
+                    <button type="button" onclick="closeFundModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium text-sm rounded-lg transition-colors">
+                        Hủy
+                    </button>
+                    <button type="submit" id="fund-btn-submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm">
+                        Lưu Khoản Thu
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- JAVASCRIPT XỬ LÝ ĐỘC LẬP -->
+    <!-- JAVASCRIPT LOGIC XỬ LÝ CHÍNH -->
     <script>
-        window.players = JSON.parse(localStorage.getItem('pb_fund_players')) || [
+        window.isAdminUnlocked = false;
+        window.ADMIN_PASSWORD = "123456";
+
+        function checkAdminPassword() {
+            const inputPass = document.getElementById('admin-pass-input').value;
+            if (inputPass === window.ADMIN_PASSWORD) {
+                window.isAdminUnlocked = true;
+                const badge = document.getElementById('admin-status-badge');
+                if(badge) {
+                    badge.innerHTML = `<i class="fa-solid fa-lock-open text-emerald-600"></i> Đã Mở Khóa Admin:`;
+                    badge.className = "text-xs font-bold text-emerald-700 flex items-center gap-1";
+                }
+                alert("🔑 Xác thực Admin thành công! Bạn có thể tích chọn cột Thực Tế.");
+                renderDayDetailView();
+            } else {
+                alert("❌ Mật khẩu Admin không đúng!");
+            }
+        }
+
+        window.players = [
             { id: 1, name: "Tiến Thọ", gender: "Nam" },
             { id: 2, name: "Châu Sĩ", gender: "Nam" },
             { id: 3, name: "Vân Đình", gender: "Nữ" },
@@ -344,8 +1121,64 @@
             { id: 6, name: "Hà Giấy", gender: "Nam" },
             { id: 7, name: "Long Diễm", gender: "Nam" },
             { id: 8, name: "Tuấn La", gender: "Nam" },
-            { id: 9, name: "Trí Đô", gender: "Nam" }
+            { id: 9, name: "Trí Đô", gender: "Nam" },
+            { id: 10, name: "Thành Sóc", gender: "Nam" },
+            { id: 11, name: "Quỳnh Cool", gender: "Nữ" },
+            { id: 12, name: "Hải Hà", gender: "Nữ" },
+            { id: 13, name: "Dũng Ngạc", gender: "Nam" },
+            { id: 14, name: "Lợi Trì", gender: "Nam" },
+            { id: 15, name: "Thành Đàm", gender: "Nam" },
+            { id: 16, name: "Điền Chèm", gender: "Nam" },
+            { id: 17, name: "Hạnh", gender: "Nữ" },
+            { id: 18, name: "Minh Vương", gender: "Nam" }
         ];
+
+        window.m1TeamA = ["Tiến Thọ", "Châu Sĩ", "Vân Đình", "Ly", "Phú Mỗ", "Hà Giấy", "Long Diễm", "Tuấn La", "Hạnh"];
+        window.m1TeamB = ["Trí Đô", "Thành Sóc", "Quỳnh Cool", "Hải Hà", "Dũng Ngạc", "Lợi Trì", "Thành Đàm", "Điền Chèm", "Minh Vương"];
+
+        window.m1Matches = [
+            { id:1, luot:1, san:1, content:"Nam xoay vòng", a1:"Tiến Thọ", a2:"Châu Sĩ", scoreA:"", scoreB:"", b1:"Trí Đô", b2:"Thành Sóc" },
+            { id:2, luot:1, san:2, content:"Nữ xoay vòng", a1:"Vân Đình", a2:"Ly", scoreA:"", scoreB:"", b1:"Quỳnh Cool", b2:"Hải Hà" },
+            { id:3, luot:1, san:3, content:"Nam xoay vòng", a1:"Phú Mỗ", a2:"Hà Giấy", scoreA:"", scoreB:"", b1:"Dũng Ngạc", b2:"Lợi Trì" },
+            { id:4, luot:2, san:1, content:"Nam xoay vòng", a1:"Long Diễm", a2:"Châu Sĩ", scoreA:"", scoreB:"", b1:"Thành Đàm", b2:"Thành Sóc" },
+            { id:5, luot:2, san:2, content:"Nam-Nữ không xoay vòng", a1:"Tuấn La", a2:"Ly", scoreA:"", scoreB:"", b1:"Điền Chèm", b2:"Hải Hà" },
+            { id:6, luot:2, san:3, content:"Nam-Nữ tidak xoay vòng", a1:"Hà Giấy", a2:"Vân Đình", scoreA:"", scoreB:"", b1:"Lợi Trì", b2:"Quỳnh Cool" }
+        ];
+
+        window.m2PairsA = [
+            { p1: "Tiến Thọ", p2: "Châu Sĩ" },
+            { p1: "Phú Mỗ", p2: "Hà Giấy" },
+            { p1: "Long Diễm", p2: "Tuấn La" },
+            { p1: "Vân Đình", p2: "Ly" }
+        ];
+
+        window.m2PairsB = [
+            { p1: "Trí Đô", p2: "Thành Sóc" },
+            { p1: "Dũng Ngạc", p2: "Lợi Trì" },
+            { p1: "Thành Đàm", p2: "Điền Chèm" },
+            { p1: "Quỳnh Cool", p2: "Hải Hà" }
+        ];
+
+        window.m2ScoresA = {};
+        window.m2ScoresB = {};
+
+        window.dates = ["1/10/26"];
+        window.currentSelectedDate = "1/10/26";
+
+        window.matchesData = {
+            "1/10/26": [
+                { id: 1, c1_p1: "Trí Đô", c1_p2: "Tiến Thọ", c2_p1: "Phú Mỗ", c2_p2: "Thành Đàm", score1: "8", score2: "11", keoMode: "default", customWin: 5, customLose: -15 },
+                { id: 2, c1_p1: "Phú Mỗ", c1_p2: "Thành Đàm", c2_p1: "Tiến Thọ", c2_p2: "Trí Đô", score1: "9", score2: "11", keoMode: "default", customWin: 5, customLose: -15 },
+                { id: 3, c1_p1: "Tiến Thọ", c1_p2: "Trí Đô", c2_p1: "Thành Đàm", c2_p2: "Long Diễm", score1: "11", score2: "5", keoMode: "default", customWin: 5, customLose: -15 }
+            ]
+        };
+
+        window.dateKeoMode = { "1/10/26": "default" };
+        window.paymentStatus = {
+            "1/10/26_Vân Đình": true,
+            "1/10/26_Tiến Thọ": true,
+            "1/10/26": { btcNoteAdminOption: "YES" }
+        };
 
         window.activeQuarterColumns = JSON.parse(localStorage.getItem('pb_active_quarter_cols')) || [
             { id: "q1", title: "Tiền Sân Quý 1", statusTitle: "Trạng Thái Q1", defaultAmt: 800000, bgColor: "teal" }
@@ -354,26 +1187,77 @@
         window.initialFund = Number(localStorage.getItem('pb_initial_fund')) || 500000;
 
         const defaultFundIncomes = [
-            { id: 1, date: "2026-01-05", desc: "Ủng hộ quỹ giao lưu đầu năm", amount: 500000, note: "Tiền mặt" }
+            { id: 1, date: "2026-01-05", desc: "Thu tiền quỹ Q1 - Tiến Thọ", amount: 800000, source: "Tiến Thọ", note: "Chuyển khoản" },
+            { id: 2, date: "2026-01-06", desc: "Thu tiền quỹ Q1 - Châu Sĩ", amount: 800000, source: "Châu Sĩ", note: "Tiền mặt" },
+            { id: 3, date: "2026-01-10", desc: "Thu tiền giao lưu vãng lai", amount: 200000, source: "Khách vãng lai / Khác", note: "Thu theo buổi" }
         ];
 
         const defaultFundExpenses = [
-            { id: 1, date: "2026-01-02", desc: "Thanh toán tiền thuê sân Tháng 1", amount: 1200000, note: "Chuyển khoản sân" }
+            { id: 1, date: "2026-01-02", desc: "Thanh toán tiền thuê sân Tháng 1", amount: 1200000, source: "Khách vãng lai / Khác", note: "Hóa đơn #01" },
+            { id: 2, date: "2026-01-15", desc: "Mua bóng Pickleball thi đấu", amount: 450000, source: "Khách vãng lai / Khác", note: "Chuyển khoản" }
         ];
 
         window.fundFeeStatus = JSON.parse(localStorage.getItem('pb_fee_status')) || {};
         window.fundIncomes = JSON.parse(localStorage.getItem('pb_incomes')) || defaultFundIncomes;
         window.fundExpenses = JSON.parse(localStorage.getItem('pb_expenses')) || defaultFundExpenses;
+        window.autoIncomeNotes = JSON.parse(localStorage.getItem('pb_auto_income_notes')) || {};
 
-        function formatVND(amount) {
-            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        function updateAutoIncomeNote(dateStr, noteVal) {
+            window.autoIncomeNotes[dateStr] = noteVal;
+            localStorage.setItem('pb_auto_income_notes', JSON.stringify(window.autoIncomeNotes));
+            autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
         }
 
-        function formatDate(dateStr) {
-            if(!dateStr) return '';
-            if(dateStr.includes('/')) return dateStr;
-            const [y, m, d] = dateStr.split('-');
-            return `${d}/${m}/${y}`;
+        function getBtcThuVeForDate(dateStr) {
+            const matches = window.matchesData[dateStr] || [];
+            if (!matches || matches.length === 0) return 0;
+
+            let statsDay = {};
+            (window.players || []).forEach(p => { 
+                if (p && p.name) statsDay[p.name.trim()] = { played: 0, total: 0 }; 
+            });
+
+            matches.forEach(m => {
+                const s1 = parseInt(m.score1);
+                const s2 = parseInt(m.score2);
+                const mMode = m.keoMode || (window.dateKeoMode ? window.dateKeoMode[dateStr] : 'default') || 'default';
+                
+                let winAmt = 5, loseAmt = -15;
+                if (mMode === "k25") { winAmt = 0; loseAmt = -25; }
+                else if (mMode === "free") {
+                    winAmt = parseFloat(m.customWin) || 0;
+                    loseAmt = parseFloat(m.customLose) || 0;
+                    if (loseAmt > 0) loseAmt = -loseAmt;
+                }
+
+                if (!isNaN(s1) && !isNaN(s2)) {
+                    const pair1 = [m.c1_p1, m.c1_p2].filter(Boolean).map(x => x.trim());
+                    const pair2 = [m.c2_p1, m.c2_p2].filter(Boolean).map(x => x.trim());
+                    let isHam = (s1 === 0 || s2 === 0);
+                    let effWin = isHam ? (winAmt > 0 ? winAmt * 2 : 0) : winAmt;
+                    let effLose = isHam ? loseAmt * 2 : loseAmt;
+
+                    if (s1 > s2) {
+                        pair1.forEach(v => { if (!statsDay[v]) statsDay[v] = { played: 0, total: 0 }; statsDay[v].played++; statsDay[v].total += effWin; });
+                        pair2.forEach(v => { if (!statsDay[v]) statsDay[v] = { played: 0, total: 0 }; statsDay[v].played++; statsDay[v].total += effLose; });
+                    } else if (s2 > s1) {
+                        pair2.forEach(v => { if (!statsDay[v]) statsDay[v] = { played: 0, total: 0 }; statsDay[v].played++; statsDay[v].total += effWin; });
+                        pair1.forEach(v => { if (!statsDay[v]) statsDay[v] = { played: 0, total: 0 }; statsDay[v].played++; statsDay[v].total += effLose; });
+                    }
+                }
+            });
+
+            let sumAmDay = 0, sumBringBackDay = 0;
+            Object.keys(statsDay).forEach(pName => {
+                let st = statsDay[pName];
+                if (st.played > 0) {
+                    if (st.total < 0) sumAmDay += st.total;
+                    else if (st.played >= 4 && st.total > 0) sumBringBackDay += st.total;
+                }
+            });
+
+            return (sumAmDay + sumBringBackDay);
         }
 
         function updateInitialFund(val) {
@@ -381,6 +1265,7 @@
             localStorage.setItem('pb_initial_fund', window.initialFund);
             calculateFundSummary();
             autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
         }
 
         function addNewQuarterColumn() {
@@ -423,6 +1308,7 @@
         function saveQuarterColsConfig() {
             localStorage.setItem('pb_active_quarter_cols', JSON.stringify(window.activeQuarterColumns));
             autoBackupData();
+            if (window.syncToFirebase) window.syncToFirebase();
         }
 
         function updateQuarterAmountDirect(playerId, qKey, val) {
@@ -440,10 +1326,15 @@
             const name = prompt("Nhập tên Pick thủ mới muốn thêm vào danh sách Quỹ:");
             if (name && name.trim() !== "") {
                 const trimmed = name.trim();
-                window.players.push({ id: Date.now(), name: trimmed, gender: "Nam" });
-                localStorage.setItem('pb_fund_players', JSON.stringify(window.players));
-                renderFundMembers();
-                autoBackupData();
+                const existing = window.players.find(p => p.name.toLowerCase() === trimmed.toLowerCase());
+                if (existing) {
+                    alert("Pick thủ này đã có trong danh sách!");
+                } else {
+                    const newPlayer = { id: Date.now(), name: trimmed, gender: "Nam" };
+                    window.players.push(newPlayer);
+                    refreshAllViews();
+                    saveFundData();
+                }
             }
         }
 
@@ -451,9 +1342,8 @@
             const p = window.players.find(item => item.id === playerId);
             if (p && confirm(`Bạn có chắc chắn muốn XÓA Pick thủ "${p.name}" khỏi danh sách?`)) {
                 window.players = window.players.filter(item => item.id !== playerId);
-                localStorage.setItem('pb_fund_players', JSON.stringify(window.players));
-                renderFundMembers();
-                autoBackupData();
+                refreshAllViews();
+                saveFundData();
             }
         }
 
@@ -461,8 +1351,21 @@
             localStorage.setItem('pb_fee_status', JSON.stringify(window.fundFeeStatus));
             localStorage.setItem('pb_incomes', JSON.stringify(window.fundIncomes));
             localStorage.setItem('pb_expenses', JSON.stringify(window.fundExpenses));
+            localStorage.setItem('pb_auto_income_notes', JSON.stringify(window.autoIncomeNotes));
             updateFundDashboard();
             autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function formatVND(amount) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        }
+
+        function formatDate(dateStr) {
+            if(!dateStr) return '';
+            if(dateStr.includes('/')) return dateStr;
+            const [y, m, d] = dateStr.split('-');
+            return `${d}/${m}/${y}`;
         }
 
         function updateFundDashboard() {
@@ -479,28 +1382,38 @@
         function calculateFundSummary() {
             let totalManualIncome = window.fundIncomes.reduce((sum, item) => sum + Number(item.amount), 0);
 
-            let totalQuarterCollected = 0;
-            window.players.forEach(p => {
-                window.activeQuarterColumns.forEach(col => {
-                    const qKey = col.id;
-                    const currentStatus = window.fundFeeStatus[`${p.id}_${qKey}_status`] || "unpaid";
-                    const currentAmt = window.fundFeeStatus[`${p.id}_${qKey}_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_${qKey}_amt`] : col.defaultAmt;
-                    if(currentStatus === "paid") {
-                        totalQuarterCollected += currentAmt;
+            let autoDailyIncomeTotal = 0;
+            (window.dates || []).forEach(d => {
+                const pStatus = window.paymentStatus ? window.paymentStatus[d] : null;
+                let isTransferYes = true;
+                if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
+                    isTransferYes = false;
+                }
+                
+                if (isTransferYes) {
+                    let dayNetK = getBtcThuVeForDate(d);
+                    if (dayNetK !== 0) {
+                        autoDailyIncomeTotal += Math.abs(dayNetK * 1000);
                     }
-                });
+                }
             });
 
-            const grandTotalIncome = totalManualIncome + totalQuarterCollected;
+            const grandTotalIncome = totalManualIncome + autoDailyIncomeTotal;
             const totalExpense = window.fundExpenses.reduce((sum, item) => sum + Number(item.amount), 0);
             const currentBalance = window.initialFund + grandTotalIncome - totalExpense;
 
-            document.getElementById('stat-income').innerText = formatVND(grandTotalIncome);
-            document.getElementById('stat-expense').innerText = formatVND(totalExpense);
-            document.getElementById('stat-balance').innerText = formatVND(currentBalance);
+            const elInc = document.getElementById('stat-income');
+            const elExp = document.getElementById('stat-expense');
+            const elBal = document.getElementById('stat-balance');
 
-            document.getElementById('income-total').innerText = formatVND(totalManualIncome);
-            document.getElementById('expense-total').innerText = formatVND(totalExpense);
+            if(elInc) elInc.innerText = formatVND(grandTotalIncome);
+            if(elExp) elExp.innerText = formatVND(totalExpense);
+            if(elBal) elBal.innerText = formatVND(currentBalance);
+
+            const elIncTot = document.getElementById('income-total');
+            const elExpTot = document.getElementById('expense-total');
+            if(elIncTot) elIncTot.innerText = formatVND(grandTotalIncome);
+            if(elExpTot) elExpTot.innerText = formatVND(totalExpense);
         }
 
         function renderFundMembers() {
@@ -521,7 +1434,7 @@
                     <th class="py-2 px-2 text-center bg-${c}-50/80 border-x border-${c}-100 min-w-[130px]">
                         <div class="flex items-center justify-between gap-1">
                             <input type="text" value="${col.title}" onchange="updateDynamicQuarterTitle('${col.id}', 'title', this.value)" class="w-full text-center bg-transparent border-b border-${c}-300 font-bold text-${c}-900 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Sửa tên cột">
-                            ${window.activeQuarterColumns.length > 1 ? `<button onclick="deleteQuarterColumn('${col.id}', '${col.title}')" class="text-rose-500 hover:text-rose-700 text-[10px] p-0.5" title="Xóa cột"><i class="fa-solid fa-trash"></i></button>` : ''}
+                            ${window.activeQuarterColumns.length > 1 ? `<button onclick="deleteQuarterColumn('${col.id}', '${col.title}')" class="text-rose-500 hover:text-rose-700 text-[10px] p-0.5" title="Xóa cột này"><i class="fa-solid fa-trash"></i></button>` : ''}
                         </div>
                     </th>
                     <th class="py-2 px-2 text-center bg-${c}-50/50 min-w-[110px]">
@@ -535,6 +1448,7 @@
 
             const search = searchEl ? searchEl.value.toLowerCase() : '';
             tbody.innerHTML = '';
+
             const filtered = window.players.filter(p => p.name.toLowerCase().includes(search));
 
             if(filtered.length === 0) {
@@ -555,7 +1469,7 @@
                 window.activeQuarterColumns.forEach(col => {
                     const qKey = col.id;
                     const c = col.bgColor || "teal";
-                    const currentStatus = window.fundFeeStatus[`${p.id}_${qKey}_status`] || "unpaid";
+                    const currentStatus = window.fundFeeStatus[`${p.id}_${qKey}_status`] || (window.fundFeeStatus[`${p.id}_${qKey}`] ? "paid" : "unpaid");
                     const currentAmt = window.fundFeeStatus[`${p.id}_${qKey}_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_${qKey}_amt`] : col.defaultAmt;
 
                     if(currentStatus === "paid") {
@@ -573,6 +1487,7 @@
                                 currentStatus === 'pause' ? 'bg-amber-100 text-amber-800 border-amber-300' :
                                 'bg-slate-200 text-slate-700 border-slate-300'
                             }">
+                                <option value="no" ${currentStatus === 'no' ? 'selected' : ''}>NO (Chưa đến)</option>
                                 <option value="unpaid" ${currentStatus === 'unpaid' ? 'selected' : ''}>Chưa đóng</option>
                                 <option value="paid" ${currentStatus === 'paid' ? 'selected' : ''}>Đã đóng</option>
                                 <option value="pause" ${currentStatus === 'pause' ? 'selected' : ''}>Tạm nghỉ</option>
@@ -583,8 +1498,9 @@
 
                 rowHtml += `
                     <td class="py-3 px-3 text-center">
-                        <button onclick="deleteFundPlayerRow(${p.id})" class="text-red-600 hover:text-red-800 font-bold text-xs bg-red-50 border border-red-200 px-2 py-1 rounded-lg shadow-sm hover:bg-red-100 transition flex items-center gap-1 mx-auto" title="Xóa Pick thủ">
-                            <i class="fa-solid fa-trash-can"></i> <span>Xóa</span>
+                        <button onclick="deleteFundPlayerRow(${p.id})" class="text-red-600 hover:text-red-800 font-bold text-xs bg-red-50 border border-red-200 px-2 py-1 rounded-lg shadow-sm hover:bg-red-100 transition-colors flex items-center gap-1 mx-auto" title="Xóa Pick thủ này khỏi Quỹ">
+                            <i class="fa-solid fa-trash-can"></i>
+                            <span>Xóa</span>
                         </button>
                     </td>
                 `;
@@ -609,37 +1525,95 @@
 
                 tfoot.innerHTML = `
                     <tr class="bg-emerald-50/80 text-emerald-900">
-                        <td class="py-2.5 px-3 text-center font-bold" colspan="2">TỔNG THU HỘI PHÍ:</td>
+                        <td class="py-2.5 px-3 text-center font-bold" colspan="2">TỔNG THU THỰC TẾ:</td>
                         ${footQuarterCells}
                         <td class="py-2.5 px-3 text-center text-emerald-700 font-black">${formatVND(grandTotalCollected)}</td>
+                    </tr>
+                    <tr class="bg-rose-50/80 text-rose-900">
+                        <td class="py-2.5 px-3 text-center font-bold" colspan="2">DÒNG CHI QUỸ:</td>
+                        <td class="py-2.5 px-3 text-right font-extrabold" colspan="${colSpanCount - 1}">Tổng Các Khoản Chi Tiền Sân & Sinh Hoạt:</td>
+                        <td class="py-2.5 px-3 text-center text-rose-600 font-black">-${formatVND(totalExpense)}</td>
+                    </tr>
+                    <tr class="bg-slate-200/80 text-slate-900">
+                        <td class="py-3 px-3 text-center font-black" colspan="2">THU - CHI CÒN LẠI:</td>
+                        <td class="py-3 px-3 text-center font-black text-base ${netCourt >= 0 ? 'text-emerald-700' : 'text-rose-700'}" colspan="${colSpanCount}">
+                            ${formatVND(netCourt)}
+                        </td>
                     </tr>
                 `;
             }
         }
 
+        /* 🛠 RENDER KHOẢN THU TỰ ĐỘNG & THỦ CÔNG (ĐÃ CHỈNH GHI CHÚ CÓ THỂ SỬA TRỰC TIẾP) 🛠 */
         function renderFundIncomes() {
             const tbody = document.getElementById('income-list');
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            window.fundIncomes.forEach(item => {
+            (window.dates || []).forEach(d => {
+                const pStatus = window.paymentStatus ? window.paymentStatus[d] : null;
+                let isTransferYes = true;
+                
+                if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
+                    isTransferYes = false;
+                }
+
+                if (isTransferYes) {
+                    let dayNetK = getBtcThuVeForDate(d);
+                    if (dayNetK !== 0) {
+                        const positiveAmount = Math.abs(dayNetK) * 1000;
+                        const currentCustomNote = window.autoIncomeNotes[d] !== undefined ? window.autoIncomeNotes[d] : "Đồng bộ tự động từ trận đấu";
+
+                        const trAuto = document.createElement('tr');
+                        trAuto.className = "bg-emerald-50/80 font-semibold text-xs border-b border-emerald-200/80 hover:bg-emerald-100/80 transition-colors";
+                        trAuto.innerHTML = `
+                            <td class="py-2.5 px-3 text-slate-600 whitespace-nowrap">${d}</td>
+                            <td class="py-2.5 px-3 text-emerald-950 font-bold flex items-center gap-1.5">
+                                <i class="fa-solid fa-coins text-amber-500"></i>
+                                <span>Thu tiền kèo Ngày ${d} (Quy đổi dương)</span>
+                            </td>
+                            <td class="py-2.5 px-3 text-right font-black text-emerald-700 whitespace-nowrap">+${formatVND(positiveAmount)}</td>
+                            <td class="py-2.5 px-3 text-slate-600"><span class="player-tag">BTC CLB</span></td>
+                            <td class="py-2.5 px-3">
+                                <input type="text" value="${currentCustomNote}" onchange="updateAutoIncomeNote('${d}', this.value)" class="w-full bg-white border border-emerald-300 rounded px-2 py-1 text-xs text-slate-700 font-medium focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="Nhập ghi chú thay đổi...">
+                            </td>
+                            <td class="py-2.5 px-3 text-center whitespace-nowrap">
+                                <button onclick="alert('Dòng này tự động cập nhật số tiền từ Bảng Chi Tiết Ngày ${d}. Bạn có thể chỉnh sửa ghi chú ngay tại cột ghi chú hoặc thay đổi kết quả tại ngày tương ứng!')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors" title="Chỉnh sửa">
+                                    <i class="fa-solid fa-pencil"></i>
+                                </button>
+                                <button onclick="if(confirm('Để ẩn khoản thu tự động Ngày ${d}, bạn có muốn đổi trạng thái NOTE của ngày này thành NO?')) { if(!window.paymentStatus[ '${d}' ]) window.paymentStatus[ '${d}' ] = {}; window.paymentStatus[ '${d}' ].btcNoteAdminOption = 'NO'; refreshAllViews(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase(); }" class="text-slate-400 hover:text-rose-500 p-1 transition-colors" title="Bỏ chuyển về Quỹ">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </td>
+                        `;
+                        tbody.appendChild(trAuto);
+                    }
+                }
+            });
+
+            (window.fundIncomes || []).forEach(item => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors";
                 tr.innerHTML = `
                     <td class="py-2.5 px-3 text-xs text-slate-500 whitespace-nowrap">${formatDate(item.date)}</td>
-                    <td class="py-2.5 px-3 font-medium text-slate-800 wrap-content-cell min-w-[180px]">${item.desc}</td>
+                    <td class="py-2.5 px-3 font-medium text-slate-800">${item.desc}</td>
                     <td class="py-2.5 px-3 text-right font-semibold text-emerald-600 whitespace-nowrap">+${formatVND(item.amount)}</td>
-                    <td class="py-2.5 px-3 text-xs text-slate-600 wrap-content-cell min-w-[150px]">${item.note || '---'}</td>
+                    <td class="py-2.5 px-3 text-xs"><span class="player-tag">${item.source}</span></td>
+                    <td class="py-2.5 px-3 text-xs text-slate-600">${item.note || '---'}</td>
                     <td class="py-2.5 px-3 text-center whitespace-nowrap">
-                        <button onclick="openEditFundModal(${item.id}, 'income')" class="text-blue-600 hover:text-blue-800 mr-2 p-1" title="Sửa"><i class="fa-solid fa-pencil"></i></button>
-                        <button onclick="deleteFundTx(${item.id}, 'income')" class="text-slate-400 hover:text-rose-500 p-1" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
+                        <button onclick="openEditFundModal(${item.id}, 'income')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors" title="Chỉnh sửa">
+                            <i class="fa-solid fa-pencil"></i>
+                        </button>
+                        <button onclick="deleteFundTx(${item.id}, 'income')" class="text-slate-400 hover:text-rose-500 p-1 transition-colors" title="Xóa">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            if (window.fundIncomes.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">Chưa có khoản thu nào.</td></tr>`;
+            if (tbody.children.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Chưa có khoản thu nào.</td></tr>`;
             }
         }
 
@@ -648,25 +1622,31 @@
             if(!tbody) return;
             tbody.innerHTML = '';
 
+            if(window.fundExpenses.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Chưa có khoản chi nào.</td></tr>`;
+                return;
+            }
+
             window.fundExpenses.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors";
                 tr.innerHTML = `
                     <td class="py-2.5 px-3 text-xs text-slate-500 whitespace-nowrap">${formatDate(item.date)}</td>
-                    <td class="py-2.5 px-3 font-medium text-slate-800 wrap-content-cell min-w-[180px]">${item.desc}</td>
+                    <td class="py-2.5 px-3 font-medium text-slate-800">${item.desc}</td>
                     <td class="py-2.5 px-3 text-right font-semibold text-rose-600 whitespace-nowrap">-${formatVND(item.amount)}</td>
-                    <td class="py-2.5 px-3 text-xs text-slate-600 wrap-content-cell min-w-[150px]">${item.note || '---'}</td>
+                    <td class="py-2.5 px-3 text-xs"><span class="player-tag">${item.source}</span></td>
+                    <td class="py-2.5 px-3 text-xs text-slate-600">${item.note || '---'}</td>
                     <td class="py-2.5 px-3 text-center whitespace-nowrap">
-                        <button onclick="openEditFundModal(${item.id}, 'expense')" class="text-blue-600 hover:text-blue-800 mr-2 p-1" title="Sửa"><i class="fa-solid fa-pencil"></i></button>
-                        <button onclick="deleteFundTx(${item.id}, 'expense')" class="text-slate-400 hover:text-rose-500 p-1" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
+                        <button onclick="openEditFundModal(${item.id}, 'expense')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors" title="Chỉnh sửa">
+                            <i class="fa-solid fa-pencil"></i>
+                        </button>
+                        <button onclick="deleteFundTx(${item.id}, 'expense')" class="text-slate-400 hover:text-rose-500 p-1 transition-colors" title="Xóa">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
-
-            if (window.fundExpenses.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">Chưa có khoản chi nào.</td></tr>`;
-            }
         }
 
         function openFundModal(type) {
@@ -674,25 +1654,39 @@
             const header = document.getElementById('fund-modal-header');
             const title = document.getElementById('fund-modal-title');
             const btnSubmit = document.getElementById('fund-btn-submit');
+            const lblSource = document.getElementById('lbl-source');
+            const sourceSelect = document.getElementById('tx-source-select');
 
+            if(sourceSelect) {
+                let optionsHtml = `<option value="Khách vãng lai / Khác">-- Khách vãng lai / Khác --</option>`;
+                window.players.forEach(p => {
+                    optionsHtml += `<option value="${p.name}">${p.name}</option>`;
+                });
+                sourceSelect.innerHTML = optionsHtml;
+            }
+            
             const form = document.getElementById('fund-transaction-form');
-            form.querySelector('#tx-id').value = '';
-            form.querySelector('#tx-type').value = type;
-            form.querySelector('#tx-date').value = new Date().toISOString().split('T')[0];
-            form.querySelector('#tx-desc').value = '';
-            form.querySelector('#tx-amount').value = '';
-            form.querySelector('#tx-note').value = '';
+            if(form) {
+                form.querySelector('#tx-id').value = '';
+                form.querySelector('#tx-type').value = type;
+                form.querySelector('#tx-date').value = new Date().toISOString().split('T')[0];
+                form.querySelector('#tx-desc').value = '';
+                form.querySelector('#tx-amount').value = '';
+                form.querySelector('#tx-note').value = '';
+            }
 
             if(type === 'income') {
                 header.className = "p-4 bg-emerald-600 text-white flex justify-between items-center";
                 title.innerHTML = '<i class="fa-solid fa-circle-arrow-down"></i> Thêm Khoản Thu Mới';
-                btnSubmit.className = "px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg transition shadow-sm";
+                btnSubmit.className = "px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm";
                 btnSubmit.innerText = "Lưu Khoản Thu";
+                if(lblSource) lblSource.innerText = "Nguồn Thu / Pick Thủ";
             } else {
                 header.className = "p-4 bg-rose-600 text-white flex justify-between items-center";
                 title.innerHTML = '<i class="fa-solid fa-circle-arrow-up"></i> Thêm Khoản Chi Mới';
-                btnSubmit.className = "px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm rounded-lg transition shadow-sm";
+                btnSubmit.className = "px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm";
                 btnSubmit.innerText = "Lưu Khoản Chi";
+                if(lblSource) lblSource.innerText = "Hạng Mục Chi / Pick Thủ Nhận";
             }
 
             backdrop.classList.remove('hidden');
@@ -710,9 +1704,11 @@
             form.querySelector('#tx-date').value = item.date;
             form.querySelector('#tx-desc').value = item.desc;
             form.querySelector('#tx-amount').value = item.amount;
+            form.querySelector('#tx-source-select').value = item.source || "Khách vãng lai / Khác";
             form.querySelector('#tx-note').value = item.note || "";
 
-            document.getElementById('fund-modal-title').innerHTML = type === 'income' ? '<i class="fa-solid fa-pen-to-square"></i> Sửa Khoản Thu' : '<i class="fa-solid fa-pen-to-square"></i> Sửa Khoản Chi';
+            const title = document.getElementById('fund-modal-title');
+            title.innerHTML = type === 'income' ? '<i class="fa-solid fa-pen-to-square"></i> Sửa Khoản Thu' : '<i class="fa-solid fa-pen-to-square"></i> Sửa Khoản Chi';
         }
 
         function closeFundModal() {
@@ -730,6 +1726,7 @@
                 date: form.querySelector('#tx-date').value,
                 desc: form.querySelector('#tx-desc').value,
                 amount: Number(form.querySelector('#tx-amount').value),
+                source: form.querySelector('#tx-source-select').value,
                 note: form.querySelector('#tx-note').value
             };
 
@@ -747,25 +1744,40 @@
         }
 
         function deleteFundTx(id, type) {
-            if(confirm("Bạn có muốn xóa giao dịch này không?")) {
-                if(type === 'income') window.fundIncomes = window.fundIncomes.filter(i => i.id !== id);
-                else window.fundExpenses = window.fundExpenses.filter(i => i.id !== id);
+            if(confirm("Bạn có muốn xóa giao dịch này khỏi hệ thống Quỹ Pick?")) {
+                if(type === 'income') {
+                    window.fundIncomes = window.fundIncomes.filter(i => i.id !== id);
+                } else {
+                    window.fundExpenses = window.fundExpenses.filter(i => i.id !== id);
+                }
                 saveFundData();
             }
         }
 
         function exportFundToExcel() {
             let totalManualIncome = window.fundIncomes.reduce((sum, item) => sum + Number(item.amount), 0);
-            let totalQuarterCollected = 0;
-            window.players.forEach(p => {
-                window.activeQuarterColumns.forEach(col => {
-                    if ((window.fundFeeStatus[`${p.id}_${col.id}_status`] || "unpaid") === "paid") {
-                        totalQuarterCollected += window.fundFeeStatus[`${p.id}_${col.id}_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_${col.id}_amt`] : col.defaultAmt;
+            let autoDailyIncomeTotal = 0;
+            let autoIncomeRows = [];
+
+            (window.dates || []).forEach(d => {
+                const pStatus = window.paymentStatus ? window.paymentStatus[d] : null;
+                let isTransferYes = true;
+                if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
+                    isTransferYes = false;
+                }
+
+                if (isTransferYes) {
+                    let dayNetK = getBtcThuVeForDate(d);
+                    if (dayNetK !== 0) {
+                        const amt = Math.abs(dayNetK) * 1000;
+                        autoDailyIncomeTotal += amt;
+                        const noteVal = window.autoIncomeNotes[d] !== undefined ? window.autoIncomeNotes[d] : "Đồng bộ tự động từ trận đấu";
+                        autoIncomeRows.push([autoIncomeRows.length + 1, d, `Thu tiền kèo Ngày ${d}`, amt, "BTC CLB", noteVal]);
                     }
-                });
+                }
             });
 
-            const grandTotalIncome = totalManualIncome + totalQuarterCollected;
+            const grandTotalIncome = totalManualIncome + autoDailyIncomeTotal;
             const totalExpense = window.fundExpenses.reduce((sum, item) => sum + Number(item.amount), 0);
             const currentBalance = window.initialFund + grandTotalIncome - totalExpense;
 
@@ -774,12 +1786,12 @@
                 [],
                 ["Hạng mục", "Số tiền (VNĐ)", "Ghi chú"],
                 ["Quỹ đầu kỳ", window.initialFund, "Tồn quỹ kỳ trước chuyển sang"],
-                ["Tổng thu (Hội phí & Khác)", grandTotalIncome, "Tổng hợp hội phí đã đóng và các khoản thu thủ công"],
-                ["Tổng chi trong kỳ", totalExpense, "Tổng hợp từ Nhật ký Chi"],
+                ["Tổng thu trong kỳ", grandTotalIncome, "Bao gồm thu thủ công & quy đổi tuyệt đối số tiền kèo tự động"],
+                ["Tổng chi trong kỳ", totalExpense, "Tự động tính từ Nhật ký Chi"],
                 ["SỐ DƯ QUỸ HIỆN TẠI", currentBalance, "Công thức: Đầu kỳ + Thu - Chi"]
             ];
 
-            const statusMap = { paid: "Đã đóng", unpaid: "Chưa đóng", pause: "Tạm nghỉ" };
+            const statusMap = { paid: "Đã đóng", unpaid: "Chưa đóng", pause: "Tạm nghỉ", no: "NO (Chưa đến)" };
 
             let dynamicHeaderExcel = ["STT", "Tên Pick Thủ"];
             window.activeQuarterColumns.forEach(col => {
@@ -792,8 +1804,9 @@
                 ...window.players.map((p, i) => {
                     let row = [i + 1, p.name];
                     window.activeQuarterColumns.forEach(col => {
-                        const amt = window.fundFeeStatus[`${p.id}_${col.id}_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_${col.id}_amt`] : col.defaultAmt;
-                        const st = statusMap[window.fundFeeStatus[`${p.id}_${col.id}_status`] || "unpaid"];
+                        const qKey = col.id;
+                        const amt = window.fundFeeStatus[`${p.id}_${qKey}_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_${qKey}_amt`] : col.defaultAmt;
+                        const st = statusMap[window.fundFeeStatus[`${p.id}_${qKey}_status`] || (window.fundFeeStatus[`${p.id}_${qKey}`] ? "paid" : "unpaid")];
                         row.push(amt, st);
                     });
                     return row;
@@ -801,72 +1814,940 @@
             ];
 
             const incomeData = [
-                ["STT", "Ngày tháng", "Nội dung thu", "Số tiền (VNĐ)", "Ghi chú"],
-                ...window.fundIncomes.map((item, i) => [i + 1, formatDate(item.date), item.desc, item.amount, item.note]),
-                ["", "", "TỔNG CỘNG THU KHÁC", totalManualIncome, ""]
+                ["STT", "Ngày tháng", "Nội dung thu", "Số tiền (VNĐ)", "Nguồn/Pick thủ", "Ghi chú"],
+                ...autoIncomeRows,
+                ...window.fundIncomes.map((item, i) => [autoIncomeRows.length + i + 1, formatDate(item.date), item.desc, item.amount, item.source, item.note]),
+                ["", "", "TỔNG CỘNG THU QUỸ", grandTotalIncome, "", ""]
             ];
 
             const expenseData = [
-                ["STT", "Ngày tháng", "Nội dung chi", "Số tiền (VNĐ)", "Ghi chú"],
-                ...window.fundExpenses.map((item, i) => [i + 1, formatDate(item.date), item.desc, item.amount, item.note]),
-                ["", "", "TỔNG CỘNG CHI", totalExpense, ""]
+                ["STT", "Ngày tháng", "Nội dung chi", "Số tiền (VNĐ)", "Hạng mục/Pick thủ", "Ghi chú"],
+                ...window.fundExpenses.map((item, i) => [i + 1, formatDate(item.date), item.desc, item.amount, item.source, item.note]),
+                ["", "", "TỔNG CỘNG CHI", totalExpense, "", ""]
             ];
 
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(summaryData), "Tổng Quan Quỹ");
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(memberData), "Hội Phí Thành Viên");
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(incomeData), "Nhật Ký Thu");
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(expenseData), "Nhật Ký Chi");
+            
+            const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+            const wsMembers = XLSX.utils.aoa_to_sheet(memberData);
+            const wsIncomes = XLSX.utils.aoa_to_sheet(incomeData);
+            const wsExpenses = XLSX.utils.aoa_to_sheet(expenseData);
 
-            XLSX.writeFile(wb, "Quan_Ly_Quy_Pickleball.xlsx");
+            XLSX.utils.book_append_sheet(wb, wsSummary, "Tổng Quan Quỹ");
+            XLSX.utils.book_append_sheet(wb, wsMembers, "Thành Viên Quỹ");
+            XLSX.utils.book_append_sheet(wb, wsIncomes, "Nhật Ký Thu Quỹ");
+            XLSX.utils.book_append_sheet(wb, wsExpenses, "Nhật Ký Chi Quỹ");
+
+            XLSX.writeFile(wb, "Quan_Ly_Thu_Chi_Quy_Pickleball.xlsx");
+        }
+
+        function toggleMenu(menuId, e) {
+            e.stopPropagation();
+            const targetMenu = document.getElementById(menuId);
+            const isAlreadyShow = targetMenu.classList.contains("show");
+            closeAllDropdowns();
+            if (!isAlreadyShow) targetMenu.classList.add("show");
+        }
+
+        function closeAllDropdowns() {
+            document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
+        }
+
+        function renderDatesMenuList() {
+            const container = document.getElementById('datesMenuList');
+            if (!container) return;
+            container.innerHTML = window.dates.map(d => `
+                <div class="dropdown-item ${window.currentSelectedDate === d ? 'text-blue-600 font-bold' : ''}" onclick="selectDateView('${d}')">
+                    <i class="fa-solid fa-calendar-day text-blue-500"></i> Ngày ${d}
+                </div>
+            `).join('');
+        }
+
+        function selectDateView(dateStr) {
+            window.currentSelectedDate = dateStr;
+            showTab('day_detail');
+            renderDayDetailView();
+        }
+
+        function addDateTab() {
+            closeAllDropdowns();
+            const dateStr = prompt("Nhập ngày đấu mới (VD: 2/10/26):");
+            if (dateStr && !window.dates.includes(dateStr)) {
+                window.dates.push(dateStr);
+                window.matchesData[dateStr] = Array.from({ length: 5 }, (_, i) => ({
+                    id: i + 1, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "", keoMode: "default", customWin: 5, customLose: -15
+                }));
+                window.dateKeoMode[dateStr] = "default";
+                selectDateView(dateStr);
+                updateFundDashboard();
+                autoBackupData();
+                if(window.syncToFirebase) window.syncToFirebase();
+            }
+        }
+
+        function renameCurrentDate() {
+            closeAllDropdowns();
+            const oldDate = window.currentSelectedDate;
+            const newDate = prompt(`Nhập tên mới cho ngày "${oldDate}":`, oldDate);
+            if (newDate && newDate.trim() !== "" && newDate !== oldDate) {
+                const trimmed = newDate.trim();
+                if (window.dates.includes(trimmed)) return alert("⚠️ Tên ngày này đã tồn tại!");
+                const idx = window.dates.indexOf(oldDate);
+                if (idx !== -1) window.dates[idx] = trimmed;
+                window.matchesData[trimmed] = window.matchesData[oldDate];
+                window.dateKeoMode[trimmed] = window.dateKeoMode[oldDate];
+                delete window.matchesData[oldDate];
+                delete window.dateKeoMode[oldDate];
+                selectDateView(trimmed);
+                updateFundDashboard();
+                autoBackupData();
+                if(window.syncToFirebase) window.syncToFirebase();
+            }
+        }
+
+        function deleteCurrentDate() {
+            closeAllDropdowns();
+            const dateToDelete = window.currentSelectedDate;
+            if (confirm(`❌ Bạn có chắc chắn muốn XÓA TOÀN BỘ dữ liệu ngày "${dateToDelete}"?`)) {
+                window.dates = window.dates.filter(d => d !== dateToDelete);
+                delete window.matchesData[dateToDelete];
+                delete window.dateKeoMode[dateToDelete];
+                if (window.dates.length > 0) selectDateView(window.dates[0]);
+                else showTab('home');
+                updateFundDashboard();
+                autoBackupData();
+                if(window.syncToFirebase) window.syncToFirebase();
+            }
+        }
+
+        function exportToExcel() {
+            closeAllDropdowns();
+            if(window.dates.length === 0) return alert("Chưa có ngày nào để xuất Excel!");
+            let wb = XLSX.utils.book_new();
+            window.dates.forEach(d => {
+                let matches = window.matchesData[d] || [];
+                let rows = matches.map((m, idx) => ({
+                    "Trận": idx + 1,
+                    "Cặp 1 - VĐV 1": m.c1_p1 || "",
+                    "Cặp 1 - VĐV 2": m.c1_p2 || "",
+                    "Điểm 1": m.score1 || "",
+                    "Điểm 2": m.score2 || "",
+                    "Cặp 2 - VĐV 1": m.c2_p1 || "",
+                    "Cặp 2 - VĐV 2": m.c2_p2 || ""
+                }));
+                let ws = XLSX.utils.json_to_sheet(rows);
+                XLSX.utils.book_append_sheet(wb, ws, d.replace(/\//g, "-"));
+            });
+            XLSX.writeFile(wb, `CLB_Pickleball_CMTD_ThongKe.xlsx`);
+        }
+
+        function backupDataJSON() { exportBackupJSON(); }
+        function triggerRestoreJSON() { triggerRestoreInput(); }
+
+        function addMatchToCurrentDate() {
+            const dateStr = window.currentSelectedDate;
+            if(!window.matchesData[dateStr]) window.matchesData[dateStr] = [];
+            const nextId = window.matchesData[dateStr].length + 1;
+            const globalMode = window.dateKeoMode[dateStr] || 'default';
+            window.matchesData[dateStr].push({ 
+                id: nextId, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "",
+                keoMode: globalMode, customWin: globalMode === 'k25' ? 0 : 5, customLose: globalMode === 'k25' ? -25 : -15
+            });
+            renderDayDetailView();
+            updateFundDashboard();
+            autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function deleteMatchFromCurrentDate(index) {
+            const dateStr = window.currentSelectedDate;
+            if(confirm(`Bạn có chắc chắn muốn XÓA Trận ${index + 1}?`)) {
+                if(window.matchesData[dateStr]) {
+                    window.matchesData[dateStr].splice(index, 1);
+                    renderDayDetailView();
+                    updateFundDashboard();
+                    autoBackupData();
+                    if(window.syncToFirebase) window.syncToFirebase();
+                }
+            }
+        }
+
+        function updateMatchData(index, field, value) {
+            const dateStr = window.currentSelectedDate;
+            if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
+                window.matchesData[dateStr][index][field] = value;
+                renderDayDetailView();
+                updateFundDashboard();
+                autoBackupData();
+                if(window.syncToFirebase) window.syncToFirebase();
+            }
+        }
+
+        function applyKeoToAllMatchesInDate(modeVal) {
+            const dateStr = window.currentSelectedDate;
+            window.dateKeoMode[dateStr] = modeVal;
+            const matches = window.matchesData[dateStr] || [];
+            matches.forEach(m => {
+                m.keoMode = modeVal;
+                if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
+                else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
+            });
+            renderDayDetailView();
+            updateFundDashboard();
+            autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function updateMatchKeoMode(index, modeVal) {
+            const dateStr = window.currentSelectedDate;
+            if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
+                const m = window.matchesData[dateStr][index];
+                m.keoMode = modeVal;
+                if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
+                else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
+                renderDayDetailView();
+                updateFundDashboard();
+                autoBackupData();
+                if(window.syncToFirebase) window.syncToFirebase();
+            }
+        }
+
+        function togglePaymentStatus(payKey) {
+            if (!window.isAdminUnlocked) {
+                alert("🔒 Bạn cần nhập Pass Admin ở phía trên để tích xác nhận nộp/chưa nộp!");
+                return;
+            }
+            window.paymentStatus[payKey] = !window.paymentStatus[payKey];
+            renderDayDetailView();
+            updateFundDashboard();
+            autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function handleBtcNoteChange(selectEl) {
+            const dateStr = window.currentSelectedDate;
+            if (!window.paymentStatus) window.paymentStatus = {};
+            
+            if (!window.paymentStatus[dateStr] || typeof window.paymentStatus[dateStr] !== 'object') {
+                window.paymentStatus[dateStr] = {};
+            }
+            
+            window.paymentStatus[dateStr].btcNoteAdminOption = selectEl.value;
+            
+            refreshAllViews();
+            autoBackupData();
+            if (window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function renderDayDetailView() {
+            const dateStr = window.currentSelectedDate;
+            const titleEl = document.getElementById('current-date-title');
+            if(titleEl) titleEl.innerText = dateStr;
+
+            const modeSelect = document.getElementById('keo-mode-select');
+            if(modeSelect) modeSelect.value = window.dateKeoMode[dateStr] || 'default';
+
+            const matches = window.matchesData[dateStr] || [];
+            const tbody = document.getElementById('day-matches-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+
+            let stats = {};
+            window.players.forEach(p => { stats[p.name] = { played: 0, winK: 0, loseK: 0, total: 0 }; });
+
+            matches.forEach((m, idx) => {
+                const val1 = (m.score1 || "").toString().trim();
+                const val2 = (m.score2 || "").toString().trim();
+                const s1 = parseInt(val1);
+                const s2 = parseInt(val2);
+
+                let keo1 = "", keo2 = "";
+                const mMode = m.keoMode || window.dateKeoMode[dateStr] || 'default';
+                let winAmt = 5, loseAmt = -15;
+
+                if (mMode === 'k25') { winAmt = 0; loseAmt = -25; }
+                else if (mMode === 'free') {
+                    winAmt = parseFloat(m.customWin) || 0;
+                    loseAmt = parseFloat(m.customLose) || 0;
+                    if (loseAmt > 0) loseAmt = -loseAmt;
+                }
+
+                if(!isNaN(s1) && !isNaN(s2)) {
+                    let isHam = (s1 === 0 || s2 === 0);
+                    let effWin = isHam ? (winAmt > 0 ? winAmt * 2 : 0) : winAmt;
+                    let effLose = isHam ? loseAmt * 2 : loseAmt;
+
+                    if(s1 > s2) { keo1 = effWin; keo2 = effLose; }
+                    else if(s2 > s1) { keo1 = effLose; keo2 = effWin; }
+                    else { keo1 = 0; keo2 = 0; }
+
+                    const pair1 = [m.c1_p1, m.c1_p2].filter(Boolean);
+                    const pair2 = [m.c2_p1, m.c2_p2].filter(Boolean);
+
+                    if(s1 > s2) {
+                        pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].winK += effWin; stats[v].total += effWin; } });
+                        pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].loseK += effLose; stats[v].total += effLose; } });
+                    } else if(s2 > s1) {
+                        pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].winK += effWin; stats[v].total += effWin; } });
+                        pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].loseK += effLose; stats[v].total += effLose; } });
+                    }
+                }
+
+                const buildPlayerSelect = (val, field) => {
+                    let opts = `<option value="">-- Chọn Pick --</option>`;
+                    window.players.forEach(p => {
+                        opts += `<option value="${p.name}" ${p.name === val ? 'selected' : ''}>${p.name}</option>`;
+                    });
+                    return `<select onchange="updateMatchData(${idx}, '${field}', this.value)" class="player-select-btn text-[11px] border rounded p-1 outline-none w-full bg-white shadow-sm">
+                        ${opts}
+                    </select>`;
+                };
+
+                const isHam1 = (val1 === "0" || s1 === 0);
+                const isHam2 = (val2 === "0" || s2 === 0);
+
+                const score1Inner = isHam1 
+                    ? `<span class="ham-text">HẦM</span>` 
+                    : `<input type="text" class="score-input" value="${m.score1 || ''}" onchange="updateMatchData(${idx}, 'score1', this.value)">`;
+
+                const score2Inner = isHam2 
+                    ? `<span class="ham-text">HẦM</span>` 
+                    : `<input type="text" class="score-input" value="${m.score2 || ''}" onchange="updateMatchData(${idx}, 'score2', this.value)">`;
+
+                let keoCellUI = `
+                    <select onchange="updateMatchKeoMode(${idx}, this.value)" class="text-[10px] sm:text-[11px] font-bold p-0.5 border rounded bg-amber-50 outline-none w-full text-amber-900 border-amber-300">
+                        <option value="default" ${mMode==='default'?'selected':''}>Mặc định (+5k/-15k)</option>
+                        <option value="k25" ${mMode==='k25'?'selected':''}>Kèo 25k (0k/-25k)</option>
+                        <option value="free" ${mMode==='free'?'selected':''}>Kèo Tự Do</option>
+                    </select>
+                `;
+
+                if (mMode === 'free') {
+                    keoCellUI += `
+                        <div class="flex items-center justify-center gap-1 mt-1">
+                            <span class="text-[10px] text-emerald-700 font-bold">+</span>
+                            <input type="number" class="keo-custom-input text-emerald-700" value="${m.customWin !== undefined ? m.customWin : 5}" onchange="updateMatchData(${idx}, 'customWin', this.value)" title="Tiền thắng">
+                            <span class="text-[10px] text-red-600 font-bold">/</span>
+                            <input type="number" class="keo-custom-input text-red-600" value="${m.customLose !== undefined ? m.customLose : -15}" onchange="updateMatchData(${idx}, 'customLose', this.value)" title="Tiền thua">
+                        </div>
+                    `;
+                }
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="font-bold text-slate-700 whitespace-nowrap px-1">Trận ${idx+1}</td>
+                        <td class="p-1">${buildPlayerSelect(m.c1_p1, 'c1_p1')}</td>
+                        <td class="p-1">${buildPlayerSelect(m.c1_p2, 'c1_p2')}</td>
+                        
+                        <td class="p-1 bg-purple-50/40 border-x border-purple-200">
+                            <div class="flex items-center justify-center gap-0.5">
+                                <div onclick="if(${isHam1}) updateMatchData(${idx}, 'score1', '')">${score1Inner}</div>
+                                <span class="font-black text-slate-400 px-0.5">-</span>
+                                <div onclick="if(${isHam2}) updateMatchData(${idx}, 'score2', '')">${score2Inner}</div>
+                            </div>
+                        </td>
+
+                        <td class="p-1">${buildPlayerSelect(m.c2_p1, 'c2_p1')}</td>
+                        <td class="p-1">${buildPlayerSelect(m.c2_p2, 'c2_p2')}</td>
+
+                        <td class="p-1 bg-amber-50/50">${keoCellUI}</td>
+                        <td class="p-1 font-extrabold ${keo1 > 0 ? 'txt-win' : (keo1 < 0 ? 'txt-lose' : '')}">${keo1}</td>
+                        <td class="p-1 font-extrabold ${keo2 > 0 ? 'txt-win' : (keo2 < 0 ? 'txt-lose' : '')}">${keo2}</td>
+                        <td class="p-1 whitespace-nowrap">
+                            <button onclick="deleteMatchFromCurrentDate(${idx})" class="text-red-600 hover:text-red-800 font-bold text-xs px-2 py-1 bg-red-50 rounded border border-red-200 shadow-sm transition-all hover:bg-red-100">
+                                <i class="fa-solid fa-trash"></i> Xóa
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            const sumBody = document.getElementById('day-summary-body');
+            if(!sumBody) return;
+            sumBody.innerHTML = '';
+
+            let sumBringBack = 0, sumThucThu = 0, sumAmThucTe = 0;
+
+            window.players.forEach(p => {
+                const st = stats[p.name];
+                if(st.played > 0) {
+                    const payKey = `${dateStr}_${p.name}`;
+                    const isPaid = window.paymentStatus[payKey] || false;
+
+                    let bringBack = 0;
+                    if(st.played >= 4 && st.total > 0) { bringBack = st.total; sumBringBack += bringBack; }
+                    if(st.total < 0) { sumAmThucTe += st.total; if(isPaid) sumThucThu += Math.abs(st.total); }
+
+                    let noteText = "";
+                    if(st.total < 0) {
+                        noteText = isPaid ? `<span class="note-paid">Đã nộp</span>` : `<span class="note-unpaid">Chưa nộp</span>`;
+                    } else if(st.total > 0) {
+                        noteText = isPaid ? `<span class="note-paid">Đã nhận</span>` : `<span class="note-unpaid">Chưa nhận</span>`;
+                    }
+
+                    const disabledAttr = window.isAdminUnlocked ? '' : 'disabled title="Cần mật khẩu Admin để sửa"';
+
+                    sumBody.innerHTML += `
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-2 border text-left whitespace-nowrap pl-3"><span class="player-tag">${p.name}</span></td>
+                            <td class="p-2 border">${st.played}</td>
+                            <td class="p-2 border txt-win">${st.winK > 0 ? st.winK : ''}</td>
+                            <td class="p-2 border txt-lose">${st.loseK < 0 ? st.loseK : ''}</td>
+                            <td class="p-2 border text-blue-600 font-bold">${bringBack > 0 ? bringBack : ''}</td>
+                            <td class="p-2 border font-extrabold ${st.total < 0 ? 'txt-lose' : (st.total > 0 ? 'txt-win' : '')}">${st.total}</td>
+                            <td class="p-2 border bg-amber-50/30">
+                                <input type="checkbox" ${isPaid ? 'checked' : ''} ${disabledAttr} onclick="togglePaymentStatus('${payKey}')" class="w-4 h-4 cursor-pointer accent-emerald-600">
+                            </td>
+                            <td class="p-2 border whitespace-nowrap">${noteText}</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            let btcThuVe = sumAmThucTe + sumBringBack;
+            let quyCon = sumThucThu - Math.abs(btcThuVe);
+
+            const pStatus = window.paymentStatus[dateStr];
+            const currentOption = (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption) ? pStatus.btcNoteAdminOption : "YES";
+
+            sumBody.innerHTML += `
+                <tr class="bg-slate-100 font-extrabold">
+                    <td class="p-2 border text-left text-red-600 whitespace-nowrap pl-3">TỔNG BTC THU VỀ</td>
+                    <td class="p-2 border"></td>
+                    <td class="p-2 border"></td>
+                    <td class="p-2 border"></td>
+                    <td class="p-2 border text-blue-700">${sumBringBack}</td>
+                    <td class="p-2 border text-red-600">${btcThuVe}</td>
+                    <td class="p-2 border text-blue-700">${sumThucThu}</td>
+                    <td class="p-2 border whitespace-nowrap">
+                        <select onchange="handleBtcNoteChange(this)" class="text-xs font-bold p-1 border rounded bg-white text-emerald-700 outline-none">
+                            <option value="YES" ${currentOption==='YES'?'selected':''}>YES (Chuyển tổng ngày)</option>
+                            <option value="NO" ${currentOption==='NO'?'selected':''}>NO (Không chuyển)</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr class="bg-slate-100 font-extrabold">
+                    <td class="p-2 border text-left text-red-600 pl-3" colspan="4">Quỹ Còn</td>
+                    <td class="p-2 border text-red-600 text-sm" colspan="2">${quyCon}</td>
+                    <td class="p-2 border" colspan="2"></td>
+                </tr>
+            `;
+        }
+
+        function renderTongHopTab() {
+            const container = document.getElementById('tonghop-content-container');
+            if(!container) return;
+
+            let activeDates = window.dates.filter(d => {
+                const matches = window.matchesData[d] || [];
+                return matches.some(m => (!isNaN(parseInt(m.score1)) && !isNaN(parseInt(m.score2))) || m.c1_p1 || m.c1_p2 || m.c2_p1 || m.c2_p2);
+            });
+
+            if (activeDates.length === 0) {
+                container.innerHTML = `<div class="p-8 text-center font-bold text-slate-500">Hiện chưa có ngày nào phát sinh dữ liệu trận đấu.</div>`;
+                return;
+            }
+
+            let vdvList = window.players.map(p => p.name);
+            let vdvDayTotals = {};
+            let vdvRowKeoSum = {};
+            
+            vdvList.forEach(v => {
+                vdvDayTotals[v] = {};
+                vdvRowKeoSum[v] = 0;
+                activeDates.forEach(d => { vdvDayTotals[v][d] = 0; });
+            });
+
+            let dayTotalsSum = {};
+            activeDates.forEach(d => { dayTotalsSum[d] = 0; });
+
+            activeDates.forEach(d => {
+                const matches = window.matchesData[d] || [];
+                const pStatus = window.paymentStatus[d];
+                let isTransferYes = true;
+                if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
+                    isTransferYes = false;
+                }
+
+                let statsDay = {};
+                vdvList.forEach(v => { statsDay[v] = { played: 0, total: 0 }; });
+
+                matches.forEach(m => {
+                    const s1 = parseInt(m.score1);
+                    const s2 = parseInt(m.score2);
+                    
+                    const mMode = m.keoMode || window.dateKeoMode[d] || 'default';
+                    let winAmt = 5, loseAmt = -15;
+
+                    if (mMode === "k25") { winAmt = 0; loseAmt = -25; } 
+                    else if (mMode === "free") {
+                        winAmt = parseFloat(m.customWin) || 0;
+                        loseAmt = parseFloat(m.customLose) || 0;
+                        if (loseAmt > 0) loseAmt = -loseAmt;
+                    }
+
+                    if (!isNaN(s1) && !isNaN(s2)) {
+                        const pair1 = [m.c1_p1, m.c1_p2].filter(Boolean);
+                        const pair2 = [m.c2_p1, m.c2_p2].filter(Boolean);
+                        let isHam = (s1 === 0 || s2 === 0);
+                        let effWin = isHam ? (winAmt > 0 ? winAmt * 2 : 0) : winAmt;
+                        let effLose = isHam ? loseAmt * 2 : loseAmt;
+
+                        if (s1 > s2) {
+                            pair1.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effWin; } });
+                            pair2.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effLose; } });
+                        } else if (s2 > s1) {
+                            pair2.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effWin; } });
+                            pair1.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effLose; } });
+                        }
+                    }
+                });
+
+                let sumAmDay = 0, sumBringBackDay = 0;
+                vdvList.forEach(v => {
+                    let st = statsDay[v];
+                    if (st.played > 0) {
+                        if (isTransferYes) {
+                            vdvDayTotals[v][d] = st.total;
+                            vdvRowKeoSum[v] += st.total;
+                        } else {
+                            vdvDayTotals[v][d] = 0;
+                        }
+
+                        if (st.total < 0) sumAmDay += st.total;
+                        else if (st.played >= 4 && st.total > 0) sumBringBackDay += st.total;
+                    }
+                });
+
+                dayTotalsSum[d] = isTransferYes ? (sumAmDay + sumBringBackDay) : 0;
+            });
+
+            let grandTotalAllDays = 0;
+            let html = `
+                <table class="w-full text-center border-collapse border border-slate-300 text-xs">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-800">
+                            <th class="p-2 border font-bold min-w-[130px] sm:min-w-[150px] text-left pl-3 sticky left-0 bg-slate-100 z-10 shadow-sm">VĐV (PICK THỦ)</th>
+                            ${activeDates.map(d => `<th class="p-2 border font-bold min-w-[90px] whitespace-nowrap">NGÀY ${d}</th>`).join('')}
+                            <th class="p-2 border font-bold bg-yellow-200 text-amber-900 min-w-[100px] whitespace-nowrap">TỔNG KÈO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            vdvList.forEach((v) => {
+                let dayCells = activeDates.map(d => {
+                    let val = vdvDayTotals[v][d];
+                    let cls = val > 0 ? 'txt-win' : (val < 0 ? 'txt-lose' : '');
+                    return `<td class="p-2 border ${cls}">${val !== 0 ? (val > 0 ? '+' + val + 'K' : val + 'K') : '-'}</td>`;
+                }).join('');
+
+                let rowSum = vdvRowKeoSum[v];
+                let totalCls = rowSum > 0 ? 'txt-win' : (rowSum < 0 ? 'txt-lose' : '');
+
+                html += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-2 border text-left pl-3 sticky left-0 bg-white z-10 shadow-sm"><span class="player-tag">${v}</span></td>
+                        ${dayCells}
+                        <td class="p-2 border font-bold bg-yellow-100 ${totalCls}">${rowSum !== 0 ? (rowSum > 0 ? '+' + rowSum + 'K' : rowSum + 'K') : '0K'}</td>
+                    </tr>
+                `;
+            });
+
+            let daySumCells = activeDates.map(d => {
+                let val = dayTotalsSum[d];
+                grandTotalAllDays += val;
+                let cls = val < 0 ? 'txt-lose' : (val > 0 ? 'txt-win' : '');
+                return `<td class="p-2 border font-bold ${cls}">${val !== 0 ? val + 'K' : '0K'}</td>`;
+            }).join('');
+
+            let grandTotalCls = grandTotalAllDays < 0 ? 'txt-lose' : (grandTotalAllDays > 0 ? 'txt-win' : '');
+
+            html += `
+                        <tr class="bg-slate-100 font-extrabold">
+                            <td class="p-2 border text-left pl-3 text-red-600 sticky left-0 bg-slate-100 z-10 shadow-sm">TỔNG BTC THU VỀ</td>
+                            ${daySumCells}
+                            <td class="p-2 border font-extrabold bg-yellow-200 ${grandTotalCls}">${grandTotalAllDays !== 0 ? grandTotalAllDays + 'K' : '0K'}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = html;
+        }
+
+        function renderM2Pairs() {
+            const boxA = document.getElementById('m2-pairs-A');
+            const boxB = document.getElementById('m2-pairs-B');
+            if(!boxA || !boxB) return;
+            boxA.innerHTML = ''; boxB.innerHTML = '';
+
+            document.getElementById('count-m2-A').innerText = window.m2PairsA.length;
+            document.getElementById('count-m2-B').innerText = window.m2PairsB.length;
+
+            window.m2PairsA.forEach((pair, idx) => {
+                boxA.innerHTML += `<div class="flex items-center justify-between bg-white p-2 rounded border text-xs shadow-sm"><span class="font-semibold">Cặp ${idx+1}: <span class="player-tag">${pair.p1}</span> & <span class="player-tag">${pair.p2}</span></span><div><button onclick="openM2EditModal('A', ${idx})" class="text-blue-600 p-1"><i class="fa-solid fa-pencil"></i></button><button onclick="deletePairM2('A', ${idx})" class="text-red-500 p-1"><i class="fa-solid fa-trash"></i></button></div></div>`;
+            });
+            window.m2PairsB.forEach((pair, idx) => {
+                boxB.innerHTML += `<div class="flex items-center justify-between bg-white p-2 rounded border text-xs shadow-sm"><span class="font-semibold">Cặp ${idx+1}: <span class="player-tag">${pair.p1}</span> & <span class="player-tag">${pair.p2}</span></span><div><button onclick="openM2EditModal('B', ${idx})" class="text-blue-600 p-1"><i class="fa-solid fa-pencil"></i></button><button onclick="deletePairM2('B', ${idx})" class="text-red-500 p-1"><i class="fa-solid fa-trash"></i></button></div></div>`;
+            });
+        }
+
+        function openM2EditModal(group, index) {
+            const pair = group === 'A' ? window.m2PairsA[index] : window.m2PairsB[index];
+            if(pair) {
+                document.getElementById('m2-edit-group').value = group;
+                document.getElementById('m2-edit-index').value = index;
+                document.getElementById('m2-p1-input').value = pair.p1;
+                document.getElementById('m2-p2-input').value = pair.p2;
+                document.getElementById('m2-edit-modal').classList.remove('hidden');
+            }
+        }
+        function closeM2EditModal() { document.getElementById('m2-edit-modal').classList.add('hidden'); }
+
+        function saveM2PairEdit() {
+            const group = document.getElementById('m2-edit-group').value;
+            const index = parseInt(document.getElementById('m2-edit-index').value);
+            const p1 = document.getElementById('m2-p1-input').value.trim();
+            const p2 = document.getElementById('m2-p2-input').value.trim();
+            if(!p1 || !p2) return alert('Vui lòng nhập đầy đủ tên 2 VĐV!');
+
+            if(group === 'A') window.m2PairsA[index] = { p1, p2 };
+            else window.m2PairsB[index] = { p1, p2 };
+
+            closeM2EditModal(); renderM2(); autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function addPairM2(group) {
+            const pList = window.players.map(p => p.name);
+            const default1 = pList[0] || "VĐV 1";
+            const default2 = pList[1] || "VĐV 2";
+
+            if(group === 'A') window.m2PairsA.push({ p1: default1, p2: default2 });
+            else window.m2PairsB.push({ p1: default1, p2: default2 });
+            renderM2(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function deletePairM2(group, index) {
+            if(confirm('Bạn có chắc muốn xóa cặp VĐV này?')) {
+                if(group === 'A') window.m2PairsA.splice(index, 1);
+                else window.m2PairsB.splice(index, 1);
+                renderM2(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
+            }
+        }
+
+        function generateM2GroupSchedule(pairs, groupName) {
+            let schedule = [];
+            let count = pairs.length;
+            let matchIdx = 1;
+
+            for(let i = 0; i < count; i++) {
+                for(let j = i + 1; j < count; j++) {
+                    const matchKey = `${groupName}_${i}_${j}`;
+                    schedule.push({
+                        key: matchKey,
+                        matchNum: matchIdx++,
+                        t1Index: i,
+                        t2Index: j,
+                        t1Name: `${pairs[i].p1} - ${pairs[i].p2}`,
+                        t2Name: `${pairs[j].p1} - ${pairs[j].p2}`
+                    });
+                }
+            }
+            return schedule;
+        }
+
+        function renderM2() {
+            renderM2Pairs();
+
+            const schedA = generateM2GroupSchedule(window.m2PairsA, 'A');
+            const schedB = generateM2GroupSchedule(window.m2PairsB, 'B');
+
+            let statsA = window.m2PairsA.map((p, idx) => ({
+                idx, name: `${p.p1} - ${p.p2}`, pts: 0, diff: 0, headToHead: {}
+            }));
+
+            const tbodySchedA = document.getElementById('m2-schedule-A');
+            if(tbodySchedA) {
+                tbodySchedA.innerHTML = '';
+                schedA.forEach(m => {
+                    const s1 = window.m2ScoresA[m.key + '_1'] !== undefined ? window.m2ScoresA[m.key + '_1'] : '';
+                    const s2 = window.m2ScoresA[m.key + '_2'] !== undefined ? window.m2ScoresA[m.key + '_2'] : '';
+
+                    if(s1 !== '' && s2 !== '') {
+                        const v1 = parseInt(s1);
+                        const v2 = parseInt(s2);
+                        const diff = v1 - v2;
+
+                        statsA[m.t1Index].diff += diff;
+                        statsA[m.t2Index].diff -= diff;
+
+                        if(v1 > v2) {
+                            statsA[m.t1Index].pts += 1;
+                            statsA[m.t1Index].headToHead[m.t2Index] = 1;
+                            statsA[m.t2Index].headToHead[m.t1Index] = -1;
+                        } else if(v2 > v1) {
+                            statsA[m.t2Index].pts += 1;
+                            statsA[m.t2Index].headToHead[m.t1Index] = 1;
+                            statsA[m.t1Index].headToHead[m.t2Index] = -1;
+                        }
+                    }
+
+                    tbodySchedA.innerHTML += `
+                        <tr>
+                            <td class="border p-1 font-bold">T${m.matchNum}</td>
+                            <td class="border p-1 text-left font-bold text-blue-800">${m.t1Name}</td>
+                            <td class="border p-1"><input type="number" value="${s1}" onchange="updateM2Score('A', '${m.key}_1', this.value)" class="w-10 text-center font-bold"></td>
+                            <td class="border p-1"><input type="number" value="${s2}" onchange="updateM2Score('A', '${m.key}_2', this.value)" class="w-10 text-center font-bold"></td>
+                            <td class="border p-1 text-left font-bold text-blue-800">${m.t2Name}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            statsA.sort((a,b) => {
+                if(b.pts !== a.pts) return b.pts - a.pts;
+                if(b.diff !== a.diff) return b.diff - a.diff;
+                return (a.headToHead[b.idx] || 0) < 0 ? 1 : -1;
+            });
+
+            const rankA = document.getElementById('m2-rank-A');
+            if(rankA) {
+                rankA.innerHTML = '';
+                statsA.forEach((st, i) => {
+                    rankA.innerHTML += `
+                        <tr>
+                            <td class="border p-1 font-bold">${i+1}</td>
+                            <td class="border p-1 text-left font-bold text-blue-800">${st.name}</td>
+                            <td class="border p-1 font-bold text-blue-800">${st.pts}</td>
+                            <td class="border p-1 font-semibold">${st.diff > 0 ? '+'+st.diff : st.diff}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            let statsB = window.m2PairsB.map((p, idx) => ({
+                idx, name: `${p.p1} - ${p.p2}`, pts: 0, diff: 0, headToHead: {}
+            }));
+
+            const tbodySchedB = document.getElementById('m2-schedule-B');
+            if(tbodySchedB) {
+                tbodySchedB.innerHTML = '';
+                schedB.forEach(m => {
+                    const s1 = window.m2ScoresB[m.key + '_1'] !== undefined ? window.m2ScoresB[m.key + '_1'] : '';
+                    const s2 = window.m2ScoresB[m.key + '_2'] !== undefined ? window.m2ScoresB[m.key + '_2'] : '';
+
+                    if(s1 !== '' && s2 !== '') {
+                        const v1 = parseInt(s1);
+                        const v2 = parseInt(s2);
+                        const diff = v1 - v2;
+
+                        statsB[m.t1Index].diff += diff;
+                        statsB[m.t2Index].diff -= diff;
+
+                        if(v1 > v2) {
+                            statsB[m.t1Index].pts += 1;
+                            statsB[m.t1Index].headToHead[m.t2Index] = 1;
+                            statsB[m.t2Index].headToHead[m.t1Index] = -1;
+                        } else if(v2 > v1) {
+                            statsB[m.t2Index].pts += 1;
+                            statsB[m.t2Index].headToHead[m.t1Index] = 1;
+                            statsB[m.t1Index].headToHead[m.t2Index] = -1;
+                        }
+                    }
+
+                    tbodySchedB.innerHTML += `
+                        <tr>
+                            <td class="border p-1 font-bold">T${m.matchNum}</td>
+                            <td class="border p-1 text-left font-bold text-orange-800">${m.t1Name}</td>
+                            <td class="border p-1"><input type="number" value="${s1}" onchange="updateM2Score('B', '${m.key}_1', this.value)" class="w-10 text-center font-bold"></td>
+                            <td class="border p-1"><input type="number" value="${s2}" onchange="updateM2Score('B', '${m.key}_2', this.value)" class="w-10 text-center font-bold"></td>
+                            <td class="border p-1 text-left font-bold text-orange-800">${m.t2Name}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            statsB.sort((a,b) => {
+                if(b.pts !== a.pts) return b.pts - a.pts;
+                if(b.diff !== a.diff) return b.diff - a.diff;
+                return (a.headToHead[b.idx] || 0) < 0 ? 1 : -1;
+            });
+
+            const rankB = document.getElementById('m2-rank-B');
+            if(rankB) {
+                rankB.innerHTML = '';
+                statsB.forEach((st, i) => {
+                    rankB.innerHTML += `
+                        <tr>
+                            <td class="border p-1 font-bold">${i+1}</td>
+                            <td class="border p-1 text-left font-bold text-orange-800">${st.name}</td>
+                            <td class="border p-1 font-bold text-orange-800">${st.pts}</td>
+                            <td class="border p-1 font-semibold">${st.diff > 0 ? '+'+st.diff : st.diff}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            const team1A = statsA[0] ? statsA[0].name : "Nhất A";
+            const team2A = statsA[1] ? statsA[1].name : "Nhì A";
+            const team1B = statsB[0] ? statsB[0].name : "Nhất B";
+            const team2B = statsB[1] ? statsB[1].name : "Nhì B";
+
+            if(document.getElementById('bk1-team1-name')) document.getElementById('bk1-team1-name').innerText = team1A;
+            if(document.getElementById('bk1-team2-name')) document.getElementById('bk1-team2-name').innerText = team2B;
+            if(document.getElementById('bk2-team1-name')) document.getElementById('bk2-team1-name').innerText = team1B;
+            if(document.getElementById('bk2-team2-name')) document.getElementById('bk2-team2-name').innerText = team2A;
+
+            const bk1_s1 = parseInt(document.getElementById('bk1-s1')?.value || -1);
+            const bk1_s2 = parseInt(document.getElementById('bk1-s2')?.value || -1);
+            const bk2_s1 = parseInt(document.getElementById('bk2-s1')?.value || -1);
+            const bk2_s2 = parseInt(document.getElementById('bk2-s2')?.value || -1);
+
+            let winBK1 = "Thắng BK1", loseBK1 = "Thua BK1";
+            let winBK2 = "Thắng BK2", loseBK2 = "Thua BK2";
+
+            if(bk1_s1 !== -1 && bk1_s2 !== -1) {
+                if(bk1_s1 > bk1_s2) { winBK1 = team1A; loseBK1 = team2B; }
+                else if(bk1_s2 > bk1_s1) { winBK1 = team2B; loseBK1 = team1A; }
+            }
+
+            if(bk2_s1 !== -1 && bk2_s2 !== -1) {
+                if(bk2_s1 > bk2_s2) { winBK2 = team1B; loseBK2 = team2A; }
+                else if(bk2_s2 > bk2_s1) { winBK2 = team2A; loseBK2 = team1B; }
+            }
+
+            if(document.getElementById('t3-team1-name')) document.getElementById('t3-team1-name').innerText = loseBK1;
+            if(document.getElementById('t3-team2-name')) document.getElementById('t3-team2-name').innerText = loseBK2;
+            if(document.getElementById('ck-team1-name')) document.getElementById('ck-team1-name').innerText = winBK1;
+            if(document.getElementById('ck-team2-name')) document.getElementById('ck-team2-name').innerText = winBK2;
+
+            const t3_s1 = parseInt(document.getElementById('t3-s1')?.value || -1);
+            const t3_s2 = parseInt(document.getElementById('t3-s2')?.value || -1);
+            const ck_s1 = parseInt(document.getElementById('ck-s1')?.value || -1);
+            const ck_s2 = parseInt(document.getElementById('ck-s2')?.value || -1);
+
+            let winner1 = "---", winner2 = "---", winner3 = "---";
+
+            if(ck_s1 !== -1 && ck_s2 !== -1) {
+                if(ck_s1 > ck_s2) { winner1 = winBK1; winner2 = winBK2; }
+                else if(ck_s2 > ck_s1) { winner1 = winBK2; winner2 = winBK1; }
+            }
+
+            if(t3_s1 !== -1 && t3_s2 !== -1) {
+                if(t3_s1 > t3_s2) { winner3 = loseBK1; }
+                else if(t3_s2 > t3_s1) { winner3 = loseBK2; }
+            }
+
+            if(document.getElementById('winner-1')) document.getElementById('winner-1').innerText = winner1;
+            if(document.getElementById('winner-2')) document.getElementById('winner-2').innerText = winner2;
+            if(document.getElementById('winner-3')) document.getElementById('winner-3').innerText = winner3;
+        }
+
+        function updateM2Score(group, key, val) {
+            if(group === 'A') window.m2ScoresA[key] = val;
+            else window.m2ScoresB[key] = val;
+            renderM2(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
         }
 
         function autoBackupData() {
             try {
+                const getVal = (id) => document.getElementById(id)?.value || "";
                 const backupData = {
-                    appName: "Pickleball_Fund_Manager",
+                    appName: "CLB-PICKLEBALL-CMTD",
                     exportDate: new Date().toISOString(),
                     players: window.players,
+                    m1TeamA: window.m1TeamA,
+                    m1TeamB: window.m1TeamB,
+                    m1Matches: window.m1Matches,
+                    m2PairsA: window.m2PairsA,
+                    m2PairsB: window.m2PairsB,
+                    m2ScoresA: window.m2ScoresA,
+                    m2ScoresB: window.m2ScoresB,
+                    dates: window.dates,
+                    matchesData: window.matchesData,
+                    dateKeoMode: window.dateKeoMode,
+                    paymentStatus: window.paymentStatus,
                     activeQuarterColumns: window.activeQuarterColumns,
                     initialFund: window.initialFund,
                     fundFeeStatus: window.fundFeeStatus,
                     fundIncomes: window.fundIncomes,
-                    fundExpenses: window.fundExpenses
+                    fundExpenses: window.fundExpenses,
+                    autoIncomeNotes: window.autoIncomeNotes,
+                    knockoutScores: {
+                        bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
+                        bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
+                        t3:  [getVal('t3-s1'),  getVal('t3-s2')],
+                        ck:  [getVal('ck-s1'),  getVal('ck-s2')]
+                    }
                 };
-                localStorage.setItem("auto_backup_fund", JSON.stringify(backupData));
+                localStorage.setItem("auto_backup_minigame", JSON.stringify(backupData));
             } catch (err) { console.error("Lỗi autoBackup:", err); }
         }
 
         function restoreAutoBackup(silent = false) {
-            const rawData = localStorage.getItem("auto_backup_fund");
-            if (!rawData) return;
+            const rawData = localStorage.getItem("auto_backup_minigame");
+            if (!rawData) { if (!silent) alert("Không tìm thấy bản sao lưu!"); return; }
             try {
                 const data = JSON.parse(rawData);
                 if (data.players) window.players = data.players;
+                if (data.m1TeamA) window.m1TeamA = data.m1TeamA;
+                if (data.m1TeamB) window.m1TeamB = data.m1TeamB;
+                if (data.m1Matches) window.m1Matches = data.m1Matches;
+                if (data.m2PairsA) window.m2PairsA = data.m2PairsA;
+                if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
+                if (data.m2ScoresA) window.m2ScoresA = data.m2ScoresA;
+                if (data.m2ScoresB) window.m2ScoresB = data.m2ScoresB;
+                if (data.dates) window.dates = data.dates;
+                if (data.matchesData) window.matchesData = data.matchesData;
+                if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
+                if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
                 if (data.activeQuarterColumns) window.activeQuarterColumns = data.activeQuarterColumns;
                 if (data.initialFund !== undefined) window.initialFund = data.initialFund;
                 if (data.fundFeeStatus) window.fundFeeStatus = data.fundFeeStatus;
                 if (data.fundIncomes) window.fundIncomes = data.fundIncomes;
                 if (data.fundExpenses) window.fundExpenses = data.fundExpenses;
-                updateFundDashboard();
+                if (data.autoIncomeNotes) window.autoIncomeNotes = data.autoIncomeNotes;
+
+                refreshAllViews();
+                if (!silent) alert("Đã nạp thành công dữ liệu từ Auto-Backup!");
             } catch (err) { console.error("Lỗi restoreAutoBackup:", err); }
         }
 
         function exportBackupJSON() {
+            const getVal = (id) => document.getElementById(id)?.value || "";
             const backupData = {
-                appName: "Pickleball_Fund_Manager",
+                appName: "CLB-PICKLEBALL-CMTD",
                 exportDate: new Date().toISOString(),
                 players: window.players,
+                m1TeamA: window.m1TeamA,
+                m1TeamB: window.m1TeamB,
+                m1Matches: window.m1Matches,
+                m2PairsA: window.m2PairsA,
+                m2PairsB: window.m2PairsB,
+                m2ScoresA: window.m2ScoresA,
+                m2ScoresB: window.m2ScoresB,
+                dates: window.dates,
+                matchesData: window.matchesData,
+                dateKeoMode: window.dateKeoMode,
+                paymentStatus: window.paymentStatus,
                 activeQuarterColumns: window.activeQuarterColumns,
                 initialFund: window.initialFund,
                 fundFeeStatus: window.fundFeeStatus,
                 fundIncomes: window.fundIncomes,
-                fundExpenses: window.fundExpenses
+                fundExpenses: window.fundExpenses,
+                autoIncomeNotes: window.autoIncomeNotes,
+                knockoutScores: {
+                    bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
+                    bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
+                    t3:  [getVal('t3-s1'),  getVal('t3-s2')],
+                    ck:  [getVal('ck-s1'),  getVal('ck-s2')]
+                }
             };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
             const anchor = document.createElement('a');
             anchor.setAttribute("href", dataStr);
-            anchor.setAttribute("download", `Pickleball_Fund_Backup_${new Date().toISOString().slice(0, 10)}.json`);
+            anchor.setAttribute("download", `CMTD_Pickleball_Backup_${new Date().toISOString().slice(0, 10)}.json`);
             document.body.appendChild(anchor);
             anchor.click(); anchor.remove();
         }
@@ -881,26 +2762,379 @@
                 try {
                     const data = JSON.parse(e.target.result);
                     if (data.players) window.players = data.players;
+                    if (data.m1TeamA) window.m1TeamA = data.m1TeamA;
+                    if (data.m1TeamB) window.m1TeamB = data.m1TeamB;
+                    if (data.m1Matches) window.m1Matches = data.m1Matches;
+                    if (data.m2PairsA) window.m2PairsA = data.m2PairsA;
+                    if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
+                    if (data.m2ScoresA) window.m2ScoresA = data.m2ScoresA;
+                    if (data.m2ScoresB) window.m2ScoresB = data.m2ScoresB;
+                    if (data.dates) window.dates = data.dates;
+                    if (data.matchesData) window.matchesData = data.matchesData;
+                    if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
+                    if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
                     if (data.activeQuarterColumns) window.activeQuarterColumns = data.activeQuarterColumns;
                     if (data.initialFund !== undefined) window.initialFund = data.initialFund;
                     if (data.fundFeeStatus) window.fundFeeStatus = data.fundFeeStatus;
                     if (data.fundIncomes) window.fundIncomes = data.fundIncomes;
                     if (data.fundExpenses) window.fundExpenses = data.fundExpenses;
+                    if (data.autoIncomeNotes) window.autoIncomeNotes = data.autoIncomeNotes;
 
-                    localStorage.setItem('pb_fund_players', JSON.stringify(window.players));
-                    saveQuarterColsConfig();
-                    saveFundData();
-                    alert("Phục hồi dữ liệu quỹ thành công!");
-                } catch (err) { alert("Lỗi đọc file backup JSON!"); }
+                    refreshAllViews();
+                    autoBackupData();
+                    if (window.syncToFirebase) window.syncToFirebase();
+                    alert("Phục hồi dữ liệu từ file backup thành công!");
+                } catch (err) { alert("Lỗi đọc file backup!"); }
             };
             reader.readAsText(file);
             event.target.value = '';
         }
 
+        function changeTheme(themeClass) {
+            document.getElementById('app-body').className = `${themeClass} min-h-screen flex flex-col font-sans transition-colors duration-300 text-slate-800`;
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-slate-700', 'text-yellow-400'));
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            if (activeBtn) activeBtn.classList.add('bg-slate-700', 'text-yellow-400');
+
+            if(tabId === 'tonghop') renderTongHopTab();
+            if(tabId === 'day_detail') renderDayDetailView();
+            if(tabId === 'fund_manager') updateFundDashboard();
+        }
+
+        function refreshAllViews() {
+            renderPlayers();
+            renderMinigame1();
+            renderM2();
+            renderDatesMenuList();
+            renderDayDetailView();
+            renderTongHopTab();
+            updateFundDashboard();
+        }
+
+        function renderPlayers() {
+            const tbody = document.getElementById('player-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            window.players.forEach((p, idx) => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 border text-center font-bold">${idx + 1}</td>
+                        <td class="p-3 border"><span class="player-tag text-base">${p.name}</span></td>
+                        <td class="p-3 border text-center font-semibold">${p.gender}</td>
+                        <td class="p-3 border text-center">
+                            <button onclick="editPlayer(${p.id})" class="text-blue-600 hover:text-blue-800 mr-3 font-bold text-xs"><i class="fa-solid fa-pen"></i> Sửa</button>
+                            <button onclick="deletePlayer(${p.id})" class="text-red-600 hover:text-red-800 font-bold text-xs"><i class="fa-solid fa-trash"></i> Xoá</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function openPlayerModal(isEdit = false) {
+            document.getElementById('player-modal').classList.remove('hidden');
+            if(!isEdit) {
+                document.getElementById('modal-title').innerText = 'Thêm Pick Thủ Mới';
+                document.getElementById('player-id').value = '';
+                document.getElementById('player-name').value = '';
+                document.getElementById('player-gender').value = 'Nam';
+            }
+        }
+        function closePlayerModal() { document.getElementById('player-modal').classList.add('hidden'); }
+
+        function savePlayer() {
+            const id = document.getElementById('player-id').value;
+            const name = document.getElementById('player-name').value.trim();
+            const gender = document.getElementById('player-gender').value;
+            if(!name) return alert('Vui lòng nhập tên VĐV!');
+
+            if(id) {
+                const player = window.players.find(p => p.id == id);
+                if(player) { player.name = name; player.gender = gender; }
+            } else {
+                window.players.push({ id: Date.now(), name: name, gender: gender });
+            }
+
+            closePlayerModal(); 
+            refreshAllViews();
+            autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function editPlayer(id) {
+            const p = window.players.find(item => item.id == id);
+            if(p) {
+                document.getElementById('modal-title').innerText = 'Sửa Thông Tin Pick Thủ';
+                document.getElementById('player-id').value = p.id;
+                document.getElementById('player-name').value = p.name;
+                document.getElementById('player-gender').value = p.gender;
+                openPlayerModal(true);
+            }
+        }
+
+        function deletePlayer(id) {
+            if(confirm('Bạn có chắc muốn xoá VĐV này khỏi danh sách?')) {
+                window.players = window.players.filter(p => p.id != id);
+                refreshAllViews();
+                autoBackupData();
+                if(window.syncToFirebase) window.syncToFirebase();
+            }
+        }
+
+        function renderMinigame1() {
+            const listA = document.getElementById('team-A-list');
+            const listB = document.getElementById('team-B-list');
+            if(!listA || !listB) return;
+            listA.innerHTML = ''; listB.innerHTML = '';
+
+            document.getElementById('team-A-count').innerText = window.m1TeamA.length;
+            document.getElementById('team-B-count').innerText = window.m1TeamB.length;
+
+            const availableForA = window.players.filter(p => !window.m1TeamB.includes(p.name));
+            const availableForB = window.players.filter(p => !window.m1TeamA.includes(p.name));
+
+            window.m1TeamA.forEach((currentName, i) => {
+                let options = availableForA.map(p => `<option value="${p.name}" ${p.name === currentName ? 'selected' : ''}>${p.name}</option>`).join('');
+                listA.innerHTML += `
+                    <div class="flex items-center justify-between bg-white px-2 py-1 rounded border border-blue-200 text-sm gap-2 shadow-sm">
+                        <span class="font-bold text-blue-800 w-6">${i+1}.</span>
+                        <select onchange="updateTeamMember('A', ${i}, this.value)" class="player-select-btn flex-grow bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs">${options}</select>
+                        <button onclick="removeTeamMember('A', ${i})" class="text-red-500 text-xs p-1"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                `;
+            });
+
+            window.m1TeamB.forEach((currentName, i) => {
+                let options = availableForB.map(p => `<option value="${p.name}" ${p.name === currentName ? 'selected' : ''}>${p.name}</option>`).join('');
+                listB.innerHTML += `
+                    <div class="flex items-center justify-between bg-white px-2 py-1 rounded border border-orange-200 text-sm gap-2 shadow-sm">
+                        <span class="font-bold text-orange-800 w-6">${i+1}.</span>
+                        <select onchange="updateTeamMember('B', ${i}, this.value)" class="player-select-btn flex-grow bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs">${options}</select>
+                        <button onclick="removeTeamMember('B', ${i})" class="text-red-500 text-xs p-1"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                `;
+            });
+
+            const body = document.getElementById('m1-schedule-body');
+            body.innerHTML = '';
+            document.getElementById('m1-match-count').innerText = window.m1Matches.length;
+
+            let scoreCountA = 0, scoreCountB = 0, totalDiffA = 0, playedMatches = 0;
+
+            window.m1Matches.forEach((m, idx) => {
+                const sA = m.scoreA !== "" ? parseInt(m.scoreA) : null;
+                const sB = m.scoreB !== "" ? parseInt(m.scoreB) : null;
+                let winner = "---", diff = "---", ptsA = 0, ptsB = 0, status = "<span class='text-slate-400'>Chưa đấu</span>";
+
+                if (sA !== null && sB !== null && !isNaN(sA) && !isNaN(sB)) {
+                    playedMatches++;
+                    const d = sA - sB; diff = d > 0 ? `+${d}` : `${d}`; totalDiffA += d;
+                    if (sA > sB) { winner = "Đội A"; ptsA = 1; scoreCountA += 1; status = "<span class='text-emerald-600 font-bold'>Xong</span>"; }
+                    else if (sB > sA) { winner = "Đội B"; ptsB = 1; scoreCountB += 1; status = "<span class='text-emerald-600 font-bold'>Xong</span>"; }
+                    else { winner = "Hòa"; status = "<span class='text-amber-600 font-bold'>Xong</span>"; }
+                }
+
+                const buildSelect = (teamList, selectedVal, field, matchId) => {
+                    let opts = `<option value="">--Chọn--</option>`;
+                    teamList.forEach(name => { opts += `<option value="${name}" ${name === selectedVal ? 'selected' : ''}>${name}</option>`; });
+                    return `<select onchange="updateM1MatchPlayer(${matchId}, '${field}', this.value)" class="player-select-btn bg-white border rounded px-1 py-0.5 text-xs">${opts}</select>`;
+                };
+
+                body.innerHTML += `
+                    <tr class="hover:bg-slate-50 text-center">
+                        <td class="font-bold">${idx + 1}</td>
+                        <td class="font-semibold text-blue-900">${m.luot}</td>
+                        <td class="font-semibold text-slate-700">${m.san}</td>
+                        <td class="text-left px-2">${m.content}</td>
+                        <td class="text-left px-1">${buildSelect(window.m1TeamA, m.a1, 'a1', m.id)}</td>
+                        <td class="text-left px-1">${buildSelect(window.m1TeamA, m.a2, 'a2', m.id)}</td>
+                        <td><input type="number" value="${m.scoreA}" onchange="updateM1Score(${m.id}, 'A', this.value)" class="text-center font-bold text-blue-900"></td>
+                        <td class="font-bold text-slate-400">vs</td>
+                        <td><input type="number" value="${m.scoreB}" onchange="updateM1Score(${m.id}, 'B', this.value)" class="text-center font-bold text-orange-900"></td>
+                        <td class="text-left px-1">${buildSelect(window.m1TeamB, m.b1, 'b1', m.id)}</td>
+                        <td class="text-left px-1">${buildSelect(window.m1TeamB, m.b2, 'b2', m.id)}</td>
+                        <td class="font-bold">${winner}</td>
+                        <td class="font-semibold">${diff}</td>
+                        <td class="font-bold text-blue-700">${ptsA}</td>
+                        <td class="font-bold text-orange-700">${ptsB}</td>
+                        <td>${status}</td>
+                        <td><button onclick="deleteM1Match(${m.id})" class="text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+
+            const sumBody = document.getElementById('m1-summary-body');
+            sumBody.innerHTML = `
+                <tr class="bg-blue-50 text-blue-900"><td class="p-3 border font-extrabold">TEAM A</td><td class="p-3 border">${playedMatches}</td><td class="p-3 border text-lg font-black">${scoreCountA}</td><td class="p-3 border">${totalDiffA > 0 ? '+' + totalDiffA : totalDiffA}</td><td class="p-3 border">${scoreCountA > scoreCountB ? '<span class="text-emerald-600">Đang Dẫn Trước</span>' : '<span class="text-red-500">Đang Bị Dẫn</span>'}</td></tr>
+                <tr class="bg-orange-50 text-orange-900"><td class="p-3 border font-extrabold">TEAM B</td><td class="p-3 border">${playedMatches}</td><td class="p-3 border text-lg font-black">${scoreCountB}</td><td class="p-3 border">${-totalDiffA}</td><td class="p-3 border">${scoreCountB > scoreCountA ? '<span class="text-emerald-600">Đang Dẫn Trước</span>' : '<span class="text-red-500">Đang Bị Dẫn</span>'}</td></tr>
+            `;
+        }
+
+        function updateTeamMember(team, index, newName) {
+            if (team === 'A') window.m1TeamA[index] = newName;
+            else window.m1TeamB[index] = newName;
+            renderMinigame1(); autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function updateM1MatchPlayer(matchId, field, value) {
+            const m = window.m1Matches.find(item => item.id === matchId);
+            if (m) { m[field] = value; renderMinigame1(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase(); }
+        }
+
+        function updateM1Score(id, team, val) {
+            const m = window.m1Matches.find(item => item.id === id);
+            if(m) { if(team === 'A') m.scoreA = val; if(team === 'B') m.scoreB = val; renderMinigame1(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase(); }
+        }
+
+        function addM1Match() {
+            const nextId = window.m1Matches.length ? Math.max(...window.m1Matches.map(m=>m.id)) + 1 : 1;
+            window.m1Matches.push({ id: nextId, luot: 1, san: 1, content: "Đôi Nam/Nữ", a1: "", a2: "", scoreA: "", scoreB: "", b1: "", b2: "" });
+            renderMinigame1(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function deleteM1Match(id) {
+            if(confirm('Bạn có chắc muốn xóa trận đấu này?')) {
+                window.m1Matches = window.m1Matches.filter(m => m.id !== id);
+                renderMinigame1(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
+            }
+        }
+
+        function addTeamMember(team) {
+            const available = window.players.filter(p => !window.m1TeamA.includes(p.name) && !window.m1TeamB.includes(p.name));
+            if (available.length === 0) return alert("Không còn VĐV khả dụng!");
+            if (team === 'A') window.m1TeamA.push(available[0].name);
+            else window.m1TeamB.push(available[0].name);
+            renderMinigame1(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function removeTeamMember(team, index) {
+            if(team === 'A') window.m1TeamA.splice(index, 1);
+            else window.m1TeamB.splice(index, 1);
+            renderMinigame1(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
+        }
+
         window.onload = function() {
             restoreAutoBackup(true);
-            updateFundDashboard();
+            refreshAllViews();
         };
+    </script>
+
+    <!-- FIREBASE REALTIME MODULE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYCKzobz_fr-1BcHt3TxmOuX1nHCOQFMs",
+            authDomain: "minigame-bb991.firebaseapp.com",
+            projectId: "minigame-bb991",
+            storageBucket: "minigame-bb991.appspot.com"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const getVal = (id) => document.getElementById(id)?.value || "";
+        const setVal = (id, val) => {
+            const el = document.getElementById(id);
+            if (el && val !== undefined) el.value = val;
+        };
+
+        window.syncToFirebase = window.saveStateToFirebase = window.saveDataToFirebase = async function() {
+            try {
+                const knockoutScores = {
+                    bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
+                    bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
+                    t3:  [getVal('t3-s1'),  getVal('t3-s2')],
+                    ck:  [getVal('ck-s1'),  getVal('ck-s2')]
+                };
+
+                await setDoc(doc(db, "minigame", "app_state"), {
+                    players: window.players,
+                    m1TeamA: window.m1TeamA,
+                    m1TeamB: window.m1TeamB,
+                    m1Matches: window.m1Matches,
+                    m2PairsA: window.m2PairsA,
+                    m2PairsB: window.m2PairsB,
+                    m2ScoresA: window.m2ScoresA,
+                    m2ScoresB: window.m2ScoresB,
+                    dates: window.dates,
+                    matchesData: window.matchesData,
+                    dateKeoMode: window.dateKeoMode,
+                    paymentStatus: window.paymentStatus,
+                    activeQuarterColumns: window.activeQuarterColumns,
+                    initialFund: window.initialFund,
+                    fundFeeStatus: window.fundFeeStatus,
+                    fundIncomes: window.fundIncomes,
+                    fundExpenses: window.fundExpenses,
+                    autoIncomeNotes: window.autoIncomeNotes,
+                    knockoutScores: knockoutScores
+                }, { merge: true });
+                console.log("Đã đồng bộ Firestore thành công!");
+            } catch (error) {
+                console.error("Lỗi đồng bộ Firestore:", error);
+            }
+        };
+
+        onSnapshot(doc(db, "minigame", "app_state"), 
+            (docSnap) => {
+                const updateStatus = (text, cls, dotCls) => {
+                    ['status-element', 'status-element-mobile'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) { el.innerText = text; el.className = cls; }
+                    });
+                    ['status-dot', 'status-dot-mobile'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.className = dotCls;
+                    });
+                };
+
+                updateStatus("Firestore Online", "text-xs text-emerald-400 font-bold", "w-2 h-2 rounded-full bg-emerald-500 animate-ping");
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.players) window.players = data.players;
+                    if (data.m1TeamA) window.m1TeamA = data.m1TeamA;
+                    if (data.m1TeamB) window.m1TeamB = data.m1TeamB;
+                    if (data.m1Matches) window.m1Matches = data.m1Matches;
+                    if (data.m2PairsA) window.m2PairsA = data.m2PairsA;
+                    if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
+                    if (data.m2ScoresA) window.m2ScoresA = data.m2ScoresA;
+                    if (data.m2ScoresB) window.m2ScoresB = data.m2ScoresB;
+                    if (data.dates) window.dates = data.dates;
+                    if (data.matchesData) window.matchesData = data.matchesData;
+                    if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
+                    if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
+                    if (data.activeQuarterColumns) window.activeQuarterColumns = data.activeQuarterColumns;
+                    if (data.initialFund !== undefined) window.initialFund = data.initialFund;
+                    if (data.fundFeeStatus) window.fundFeeStatus = data.fundFeeStatus;
+                    if (data.fundIncomes) window.fundIncomes = data.fundIncomes;
+                    if (data.fundExpenses) window.fundExpenses = data.fundExpenses;
+                    if (data.autoIncomeNotes) window.autoIncomeNotes = data.autoIncomeNotes;
+
+                    if (data.knockoutScores) {
+                        const s = data.knockoutScores;
+                        if (s.bk1) { setVal('bk1-s1', s.bk1[0]); setVal('bk1-s2', s.bk1[1]); }
+                        if (s.bk2) { setVal('bk2-s1', s.bk2[0]); setVal('bk2-s2', s.bk2[1]); }
+                        if (s.t3)  { setVal('t3-s1',  s.t3[0]);  setVal('t3-s2',  s.t3[1]); }
+                        if (s.ck)  { setVal('ck-s1',  s.ck[0]);  setVal('ck-s2',  s.ck[1]); }
+                    }
+
+                    if (typeof window.refreshAllViews === 'function') window.refreshAllViews();
+                    if (typeof window.autoBackupData === 'function') window.autoBackupData();
+                }
+            },
+            (error) => {
+                console.error("Lỗi Firestore:", error);
+                const el = document.getElementById('status-element');
+                if (el) { el.innerText = "Offline"; el.className = "text-xs text-red-400 font-bold"; }
+            }
+        );
     </script>
 </body>
 </html>
