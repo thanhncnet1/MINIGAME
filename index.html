@@ -342,6 +342,29 @@
                     </div>
                 </div>
 
+                <!-- BỘ KHUÂN HIỂN THỊ CHI TIẾT NGÀY GẦN NHẤT TRỰC TIẾP TẠI TRANG CHỦ -->
+                <div class="mt-8 text-left border-t border-slate-200 pt-6">
+                    <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-blue-600 text-white text-xs font-black px-2.5 py-1 rounded-full uppercase tracking-wider animate-pulse">
+                                🔥 Cập Nhật
+                            </span>
+                            <h3 class="text-lg md:text-xl font-extrabold text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-calendar-check text-blue-600"></i>
+                                <span>DIỄN BIẾN NGÀY GẦN NHẤT: <span id="home-closest-date-title" class="text-blue-700 underline decoration-yellow-400">---</span></span>
+                            </h3>
+                        </div>
+                        <button onclick="goToClosestDateTab()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-lg shadow font-bold flex items-center gap-1.5 transition-all">
+                            <i class="fa-solid fa-up-right-from-square"></i> Quản Lý Chi Tiết Ngày
+                        </button>
+                    </div>
+
+                    <!-- CONTAINER CHỨA NỘI DUNG CHI TIẾT NGÀY GẦN NHẤT -->
+                    <div id="home-closest-date-container" class="space-y-6">
+                        <!-- Render động qua hàm renderHomeClosestDateView() -->
+                    </div>
+                </div>
+
                 <div class="mt-8 pt-6 border-t border-slate-200 max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50 p-4 rounded-xl border">
                     <div class="text-left">
                         <h4 class="font-bold text-sm text-slate-800 flex items-center gap-2">
@@ -857,7 +880,7 @@
                 </div>
             </div>
 
-            <!-- NHẬT KÝ THU / CHI (BẢNG CĂN CHỈNH NỘI DUNG VÀ GHI CHÚ RỘNG RÃI, CHO PHÉP NHẬP NHIỀU KÝ TỰ) -->
+            <!-- NHẬT KÝ THU / CHI -->
             <div class="flex flex-col gap-6">
                 <!-- BẢNG NHẬT KÝ KHOẢN THU -->
                 <section class="bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col">
@@ -1209,6 +1232,256 @@
         window.fundExpenses = JSON.parse(localStorage.getItem('pb_expenses')) || defaultFundExpenses;
         window.autoIncomeNotes = JSON.parse(localStorage.getItem('pb_auto_income_notes')) || {};
 
+        /* 📍 HÀM XÁC ĐỊNH NGÀY GẦN NHẤT SO VỚI NGÀY HIỆN TẠI */
+        function getClosestDateToToday() {
+            if (!window.dates || window.dates.length === 0) return null;
+            if (window.dates.length === 1) return window.dates[0];
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            let closestDateStr = window.dates[0];
+            let minDiff = Infinity;
+
+            const parseDateString = (dStr) => {
+                if (!dStr) return new Date(0);
+                const parts = dStr.split('/');
+                if (parts.length === 3) {
+                    let day = parseInt(parts[0], 10);
+                    let month = parseInt(parts[1], 10) - 1;
+                    let year = parseInt(parts[2], 10);
+                    if (year < 100) year += 2000;
+                    return new Date(year, month, day);
+                }
+                return new Date(dStr);
+            };
+
+            window.dates.forEach(dStr => {
+                const dObj = parseDateString(dStr);
+                const diff = Math.abs(dObj.getTime() - today.getTime());
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestDateStr = dStr;
+                }
+            });
+
+            return closestDateStr;
+        }
+
+        /* 📍 HIỂN THỊ DIỄN BIẾN NGÀY GẦN NHẤT RA TRANG CHỦ */
+        function renderHomeClosestDateView() {
+            const container = document.getElementById('home-closest-date-container');
+            const titleEl = document.getElementById('home-closest-date-title');
+            if (!container) return;
+
+            const closestDate = getClosestDateToToday();
+            if (!closestDate) {
+                if(titleEl) titleEl.innerText = "Chưa có dữ liệu";
+                container.innerHTML = `<div class="p-6 text-center text-slate-400 bg-slate-50 rounded-xl">Chưa có ngày nào được tạo trong hệ thống.</div>`;
+                return;
+            }
+
+            if(titleEl) titleEl.innerText = closestDate;
+
+            const matches = window.matchesData[closestDate] || [];
+            
+            let matchesTableRows = '';
+            matches.forEach((m, idx) => {
+                const val1 = (m.score1 || "").toString().trim();
+                const val2 = (m.score2 || "").toString().trim();
+                const s1 = parseInt(val1);
+                const s2 = parseInt(val2);
+
+                let keo1 = "", keo2 = "";
+                const mMode = m.keoMode || window.dateKeoMode[closestDate] || 'default';
+                let winAmt = 5, loseAmt = -15;
+
+                if (mMode === 'k25') { winAmt = 0; loseAmt = -25; }
+                else if (mMode === 'free') {
+                    winAmt = parseFloat(m.customWin) || 0;
+                    loseAmt = parseFloat(m.customLose) || 0;
+                    if (loseAmt > 0) loseAmt = -loseAmt;
+                }
+
+                if(!isNaN(s1) && !isNaN(s2)) {
+                    let isHam = (s1 === 0 || s2 === 0);
+                    let effWin = isHam ? (winAmt > 0 ? winAmt * 2 : 0) : winAmt;
+                    let effLose = isHam ? loseAmt * 2 : loseAmt;
+
+                    if(s1 > s2) { keo1 = effWin; keo2 = effLose; }
+                    else if(s2 > s1) { keo1 = effLose; keo2 = effWin; }
+                    else { keo1 = 0; keo2 = 0; }
+                }
+
+                const c1_p1 = m.c1_p1 ? `<span class="player-tag">${m.c1_p1}</span>` : '---';
+                const c1_p2 = m.c1_p2 ? `<span class="player-tag">${m.c1_p2}</span>` : '---';
+                const c2_p1 = m.c2_p1 ? `<span class="player-tag">${m.c2_p1}</span>` : '---';
+                const c2_p2 = m.c2_p2 ? `<span class="player-tag">${m.c2_p2}</span>` : '---';
+
+                const scoreStr = (val1 === "0" || s1 === 0) && (val2 === "0" || s2 === 0) 
+                    ? `<span class="ham-text px-2 inline-block">HẦM - HẦM</span>` 
+                    : (val1 === "0" || s1 === 0) ? `<span class="ham-text px-1 inline-block">HẦM</span> - <span class="font-black text-blue-800 text-sm">${m.score2}</span>`
+                    : (val2 === "0" || s2 === 0) ? `<span class="font-black text-blue-800 text-sm">${m.score1}</span> - <span class="ham-text px-1 inline-block">HẦM</span>`
+                    : (m.score1 || m.score2) ? `<span class="font-black text-purple-900 text-sm">${m.score1 || 0} - ${m.score2 || 0}</span>` : `---`;
+
+                matchesTableRows += `
+                    <tr class="hover:bg-slate-50 text-center">
+                        <td class="p-2 font-bold text-slate-700">Trận ${idx + 1}</td>
+                        <td class="p-2">${c1_p1}</td>
+                        <td class="p-2">${c1_p2}</td>
+                        <td class="p-2 bg-purple-50/50 font-bold border-x border-purple-200">${scoreStr}</td>
+                        <td class="p-2">${c2_p1}</td>
+                        <td class="p-2">${c2_p2}</td>
+                        <td class="p-2 font-extrabold ${keo1 > 0 ? 'txt-win' : (keo1 < 0 ? 'txt-lose' : '')}">${keo1 !== '' ? keo1 + 'K' : '---'}</td>
+                        <td class="p-2 font-extrabold ${keo2 > 0 ? 'txt-win' : (keo2 < 0 ? 'txt-lose' : '')}">${keo2 !== '' ? keo2 + 'K' : '---'}</td>
+                    </tr>
+                `;
+            });
+
+            if(!matchesTableRows) {
+                matchesTableRows = `<tr><td colspan="8" class="p-4 text-center text-slate-400">Chưa có trận đấu nào được tạo.</td></tr>`;
+            }
+
+            let stats = {};
+            window.players.forEach(p => { stats[p.name] = { played: 0, winK: 0, loseK: 0, total: 0 }; });
+
+            matches.forEach((m) => {
+                const s1 = parseInt(m.score1);
+                const s2 = parseInt(m.score2);
+                const mMode = m.keoMode || window.dateKeoMode[closestDate] || 'default';
+                let winAmt = 5, loseAmt = -15;
+
+                if (mMode === 'k25') { winAmt = 0; loseAmt = -25; }
+                else if (mMode === 'free') {
+                    winAmt = parseFloat(m.customWin) || 0;
+                    loseAmt = parseFloat(m.customLose) || 0;
+                    if (loseAmt > 0) loseAmt = -loseAmt;
+                }
+
+                if(!isNaN(s1) && !isNaN(s2)) {
+                    let isHam = (s1 === 0 || s2 === 0);
+                    let effWin = isHam ? (winAmt > 0 ? winAmt * 2 : 0) : winAmt;
+                    let effLose = isHam ? loseAmt * 2 : loseAmt;
+
+                    const pair1 = [m.c1_p1, m.c1_p2].filter(Boolean);
+                    const pair2 = [m.c2_p1, m.c2_p2].filter(Boolean);
+
+                    if(s1 > s2) {
+                        pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].winK += effWin; stats[v].total += effWin; } });
+                        pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].loseK += effLose; stats[v].total += effLose; } });
+                    } else if(s2 > s1) {
+                        pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].winK += effWin; stats[v].total += effWin; } });
+                        pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].loseK += effLose; stats[v].total += effLose; } });
+                    }
+                }
+            });
+
+            let summaryRows = '';
+            let sumBringBack = 0, sumThucThu = 0, sumAmThucTe = 0;
+
+            window.players.forEach(p => {
+                const st = stats[p.name];
+                if(st.played > 0) {
+                    const payKey = `${closestDate}_${p.name}`;
+                    const isPaid = window.paymentStatus[payKey] || false;
+
+                    let bringBack = 0;
+                    if(st.played >= 4 && st.total > 0) { bringBack = st.total; sumBringBack += bringBack; }
+                    if(st.total < 0) { sumAmThucTe += st.total; if(isPaid) sumThucThu += Math.abs(st.total); }
+
+                    let noteText = "";
+                    if(st.total < 0) {
+                        noteText = isPaid ? `<span class="note-paid"><i class="fa-solid fa-check"></i> Đã nộp</span>` : `<span class="note-unpaid"><i class="fa-solid fa-xmark"></i> Chưa nộp</span>`;
+                    } else if(st.total > 0) {
+                        noteText = isPaid ? `<span class="note-paid"><i class="fa-solid fa-check"></i> Đã nhận</span>` : `<span class="note-unpaid"><i class="fa-solid fa-clock"></i> Chưa nhận</span>`;
+                    }
+
+                    summaryRows += `
+                        <tr class="hover:bg-slate-50 text-center">
+                            <td class="p-2 border text-left pl-3"><span class="player-tag">${p.name}</span></td>
+                            <td class="p-2 border">${st.played}</td>
+                            <td class="p-2 border txt-win">${st.winK > 0 ? '+' + st.winK + 'K' : ''}</td>
+                            <td class="p-2 border txt-lose">${st.loseK < 0 ? st.loseK + 'K' : ''}</td>
+                            <td class="p-2 border text-blue-600 font-bold">${bringBack > 0 ? '+' + bringBack + 'K' : ''}</td>
+                            <td class="p-2 border font-extrabold ${st.total < 0 ? 'txt-lose' : (st.total > 0 ? 'txt-win' : '')}">${st.total !== 0 ? (st.total > 0 ? '+' + st.total + 'K' : st.total + 'K') : '0K'}</td>
+                            <td class="p-2 border bg-amber-50/30">
+                                <span class="font-bold text-xs ${isPaid ? 'text-emerald-700' : 'text-slate-400'}">${isPaid ? '✔️ Đã duyệt' : '❌ Chưa'}</span>
+                            </td>
+                            <td class="p-2 border">${noteText}</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            let btcThuVe = sumAmThucTe + sumBringBack;
+            let quyCon = sumThucThu - Math.abs(btcThuVe);
+
+            container.innerHTML = `
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-5">
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-700 mb-2 flex items-center gap-1.5">
+                            <i class="fa-solid fa-table-list text-blue-600"></i> BẢNG DÂN TRẬN PICK NGÀY ${closestDate}
+                        </h4>
+                        <div class="smooth-scroll border border-slate-200 rounded-lg bg-white shadow-sm">
+                            <table class="w-full text-xs min-w-[650px] border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 font-bold">
+                                        <th class="p-2 border w-12">STT</th>
+                                        <th class="p-2 border bg-emerald-50 text-emerald-900" colspan="2">CẶP 1</th>
+                                        <th class="p-2 border bg-purple-100 text-purple-900 w-20">TỶ SỐ</th>
+                                        <th class="p-2 border bg-red-50 text-red-900" colspan="2">CẶP 2</th>
+                                        <th class="p-2 border bg-amber-50 text-amber-900 w-20">KÈO 1</th>
+                                        <th class="p-2 border bg-amber-50 text-amber-900 w-20">KÈO 2</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${matchesTableRows}</tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-700 mb-2 flex items-center gap-1.5">
+                            <i class="fa-solid fa-calculator text-indigo-600"></i> BẢNG TỔNG HỢP THƯỞNG PHẠT KÈO NGÀY ${closestDate}
+                        </h4>
+                        <div class="smooth-scroll border border-slate-200 rounded-lg bg-white shadow-sm">
+                            <table class="w-full text-xs min-w-[650px] border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 font-bold text-center">
+                                        <th class="p-2 border w-28 text-left pl-3">PICK THỦ</th>
+                                        <th class="p-2 border w-16">TRẬN</th>
+                                        <th class="p-2 border w-20">THẮNG</th>
+                                        <th class="p-2 border w-20">THUA</th>
+                                        <th class="p-2 border w-24">MANG VỀ</th>
+                                        <th class="p-2 border w-20">TỔNG</th>
+                                        <th class="p-2 border w-20 bg-amber-50 text-amber-900">THỰC TẾ</th>
+                                        <th class="p-2 border w-28">TRẠNG THÁI</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${summaryRows || `<tr><td colspan="8" class="p-4 text-center text-slate-400">Chưa có kết quả tổng hợp.</td></tr>`}
+                                    <tr class="bg-slate-100 font-extrabold text-center">
+                                        <td class="p-2 border text-left text-red-600 pl-3">TỔNG BTC THU VỀ</td>
+                                        <td class="p-2 border" colspan="3"></td>
+                                        <td class="p-2 border text-blue-700">+${sumBringBack}K</td>
+                                        <td class="p-2 border text-red-600">${btcThuVe}K</td>
+                                        <td class="p-2 border text-blue-700">+${sumThucThu}K</td>
+                                        <td class="p-2 border text-slate-600">QUỸ CÒN: <span class="text-red-600 font-black">${quyCon}K</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function goToClosestDateTab() {
+            const closestDate = getClosestDateToToday();
+            if (closestDate) {
+                selectDateView(closestDate);
+            }
+        }
+
         function updateAutoIncomeNote(dateStr, noteVal) {
             window.autoIncomeNotes[dateStr] = noteVal;
             localStorage.setItem('pb_auto_income_notes', JSON.stringify(window.autoIncomeNotes));
@@ -1551,7 +1824,6 @@
             }
         }
 
-        /* 🛠 RENDER KHOẢN THU TỰ ĐỘNG & THỦ CÔNG (ĐÃ ĐỔI TÊN NỘI DUNG & CĂN CHỈNH Ô GHI CHÚ RỘNG RÃI) 🛠 */
         function renderFundIncomes() {
             const tbody = document.getElementById('income-list');
             if (!tbody) return;
@@ -2241,6 +2513,8 @@
                     <td class="p-2 border" colspan="2"></td>
                 </tr>
             `;
+
+            renderHomeClosestDateView();
         }
 
         function renderTongHopTab() {
@@ -2810,6 +3084,7 @@
             const activeBtn = document.getElementById(`btn-${tabId}`);
             if (activeBtn) activeBtn.classList.add('bg-slate-700', 'text-yellow-400');
 
+            if(tabId === 'home') renderHomeClosestDateView();
             if(tabId === 'tonghop') renderTongHopTab();
             if(tabId === 'day_detail') renderDayDetailView();
             if(tabId === 'fund_manager') updateFundDashboard();
@@ -2823,6 +3098,7 @@
             renderDayDetailView();
             renderTongHopTab();
             updateFundDashboard();
+            renderHomeClosestDateView();
         }
 
         function renderPlayers() {
