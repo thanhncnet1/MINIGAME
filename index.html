@@ -224,13 +224,41 @@
                     <i class="fa-solid fa-users"></i> <span>Pick Thủ</span>
                 </button>
                 
-                <button onclick="showTab('minigame1')" id="btn-minigame1" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
-                    <i class="fa-solid fa-trophy"></i> <span>MINIGAME TEAM</span>
-                </button>
+                <!-- MINIGAME TEAM VỚI DROPDOWN THÊM/CHỌN GIẢI MỚI -->
+                <div class="relative">
+                    <button onclick="toggleMenu('menuNavTeam', event)" id="btn-minigame1" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
+                        <i class="fa-solid fa-trophy"></i> <span>MINIGAME TEAM ▾</span>
+                    </button>
+                    <div class="dropdown-menu" id="menuNavTeam">
+                        <div class="dropdown-item" onclick="showTab('minigame1'); closeAllDropdowns();">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-play text-blue-600"></i> Lịch Thi Đấu Team A & B</span>
+                        </div>
+                        <div class="dropdown-item" onclick="openCreateTournamentPage('team')">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-plus-circle text-amber-600"></i> Tạo Giải Team Mới</span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase">Danh Sách Giải Team:</div>
+                        <div id="nav-m1-dropdown-list"></div>
+                    </div>
+                </div>
                 
-                <button onclick="showTab('minigame2')" id="btn-minigame2" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
-                    <i class="fa-solid fa-medal"></i> <span>MINIGAME BẢNG & VÒNG TRÒN</span>
-                </button>
+                <!-- MINIGAME BẢNG & VÒNG TRÒN VỚI DROPDOWN THÊM/CHỌN GIẢI MỚI -->
+                <div class="relative">
+                    <button onclick="toggleMenu('menuNavBracket', event)" id="btn-minigame2" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
+                        <i class="fa-solid fa-medal"></i> <span>MINIGAME BẢNG & VÒNG TRÒN ▾</span>
+                    </button>
+                    <div class="dropdown-menu" id="menuNavBracket">
+                        <div class="dropdown-item" onclick="showTab('minigame2'); closeAllDropdowns();">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-diagram-project text-emerald-600"></i> Bảng Đấu & Knockout</span>
+                        </div>
+                        <div class="dropdown-item" onclick="openCreateTournamentPage('bracket')">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-plus-circle text-amber-600"></i> Tạo Giải Bảng Mới</span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase">Danh Sách Giải Vòng Bảng:</div>
+                        <div id="nav-m2-dropdown-list"></div>
+                    </div>
+                </div>
 
                 <button onclick="showTab('fund_manager')" id="btn-fund_manager" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-teal-800 text-teal-100 border border-teal-400/40 font-bold shadow-sm">
                     <i class="fa-solid fa-vault text-yellow-300"></i> <span>QUẢN LÝ QUỸ PICK</span>
@@ -474,7 +502,7 @@
 
         <!-- MINIGAME TEAM -->
         <section id="tab-minigame1" class="tab-content hidden">
-            <!-- THANH MENU NÚT SỔ THẢ XUỐNG CHỌN VÀ TẠO GIẢI MỚI TRỰC TIẾP -->
+            <!-- THANH TIÊU ĐỀ GIẢI HIỆN TẠI TRONG TAB -->
             <div class="bg-amber-500/10 border border-amber-400/40 rounded-xl p-3 mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-2">
                     <span class="text-xs font-black uppercase text-amber-900 bg-amber-400/30 px-2.5 py-1 rounded-md">GIẢI HIỆN TẠI:</span>
@@ -484,22 +512,9 @@
                     </button>
                 </div>
 
-                <!-- DROPDOWN MENU TẠO / CHỌN GIẢI TEAM -->
-                <div class="relative">
-                    <button onclick="toggleMenu('menuSelectTeamMinigame', event)" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-2 rounded-lg font-extrabold shadow flex items-center gap-1.5">
-                        <i class="fa-solid fa-list-ul"></i> <span>TẠO & CHỌN GIẢI ▾</span>
-                    </button>
-                    <div class="dropdown-menu" id="menuSelectTeamMinigame">
-                        <div class="dropdown-item text-amber-800 font-bold bg-amber-50" onclick="openCreateTournamentPage('team')">
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-plus-circle text-amber-600"></i> ➕ Tạo Giải Team Mới</span>
-                        </div>
-                        <div class="dropdown-divider"></div>
-                        <div class="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase">Danh Sách Giải Team:</div>
-                        <div id="m1-tourney-dropdown-list">
-                            <!-- Render động các giải Team -->
-                        </div>
-                    </div>
-                </div>
+                <button onclick="openCreateTournamentPage('team')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-2 rounded-lg font-extrabold shadow flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus-circle"></i> <span>➕ Tạo Giải Team Mới</span>
+                </button>
             </div>
 
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
@@ -594,7 +609,7 @@
 
         <!-- MINIGAME BẢNG & VÒNG TRÒN -->
         <section id="tab-minigame2" class="tab-content hidden">
-            <!-- THANH MENU NÚT SỔ THẢ XUỐNG CHỌN VÀ TẠO GIẢI MỚI TRỰC TIẾP -->
+            <!-- THANH TIÊU ĐỀ GIẢI HIỆN TẠI TRONG TAB -->
             <div class="bg-emerald-500/10 border border-emerald-400/40 rounded-xl p-3 mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-2">
                     <span class="text-xs font-black uppercase text-emerald-900 bg-emerald-400/30 px-2.5 py-1 rounded-md">GIẢI HIỆN TẠI:</span>
@@ -604,22 +619,9 @@
                     </button>
                 </div>
 
-                <!-- DROPDOWN MENU TẠO / CHỌN GIẢI BẢNG VÒNG TRÒN -->
-                <div class="relative">
-                    <button onclick="toggleMenu('menuSelectBracketMinigame', event)" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-lg font-extrabold shadow flex items-center gap-1.5">
-                        <i class="fa-solid fa-list-ul"></i> <span>TẠO & CHỌN GIẢI ▾</span>
-                    </button>
-                    <div class="dropdown-menu" id="menuSelectBracketMinigame">
-                        <div class="dropdown-item text-emerald-800 font-bold bg-emerald-50" onclick="openCreateTournamentPage('bracket')">
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-plus-circle text-emerald-600"></i> ➕ Tạo Giải Bảng & Vòng Tròn Mới</span>
-                        </div>
-                        <div class="dropdown-divider"></div>
-                        <div class="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase">Danh Sách Giải Vòng Bảng:</div>
-                        <div id="m2-tourney-dropdown-list">
-                            <!-- Render động các giải Bracket -->
-                        </div>
-                    </div>
-                </div>
+                <button onclick="openCreateTournamentPage('bracket')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-lg font-extrabold shadow flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus-circle"></i> <span>➕ Tạo Giải Bảng Mới</span>
+                </button>
             </div>
 
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
@@ -1356,8 +1358,8 @@
         }
 
         function renderDynamicMinigameDropdowns() {
-            const containerTeam = document.getElementById('m1-tourney-dropdown-list');
-            const containerBracket = document.getElementById('m2-tourney-dropdown-list');
+            const containerTeam = document.getElementById('nav-m1-dropdown-list');
+            const containerBracket = document.getElementById('nav-m2-dropdown-list');
 
             const teamList = window.createdMinigames.filter(m => m.type === 'team');
             const bracketList = window.createdMinigames.filter(m => m.type === 'bracket');
@@ -1407,10 +1409,12 @@
             if (type === 'team') {
                 window.currentTeamMinigameId = id;
                 localStorage.setItem('pb_current_team_mg_id', id);
+                showTab('minigame1');
                 renderMinigame1();
             } else {
                 window.currentBracketMinigameId = id;
                 localStorage.setItem('pb_current_bracket_mg_id', id);
+                showTab('minigame2');
                 renderM2();
             }
             renderDynamicMinigameDropdowns();
