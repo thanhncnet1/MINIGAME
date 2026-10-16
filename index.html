@@ -192,46 +192,6 @@
             word-break: break-word !important;
             line-height: 1.4;
         }
-
-        /* Thêm style cho phần Roster Team mới */
-        .roster-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        @media (max-width: 768px) {
-            .roster-grid { grid-template-columns: 1fr; }
-        }
-        .team-box {
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 16px;
-        }
-        .form-group {
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-        }
-        .form-group label {
-            font-weight: 700;
-            font-size: 12px;
-            color: #334155;
-            flex: 1;
-        }
-        .form-group select {
-            flex: 2;
-            padding: 5px 8px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 13px;
-            background: white;
-            font-weight: 700;
-            color: #1e40af;
-            outline: none;
-        }
     </style>
 </head>
 <body id="app-body" class="bg-theme-slate min-h-screen flex flex-col font-sans transition-colors duration-300 text-slate-800" onclick="closeAllDropdowns()">
@@ -264,41 +224,13 @@
                     <i class="fa-solid fa-users"></i> <span>Pick Thủ</span>
                 </button>
                 
-                <!-- MINIGAME TEAM VỚI DROPDOWN THÊM/CHỌN GIẢI MỚI -->
-                <div class="relative">
-                    <button onclick="toggleMenu('menuNavTeam', event)" id="btn-minigame1" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
-                        <i class="fa-solid fa-trophy"></i> <span>MINIGAME TEAM ▾</span>
-                    </button>
-                    <div class="dropdown-menu" id="menuNavTeam">
-                        <div class="dropdown-item" onclick="showTab('minigame1'); closeAllDropdowns();">
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-play text-blue-600"></i> Lịch Thi Đấu Team (5 Nam, 3 Nữ)</span>
-                        </div>
-                        <div class="dropdown-item" onclick="openCreateTournamentPage('team')">
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-plus-circle text-amber-600"></i> Tạo Giải Team Mới</span>
-                        </div>
-                        <div class="dropdown-divider"></div>
-                        <div class="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase">Danh Sách Giải Team:</div>
-                        <div id="nav-m1-dropdown-list"></div>
-                    </div>
-                </div>
+                <button onclick="showTab('minigame1')" id="btn-minigame1" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
+                    <i class="fa-solid fa-trophy"></i> <span>MINIGAME TEAM</span>
+                </button>
                 
-                <!-- MINIGAME BẢNG & VÒNG TRÒN VỚI DROPDOWN THÊM/CHỌN GIẢI MỚI -->
-                <div class="relative">
-                    <button onclick="toggleMenu('menuNavBracket', event)" id="btn-minigame2" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
-                        <i class="fa-solid fa-medal"></i> <span>MINIGAME BẢNG & VÒNG TRÒN ▾</span>
-                    </button>
-                    <div class="dropdown-menu" id="menuNavBracket">
-                        <div class="dropdown-item" onclick="showTab('minigame2'); closeAllDropdowns();">
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-diagram-project text-emerald-600"></i> Bảng Đấu & Knockout</span>
-                        </div>
-                        <div class="dropdown-item" onclick="openCreateTournamentPage('bracket')">
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-plus-circle text-amber-600"></i> Tạo Giải Bảng Mới</span>
-                        </div>
-                        <div class="dropdown-divider"></div>
-                        <div class="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase">Danh Sách Giải Vòng Bảng:</div>
-                        <div id="nav-m2-dropdown-list"></div>
-                    </div>
-                </div>
+                <button onclick="showTab('minigame2')" id="btn-minigame2" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
+                    <i class="fa-solid fa-medal"></i> <span>MINIGAME BẢNG & VÒNG TRÒN</span>
+                </button>
 
                 <button onclick="showTab('fund_manager')" id="btn-fund_manager" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-teal-800 text-teal-100 border border-teal-400/40 font-bold shadow-sm">
                     <i class="fa-solid fa-vault text-yellow-300"></i> <span>QUẢN LÝ QUỸ PICK</span>
@@ -383,7 +315,7 @@
                         <div class="my-auto">
                             <i class="fa-solid fa-people-group text-4xl text-amber-600 mb-3 group-hover:scale-110 transition-transform block"></i>
                             <h3 class="font-bold text-base md:text-lg text-slate-800">MINIGAME TEAM</h3>
-                            <p class="text-xs text-slate-500 mt-2">Mỗi Team 8 VĐV (5 Nam, 3 Nữ, 4 cặp đấu)</p>
+                            <p class="text-xs text-slate-500 mt-2">Đấu Team A vs Team B (Lịch thi đấu & Tổng hợp)</p>
                         </div>
                     </div>
 
@@ -391,7 +323,7 @@
                         <div class="my-auto">
                             <i class="fa-solid fa-diagram-project text-4xl text-emerald-600 mb-3 group-hover:scale-110 transition-transform block"></i>
                             <h3 class="font-bold text-base md:text-lg text-slate-800">MINIGAME BẢNG & VÒNG TRÒN</h3>
-                            <p class="text-xs text-slate-500 mt-2">Vòng Bảng A-B, Vòng Tròn, Bán Kết, Chung Kết</p>
+                            <p class="text-xs text-slate-500 mt-2">Vòng Bảng A-B, Vòng Vòng Tròn, Bán Kết, Chung Kết</p>
                         </div>
                     </div>
 
@@ -471,7 +403,7 @@
                 <div class="space-y-6">
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-1">Tên Giải Đấu / Minigame</label>
-                        <input type="text" id="new-tourney-name" placeholder="Ví dụ: Minigame 20/10 Mở Rộng, Giải Mùa Hè..." class="w-full border rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-amber-500 font-semibold">
+                        <input type="text" id="new-tourney-name" placeholder="Ví dụ: Giải Mùa Hè 2026, Phú Thọ Open Khai Xuân..." class="w-full border rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-amber-500 font-semibold">
                     </div>
 
                     <div>
@@ -481,14 +413,14 @@
                                 <input type="radio" name="tourney-type" value="team" checked class="mt-1 accent-amber-600">
                                 <div>
                                     <div class="font-bold text-slate-800 text-sm">MINIGAME TEAM</div>
-                                    <p class="text-xs text-slate-500 mt-0.5">Mỗi team 8 VĐV (5 Nam, 3 Nữ), 4 cặp đấu đối kháng.</p>
+                                    <p class="text-xs text-slate-500 mt-0.5">Chia 2 Đội A & B, đánh theo lượt & tính tổng hiệu số thắng thua.</p>
                                 </div>
                             </label>
                             <label class="border rounded-xl p-4 flex items-start gap-3 cursor-pointer hover:bg-emerald-50 transition border-slate-300 has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50/50">
                                 <input type="radio" name="tourney-type" value="bracket" class="mt-1 accent-emerald-600">
                                 <div>
                                     <div class="font-bold text-slate-800 text-sm">MINIGAME BẢNG & VÒNG TRÒN</div>
-                                    <p class="text-xs text-slate-500 mt-0.5">Chia các Cặp đấu Bảng A - B, thi đấu Vòng tròn & Vòng Knockout.</p>
+                                    <p class="text-xs text-slate-500 mt-0.5">Chia các Cặp đấu Bảng A - B, thi đấu Vòng tròn & Vòng Knockout Bán kết/Chung kết.</p>
                                 </div>
                             </label>
                         </div>
@@ -540,143 +472,129 @@
             </div>
         </section>
 
-        <!-- MINIGAME TEAM (ĐÃ CẬP NHẬT NỘI DUNG MỚI CHO 20/10: 8 VĐV/TEAM: 5 NAM, 3 NỮ, 4 CẶP ĐẤU) -->
-        <section id="tab-minigame1" class="tab-content hidden space-y-6">
-            <!-- THANH TIÊU ĐỀ GIẢI HIỆN TẠI TRONG TAB -->
-            <div class="bg-amber-500/10 border border-amber-400/40 rounded-xl p-3 flex flex-wrap items-center justify-between gap-3">
+        <!-- MINIGAME TEAM -->
+        <section id="tab-minigame1" class="tab-content hidden">
+            <!-- THANH MENU NÚT SỔ THẢ XUỐNG CHỌN VÀ TẠO GIẢI MỚI TRỰC TIẾP -->
+            <div class="bg-amber-500/10 border border-amber-400/40 rounded-xl p-3 mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-2">
                     <span class="text-xs font-black uppercase text-amber-900 bg-amber-400/30 px-2.5 py-1 rounded-md">GIẢI HIỆN TẠI:</span>
-                    <h2 id="current-m1-tourney-name" class="text-base md:text-lg font-black text-amber-900">MINIGAME 20/10</h2>
+                    <h2 id="current-m1-tourney-name" class="text-base md:text-lg font-black text-amber-900">MINIGAME TEAM MẶC ĐỊNH</h2>
                     <button onclick="renameCurrentMinigame('team')" class="text-slate-600 hover:text-amber-800 text-xs px-1.5 py-0.5 rounded border border-amber-300 bg-white" title="Sửa tên giải này trực tiếp">
                         <i class="fa-solid fa-pen-to-square"></i> Sửa tên
                     </button>
                 </div>
 
-                <button onclick="openCreateTournamentPage('team')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-2 rounded-lg font-extrabold shadow flex items-center gap-1.5">
-                    <i class="fa-solid fa-plus-circle"></i> <span>➕ Tạo Giải Team Mới</span>
-                </button>
-            </div>
-
-            <!-- PHẦN 1: ĐĂNG KÝ DANH SÁCH 8 VĐV MỖI TEAM (5 NAM + 3 NỮ) -->
-            <div class="bg-white rounded-xl shadow-md p-4 md:p-6 text-slate-800">
-                <h2 class="text-base md:text-lg font-black text-slate-800 mb-1 flex items-center gap-2 border-b pb-2">
-                    <i class="fa-solid fa-users text-blue-600"></i> 1. ĐĂNG KÝ DANH SÁCH VĐV TEAM (8 VĐV / TEAM: 5 NAM + 3 NỮ)
-                </h2>
-                <p class="text-xs text-slate-500 mb-4">* VĐV đã được chọn ở **Team A** sẽ tự động ẩn khỏi danh sách chọn của **Team B** để không trùng lặp VĐV giữa 2 đội.</p>
-
-                <div class="roster-grid">
-                    <!-- TEAM A -->
-                    <div class="team-box border-blue-200 bg-blue-50/40">
-                        <h3 class="font-extrabold text-blue-900 text-sm mb-3 flex items-center justify-between">
-                            <span><i class="fa-solid fa-shield-halved text-blue-600"></i> TEAM A (8 VĐV)</span>
-                            <span class="text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">5 Nam - 3 Nữ</span>
-                        </h3>
-                        
-                        <div class="text-xs font-bold text-blue-800 mb-1">Cơ cấu VĐV Nam (5 Nam):</div>
-                        <div class="form-group"><label>A - Nam 1:</label><select id="a_nam_1" onchange="updateTeamRosterOptions()"></select></div>
-                        <div class="form-group"><label>A - Nam 2:</label><select id="a_nam_2" onchange="updateTeamRosterOptions()"></select></div>
-                        <div class="form-group"><label>A - Nam 3:</label><select id="a_nam_3" onchange="updateTeamRosterOptions()"></select></div>
-                        <div class="form-group"><label>A - Nam 4:</label><select id="a_nam_4" onchange="updateTeamRosterOptions()"></select></div>
-                        <div class="form-group"><label>A - Nam 5:</label><select id="a_nam_5" onchange="updateTeamRosterOptions()"></select></div>
-
-                        <div class="text-xs font-bold text-pink-700 mt-3 mb-1">Cơ cấu VĐV Nữ (3 Nữ):</div>
-                        <div class="form-group"><label>A - Nữ 1:</label><select id="a_nu_1" onchange="updateTeamRosterOptions()"></select></div>
-                        <div class="form-group"><label>A - Nữ 2:</label><select id="a_nu_2" onchange="updateTeamRosterOptions()"></select></div>
-                        <div class="form-group"><label>A - Nữ 3:</label><select id="a_nu_3" onchange="updateTeamRosterOptions()"></select></div>
-                    </div>
-
-                    <!-- TEAM B -->
-                    <div class="team-box border-orange-200 bg-orange-50/40">
-                        <h3 class="font-extrabold text-orange-900 text-sm mb-3 flex items-center justify-between">
-                            <span><i class="fa-solid fa-shield-halved text-orange-600"></i> TEAM B (8 VĐV)</span>
-                            <span class="text-xs text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">5 Nam - 3 Nữ</span>
-                        </h3>
-
-                        <div class="text-xs font-bold text-orange-800 mb-1">Cơ cấu VĐV Nam (5 Nam):</div>
-                        <div class="form-group"><label>B - Nam 1:</label><select id="b_nam_1" onchange="updateTeamRosterOptions()"></select></div>
-                        <div class="form-group"><label>B - Nam 2:</label><select id="b_nam_2" onchange="updateTeamRosterOptions()"></select></div>
-                        <div class="form-group"><label>B - Nam 3:</label><select id="b_nam_3" onchange="updateTeamRosterOptions()"></select></div>
-                        <div class="form-group"><label>B - Nam 4:</label><select id="b_nam_4" onchange="updateTeamRosterOptions()"></select></div>
-                        <div class="form-group"><label>B - Nam 5:</label><select id="b_nam_5" onchange="updateTeamRosterOptions()"></select></div>
-
-                        <div class="text-xs font-bold text-pink-700 mt-3 mb-1">Cơ cấu VĐV Nữ (3 Nữ):</div>
-                        <div class="form-group"><label>B - Nữ 1:</label><select id="b_nu_1" onchange="updateTeamRosterOptions()"></select></div>
-                        <div class="form-group"><label>B - Nữ 2:</label><select id="b_nu_2" onchange="updateTeamRosterOptions()"></select></div>
-                        <div class="form-group"><label>B - Nữ 3:</label><select id="b_nu_3" onchange="updateTeamRosterOptions()"></select></div>
+                <!-- DROPDOWN MENU TẠO / CHỌN GIẢI TEAM -->
+                <div class="relative">
+                    <button onclick="toggleMenu('menuSelectTeamMinigame', event)" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-2 rounded-lg font-extrabold shadow flex items-center gap-1.5">
+                        <i class="fa-solid fa-list-ul"></i> <span>TẠO & CHỌN GIẢI ▾</span>
+                    </button>
+                    <div class="dropdown-menu" id="menuSelectTeamMinigame">
+                        <div class="dropdown-item text-amber-800 font-bold bg-amber-50" onclick="openCreateTournamentPage('team')">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-plus-circle text-amber-600"></i> ➕ Tạo Giải Team Mới</span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase">Danh Sách Giải Team:</div>
+                        <div id="m1-tourney-dropdown-list">
+                            <!-- Render động các giải Team -->
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- PHẦN 2: BẢNG SƠ ĐỒ 4 CẶP THI ĐẤU -->
-            <div class="bg-white rounded-xl shadow-md p-4 md:p-6 text-slate-800">
-                <h2 class="text-base md:text-lg font-black text-slate-800 mb-3 flex items-center gap-2 border-b pb-2">
-                    <i class="fa-solid fa-diagram-project text-amber-600"></i> 2. SƠ ĐỒ 4 CẶP THI ĐẤU MỖI TEAM
-                </h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="border border-blue-200 rounded-lg p-3 bg-blue-50/20">
-                        <h4 class="font-bold text-xs text-blue-900 uppercase mb-2">📌 4 CẶP ĐẤU TEAM A:</h4>
-                        <ul class="text-xs space-y-1.5 font-semibold">
-                            <li class="bg-white p-2 rounded border">Cặp 1 (Đôi Nam 1): <span id="pair_a_1" class="text-blue-700 font-extrabold">-</span></li>
-                            <li class="bg-white p-2 rounded border">Cặp 2 (Đôi Nam 2): <span id="pair_a_2" class="text-blue-700 font-extrabold">-</span></li>
-                            <li class="bg-white p-2 rounded border">Cặp 3 (Đôi Nam Nữ): <span id="pair_a_3" class="text-blue-700 font-extrabold">-</span></li>
-                            <li class="bg-white p-2 rounded border">Cặp 4 (Đôi Nữ): <span id="pair_a_4" class="text-pink-700 font-extrabold">-</span></li>
-                        </ul>
+            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
+                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
+                    <i class="fa-solid fa-users-rectangle text-amber-600"></i> Danh Sách Pick Thủ Chia 2 Team (A & B)
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border border-blue-200 bg-blue-50/50 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <h4 class="font-bold text-blue-800 uppercase flex items-center gap-2">
+                                <i class="fa-solid fa-shield-halved"></i> Team A (<span id="team-A-count">0</span> VĐV)
+                            </h4>
+                            <button onclick="addTeamMember('A')" class="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700">
+                                <i class="fa-solid fa-plus"></i> Thêm VĐV
+                            </button>
+                        </div>
+                        <div id="team-A-list" class="space-y-2"></div>
                     </div>
-
-                    <div class="border border-orange-200 rounded-lg p-3 bg-orange-50/20">
-                        <h4 class="font-bold text-xs text-orange-900 uppercase mb-2">📌 4 CẶP ĐẤU TEAM B:</h4>
-                        <ul class="text-xs space-y-1.5 font-semibold">
-                            <li class="bg-white p-2 rounded border">Cặp 1 (Đôi Nam 1): <span id="pair_b_1" class="text-orange-700 font-extrabold">-</span></li>
-                            <li class="bg-white p-2 rounded border">Cặp 2 (Đôi Nam 2): <span id="pair_b_2" class="text-orange-700 font-extrabold">-</span></li>
-                            <li class="bg-white p-2 rounded border">Cặp 3 (Đôi Nam Nữ): <span id="pair_b_3" class="text-orange-700 font-extrabold">-</span></li>
-                            <li class="bg-white p-2 rounded border">Cặp 4 (Đôi Nữ): <span id="pair_b_4" class="text-pink-700 font-extrabold">-</span></li>
-                        </ul>
+                    <div class="border border-orange-200 bg-orange-50/50 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <h4 class="font-bold text-orange-800 uppercase flex items-center gap-2">
+                                <i class="fa-solid fa-shield-halved"></i> Team B (<span id="team-B-count">0</span> VĐV)
+                            </h4>
+                            <button onclick="addTeamMember('B')" class="text-xs bg-orange-600 text-white px-2 py-1 rounded hover:bg-orange-700">
+                                <i class="fa-solid fa-plus"></i> Thêm VĐV
+                            </button>
+                        </div>
+                        <div id="team-B-list" class="space-y-2"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- PHẦN 3: LỊCH THI ĐẤU & BẢNG ĐIỂM SỐ (4 TRẬN) -->
-            <div class="bg-white rounded-xl shadow-md p-4 md:p-6 text-slate-800">
-                <h2 class="text-base md:text-lg font-black text-slate-800 mb-3 flex items-center gap-2 border-b pb-2">
-                    <i class="fa-solid fa-calendar-days text-indigo-600"></i> 3. LỊCH THI ĐẤU CHI TIẾT (4 TRẬN CẶP ĐẤU)
-                </h2>
+            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
+                <div class="flex justify-between items-center mb-3">
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-black text-blue-900 tracking-wide uppercase">LỊCH THI ĐẤU MINIGAME TEAM (<span id="m1-match-count">24</span> TRẬN)</h2>
+                        <p class="text-xs italic text-slate-500">Tên Pick Thủ được cập nhật đồng bộ từ Danh sách Pick Thủ.</p>
+                    </div>
+                    <button onclick="addM1Match()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded shadow flex items-center gap-1 font-bold">
+                        <i class="fa-solid fa-plus"></i> Thêm Trận
+                    </button>
+                </div>
 
                 <div class="smooth-scroll">
                     <table class="w-full excel-table border-collapse">
                         <thead>
                             <tr>
                                 <th class="w-10">STT</th>
-                                <th class="w-32">Nội dung</th>
-                                <th>Cặp Đấu Team A</th>
+                                <th class="w-12">Lượt</th>
+                                <th class="w-12">Sân</th>
+                                <th class="w-36">Nội dung</th>
+                                <th class="player-cell">Đội A - VĐV 1</th>
+                                <th class="player-cell">Đội A - VĐV 2</th>
+                                <th class="w-12">Tỷ số A</th>
                                 <th class="w-8">VS</th>
-                                <th>Cặp Đấu Team B</th>
-                                <th class="w-16">Tỷ số A</th>
-                                <th class="w-16">Tỷ số B</th>
-                                <th class="w-24">Đội Thắng</th>
-                                <th class="w-32">Ghi Chú</th>
+                                <th class="w-12">Tỷ số B</th>
+                                <th class="player-cell">Đội B - VĐV 1</th>
+                                <th class="player-cell">Đội B - VĐV 2</th>
+                                <th class="w-20">Đội thắng</th>
+                                <th class="w-16">Hiệu số A-B</th>
+                                <th class="w-12">Điểm A</th>
+                                <th class="w-12">Điểm B</th>
+                                <th class="w-20">Trạng thái</th>
+                                <th class="w-12">Thao tác</th>
                             </tr>
                         </thead>
-                        <tbody id="match-table-team-body"></tbody>
+                        <tbody id="m1-schedule-body"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- PHẦN 4: TỔNG KẾT KẾT QUẢ -->
-            <div class="bg-white rounded-xl shadow-md p-4 md:p-6 text-slate-800">
-                <h2 class="text-base md:text-lg font-black text-slate-800 mb-3 flex items-center gap-2 border-b pb-2">
-                    <i class="fa-solid fa-chart-pie text-emerald-600"></i> 4. TỔNG KẾT TỔNG TRẬN THẮNG
-                </h2>
-                <div class="flex flex-wrap justify-around bg-emerald-50 border border-emerald-200 p-4 rounded-xl font-black text-sm md:text-base text-slate-800 gap-4">
-                    <div>TỔNG TRẬN THẮNG TEAM A: <span id="wins-team-a" class="text-blue-700 text-xl font-black">0</span></div>
-                    <div>TỔNG TRẬN THẮNG TEAM B: <span id="wins-team-b" class="text-orange-600 text-xl font-black">0</span></div>
+            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
+                <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-pie text-indigo-600"></i> Bảng Tổng Hợp Chung Minigame Team
+                </h3>
+                <div class="smooth-scroll">
+                    <table class="w-full text-center border-collapse border border-slate-300">
+                        <thead>
+                            <tr class="bg-slate-800 text-white text-sm">
+                                <th class="p-2 border">Team</th>
+                                <th class="p-2 border">Số Trận Đã Đánh</th>
+                                <th class="p-2 border">Điểm Số</th>
+                                <th class="p-2 border">Hiệu Số Tổng</th>
+                                <th class="p-2 border">Trạng Thái Hiện Tại</th>
+                            </tr>
+                        </thead>
+                        <tbody id="m1-summary-body" class="text-sm font-semibold"></tbody>
+                    </table>
                 </div>
             </div>
         </section>
 
         <!-- MINIGAME BẢNG & VÒNG TRÒN -->
         <section id="tab-minigame2" class="tab-content hidden">
-            <!-- THANH TIÊU ĐỀ GIẢI HIỆN TẠI TRONG TAB -->
+            <!-- THANH MENU NÚT SỔ THẢ XUỐNG CHỌN VÀ TẠO GIẢI MỚI TRỰC TIẾP -->
             <div class="bg-emerald-500/10 border border-emerald-400/40 rounded-xl p-3 mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-2">
                     <span class="text-xs font-black uppercase text-emerald-900 bg-emerald-400/30 px-2.5 py-1 rounded-md">GIẢI HIỆN TẠI:</span>
@@ -686,9 +604,22 @@
                     </button>
                 </div>
 
-                <button onclick="openCreateTournamentPage('bracket')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-lg font-extrabold shadow flex items-center gap-1.5">
-                    <i class="fa-solid fa-plus-circle"></i> <span>➕ Tạo Giải Bảng Mới</span>
-                </button>
+                <!-- DROPDOWN MENU TẠO / CHỌN GIẢI BẢNG VÒNG TRÒN -->
+                <div class="relative">
+                    <button onclick="toggleMenu('menuSelectBracketMinigame', event)" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-lg font-extrabold shadow flex items-center gap-1.5">
+                        <i class="fa-solid fa-list-ul"></i> <span>TẠO & CHỌN GIẢI ▾</span>
+                    </button>
+                    <div class="dropdown-menu" id="menuSelectBracketMinigame">
+                        <div class="dropdown-item text-emerald-800 font-bold bg-emerald-50" onclick="openCreateTournamentPage('bracket')">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-plus-circle text-emerald-600"></i> ➕ Tạo Giải Bảng & Vòng Tròn Mới</span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase">Danh Sách Giải Vòng Bảng:</div>
+                        <div id="m2-tourney-dropdown-list">
+                            <!-- Render động các giải Bracket -->
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
@@ -1317,11 +1248,11 @@
 
         /* QUẢN LÝ DANH SÁCH VÀ CHỌN CÁC MINIGAME ĐỘNG */
         window.createdMinigames = JSON.parse(localStorage.getItem('pb_created_minigames')) || [
-            { id: 'mg_2010', name: 'MINIGAME 20/10', type: 'team' },
+            { id: 'mg_team_default', name: 'MINIGAME TEAM MẶC ĐỊNH', type: 'team' },
             { id: 'mg_bracket_default', name: 'Phú Thọ Open (Bảng & Vòng Tròn)', type: 'bracket' }
         ];
 
-        window.currentTeamMinigameId = localStorage.getItem('pb_current_team_mg_id') || 'mg_2010';
+        window.currentTeamMinigameId = localStorage.getItem('pb_current_team_mg_id') || 'mg_team_default';
         window.currentBracketMinigameId = localStorage.getItem('pb_current_bracket_mg_id') || 'mg_bracket_default';
 
         function checkAdminPassword() {
@@ -1425,8 +1356,8 @@
         }
 
         function renderDynamicMinigameDropdowns() {
-            const containerTeam = document.getElementById('nav-m1-dropdown-list');
-            const containerBracket = document.getElementById('nav-m2-dropdown-list');
+            const containerTeam = document.getElementById('m1-tourney-dropdown-list');
+            const containerBracket = document.getElementById('m2-tourney-dropdown-list');
 
             const teamList = window.createdMinigames.filter(m => m.type === 'team');
             const bracketList = window.createdMinigames.filter(m => m.type === 'bracket');
@@ -1476,12 +1407,10 @@
             if (type === 'team') {
                 window.currentTeamMinigameId = id;
                 localStorage.setItem('pb_current_team_mg_id', id);
-                showTab('minigame1');
-                renderMinigameTeam();
+                renderMinigame1();
             } else {
                 window.currentBracketMinigameId = id;
                 localStorage.setItem('pb_current_bracket_mg_id', id);
-                showTab('minigame2');
                 renderM2();
             }
             renderDynamicMinigameDropdowns();
@@ -1550,24 +1479,17 @@
             { id: 18, name: "Minh Vương", gender: "Nam" }
         ];
 
-        /* ================= CẤU HÌNH DỮ LIỆU MINIGAME TEAM MỚI (5 NAM, 3 NỮ, 4 CẶP ĐẤU) ================= */
-        const masterMenList = window.players.filter(p => p.gender === 'Nam').map(p => p.name);
-        const masterWomenList = window.players.filter(p => p.gender === 'Nữ').map(p => p.name);
+        window.m1TeamA = ["Tiến Thọ", "Châu Sĩ", "Vân Đình", "Ly", "Phú Mỗ", "Hà Giấy", "Long Diễm", "Tuấn La", "Hạnh"];
+        window.m1TeamB = ["Trí Đô", "Thành Sóc", "Quỳnh Cool", "Hải Hà", "Dũng Ngạc", "Lợi Trì", "Thành Đàm", "Điền Chèm", "Minh Vương"];
 
-        const teamA_men_ids = ['a_nam_1', 'a_nam_2', 'a_nam_3', 'a_nam_4', 'a_nam_5'];
-        const teamA_women_ids = ['a_nu_1', 'a_nu_2', 'a_nu_3'];
-        
-        const teamB_men_ids = ['b_nam_1', 'b_nam_2', 'b_nam_3', 'b_nam_4', 'b_nam_5'];
-        const teamB_women_ids = ['b_nu_1', 'b_nu_2', 'b_nu_3'];
-
-        const matchesTeamConfig = [
-            { stt: 1, title: "Trận 1: Đôi Nam 1", cat: "Đôi Nam", pA1: "a_nam_1", pA2: "a_nam_2", pB1: "b_nam_1", pB2: "b_nam_2" },
-            { stt: 2, title: "Trận 2: Đôi Nam 2", cat: "Đôi Nam", pA1: "a_nam_3", pA2: "a_nam_4", pB1: "b_nam_3", pB2: "b_nam_4" },
-            { stt: 3, title: "Trận 3: Đôi Nam Nữ", cat: "Đôi Nam Nữ", pA1: "a_nam_5", pA2: "a_nu_1", pB1: "b_nam_5", pB2: "b_nu_1" },
-            { stt: 4, title: "Trận 4: Đôi Nữ", cat: "Đôi Nữ", pA1: "a_nu_2", pA2: "a_nu_3", pB1: "b_nu_2", pB2: "b_nu_3" }
+        window.m1Matches = [
+            { id:1, luot:1, san:1, content:"Nam xoay vòng", a1:"Tiến Thọ", a2:"Châu Sĩ", scoreA:"", scoreB:"", b1:"Trí Đô", b2:"Thành Sóc" },
+            { id:2, luot:1, san:2, content:"Nữ xoay vòng", a1:"Vân Đình", a2:"Ly", scoreA:"", scoreB:"", b1:"Quỳnh Cool", b2:"Hải Hà" },
+            { id:3, luot:1, san:3, content:"Nam xoay vòng", a1:"Phú Mỗ", a2:"Hà Giấy", scoreA:"", scoreB:"", b1:"Dũng Ngạc", b2:"Lợi Trì" },
+            { id:4, luot:2, san:1, content:"Nam xoay vòng", a1:"Long Diễm", a2:"Châu Sĩ", scoreA:"", scoreB:"", b1:"Thành Đàm", b2:"Thành Sóc" },
+            { id:5, luot:2, san:2, content:"Nam-Nữ không xoay vòng", a1:"Tuấn La", a2:"Ly", scoreA:"", scoreB:"", b1:"Điền Chèm", b2:"Hải Hà" },
+            { id:6, luot:2, san:3, content:"Nam-Nữ không xoay vòng", a1:"Hà Giấy", a2:"Vân Đình", scoreA:"", scoreB:"", b1:"Lợi Trì", b2:"Quỳnh Cool" }
         ];
-
-        window.teamScoresState = {};
 
         window.m2PairsA = [
             { p1: "Tiến Thọ", p2: "Châu Sĩ" },
@@ -3404,170 +3326,6 @@
             renderM2(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
         }
 
-        /* ================= LOGIC XỬ LÝ MINIGAME TEAM MỚI (5 NAM, 3 NỮ, 4 CẶP ĐẤU) ================= */
-        function initTeamDropdowns() {
-            teamA_men_ids.forEach((id, idx) => setSelectOptions(id, masterMenList, idx < masterMenList.length ? idx : 0));
-            teamA_women_ids.forEach((id, idx) => setSelectOptions(id, masterWomenList, idx < masterWomenList.length ? idx : 0));
-
-            teamB_men_ids.forEach((id, idx) => setSelectOptions(id, masterMenList, (idx + 5) < masterMenList.length ? (idx + 5) : 0));
-            teamB_women_ids.forEach((id, idx) => setSelectOptions(id, masterWomenList, (idx + 3) < masterWomenList.length ? (idx + 3) : 0));
-
-            renderTeamMatchesTable();
-            updateTeamRosterOptions();
-        }
-
-        function setSelectOptions(elementId, masterList, defaultIdx) {
-            const select = document.getElementById(elementId);
-            if (!select) return;
-            select.innerHTML = '';
-            masterList.forEach((name, idx) => {
-                const opt = document.createElement('option');
-                opt.value = name;
-                opt.textContent = name;
-                if (idx === defaultIdx) opt.selected = true;
-                select.appendChild(opt);
-            });
-        }
-
-        function updateTeamRosterOptions() {
-            const selectedA_men = teamA_men_ids.map(id => document.getElementById(id)?.value);
-            const selectedA_women = teamA_women_ids.map(id => document.getElementById(id)?.value);
-            const selectedB_men = teamB_men_ids.map(id => document.getElementById(id)?.value);
-            const selectedB_women = teamB_women_ids.map(id => document.getElementById(id)?.value);
-
-            refreshDropdownWithExclude(teamB_men_ids, masterMenList, selectedA_men);
-            refreshDropdownWithExclude(teamB_women_ids, masterWomenList, selectedA_women);
-            refreshDropdownWithExclude(teamA_men_ids, masterMenList, selectedB_men);
-            refreshDropdownWithExclude(teamA_women_ids, masterWomenList, selectedB_women);
-
-            updateTeamPairsDisplay();
-            calculateTeamScores();
-        }
-
-        function refreshDropdownWithExclude(groupIds, masterList, excludeList) {
-            groupIds.forEach(id => {
-                const select = document.getElementById(id);
-                if (!select) return;
-                const currentVal = select.value;
-
-                select.innerHTML = '';
-                masterList.forEach(name => {
-                    if (name === currentVal || !excludeList.includes(name)) {
-                        const opt = document.createElement('option');
-                        opt.value = name;
-                        opt.textContent = name;
-                        if (name === currentVal) opt.selected = true;
-                        select.appendChild(opt);
-                    }
-                });
-            });
-        }
-
-        function updateTeamPairsDisplay() {
-            setPairText('pair_a_1', 'a_nam_1', 'a_nam_2');
-            setPairText('pair_a_2', 'a_nam_3', 'a_nam_4');
-            setPairText('pair_a_3', 'a_nam_5', 'a_nu_1');
-            setPairText('pair_a_4', 'a_nu_2', 'a_nu_3');
-
-            setPairText('pair_b_1', 'b_nam_1', 'b_nam_2');
-            setPairText('pair_b_2', 'b_nam_3', 'b_nam_4');
-            setPairText('pair_b_3', 'b_nam_5', 'b_nu_1');
-            setPairText('pair_b_4', 'b_nu_2', 'b_nu_3');
-
-            matchesTeamConfig.forEach(m => {
-                const pA1 = document.getElementById(m.pA1)?.value || '-';
-                const pA2 = document.getElementById(m.pA2)?.value || '-';
-                const pB1 = document.getElementById(m.pB1)?.value || '-';
-                const pB2 = document.getElementById(m.pB2)?.value || '-';
-
-                const elA = document.getElementById(`match_team_a_${m.stt}`);
-                const elB = document.getElementById(`match_team_b_${m.stt}`);
-                if (elA) elA.textContent = `${pA1} + ${pA2}`;
-                if (elB) elB.textContent = `${pB1} + ${pB2}`;
-            });
-        }
-
-        function setPairText(targetId, id1, id2) {
-            const val1 = document.getElementById(id1)?.value || '-';
-            const val2 = document.getElementById(id2)?.value || '-';
-            const el = document.getElementById(targetId);
-            if (el) el.textContent = `${val1} + ${val2}`;
-        }
-
-        function renderTeamMatchesTable() {
-            const tbody = document.getElementById('match-table-team-body');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-
-            matchesTeamConfig.forEach(m => {
-                const savedScoreA = window.teamScoresState[`score_a_${m.stt}`] !== undefined ? window.teamScoresState[`score_a_${m.stt}`] : '';
-                const savedScoreB = window.teamScoresState[`score_b_${m.stt}`] !== undefined ? window.teamScoresState[`score_b_${m.stt}`] : '';
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="font-bold text-center">${m.stt}</td>
-                    <td class="font-semibold text-slate-700">${m.cat}</td>
-                    <td class="text-center font-bold text-blue-800"><span id="match_team_a_${m.stt}">-</span></td>
-                    <td class="font-black text-center text-slate-400">VS</td>
-                    <td class="text-center font-bold text-orange-700"><span id="match_team_b_${m.stt}">-</span></td>
-                    <td class="text-center"><input type="number" min="0" class="score-input" id="score_team_a_${m.stt}" value="${savedScoreA}" oninput="calculateTeamScores()"></td>
-                    <td class="text-center"><input type="number" min="0" class="score-input" id="score_team_b_${m.stt}" value="${savedScoreB}" oninput="calculateTeamScores()"></td>
-                    <td class="text-center font-bold"><span id="winner_team_${m.stt}">-</span></td>
-                    <td class="text-xs text-slate-500">${m.title}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-            updateTeamPairsDisplay();
-        }
-
-        function calculateTeamScores() {
-            let winsA = 0;
-            let winsB = 0;
-
-            matchesTeamConfig.forEach(m => {
-                const sAInput = document.getElementById(`score_team_a_${m.stt}`)?.value;
-                const sBInput = document.getElementById(`score_team_b_${m.stt}`)?.value;
-                const winEl = document.getElementById(`winner_team_${m.stt}`);
-
-                if (sAInput !== undefined) window.teamScoresState[`score_a_${m.stt}`] = sAInput;
-                if (sBInput !== undefined) window.teamScoresState[`score_b_${m.stt}`] = sBInput;
-
-                if (sAInput !== "" && sBInput !== "" && sAInput !== undefined && sBInput !== undefined && winEl) {
-                    const numA = parseInt(sAInput);
-                    const numB = parseInt(sBInput);
-                    if (!isNaN(numA) && !isNaN(numB)) {
-                        if (numA > numB) {
-                            winEl.textContent = "Team A";
-                            winEl.className = "text-blue-700 font-extrabold";
-                            winsA++;
-                        } else if (numB > numA) {
-                            winEl.textContent = "Team B";
-                            winEl.className = "text-orange-600 font-extrabold";
-                            winsB++;
-                        } else {
-                            winEl.textContent = "Hòa";
-                            winEl.className = "text-slate-500 font-bold";
-                        }
-                    }
-                } else if (winEl) {
-                    winEl.textContent = "-";
-                    winEl.className = "";
-                }
-            });
-
-            const elA = document.getElementById('wins-team-a');
-            const elB = document.getElementById('wins-team-b');
-            if (elA) elA.innerText = winsA;
-            if (elB) elB.innerText = winsB;
-
-            autoBackupData();
-            if (window.syncToFirebase) window.syncToFirebase();
-        }
-
-        function renderMinigameTeam() {
-            initTeamDropdowns();
-        }
-
         function autoBackupData() {
             try {
                 const getVal = (id) => document.getElementById(id)?.value || "";
@@ -3578,7 +3336,9 @@
                     createdMinigames: window.createdMinigames,
                     currentTeamMinigameId: window.currentTeamMinigameId,
                     currentBracketMinigameId: window.currentBracketMinigameId,
-                    teamScoresState: window.teamScoresState,
+                    m1TeamA: window.m1TeamA,
+                    m1TeamB: window.m1TeamB,
+                    m1Matches: window.m1Matches,
                     m2PairsA: window.m2PairsA,
                     m2PairsB: window.m2PairsB,
                     m2ScoresA: window.m2ScoresA,
@@ -3613,7 +3373,9 @@
                 if (data.createdMinigames) window.createdMinigames = data.createdMinigames;
                 if (data.currentTeamMinigameId) window.currentTeamMinigameId = data.currentTeamMinigameId;
                 if (data.currentBracketMinigameId) window.currentBracketMinigameId = data.currentBracketMinigameId;
-                if (data.teamScoresState) window.teamScoresState = data.teamScoresState;
+                if (data.m1TeamA) window.m1TeamA = data.m1TeamA;
+                if (data.m1TeamB) window.m1TeamB = data.m1TeamB;
+                if (data.m1Matches) window.m1Matches = data.m1Matches;
                 if (data.m2PairsA) window.m2PairsA = data.m2PairsA;
                 if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
                 if (data.m2ScoresA) window.m2ScoresA = data.m2ScoresA;
@@ -3643,7 +3405,9 @@
                 createdMinigames: window.createdMinigames,
                 currentTeamMinigameId: window.currentTeamMinigameId,
                 currentBracketMinigameId: window.currentBracketMinigameId,
-                teamScoresState: window.teamScoresState,
+                m1TeamA: window.m1TeamA,
+                m1TeamB: window.m1TeamB,
+                m1Matches: window.m1Matches,
                 m2PairsA: window.m2PairsA,
                 m2PairsB: window.m2PairsB,
                 m2ScoresA: window.m2ScoresA,
@@ -3686,7 +3450,9 @@
                     if (data.createdMinigames) window.createdMinigames = data.createdMinigames;
                     if (data.currentTeamMinigameId) window.currentTeamMinigameId = data.currentTeamMinigameId;
                     if (data.currentBracketMinigameId) window.currentBracketMinigameId = data.currentBracketMinigameId;
-                    if (data.teamScoresState) window.teamScoresState = data.teamScoresState;
+                    if (data.m1TeamA) window.m1TeamA = data.m1TeamA;
+                    if (data.m1TeamB) window.m1TeamB = data.m1TeamB;
+                    if (data.m1Matches) window.m1Matches = data.m1Matches;
                     if (data.m2PairsA) window.m2PairsA = data.m2PairsA;
                     if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
                     if (data.m2ScoresA) window.m2ScoresA = data.m2ScoresA;
@@ -3732,7 +3498,7 @@
 
         function refreshAllViews() {
             renderPlayers();
-            renderMinigameTeam();
+            renderMinigame1();
             renderM2();
             renderDatesMenuList();
             renderDayDetailView();
@@ -3811,6 +3577,139 @@
             }
         }
 
+        function renderMinigame1() {
+            const listA = document.getElementById('team-A-list');
+            const listB = document.getElementById('team-B-list');
+            if(!listA || !listB) return;
+            listA.innerHTML = ''; listB.innerHTML = '';
+
+            document.getElementById('team-A-count').innerText = window.m1TeamA.length;
+            document.getElementById('team-B-count').innerText = window.m1TeamB.length;
+
+            const availableForA = window.players.filter(p => !window.m1TeamB.includes(p.name));
+            const availableForB = window.players.filter(p => !window.m1TeamA.includes(p.name));
+
+            window.m1TeamA.forEach((currentName, i) => {
+                let options = availableForA.map(p => `<option value="${p.name}" ${p.name === currentName ? 'selected' : ''}>${p.name}</option>`).join('');
+                listA.innerHTML += `
+                    <div class="flex items-center justify-between bg-white px-2 py-1 rounded border border-blue-200 text-sm gap-2 shadow-sm">
+                        <span class="font-bold text-blue-800 w-6">${i+1}.</span>
+                        <select onchange="updateTeamMember('A', ${i}, this.value)" class="player-select-btn flex-grow bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs">${options}</select>
+                        <button onclick="removeTeamMember('A', ${i})" class="text-red-500 text-xs p-1"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                `;
+            });
+
+            window.m1TeamB.forEach((currentName, i) => {
+                let options = availableForB.map(p => `<option value="${p.name}" ${p.name === currentName ? 'selected' : ''}>${p.name}</option>`).join('');
+                listB.innerHTML += `
+                    <div class="flex items-center justify-between bg-white px-2 py-1 rounded border border-orange-200 text-sm gap-2 shadow-sm">
+                        <span class="font-bold text-orange-800 w-6">${i+1}.</span>
+                        <select onchange="updateTeamMember('B', ${i}, this.value)" class="player-select-btn flex-grow bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs">${options}</select>
+                        <button onclick="removeTeamMember('B', ${i})" class="text-red-500 text-xs p-1"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                `;
+            });
+
+            const body = document.getElementById('m1-schedule-body');
+            body.innerHTML = '';
+            document.getElementById('m1-match-count').innerText = window.m1Matches.length;
+
+            let scoreCountA = 0, scoreCountB = 0, totalDiffA = 0, playedMatches = 0;
+
+            window.m1Matches.forEach((m, idx) => {
+                const sA = m.scoreA !== "" ? parseInt(m.scoreA) : null;
+                const sB = m.scoreB !== "" ? parseInt(m.scoreB) : null;
+                let winner = "---", diff = "---", ptsA = 0, ptsB = 0, status = "<span class='text-slate-400'>Chưa đấu</span>";
+
+                if (sA !== null && sB !== null && !isNaN(sA) && !isNaN(sB)) {
+                    playedMatches++;
+                    const d = sA - sB; diff = d > 0 ? `+${d}` : `${d}`; totalDiffA += d;
+                    if (sA > sB) { winner = "Đội A"; ptsA = 1; scoreCountA += 1; status = "<span class='text-emerald-600 font-bold'>Xong</span>"; }
+                    else if (sB > sA) { winner = "Đội B"; ptsB = 1; scoreCountB += 1; status = "<span class='text-emerald-600 font-bold'>Xong</span>"; }
+                    else { winner = "Hòa"; status = "<span class='text-amber-600 font-bold'>Xong</span>"; }
+                }
+
+                const buildSelect = (teamList, selectedVal, field, matchId) => {
+                    let opts = `<option value="">--Chọn--</option>`;
+                    teamList.forEach(name => { opts += `<option value="${name}" ${name === selectedVal ? 'selected' : ''}>${name}</option>`; });
+                    return `<select onchange="updateM1MatchPlayer(${matchId}, '${field}', this.value)" class="player-select-btn bg-white border rounded px-1 py-0.5 text-xs">${opts}</select>`;
+                };
+
+                body.innerHTML += `
+                    <tr class="hover:bg-slate-50 text-center">
+                        <td class="font-bold">${idx + 1}</td>
+                        <td class="font-semibold text-blue-900">${m.luot}</td>
+                        <td class="font-semibold text-slate-700">${m.san}</td>
+                        <td class="text-left px-2">${m.content}</td>
+                        <td class="text-left px-1">${buildSelect(window.m1TeamA, m.a1, 'a1', m.id)}</td>
+                        <td class="text-left px-1">${buildSelect(window.m1TeamA, m.a2, 'a2', m.id)}</td>
+                        <td><input type="number" value="${m.scoreA}" onchange="updateM1Score(${m.id}, 'A', this.value)" class="text-center font-bold text-blue-900"></td>
+                        <td class="font-bold text-slate-400">vs</td>
+                        <td><input type="number" value="${m.scoreB}" onchange="updateM1Score(${m.id}, 'B', this.value)" class="text-center font-bold text-orange-900"></td>
+                        <td class="text-left px-1">${buildSelect(window.m1TeamB, m.b1, 'b1', m.id)}</td>
+                        <td class="text-left px-1">${buildSelect(window.m1TeamB, m.b2, 'b2', m.id)}</td>
+                        <td class="font-bold">${winner}</td>
+                        <td class="font-semibold">${diff}</td>
+                        <td class="font-bold text-blue-700">${ptsA}</td>
+                        <td class="font-bold text-orange-700">${ptsB}</td>
+                        <td>${status}</td>
+                        <td><button onclick="deleteM1Match(${m.id})" class="text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+
+            const sumBody = document.getElementById('m1-summary-body');
+            sumBody.innerHTML = `
+                <tr class="bg-blue-50 text-blue-900"><td class="p-3 border font-extrabold">TEAM A</td><td class="p-3 border">${playedMatches}</td><td class="p-3 border text-lg font-black">${scoreCountA}</td><td class="p-3 border">${totalDiffA > 0 ? '+' + totalDiffA : totalDiffA}</td><td class="p-3 border">${scoreCountA > scoreCountB ? '<span class="text-emerald-600">Đang Dẫn Trước</span>' : '<span class="text-red-500">Đang Bị Dẫn</span>'}</td></tr>
+                <tr class="bg-orange-50 text-orange-900"><td class="p-3 border font-extrabold">TEAM B</td><td class="p-3 border">${playedMatches}</td><td class="p-3 border text-lg font-black">${scoreCountB}</td><td class="p-3 border">${-totalDiffA}</td><td class="p-3 border">${scoreCountB > scoreCountA ? '<span class="text-emerald-600">Đang Dẫn Trước</span>' : '<span class="text-red-500">Đang Bị Dẫn</span>'}</td></tr>
+            `;
+        }
+
+        function updateTeamMember(team, index, newName) {
+            if (team === 'A') window.m1TeamA[index] = newName;
+            else window.m1TeamB[index] = newName;
+            renderMinigame1(); autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function updateM1MatchPlayer(matchId, field, value) {
+            const m = window.m1Matches.find(item => item.id === matchId);
+            if (m) { m[field] = value; renderMinigame1(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase(); }
+        }
+
+        function updateM1Score(id, team, val) {
+            const m = window.m1Matches.find(item => item.id === id);
+            if(m) { if(team === 'A') m.scoreA = val; if(team === 'B') m.scoreB = val; renderMinigame1(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase(); }
+        }
+
+        function addM1Match() {
+            const nextId = window.m1Matches.length ? Math.max(...window.m1Matches.map(m=>m.id)) + 1 : 1;
+            window.m1Matches.push({ id: nextId, luot: 1, san: 1, content: "Đôi Nam/Nữ", a1: "", a2: "", scoreA: "", scoreB: "", b1: "", b2: "" });
+            renderMinigame1(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function deleteM1Match(id) {
+            if(confirm('Bạn có chắc muốn xóa trận đấu này?')) {
+                window.m1Matches = window.m1Matches.filter(m => m.id !== id);
+                renderMinigame1(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
+            }
+        }
+
+        function addTeamMember(team) {
+            const available = window.players.filter(p => !window.m1TeamA.includes(p.name) && !window.m1TeamB.includes(p.name));
+            if (available.length === 0) return alert("Không còn VĐV khả dụng!");
+            if (team === 'A') window.m1TeamA.push(available[0].name);
+            else window.m1TeamB.push(available[0].name);
+            renderMinigame1(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function removeTeamMember(team, index) {
+            if(team === 'A') window.m1TeamA.splice(index, 1);
+            else window.m1TeamB.splice(index, 1);
+            renderMinigame1(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
+        }
+
         window.onload = function() {
             restoreAutoBackup(true);
             refreshAllViews();
@@ -3852,7 +3751,9 @@
                     createdMinigames: window.createdMinigames,
                     currentTeamMinigameId: window.currentTeamMinigameId,
                     currentBracketMinigameId: window.currentBracketMinigameId,
-                    teamScoresState: window.teamScoresState,
+                    m1TeamA: window.m1TeamA,
+                    m1TeamB: window.m1TeamB,
+                    m1Matches: window.m1Matches,
                     m2PairsA: window.m2PairsA,
                     m2PairsB: window.m2PairsB,
                     m2ScoresA: window.m2ScoresA,
@@ -3896,7 +3797,9 @@
                     if (data.createdMinigames) window.createdMinigames = data.createdMinigames;
                     if (data.currentTeamMinigameId) window.currentTeamMinigameId = data.currentTeamMinigameId;
                     if (data.currentBracketMinigameId) window.currentBracketMinigameId = data.currentBracketMinigameId;
-                    if (data.teamScoresState) window.teamScoresState = data.teamScoresState;
+                    if (data.m1TeamA) window.m1TeamA = data.m1TeamA;
+                    if (data.m1TeamB) window.m1TeamB = data.m1TeamB;
+                    if (data.m1Matches) window.m1Matches = data.m1Matches;
                     if (data.m2PairsA) window.m2PairsA = data.m2PairsA;
                     if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
                     if (data.m2ScoresA) window.m2ScoresA = data.m2ScoresA;
