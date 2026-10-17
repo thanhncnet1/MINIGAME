@@ -2025,6 +2025,7 @@
 
                 saveQuarterColsConfig();
                 renderFundMembers();
+                updateFundDashboard();
             });
         }
 
@@ -2034,6 +2035,7 @@
                     window.activeQuarterColumns = window.activeQuarterColumns.filter(col => col.id !== qId);
                     saveQuarterColsConfig();
                     renderFundMembers();
+                    updateFundDashboard();
                 }
             });
         }
