@@ -263,7 +263,7 @@
                     <i class="fa-solid fa-users"></i> <span>Pick Thủ</span>
                 </button>
                 
-                <!-- MINIGAME TEAM VỚI DANH SÁCH GIẢI ĐẤU ĐỘC LẬP -->
+                <!-- MINIGAME TEAM VỚI 3 GIẢI ĐẤU ĐỘC LẬP TRONG DROPDOWN -->
                 <div class="relative">
                     <button onclick="toggleMenu('menuNavTeam', event)" id="btn-minigame1" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
                         <i class="fa-solid fa-trophy"></i> <span>MINIGAME TEAM ▾</span>
@@ -383,7 +383,7 @@
                         <div class="my-auto">
                             <i class="fa-solid fa-people-group text-4xl text-amber-600 mb-3 group-hover:scale-110 transition-transform block"></i>
                             <h3 class="font-bold text-base md:text-lg text-slate-800">MINIGAME TEAM</h3>
-                            <p class="text-xs text-slate-500 mt-2">Nhiều giải Team: 20/10, Hòa Lạc Open, Mùa Hè...</p>
+                            <p class="text-xs text-slate-500 mt-2">Nhiều giải Team: 20/10, Mùa Hè Open, Giao Lưu...</p>
                         </div>
                     </div>
 
@@ -1282,10 +1282,9 @@
         window.isAdminUnlocked = false;
         window.ADMIN_PASSWORD = "123456";
 
-        /* QUẢN LÝ DANH SÁCH VÀ CHỌN CÁC MINIGAME ĐỘNG (ĐÃ CẬP NHẬT HÒA LẠC OPEN THÀNH GIẢI TEAM 2 BẢNG 8 VĐV) */
+        /* QUẢN LÝ DANH SÁCH VÀ CHỌN CÁC MINIGAME ĐỘNG */
         window.createdMinigames = JSON.parse(localStorage.getItem('pb_created_minigames')) || [
             { id: 'mg_2010', name: 'MINIGAME 20/10 (5 Nam, 3 Nữ)', type: 'team' },
-            { id: 'mg_hualac', name: 'Hòa Lạc Open (Team 2 Bảng, 8 VĐV)', type: 'team' },
             { id: 'mg_muahe', name: 'Minigame Mùa Hè Open (4 Nam, 2 Nữ)', type: 'team' },
             { id: 'mg_giaoluu', name: 'Minigame Giao Lưu Cuối Tuần (2 Nam, 2 Nữ)', type: 'team' },
             { id: 'mg_bracket_default', name: 'Phú Thọ Open (Bảng & Vòng Tròn)', type: 'bracket' }
@@ -3307,8 +3306,8 @@
             }
 
             if(bk2_s1 !== -1 && bk2_s2 !== -1) {
-                if(bk2_s1 > bk2_s2) { winBK1 = team1B; loseBK1 = team2A; }
-                else if(bk2_s2 > bk2_s1) { winBK1 = team2A; loseBK1 = team1B; }
+                if(bk2_s1 > bk2_s2) { winBK2 = team1B; loseBK2 = team2A; }
+                else if(bk2_s2 > bk2_s1) { winBK2 = team2A; loseBK2 = team1B; }
             }
 
             if(document.getElementById('t3-team1-name')) document.getElementById('t3-team1-name').innerText = loseBK1;
@@ -3347,22 +3346,9 @@
         /* ================= LOGIC XỬ LÝ MINIGAME TEAM ĐỘNG (HỖ TRỢ ĐA DẠNG CẤU TRÚC GIẢI) ================= */
         function getActiveTeamConfig() {
             const mgId = window.currentTeamMinigameId;
-            // Hòa Lạc Open: Giải đấu team chia làm 2 bảng, 8 VĐV / Team (4 Nam, 4 Nữ hoặc 5 Nam, 3 Nữ tương ứng cấu trúc 4 cặp đấu)
-            if (mgId === 'mg_hualac') {
-                return {
-                    name: "Hòa Lạc Open (Team 2 Bảng, 8 VĐV)",
-                    rosterTitle: "1. ĐĂNG KÝ DANH SÁCH VĐV TEAM (GIẢI TEAM 2 BẢNG - 8 VĐV / TEAM)",
-                    menCount: 5,
-                    womenCount: 3,
-                    badgeText: "Giải Team 2 Bảng (5 Nam - 3 Nữ)",
-                    pairsConfig: [
-                        { stt: 1, title: "Trận 1: Đối Kháng Bảng A - Đôi Nam 1", cat: "Bảng A (Đôi Nam)", pA1: "a_nam_1", pA2: "a_nam_2", pB1: "b_nam_1", pB2: "b_nam_2" },
-                        { stt: 2, title: "Trận 2: Đối Kháng Bảng A - Đôi Nam 2", cat: "Bảng A (Đôi Nam)", pA1: "a_nam_3", pA2: "a_nam_4", pB1: "b_nam_3", pB2: "b_nam_4" },
-                        { stt: 3, title: "Trận 3: Đối Kháng Bảng B - Đôi Nam Nữ", cat: "Bảng B (Đôi Nam Nữ)", pA1: "a_nam_5", pA2: "a_nu_1", pB1: "b_nam_5", pB2: "b_nu_1" },
-                        { stt: 4, title: "Trận 4: Đối Kháng Bảng B - Đôi Nữ", cat: "Bảng B (Đôi Nữ)", pA1: "a_nu_2", pA2: "a_nu_3", pB1: "b_nu_2", pB2: "b_nu_3" }
-                    ]
-                };
-            } else if (mgId === 'mg_muahe') {
+            // Giải 20/10 (Mặc định gốc của bạn): 8 VĐV/Team (5 Nam, 3 Nữ, 4 cặp đấu)
+            if (mgId === 'mg_muahe') {
+                // Giải Mùa Hè Open: 6 VĐV/Team (4 Nam, 2 Nữ, 3 cặp đấu: 2 Đôi Nam, 1 Đôi Nam Nữ)
                 return {
                     name: "Minigame Mùa Hè Open",
                     rosterTitle: "1. ĐĂNG KÝ DANH SÁCH VĐV TEAM (6 VĐV / TEAM: 4 NAM + 2 NỮ)",
@@ -3376,6 +3362,7 @@
                     ]
                 };
             } else if (mgId === 'mg_giaoluu') {
+                // Giải Giao Lưu Cuối Tuần: 4 VĐV/Team (2 Nam, 2 Nữ, 2 cặp đấu: 1 Đôi Nam Nữ, 1 Đôi Nữ)
                 return {
                     name: "Minigame Giao Lưu Cuối Tuần",
                     rosterTitle: "1. ĐĂNG KÝ DANH SÁCH VĐV TEAM (4 VĐV / TEAM: 2 NAM + 2 NỮ)",
@@ -3388,6 +3375,7 @@
                     ]
                 };
             } else {
+                // Mặc định Minigame 20/10: 8 VĐV/Team (5 Nam, 3 Nữ, 4 cặp đấu)
                 return {
                     name: "MINIGAME 20/10",
                     rosterTitle: "1. ĐĂNG KÝ DANH SÁCH VĐV TEAM (8 VĐV / TEAM: 5 NAM + 3 NỮ)",
