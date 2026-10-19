@@ -64,7 +64,7 @@
         }
 
         .player-cell {
-            min-width: 120px;
+            min-width: 110px;
             font-weight: 600;
         }
 
@@ -80,7 +80,7 @@
         .player-tag:hover, .player-select-btn:hover {
             background-color: #fef08a !important;
             color: #0369a1 !important;
-            transform: scale(1.03);
+            transform: scale(1.05);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
         }
 
@@ -231,7 +231,7 @@
                 </button>
 
                 <button onclick="showTab('fund_manager')" id="btn-fund_manager" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-teal-800 text-teal-100 border border-teal-400/40 font-bold shadow-sm">
-                    <i class="fa-solid fa-vault text-yellow-300"></i> <span>QUẢN LÝ QUỸ PICK</span>
+                    <i class="fa-solid fa-vault text-yellow-300"></i> <span>QUẢN LÝ QUỸ PICK</span>
                 </button>
 
                 <button onclick="showTab('tonghop')" id="btn-tonghop" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-indigo-800 text-indigo-100 border border-indigo-400/40 font-bold shadow-sm">
@@ -351,7 +351,7 @@
                             </span>
                             <h3 class="text-lg md:text-xl font-extrabold text-slate-800 flex items-center gap-2">
                                 <i class="fa-solid fa-calendar-check text-blue-600"></i>
-                                <span>BẢNG THỐNG KÊ TRẬN PICK NGÀY <span id="home-closest-date-title" class="text-blue-700 underline decoration-yellow-400">---</span></span>
+                                <span>DIỄN BIẾN NGÀY GẦN NHẤT: <span id="home-closest-date-title" class="text-blue-700 underline decoration-yellow-400">---</span></span>
                             </h3>
                         </div>
                         <button onclick="goToClosestDateTab()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-lg shadow font-bold flex items-center gap-1.5 transition-all">
@@ -723,7 +723,7 @@
             <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 text-slate-800">
                 <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b gap-2">
                     <h2 class="text-base md:text-lg font-black text-slate-800 uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-calendar-day text-blue-600"></i> BẢNG THỐNG KÊ TRẬN PICK NGÀY <span id="current-date-title" class="text-blue-700">1/10/26</span>
+                        <i class="fa-solid fa-calendar-day text-blue-600"></i> BẢNG THỐNG KÊ TRẬN PICK - NGÀY <span id="current-date-title" class="text-blue-700">1/10/26</span>
                     </h2>
                     <div class="flex items-center gap-2">
                         <button onclick="addMatchToCurrentDate()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg shadow font-bold flex items-center gap-1">
@@ -737,8 +737,8 @@
                         <i class="fa-solid fa-coins"></i> KÈO ÁP DỤNG TOÀN NGÀY:
                     </span>
                     <select id="keo-mode-select" onchange="applyKeoToAllMatchesInDate(this.value)" class="text-xs p-1.5 border rounded bg-white font-bold outline-none border-amber-400 text-slate-800 cursor-pointer">
-                        <option value="default">Kèo (+5k/-15k)</option>
-                        <option value="k25">Kèo 25k (0k/-25k)</option>
+                        <option value="default">Kèo Mặc Định (Thắng +5k / Thua -15k)</option>
+                        <option value="k25">Kèo 25k (Thắng 0k / Thua -25k)</option>
                         <option value="free">Kèo Tự Do (Tùy chỉnh riêng từng trận)</option>
                     </select>
                 </div>
@@ -747,13 +747,13 @@
                     <table class="w-full min-w-[780px] text-center border-collapse border border-slate-300 text-xs">
                         <thead>
                             <tr class="bg-slate-100 text-slate-700 font-bold">
-                                <th class="p-2 border w-10">STT</th>
+                                <th class="p-2 border w-12">STT</th>
                                 <th class="p-2 border bg-emerald-100 text-emerald-900" colspan="2">CẶP PICK 1</th>
-                                <th class="p-2 border bg-purple-100 text-purple-900 w-20">TỶ SỐ</th>
+                                <th class="p-2 border bg-purple-100 text-purple-900 w-24">TỶ SỐ</th>
                                 <th class="p-2 border bg-red-100 text-red-900" colspan="2">CẶP PICK 2</th>
-                                <th class="p-2 border bg-amber-100 text-amber-900 w-28">CHỌN KÈO TRẬN</th>
+                                <th class="p-2 border bg-amber-100 text-amber-900 w-32">CHỌN KÈO TRẬN</th>
                                 <th class="p-2 border bg-amber-100 text-amber-900" colspan="2">KÈO BAN ĐẦU</th>
-                                <th class="p-2 border w-12 bg-slate-200 text-slate-800"><i class="fa-solid fa-gear"></i></th>
+                                <th class="p-2 border w-20 bg-slate-200 text-slate-800">THAO TÁC</th>
                             </tr>
                         </thead>
                         <tbody id="day-matches-body"></tbody>
@@ -810,16 +810,6 @@
                         <p class="text-xs text-brand-100">Hệ thống theo dõi Thu Chi & Hội Phí Tự Động</p>
                     </div>
                 </div>
-
-                <div class="flex items-center gap-2 bg-white/10 p-2 rounded-xl backdrop-blur-md border border-white/20">
-                    <span id="fund-admin-status-badge" class="text-xs font-bold text-yellow-300 flex items-center gap-1">
-                        <i class="fa-solid fa-lock text-red-300"></i> Admin Quỹ:
-                    </span>
-                    <input type="password" id="fund-admin-pass-input" placeholder="Pass Admin..." class="w-24 text-xs p-1 border rounded bg-white text-slate-800 outline-none focus:ring-1 focus:ring-yellow-400">
-                    <button onclick="checkFundAdminPassword()" class="bg-yellow-500 hover:bg-yellow-400 text-slate-900 text-xs px-2.5 py-1 rounded font-extrabold shadow">
-                        Mở Khóa
-                    </button>
-                </div>
                 
                 <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
                     <button onclick="exportFundToExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-medium text-sm transition-all shadow-sm flex items-center gap-2 border border-emerald-400/30">
@@ -841,7 +831,7 @@
                             <i class="fa-solid fa-vault text-xl"></i>
                         </div>
                     </div>
-                    <div class="mt-3 text-xs text-slate-400">Cần quyền Admin để chỉnh sửa</div>
+                    <div class="mt-3 text-xs text-slate-400">Click để chỉnh sửa số dư đầu kỳ</div>
                 </div>
 
                 <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm relative overflow-hidden group">
@@ -855,7 +845,7 @@
                         </div>
                     </div>
                     <div class="mt-3 text-xs text-slate-400 flex items-center gap-1">
-                        <i class="fa-solid fa-circle-info text-emerald-500"></i> Tự động cộng từ dòng TỔNG BTC THU VỀ
+                        <i class="fa-solid fa-circle-info text-emerald-500"></i> Tự động cộng giá trị tuyệt đối từ dòng TỔNG BTC THU VỀ
                     </div>
                 </div>
 
@@ -1077,7 +1067,7 @@
         </div>
     </div>
 
-    <!-- MODAL THÊM / SỬA KHOẢN THU CHI QUẤY -->
+    <!-- MODAL THÊM / SỬA KHOẢN THU CHI QUỸ -->
     <div id="fund-modal-backdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-slate-100">
             <div id="fund-modal-header" class="p-4 bg-emerald-600 text-white flex justify-between items-center">
@@ -1150,44 +1140,6 @@
                 renderHomeClosestDateView();
             } else {
                 alert("❌ Mật khẩu Admin không đúng!");
-            }
-        }
-
-        function checkFundAdminPassword() {
-            const inputPass = document.getElementById('fund-admin-pass-input').value;
-            if (inputPass === window.ADMIN_PASSWORD) {
-                window.isAdminUnlocked = true;
-                const badge = document.getElementById('fund-admin-status-badge');
-                const badgeDay = document.getElementById('admin-status-badge');
-                if(badge) {
-                    badge.innerHTML = `<i class="fa-solid fa-lock-open text-emerald-300"></i> Admin Quỹ: Mở Khóa`;
-                    badge.className = "text-xs font-extrabold text-emerald-300 flex items-center gap-1";
-                }
-                if(badgeDay) {
-                    badgeDay.innerHTML = `<i class="fa-solid fa-lock-open text-emerald-600"></i> Đã Mở Khóa Admin:`;
-                    badgeDay.className = "text-xs font-bold text-emerald-700 flex items-center gap-1";
-                }
-                alert("🔑 Xác thực Admin thành công! Bạn có toàn quyền thêm, sửa, xóa dữ liệu Quỹ.");
-                updateFundDashboard();
-                renderDayDetailView();
-                renderHomeClosestDateView();
-            } else {
-                alert("❌ Mật khẩu Admin không đúng!");
-            }
-        }
-
-        function requireAdminAuth(actionCallback) {
-            if (window.isAdminUnlocked) {
-                actionCallback();
-            } else {
-                const pass = prompt("🔒 Vui lòng nhập mật khẩu Admin để thực hiện thao tác này:");
-                if (pass === window.ADMIN_PASSWORD) {
-                    window.isAdminUnlocked = true;
-                    alert("🔑 Xác thực Admin thành công!");
-                    actionCallback();
-                } else if (pass !== null) {
-                    alert("❌ Mật khẩu Admin không đúng!");
-                }
             }
         }
 
@@ -1399,7 +1351,7 @@
 
                 let keoCellUI = `
                     <select onchange="updateMatchKeoModeForDate('${closestDate}', ${idx}, this.value)" class="text-[10px] sm:text-[11px] font-bold p-0.5 border rounded bg-amber-50 outline-none w-full text-amber-900 border-amber-300">
-                        <option value="default" ${mMode==='default'?'selected':''}>Kèo (+5k/-15k)</option>
+                        <option value="default" ${mMode==='default'?'selected':''}>Mặc định (+5k/-15k)</option>
                         <option value="k25" ${mMode==='k25'?'selected':''}>Kèo 25k (0k/-25k)</option>
                         <option value="free" ${mMode==='free'?'selected':''}>Kèo Tự Do</option>
                     </select>
@@ -1433,9 +1385,9 @@
                         <td class="p-1 bg-amber-50/50">${keoCellUI}</td>
                         <td class="p-1 font-extrabold ${keo1 > 0 ? 'txt-win' : (keo1 < 0 ? 'txt-lose' : '')}">${keo1 !== '' ? keo1 + 'K' : '---'}</td>
                         <td class="p-1 font-extrabold ${keo2 > 0 ? 'txt-win' : (keo2 < 0 ? 'txt-lose' : '')}">${keo2 !== '' ? keo2 + 'K' : '---'}</td>
-                        <td class="p-1 text-center whitespace-nowrap">
-                            <button onclick="deleteMatchFromDate('${closestDate}', ${idx})" class="text-slate-400 hover:text-red-600 font-bold p-1 transition-colors" title="Xóa trận đấu">
-                                <i class="fa-solid fa-trash-can text-sm"></i>
+                        <td class="p-1 whitespace-nowrap">
+                            <button onclick="deleteMatchFromDate('${closestDate}', ${idx})" class="text-red-600 hover:text-red-800 font-bold text-xs px-2 py-1 bg-red-50 rounded border border-red-200 shadow-sm transition-all hover:bg-red-100">
+                                <i class="fa-solid fa-trash"></i> Xóa
                             </button>
                         </td>
                     </tr>
@@ -1502,7 +1454,7 @@
                             </h4>
                             <div class="flex items-center gap-2">
                                 <select onchange="applyKeoToAllMatchesForDate('${closestDate}', this.value)" class="text-xs p-1 border rounded bg-white font-bold outline-none border-amber-400 text-slate-800 cursor-pointer">
-                                    <option value="default" ${(window.dateKeoMode[closestDate]||'default')==='default'?'selected':''}>Kèo (+5k/-15k)</option>
+                                    <option value="default" ${(window.dateKeoMode[closestDate]||'default')==='default'?'selected':''}>Kèo Mặc Định (+5k/-15k)</option>
                                     <option value="k25" ${(window.dateKeoMode[closestDate]||'default')==='k25'?'selected':''}>Kèo 25k (0k/-25k)</option>
                                     <option value="free" ${(window.dateKeoMode[closestDate]||'default')==='free'?'selected':''}>Kèo Tự Do</option>
                                 </select>
@@ -1516,13 +1468,13 @@
                             <table class="w-full text-xs min-w-[780px] border-collapse text-center">
                                 <thead>
                                     <tr class="bg-slate-100 text-slate-700 font-bold">
-                                        <th class="p-2 border w-10">STT</th>
+                                        <th class="p-2 border w-12">STT</th>
                                         <th class="p-2 border bg-emerald-50 text-emerald-900" colspan="2">CẶP PICK 1</th>
-                                        <th class="p-2 border bg-purple-100 text-purple-900 w-20">TỶ SỐ</th>
+                                        <th class="p-2 border bg-purple-100 text-purple-900 w-24">TỶ SỐ</th>
                                         <th class="p-2 border bg-red-50 text-red-900" colspan="2">CẶP PICK 2</th>
-                                        <th class="p-2 border bg-amber-50 text-amber-900 w-28">CHỌN KÈO TRẬN</th>
+                                        <th class="p-2 border bg-amber-50 text-amber-900 w-32">CHỌN KÈO TRẬN</th>
                                         <th class="p-2 border bg-amber-50 text-amber-900" colspan="2">KÈO BAN ĐẦU</th>
-                                        <th class="p-2 border w-12 bg-slate-200 text-slate-800"><i class="fa-solid fa-gear"></i></th>
+                                        <th class="p-2 border w-20 bg-slate-200 text-slate-800">THAO TÁC</th>
                                     </tr>
                                 </thead>
                                 <tbody>${matchesTableRows}</tbody>
@@ -1655,12 +1607,10 @@
         }
 
         function updateAutoIncomeNote(dateStr, noteVal) {
-            requireAdminAuth(() => {
-                window.autoIncomeNotes[dateStr] = noteVal;
-                localStorage.setItem('pb_auto_income_notes', JSON.stringify(window.autoIncomeNotes));
-                autoBackupData();
-                if(window.syncToFirebase) window.syncToFirebase();
-            });
+            window.autoIncomeNotes[dateStr] = noteVal;
+            localStorage.setItem('pb_auto_income_notes', JSON.stringify(window.autoIncomeNotes));
+            autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
         }
 
         function getBtcThuVeForDate(dateStr) {
@@ -1715,56 +1665,48 @@
         }
 
         function updateInitialFund(val) {
-            requireAdminAuth(() => {
-                window.initialFund = Number(val) || 0;
-                localStorage.setItem('pb_initial_fund', window.initialFund);
-                calculateFundSummary();
-                autoBackupData();
-                if(window.syncToFirebase) window.syncToFirebase();
-            });
+            window.initialFund = Number(val) || 0;
+            localStorage.setItem('pb_initial_fund', window.initialFund);
+            calculateFundSummary();
+            autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
         }
 
         function addNewQuarterColumn() {
-            requireAdminAuth(() => {
-                const num = window.activeQuarterColumns.length + 1;
-                const qId = `q_${Date.now()}`;
-                const colors = ["amber", "purple", "blue", "teal", "emerald", "indigo", "rose"];
-                const chosenColor = colors[(num - 1) % colors.length];
+            const num = window.activeQuarterColumns.length + 1;
+            const qId = `q_${Date.now()}`;
+            const colors = ["amber", "purple", "blue", "teal", "emerald", "indigo", "rose"];
+            const chosenColor = colors[(num - 1) % colors.length];
 
-                const qTitle = prompt(`Nhập tên hiển thị cho Cột Quý Mới (VD: Tiền Sân Quý ${num}):`, `Tiền Sân Quý ${num}`);
-                if (!qTitle) return;
+            const qTitle = prompt(`Nhập tên hiển thị cho Cột Quý Mới (VD: Tiền Sân Quý ${num}):`, `Tiền Sân Quý ${num}`);
+            if (!qTitle) return;
 
-                window.activeQuarterColumns.push({
-                    id: qId,
-                    title: qTitle.trim(),
-                    statusTitle: `Trạng Thái Q${num}`,
-                    defaultAmt: 800000,
-                    bgColor: chosenColor
-                });
-
-                saveQuarterColsConfig();
-                renderFundMembers();
+            window.activeQuarterColumns.push({
+                id: qId,
+                title: qTitle.trim(),
+                statusTitle: `Trạng Thái Q${num}`,
+                defaultAmt: 800000,
+                bgColor: chosenColor
             });
+
+            saveQuarterColsConfig();
+            renderFundMembers();
         }
 
         function deleteQuarterColumn(qId, title) {
-            requireAdminAuth(() => {
-                if (confirm(`Bạn có chắc chắn muốn XÓA cột "${title}" này khỏi Bảng Quỹ?`)) {
-                    window.activeQuarterColumns = window.activeQuarterColumns.filter(col => col.id !== qId);
-                    saveQuarterColsConfig();
-                    renderFundMembers();
-                }
-            });
+            if (confirm(`Bạn có chắc chắn muốn XÓA cột "${title}" này khỏi Bảng Quỹ?`)) {
+                window.activeQuarterColumns = window.activeQuarterColumns.filter(col => col.id !== qId);
+                saveQuarterColsConfig();
+                renderFundMembers();
+            }
         }
 
         function updateDynamicQuarterTitle(qId, field, value) {
-            requireAdminAuth(() => {
-                const col = window.activeQuarterColumns.find(c => c.id === qId);
-                if (col) {
-                    col[field] = value.trim();
-                    saveQuarterColsConfig();
-                }
-            });
+            const col = window.activeQuarterColumns.find(c => c.id === qId);
+            if (col) {
+                col[field] = value.trim();
+                saveQuarterColsConfig();
+            }
         }
 
         function saveQuarterColsConfig() {
@@ -1774,47 +1716,39 @@
         }
 
         function updateQuarterAmountDirect(playerId, qKey, val) {
-            requireAdminAuth(() => {
-                const numVal = Number(val) || 0;
-                window.fundFeeStatus[`${playerId}_${qKey}_amt`] = numVal;
-                saveFundData();
-            });
+            const numVal = Number(val) || 0;
+            window.fundFeeStatus[`${playerId}_${qKey}_amt`] = numVal;
+            saveFundData();
         }
 
         function updateQuarterStatusDirect(playerId, qKey, val) {
-            requireAdminAuth(() => {
-                window.fundFeeStatus[`${playerId}_${qKey}_status`] = val;
-                saveFundData();
-            });
+            window.fundFeeStatus[`${playerId}_${qKey}_status`] = val;
+            saveFundData();
         }
 
         function addNewFundPlayerPrompt() {
-            requireAdminAuth(() => {
-                const name = prompt("Nhập tên Pick thủ mới muốn thêm vào danh sách Quỹ:");
-                if (name && name.trim() !== "") {
-                    const trimmed = name.trim();
-                    const existing = window.players.find(p => p.name.toLowerCase() === trimmed.toLowerCase());
-                    if (existing) {
-                        alert("Pick thủ này đã có trong danh sách!");
-                    } else {
-                        const newPlayer = { id: Date.now(), name: trimmed, gender: "Nam" };
-                        window.players.push(newPlayer);
-                        refreshAllViews();
-                        saveFundData();
-                    }
-                }
-            });
-        }
-
-        function deleteFundPlayerRow(playerId) {
-            requireAdminAuth(() => {
-                const p = window.players.find(item => item.id === playerId);
-                if (p && confirm(`Bạn có chắc chắn muốn XÓA Pick thủ "${p.name}" khỏi danh sách?`)) {
-                    window.players = window.players.filter(item => item.id !== playerId);
+            const name = prompt("Nhập tên Pick thủ mới muốn thêm vào danh sách Quỹ:");
+            if (name && name.trim() !== "") {
+                const trimmed = name.trim();
+                const existing = window.players.find(p => p.name.toLowerCase() === trimmed.toLowerCase());
+                if (existing) {
+                    alert("Pick thủ này đã có trong danh sách!");
+                } else {
+                    const newPlayer = { id: Date.now(), name: trimmed, gender: "Nam" };
+                    window.players.push(newPlayer);
                     refreshAllViews();
                     saveFundData();
                 }
-            });
+            }
+        }
+
+        function deleteFundPlayerRow(playerId) {
+            const p = window.players.find(item => item.id === playerId);
+            if (p && confirm(`Bạn có chắc chắn muốn XÓA Pick thủ "${p.name}" khỏi danh sách?`)) {
+                window.players = window.players.filter(item => item.id !== playerId);
+                refreshAllViews();
+                saveFundData();
+            }
         }
 
         function saveFundData() {
@@ -2000,7 +1934,7 @@
                         <td class="py-2.5 px-3 text-center text-emerald-700 font-black">${formatVND(grandTotalCollected)}</td>
                     </tr>
                     <tr class="bg-rose-50/80 text-rose-900">
-                        <td class="py-2.5 px-3 text-center font-bold" colspan="2">DÒNG CHI QUẤY:</td>
+                        <td class="py-2.5 px-3 text-center font-bold" colspan="2">DÒNG CHI QUỸ:</td>
                         <td class="py-2.5 px-3 text-right font-extrabold" colspan="${colSpanCount - 1}">Tổng Các Khoản Chi Tiền Sân & Sinh Hoạt:</td>
                         <td class="py-2.5 px-3 text-center text-rose-600 font-black">-${formatVND(totalExpense)}</td>
                     </tr>
@@ -2052,7 +1986,7 @@
                                 <button onclick="alert('Dòng này tự động cập nhật số tiền từ Bảng Chi Tiết Ngày ${d}. Bạn có thể chỉnh sửa ghi chú ngay tại cột ghi chú hoặc thay đổi kết quả tại ngày tương ứng!')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors" title="Chỉnh sửa">
                                     <i class="fa-solid fa-pencil"></i>
                                 </button>
-                                <button onclick="requireAdminAuth(() => { if(confirm('Để ẩn khoản thu tự động Ngày ${d}, bạn có muốn đổi trạng thái NOTE của ngày này thành NO?')) { if(!window.paymentStatus['${d}']) window.paymentStatus['${d}'] = {}; window.paymentStatus['${d}'].btcNoteAdminOption = 'NO'; refreshAllViews(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase(); } })" class="text-slate-400 hover:text-rose-500 p-1 transition-colors" title="Bỏ chuyển về Quỹ">
+                                <button onclick="if(confirm('Để ẩn khoản thu tự động Ngày ${d}, bạn có muốn đổi trạng thái NOTE của ngày này thành NO?')) { if(!window.paymentStatus[ '${d}' ]) window.paymentStatus[ '${d}' ] = {}; window.paymentStatus[ '${d}' ].btcNoteAdminOption = 'NO'; refreshAllViews(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase(); }" class="text-slate-400 hover:text-rose-500 p-1 transition-colors" title="Bỏ chuyển về Quỹ">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </td>
@@ -2121,69 +2055,65 @@
         }
 
         function openFundModal(type) {
-            requireAdminAuth(() => {
-                const backdrop = document.getElementById('fund-modal-backdrop');
-                const header = document.getElementById('fund-modal-header');
-                const title = document.getElementById('fund-modal-title');
-                const btnSubmit = document.getElementById('fund-btn-submit');
-                const lblSource = document.getElementById('lbl-source');
-                const sourceSelect = document.getElementById('tx-source-select');
+            const backdrop = document.getElementById('fund-modal-backdrop');
+            const header = document.getElementById('fund-modal-header');
+            const title = document.getElementById('fund-modal-title');
+            const btnSubmit = document.getElementById('fund-btn-submit');
+            const lblSource = document.getElementById('lbl-source');
+            const sourceSelect = document.getElementById('tx-source-select');
 
-                if(sourceSelect) {
-                    let optionsHtml = `<option value="Khách vãng lai / Khác">-- Khách vãng lai / Khác --</option>`;
-                    window.players.forEach(p => {
-                        optionsHtml += `<option value="${p.name}">${p.name}</option>`;
-                    });
-                    sourceSelect.innerHTML = optionsHtml;
-                }
-                
-                const form = document.getElementById('fund-transaction-form');
-                if(form) {
-                    form.querySelector('#tx-id').value = '';
-                    form.querySelector('#tx-type').value = type;
-                    form.querySelector('#tx-date').value = new Date().toISOString().split('T')[0];
-                    form.querySelector('#tx-desc').value = '';
-                    form.querySelector('#tx-amount').value = '';
-                    form.querySelector('#tx-note').value = '';
-                }
+            if(sourceSelect) {
+                let optionsHtml = `<option value="Khách vãng lai / Khác">-- Khách vãng lai / Khác --</option>`;
+                window.players.forEach(p => {
+                    optionsHtml += `<option value="${p.name}">${p.name}</option>`;
+                });
+                sourceSelect.innerHTML = optionsHtml;
+            }
+            
+            const form = document.getElementById('fund-transaction-form');
+            if(form) {
+                form.querySelector('#tx-id').value = '';
+                form.querySelector('#tx-type').value = type;
+                form.querySelector('#tx-date').value = new Date().toISOString().split('T')[0];
+                form.querySelector('#tx-desc').value = '';
+                form.querySelector('#tx-amount').value = '';
+                form.querySelector('#tx-note').value = '';
+            }
 
-                if(type === 'income') {
-                    header.className = "p-4 bg-emerald-600 text-white flex justify-between items-center";
-                    title.innerHTML = '<i class="fa-solid fa-circle-arrow-down"></i> Thêm Khoản Thu Mới';
-                    btnSubmit.className = "px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm";
-                    btnSubmit.innerText = "Lưu Khoản Thu";
-                    if(lblSource) lblSource.innerText = "Nguồn Thu / Pick Thủ";
-                } else {
-                    header.className = "p-4 bg-rose-600 text-white flex justify-between items-center";
-                    title.innerHTML = '<i class="fa-solid fa-circle-arrow-up"></i> Thêm Khoản Chi Mới';
-                    btnSubmit.className = "px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm";
-                    btnSubmit.innerText = "Lưu Khoản Chi";
-                    if(lblSource) lblSource.innerText = "Hạng Mục Chi / Pick Thủ Nhận";
-                }
+            if(type === 'income') {
+                header.className = "p-4 bg-emerald-600 text-white flex justify-between items-center";
+                title.innerHTML = '<i class="fa-solid fa-circle-arrow-down"></i> Thêm Khoản Thu Mới';
+                btnSubmit.className = "px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm";
+                btnSubmit.innerText = "Lưu Khoản Thu";
+                if(lblSource) lblSource.innerText = "Nguồn Thu / Pick Thủ";
+            } else {
+                header.className = "p-4 bg-rose-600 text-white flex justify-between items-center";
+                title.innerHTML = '<i class="fa-solid fa-circle-arrow-up"></i> Thêm Khoản Chi Mới';
+                btnSubmit.className = "px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm";
+                btnSubmit.innerText = "Lưu Khoản Chi";
+                if(lblSource) lblSource.innerText = "Hạng Mục Chi / Pick Thủ Nhận";
+            }
 
-                backdrop.classList.remove('hidden');
-            });
+            backdrop.classList.remove('hidden');
         }
 
         function openEditFundModal(id, type) {
-            requireAdminAuth(() => {
-                const list = type === 'income' ? window.fundIncomes : window.fundExpenses;
-                const item = list.find(x => x.id === id);
-                if(!item) return;
+            const list = type === 'income' ? window.fundIncomes : window.fundExpenses;
+            const item = list.find(x => x.id === id);
+            if(!item) return;
 
-                openFundModal(type);
+            openFundModal(type);
 
-                const form = document.getElementById('fund-transaction-form');
-                form.querySelector('#tx-id').value = item.id;
-                form.querySelector('#tx-date').value = item.date;
-                form.querySelector('#tx-desc').value = item.desc;
-                form.querySelector('#tx-amount').value = item.amount;
-                form.querySelector('#tx-source-select').value = item.source || "Khách vãng lai / Khác";
-                form.querySelector('#tx-note').value = item.note || "";
+            const form = document.getElementById('fund-transaction-form');
+            form.querySelector('#tx-id').value = item.id;
+            form.querySelector('#tx-date').value = item.date;
+            form.querySelector('#tx-desc').value = item.desc;
+            form.querySelector('#tx-amount').value = item.amount;
+            form.querySelector('#tx-source-select').value = item.source || "Khách vãng lai / Khác";
+            form.querySelector('#tx-note').value = item.note || "";
 
-                const title = document.getElementById('fund-modal-title');
-                title.innerHTML = type === 'income' ? '<i class="fa-solid fa-pen-to-square"></i> Sửa Khoản Thu' : '<i class="fa-solid fa-pen-to-square"></i> Sửa Khoản Chi';
-            });
+            const title = document.getElementById('fund-modal-title');
+            title.innerHTML = type === 'income' ? '<i class="fa-solid fa-pen-to-square"></i> Sửa Khoản Thu' : '<i class="fa-solid fa-pen-to-square"></i> Sửa Khoản Chi';
         }
 
         function closeFundModal() {
@@ -2219,16 +2149,14 @@
         }
 
         function deleteFundTx(id, type) {
-            requireAdminAuth(() => {
-                if(confirm("Bạn có muốn xóa giao dịch này khỏi hệ thống Quỹ Pick?")) {
-                    if(type === 'income') {
-                        window.fundIncomes = window.fundIncomes.filter(i => i.id !== id);
-                    } else {
-                        window.fundExpenses = window.fundExpenses.filter(i => i.id !== id);
-                    }
-                    saveFundData();
+            if(confirm("Bạn có muốn xóa giao dịch này khỏi hệ thống Quỹ Pick?")) {
+                if(type === 'income') {
+                    window.fundIncomes = window.fundIncomes.filter(i => i.id !== id);
+                } else {
+                    window.fundExpenses = window.fundExpenses.filter(i => i.id !== id);
                 }
-            });
+                saveFundData();
+            }
         }
 
         function exportFundToExcel() {
@@ -2259,13 +2187,13 @@
             const currentBalance = window.initialFund + grandTotalIncome - totalExpense;
 
             const summaryData = [
-                ["BÁO CÁO TỔNG QUAN QUẤY PICKLEBALL"],
+                ["BÁO CÁO TỔNG QUAN QUỸ PICKLEBALL"],
                 [],
                 ["Hạng mục", "Số tiền (VNĐ)", "Ghi chú"],
                 ["Quỹ đầu kỳ", window.initialFund, "Tồn quỹ kỳ trước chuyển sang"],
                 ["Tổng thu trong kỳ", grandTotalIncome, "Bao gồm thu thủ công & quy đổi tuyệt đối số tiền kèo tự động"],
                 ["Tổng chi trong kỳ", totalExpense, "Tự động tính từ Nhật ký Chi"],
-                ["SỐ DƯ QUẤY HIỆN TẠI", currentBalance, "Công thức: Đầu kỳ + Thu - Chi"]
+                ["SỐ DƯ QUỸ HIỆN TẠI", currentBalance, "Công thức: Đầu kỳ + Thu - Chi"]
             ];
 
             const statusMap = { paid: "Đã đóng", unpaid: "Chưa đóng", pause: "Tạm nghỉ", no: "NO (Chưa đến)" };
@@ -2294,7 +2222,7 @@
                 ["STT", "Ngày tháng", "Nội dung thu", "Số tiền (VNĐ)", "Nguồn/Pick thủ", "Ghi chú"],
                 ...autoIncomeRows,
                 ...window.fundIncomes.map((item, i) => [autoIncomeRows.length + i + 1, formatDate(item.date), item.desc, item.amount, item.source, item.note]),
-                ["", "", "TỔNG CỘNG THU QUẤY", grandTotalIncome, "", ""]
+                ["", "", "TỔNG CỘNG THU QUỸ", grandTotalIncome, "", ""]
             ];
 
             const expenseData = [
@@ -2533,7 +2461,7 @@
 
                 let keoCellUI = `
                     <select onchange="updateMatchKeoModeForDate('${dateStr}', ${idx}, this.value)" class="text-[10px] sm:text-[11px] font-bold p-0.5 border rounded bg-amber-50 outline-none w-full text-amber-900 border-amber-300">
-                        <option value="default" ${mMode==='default'?'selected':''}>Kèo (+5k/-15k)</option>
+                        <option value="default" ${mMode==='default'?'selected':''}>Mặc định (+5k/-15k)</option>
                         <option value="k25" ${mMode==='k25'?'selected':''}>Kèo 25k (0k/-25k)</option>
                         <option value="free" ${mMode==='free'?'selected':''}>Kèo Tự Do</option>
                     </select>
@@ -2570,9 +2498,9 @@
                         <td class="p-1 bg-amber-50/50">${keoCellUI}</td>
                         <td class="p-1 font-extrabold ${keo1 > 0 ? 'txt-win' : (keo1 < 0 ? 'txt-lose' : '')}">${keo1}</td>
                         <td class="p-1 font-extrabold ${keo2 > 0 ? 'txt-win' : (keo2 < 0 ? 'txt-lose' : '')}">${keo2}</td>
-                        <td class="p-1 text-center whitespace-nowrap">
-                            <button onclick="deleteMatchFromDate('${dateStr}', ${idx})" class="text-slate-400 hover:text-red-600 font-bold p-1 transition-colors" title="Xóa trận đấu">
-                                <i class="fa-solid fa-trash-can text-sm"></i>
+                        <td class="p-1 whitespace-nowrap">
+                            <button onclick="deleteMatchFromDate('${dateStr}', ${idx})" class="text-red-600 hover:text-red-800 font-bold text-xs px-2 py-1 bg-red-50 rounded border border-red-200 shadow-sm transition-all hover:bg-red-100">
+                                <i class="fa-solid fa-trash"></i> Xóa
                             </button>
                         </td>
                     </tr>
