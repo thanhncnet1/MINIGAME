@@ -539,7 +539,6 @@
 
         <!-- MINIGAME TEAM -->
         <section id="tab-minigame1" class="tab-content hidden space-y-6">
-            <!-- THANH TIÊU ĐỀ GIẢI HIỆN TẠI TRONG TAB -->
             <div class="bg-amber-500/10 border border-amber-400/40 rounded-xl p-3 flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-2">
                     <span class="text-xs font-black uppercase text-amber-900 bg-amber-400/30 px-2.5 py-1 rounded-md">GIẢI TEAM HIỆN TẠI:</span>
@@ -569,9 +568,7 @@
                             <span id="team-a-badge" class="text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">5 Nam - 3 Nữ</span>
                         </h3>
                         
-                        <div id="team-a-inputs-container" class="space-y-1">
-                            <!-- Render động theo giải -->
-                        </div>
+                        <div id="team-a-inputs-container" class="space-y-1"></div>
                     </div>
 
                     <!-- TEAM B -->
@@ -581,9 +578,7 @@
                             <span id="team-b-badge" class="text-xs text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">5 Nam - 3 Nữ</span>
                         </h3>
 
-                        <div id="team-b-inputs-container" class="space-y-1">
-                            <!-- Render động theo giải -->
-                        </div>
+                        <div id="team-b-inputs-container" class="space-y-1"></div>
                     </div>
                 </div>
             </div>
@@ -996,7 +991,7 @@
                 <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm relative overflow-hidden group">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Tổng Thu</p>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Tổng Thu Quỹ</p>
                             <h3 id="stat-income" class="text-2xl font-bold text-emerald-600 mt-1">0 ₫</h3>
                         </div>
                         <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
@@ -1004,14 +999,14 @@
                         </div>
                     </div>
                     <div class="mt-3 text-xs text-slate-400 flex items-center gap-1">
-                        <i class="fa-solid fa-circle-info text-emerald-500"></i> Tự động cộng từ dòng TỔNG BTC THU VỀ
+                        <i class="fa-solid fa-circle-info text-emerald-500"></i> Bao gồm Tiền Sân Quý, Kèo Ngày & Thu Khác
                     </div>
                 </div>
 
                 <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm relative overflow-hidden group">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-wider text-rose-600">Tổng Chi</p>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-rose-600">Tổng Chi Quỹ</p>
                             <h3 id="stat-expense" class="text-2xl font-bold text-rose-600 mt-1">0 ₫</h3>
                         </div>
                         <div class="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center text-rose-600 group-hover:scale-110 transition-transform">
@@ -1049,11 +1044,11 @@
                                 <i class="fa-solid fa-circle-arrow-down text-emerald-600"></i>
                                 <span>Nhật Ký Khoản Thu</span>
                             </h2>
-                            <p class="text-xs text-slate-500 mt-0.5">Thu thủ công & Tự động đồng bộ số dương từ dòng TỔNG BTC THU VỀ</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Thu thủ công, Tự động cộng Tiền Sân các Quý & Kèo các ngày</p>
                         </div>
                         <button onclick="openFundModal('income')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm">
                             <i class="fa-solid fa-plus"></i>
-                            <span>Thêm Thu</span>
+                            <span>Thêm Thu Thủ Công</span>
                         </button>
                     </div>
 
@@ -1074,7 +1069,7 @@
                     </div>
 
                     <div class="p-3 bg-slate-50 border-t border-slate-100 rounded-b-2xl flex justify-between items-center px-4 font-semibold text-slate-700 text-sm">
-                        <span>Tổng Thu Quỹ:</span>
+                        <span>Tổng Khoản Thu Quỹ:</span>
                         <span id="income-total" class="text-emerald-600 font-bold">0 ₫</span>
                     </div>
                 </section>
@@ -1126,7 +1121,7 @@
                             <i class="fa-solid fa-users text-brand-600"></i>
                             <span>Danh Sách Pick Thủ CLB & Tiền Sân Các Quý</span>
                         </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Click tên cột để sửa. Dùng nút "➕ Thêm Cột Quý Mới" nếu cần mở rộng.</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Các khoản đã đóng sẽ tự động cập nhật vào Nhật Ký Thu và chuyển vào Số Dư Quỹ.</p>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
@@ -1247,7 +1242,7 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Nội Dung Chi Tiết</label>
-                    <textarea id="tx-desc" rows="2" placeholder="Ví dụ: Thu tiền kèo ngày 1/10/26..." required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
+                    <textarea id="tx-desc" rows="2" placeholder="Ví dụ: Thu tiền tài trợ, Thu tiền kèo..." required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
                 </div>
 
                 <div>
@@ -1282,7 +1277,7 @@
         window.isAdminUnlocked = false;
         window.ADMIN_PASSWORD = "123456";
 
-        /* QUẢN LÝ DANH SÁCH VÀ CHỌN CÁC MINIGAME ĐỘNG (ĐÃ CẬP NHẬT HÒA LẠC OPEN THÀNH GIẢI TEAM 2 BẢNG 8 VĐV) */
+        /* QUẢN LÝ DANH SÁCH VÀ CHỌN CÁC MINIGAME ĐỘNG */
         window.createdMinigames = JSON.parse(localStorage.getItem('pb_created_minigames')) || [
             { id: 'mg_2010', name: 'MINIGAME 20/10 (5 Nam, 3 Nữ)', type: 'team' },
             { id: 'mg_hualac', name: 'Hòa Lạc Open (Team 2 Bảng, 8 VĐV)', type: 'team' },
@@ -1568,8 +1563,7 @@
         window.initialFund = Number(localStorage.getItem('pb_initial_fund')) || 500000;
 
         const defaultFundIncomes = [
-            { id: 1, date: "2026-01-05", desc: "Thu tiền quỹ Q1 - Tiến Thọ", amount: 800000, source: "Tiến Thọ", note: "Chuyển khoản ngân hàng VPBank" },
-            { id: 2, date: "2026-01-06", desc: "Thu tiền quỹ Q1 - Châu Sĩ", amount: 800000, source: "Châu Sĩ", note: "Thanh toán bằng tiền mặt" }
+            { id: 1, date: "2026-01-05", desc: "Thu tiền tài trợ giải", amount: 500000, source: "Khách vãng lai / Khác", note: "Tài trợ nước uống" }
         ];
 
         const defaultFundExpenses = [
@@ -2136,9 +2130,12 @@
             calculateFundSummary();
         }
 
+        /* TÍNH TOÁN VÀ ĐỒNG BỘ THU CHI TỰ ĐỘNG CHÍNH XÁC VÀO SỐ DƯ QUỸ */
         function calculateFundSummary() {
+            // 1. Khoản thu thủ công
             let totalManualIncome = window.fundIncomes.reduce((sum, item) => sum + Number(item.amount), 0);
 
+            // 2. Khoản thu từ Kèo các Ngày
             let autoDailyIncomeTotal = 0;
             (window.dates || []).forEach(d => {
                 const pStatus = window.paymentStatus ? window.paymentStatus[d] : null;
@@ -2146,7 +2143,7 @@
                 if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
                     isTransferYes = false;
                 }
-                
+
                 if (isTransferYes) {
                     let dayNetK = getBtcThuVeForDate(d);
                     if (dayNetK !== 0) {
@@ -2155,8 +2152,25 @@
                 }
             });
 
-            const grandTotalIncome = totalManualIncome + autoDailyIncomeTotal;
+            // 3. Khoản thu từ Tiền Sân Các Quý (Thu của những thành viên Đã đóng)
+            let totalQuarterFeeIncome = 0;
+            (window.activeQuarterColumns || []).forEach(col => {
+                const qKey = col.id;
+                (window.players || []).forEach(p => {
+                    const currentStatus = window.fundFeeStatus[`${p.id}_${qKey}_status`] || (window.fundFeeStatus[`${p.id}_${qKey}`] ? "paid" : "unpaid");
+                    const currentAmt = window.fundFeeStatus[`${p.id}_${qKey}_amt`] !== undefined ? Number(window.fundFeeStatus[`${p.id}_${qKey}_amt`]) : Number(col.defaultAmt);
+                    
+                    if (currentStatus === "paid") {
+                        totalQuarterFeeIncome += currentAmt;
+                    }
+                });
+            });
+
+            // TỔNG THU HOÀN CHỈNH
+            const grandTotalIncome = totalManualIncome + autoDailyIncomeTotal + totalQuarterFeeIncome;
             const totalExpense = window.fundExpenses.reduce((sum, item) => sum + Number(item.amount), 0);
+            
+            // SỐ DƯ QUỸ = Quỹ Đầu Kỳ + Tổng Thu - Tổng Chi
             const currentBalance = window.initialFund + grandTotalIncome - totalExpense;
 
             const elInc = document.getElementById('stat-income');
@@ -2230,7 +2244,7 @@
                     const currentAmt = window.fundFeeStatus[`${p.id}_${qKey}_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_${qKey}_amt`] : col.defaultAmt;
 
                     if(currentStatus === "paid") {
-                        collectedTotals[qKey] += currentAmt;
+                        collectedTotals[qKey] += Number(currentAmt);
                     }
 
                     rowHtml += `
@@ -2282,7 +2296,7 @@
 
                 tfoot.innerHTML = `
                     <tr class="bg-emerald-50/80 text-emerald-900">
-                        <td class="py-2.5 px-3 text-center font-bold" colspan="2">TỔNG THU THỰC TẾ:</td>
+                        <td class="py-2.5 px-3 text-center font-bold" colspan="2">TỔNG THU TIỀN SÂN QUÝ:</td>
                         ${footQuarterCells}
                         <td class="py-2.5 px-3 text-center text-emerald-700 font-black">${formatVND(grandTotalCollected)}</td>
                     </tr>
@@ -2292,7 +2306,7 @@
                         <td class="py-2.5 px-3 text-center text-rose-600 font-black">-${formatVND(totalExpense)}</td>
                     </tr>
                     <tr class="bg-slate-200/80 text-slate-900">
-                        <td class="py-3 px-3 text-center font-black" colspan="2">THU - CHI CÒN LẠI:</td>
+                        <td class="py-3 px-3 text-center font-black" colspan="2">THU SÂN - CHI CÒN LẠI:</td>
                         <td class="py-3 px-3 text-center font-black text-base ${netCourt >= 0 ? 'text-emerald-700' : 'text-rose-700'}" colspan="${colSpanCount}">
                             ${formatVND(netCourt)}
                         </td>
@@ -2301,11 +2315,50 @@
             }
         }
 
+        /* HIỂN THỊ TỰ ĐỘNG TIỀN SÂN QUÝ TRONG BẢNG NHẬT KÝ THU */
         function renderFundIncomes() {
             const tbody = document.getElementById('income-list');
             if (!tbody) return;
             tbody.innerHTML = '';
 
+            // 1. Dòng tổng thu tự động từ Tiền Sân Các Quý
+            (window.activeQuarterColumns || []).forEach(col => {
+                const qKey = col.id;
+                let quarterTotal = 0;
+                let paidCount = 0;
+
+                (window.players || []).forEach(p => {
+                    const currentStatus = window.fundFeeStatus[`${p.id}_${qKey}_status`] || (window.fundFeeStatus[`${p.id}_${qKey}`] ? "paid" : "unpaid");
+                    const currentAmt = window.fundFeeStatus[`${p.id}_${qKey}_amt`] !== undefined ? Number(window.fundFeeStatus[`${p.id}_${qKey}_amt`]) : Number(col.defaultAmt);
+                    if (currentStatus === "paid") {
+                        quarterTotal += currentAmt;
+                        paidCount++;
+                    }
+                });
+
+                if (quarterTotal > 0) {
+                    const trQ = document.createElement('tr');
+                    trQ.className = "bg-teal-50/80 font-semibold text-xs border-b border-teal-200/80 hover:bg-teal-100/80 transition-colors";
+                    trQ.innerHTML = `
+                        <td class="py-2.5 px-3 text-slate-600 whitespace-nowrap">Định kỳ</td>
+                        <td class="py-2.5 px-3 text-teal-950 font-bold wrap-content-cell min-w-[220px]">
+                            <div class="flex items-center gap-1.5">
+                                <i class="fa-solid fa-receipt text-teal-600 flex-shrink-0"></i>
+                                <span>Tổng Thu ${col.title} (${paidCount} VĐV đã đóng)</span>
+                            </div>
+                        </td>
+                        <td class="py-2.5 px-3 text-right font-black text-teal-700 whitespace-nowrap">+${formatVND(quarterTotal)}</td>
+                        <td class="py-2.5 px-3 text-slate-600 whitespace-nowrap"><span class="player-tag">Pick Thủ CLB</span></td>
+                        <td class="py-2.5 px-3 text-xs text-slate-600 min-w-[200px]">Tự động tổng hợp từ Bảng Hội Phí Quý</td>
+                        <td class="py-2.5 px-3 text-center whitespace-nowrap">
+                            <span class="text-[10px] bg-teal-200 text-teal-800 px-2 py-0.5 rounded-full font-bold">Auto Quý</span>
+                        </td>
+                    `;
+                    tbody.appendChild(trQ);
+                }
+            });
+
+            // 2. Dòng tổng thu tự động từ Kèo Ngày
             (window.dates || []).forEach(d => {
                 const pStatus = window.paymentStatus ? window.paymentStatus[d] : null;
                 let isTransferYes = true;
@@ -2349,6 +2402,7 @@
                 }
             });
 
+            // 3. Dòng thu nhập thủ công
             (window.fundIncomes || []).forEach(item => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors";
@@ -2541,7 +2595,17 @@
                 }
             });
 
-            const grandTotalIncome = totalManualIncome + autoDailyIncomeTotal;
+            let totalQuarterFeeIncome = 0;
+            (window.activeQuarterColumns || []).forEach(col => {
+                const qKey = col.id;
+                (window.players || []).forEach(p => {
+                    const currentStatus = window.fundFeeStatus[`${p.id}_${qKey}_status`] || (window.fundFeeStatus[`${p.id}_${qKey}`] ? "paid" : "unpaid");
+                    const currentAmt = window.fundFeeStatus[`${p.id}_${qKey}_amt`] !== undefined ? Number(window.fundFeeStatus[`${p.id}_${qKey}_amt`]) : Number(col.defaultAmt);
+                    if (currentStatus === "paid") totalQuarterFeeIncome += currentAmt;
+                });
+            });
+
+            const grandTotalIncome = totalManualIncome + autoDailyIncomeTotal + totalQuarterFeeIncome;
             const totalExpense = window.fundExpenses.reduce((sum, item) => sum + Number(item.amount), 0);
             const currentBalance = window.initialFund + grandTotalIncome - totalExpense;
 
@@ -2550,7 +2614,7 @@
                 [],
                 ["Hạng mục", "Số tiền (VNĐ)", "Ghi chú"],
                 ["Quỹ đầu kỳ", window.initialFund, "Tồn quỹ kỳ trước chuyển sang"],
-                ["Tổng thu trong kỳ", grandTotalIncome, "Bao gồm thu thủ công & tự động"],
+                ["Tổng thu trong kỳ", grandTotalIncome, "Bao gồm thu thủ công, Tiền Sân Quý & Kèo Ngày"],
                 ["Tổng chi trong kỳ", totalExpense, "Tự động tính từ Nhật ký Chi"],
                 ["SỐ DƯ QUỸ HIỆN TẠI", currentBalance, "Công thức: Đầu kỳ + Thu - Chi"]
             ];
@@ -3344,10 +3408,9 @@
             renderM2(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
         }
 
-        /* ================= LOGIC XỬ LÝ MINIGAME TEAM ĐỘNG (HỖ TRỢ ĐA DẠNG CẤU TRÚC GIẢI) ================= */
+        /* LOGIC XỬ LÝ MINIGAME TEAM ĐỘNG */
         function getActiveTeamConfig() {
             const mgId = window.currentTeamMinigameId;
-            // Hòa Lạc Open: Giải đấu team chia làm 2 bảng, 8 VĐV / Team (4 Nam, 4 Nữ hoặc 5 Nam, 3 Nữ tương ứng cấu trúc 4 cặp đấu)
             if (mgId === 'mg_hualac') {
                 return {
                     name: "Hòa Lạc Open (Team 2 Bảng, 8 VĐV)",
