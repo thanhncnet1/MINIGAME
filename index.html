@@ -38,7 +38,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- SheetJS (XLSX) cho chức năng xuất Excel -->
+    <!-- SheetJS (XLSX) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     
     <style>
@@ -64,7 +64,7 @@
         }
 
         .player-cell {
-            min-width: 110px;
+            min-width: 120px;
             font-weight: 600;
         }
 
@@ -80,7 +80,7 @@
         .player-tag:hover, .player-select-btn:hover {
             background-color: #fef08a !important;
             color: #0369a1 !important;
-            transform: scale(1.05);
+            transform: scale(1.03);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
         }
 
@@ -185,6 +185,12 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+
+        .wrap-content-cell {
+            white-space: normal !important;
+            word-break: break-word !important;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body id="app-body" class="bg-theme-slate min-h-screen flex flex-col font-sans transition-colors duration-300 text-slate-800" onclick="closeAllDropdowns()">
@@ -216,15 +222,38 @@
                 <button onclick="showTab('players')" id="btn-players" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
                     <i class="fa-solid fa-users"></i> <span>Pick Thủ</span>
                 </button>
+                
+                <!-- ĐỔI TÊN NÚT MINIGAME TEAM -->
                 <button onclick="showTab('minigame1')" id="btn-minigame1" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
-                    <i class="fa-solid fa-trophy"></i> <span>MINIGAME 1</span>
+                    <i class="fa-solid fa-trophy"></i> <span>MINIGAME TEAM</span>
                 </button>
+                
+                <!-- ĐỔI TÊN NÚT MINIGAME BẢNG & VÒNG TRÒN -->
                 <button onclick="showTab('minigame2')" id="btn-minigame2" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
-                    <i class="fa-solid fa-medal"></i> <span>MINIGAME 2</span>
+                    <i class="fa-solid fa-medal"></i> <span>MINIGAME BẢNG & VÒNG TRÒN</span>
                 </button>
 
+                <!-- MENU TẠO NỘI DUNG MINIGAME MỚI -->
+                <div class="relative">
+                    <button onclick="toggleMenu('menuCreateMinigame', event)" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-amber-600 text-white font-bold border border-amber-400/40 shadow-sm">
+                        <i class="fa-solid fa-plus-circle"></i> <span>TẠO MINIGAME ▾</span>
+                    </button>
+                    <div class="dropdown-menu" id="menuCreateMinigame">
+                        <div class="dropdown-item" onclick="createNewMinigame('team')">
+                            <i class="fa-solid fa-people-group text-amber-600"></i> ➕ Tạo Minigame Team Mới
+                        </div>
+                        <div class="dropdown-item" onclick="createNewMinigame('bracket')">
+                            <i class="fa-solid fa-diagram-project text-emerald-600"></i> ➕ Tạo Minigame Bảng & Vòng Tròn Mới
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div id="dynamic-minigame-list">
+                            <!-- Hiển thị các MiniGame được tạo thêm -->
+                        </div>
+                    </div>
+                </div>
+
                 <button onclick="showTab('fund_manager')" id="btn-fund_manager" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-teal-800 text-teal-100 border border-teal-400/40 font-bold shadow-sm">
-                    <i class="fa-solid fa-vault text-yellow-300"></i> <span>QUẢN LÝ QUỸ PICK</span>
+                    <i class="fa-solid fa-vault text-yellow-300"></i> <span>QUẢN LÝ QUỸ PICK</span>
                 </button>
 
                 <button onclick="showTab('tonghop')" id="btn-tonghop" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-indigo-800 text-indigo-100 border border-indigo-400/40 font-bold shadow-sm">
@@ -305,15 +334,15 @@
                     <div onclick="showTab('minigame1')" class="cursor-pointer bg-amber-50/80 border border-amber-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
                         <div class="my-auto">
                             <i class="fa-solid fa-people-group text-4xl text-amber-600 mb-3 group-hover:scale-110 transition-transform block"></i>
-                            <h3 class="font-bold text-base md:text-lg text-slate-800">MINIGAME 1</h3>
-                            <p class="text-xs text-slate-500 mt-2">Đấu Team A vs Team B (Lịch 24 trận & Tổng hợp)</p>
+                            <h3 class="font-bold text-base md:text-lg text-slate-800">MINIGAME TEAM</h3>
+                            <p class="text-xs text-slate-500 mt-2">Đấu Team A vs Team B (Lịch thi đấu & Tổng hợp)</p>
                         </div>
                     </div>
 
                     <div onclick="showTab('minigame2')" class="cursor-pointer bg-emerald-50/80 border border-emerald-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
                         <div class="my-auto">
                             <i class="fa-solid fa-diagram-project text-4xl text-emerald-600 mb-3 group-hover:scale-110 transition-transform block"></i>
-                            <h3 class="font-bold text-base md:text-lg text-slate-800">MINIGAME 2</h3>
+                            <h3 class="font-bold text-base md:text-lg text-slate-800">MINIGAME BẢNG & VÒNG TRÒN</h3>
                             <p class="text-xs text-slate-500 mt-2">Vòng Bảng A-B, Vòng Vòng Tròn, Bán Kết, Chung Kết</p>
                         </div>
                     </div>
@@ -332,6 +361,28 @@
                             <h3 class="font-bold text-base md:text-lg text-slate-800">Bảng Tổng Hợp</h3>
                             <p class="text-xs text-slate-500 mt-2">Tổng hợp kết quả kèo & thưởng phạt tất cả các ngày</p>
                         </div>
+                    </div>
+                </div>
+
+                <!-- KHU VỰC CHI TIẾT NGÀY GẦN NHẤT TƯƠNG TÁC TẠI TRANG CHỦ -->
+                <div class="mt-8 text-left border-t border-slate-200 pt-6">
+                    <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-blue-600 text-white text-xs font-black px-2.5 py-1 rounded-full uppercase tracking-wider animate-pulse">
+                                🔥 Cập Nhật
+                            </span>
+                            <h3 class="text-lg md:text-xl font-extrabold text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-calendar-check text-blue-600"></i>
+                                <span>BẢNG THỐNG KÊ TRẬN PICK NGÀY <span id="home-closest-date-title" class="text-blue-700 underline decoration-yellow-400">---</span></span>
+                            </h3>
+                        </div>
+                        <button onclick="goToClosestDateTab()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-lg shadow font-bold flex items-center gap-1.5 transition-all">
+                            <i class="fa-solid fa-up-right-from-square"></i> Quản Lý Chi Tiết Ngày Full
+                        </button>
+                    </div>
+
+                    <div id="home-closest-date-container" class="space-y-6">
+                        <!-- Render động -->
                     </div>
                 </div>
 
@@ -365,7 +416,7 @@
                         <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
                             <i class="fa-solid fa-users text-blue-600"></i> Danh Sách Pick Thủ CLB
                         </h2>
-                        <p class="text-xs text-slate-500">Quản lý danh sách thành viên tham gia giải đấu (Đồng bộ toàn bộ giao diện)</p>
+                        <p class="text-xs text-slate-500">Quản lý danh sách thành viên tham gia giải đấu</p>
                     </div>
                     <button onclick="openPlayerModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 shadow">
                         <i class="fa-solid fa-plus"></i> Thêm Pick Thủ
@@ -388,7 +439,7 @@
             </div>
         </section>
 
-        <!-- MINIGAME 1 -->
+        <!-- MINIGAME TEAM -->
         <section id="tab-minigame1" class="tab-content hidden">
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
                 <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
@@ -423,7 +474,7 @@
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
                 <div class="flex justify-between items-center mb-3">
                     <div>
-                        <h2 class="text-xl md:text-2xl font-black text-blue-900 tracking-wide uppercase">LỊCH THI ĐẤU MINIGAME 1 (<span id="m1-match-count">24</span> TRẬN)</h2>
+                        <h2 class="text-xl md:text-2xl font-black text-blue-900 tracking-wide uppercase">LỊCH THI ĐẤU MINIGAME TEAM (<span id="m1-match-count">24</span> TRẬN)</h2>
                         <p class="text-xs italic text-slate-500">Tên Pick Thủ được cập nhật đồng bộ từ Danh sách Pick Thủ.</p>
                     </div>
                     <button onclick="addM1Match()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded shadow flex items-center gap-1 font-bold">
@@ -461,7 +512,7 @@
 
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
                 <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
-                    <i class="fa-solid fa-chart-pie text-indigo-600"></i> Bảng Tổng Hợp Chung Minigame 1
+                    <i class="fa-solid fa-chart-pie text-indigo-600"></i> Bảng Tổng Hợp Chung Minigame Team
                 </h3>
                 <div class="smooth-scroll">
                     <table class="w-full text-center border-collapse border border-slate-300">
@@ -480,12 +531,12 @@
             </div>
         </section>
 
-        <!-- MINIGAME 2 -->
+        <!-- MINIGAME BẢNG & VÒNG TRÒN -->
         <section id="tab-minigame2" class="tab-content hidden">
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
                 <div class="flex flex-wrap justify-between items-center mb-4 border-b pb-3 gap-2">
                     <h2 class="text-xl font-bold text-slate-800 uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-trophy text-yellow-500"></i> Lịch Thi Đấu Giải Phú Thọ Open (Minigame 2)
+                        <i class="fa-solid fa-trophy text-yellow-500"></i> Lịch Thi Đấu Minigame Bảng & Vòng Tròn (Phú Thọ Open)
                     </h2>
                     <div class="flex gap-2">
                         <button onclick="addPairM2('A')" class="bg-blue-600 text-white text-xs px-3 py-1.5 rounded hover:bg-blue-700 flex items-center gap-1 font-semibold">
@@ -666,7 +717,7 @@
                     </div>
 
                     <div class="border rounded overflow-hidden bg-amber-100/90 border-amber-300 shadow-sm">
-                        <div class="bg-amber-600 text-white text-xs font-bold p-1.5 text-center">BẢNG CHUNG CUỘC MINIGAME 2</div>
+                        <div class="bg-amber-600 text-white text-xs font-bold p-1.5 text-center">BẢNG CHUNG CUỘC MINIGAME BẢNG & VÒNG TRÒN</div>
                         <table class="w-full text-xs border-collapse">
                             <tbody>
                                 <tr class="border-b border-amber-200">
@@ -693,7 +744,7 @@
             <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 text-slate-800">
                 <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b gap-2">
                     <h2 class="text-base md:text-lg font-black text-slate-800 uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-calendar-day text-blue-600"></i> BẢNG THỐNG KÊ TRẬN PICK - NGÀY <span id="current-date-title" class="text-blue-700">1/10/26</span>
+                        <i class="fa-solid fa-calendar-day text-blue-600"></i> BẢNG THỐNG KÊ TRẬN PICK NGÀY <span id="current-date-title" class="text-blue-700">1/10/26</span>
                     </h2>
                     <div class="flex items-center gap-2">
                         <button onclick="addMatchToCurrentDate()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg shadow font-bold flex items-center gap-1">
@@ -707,8 +758,8 @@
                         <i class="fa-solid fa-coins"></i> KÈO ÁP DỤNG TOÀN NGÀY:
                     </span>
                     <select id="keo-mode-select" onchange="applyKeoToAllMatchesInDate(this.value)" class="text-xs p-1.5 border rounded bg-white font-bold outline-none border-amber-400 text-slate-800 cursor-pointer">
-                        <option value="default">Kèo Mặc Định (Thắng +5k / Thua -15k)</option>
-                        <option value="k25">Kèo 25k (Thắng 0k / Thua -25k)</option>
+                        <option value="default">Kèo (+5k/-15k)</option>
+                        <option value="k25">Kèo 25k (0k/-25k)</option>
                         <option value="free">Kèo Tự Do (Tùy chỉnh riêng từng trận)</option>
                     </select>
                 </div>
@@ -717,13 +768,13 @@
                     <table class="w-full min-w-[780px] text-center border-collapse border border-slate-300 text-xs">
                         <thead>
                             <tr class="bg-slate-100 text-slate-700 font-bold">
-                                <th class="p-2 border w-12">STT</th>
+                                <th class="p-2 border w-10">STT</th>
                                 <th class="p-2 border bg-emerald-100 text-emerald-900" colspan="2">CẶP PICK 1</th>
-                                <th class="p-2 border bg-purple-100 text-purple-900 w-24">TỶ SỐ</th>
+                                <th class="p-2 border bg-purple-100 text-purple-900 w-20">TỶ SỐ</th>
                                 <th class="p-2 border bg-red-100 text-red-900" colspan="2">CẶP PICK 2</th>
-                                <th class="p-2 border bg-amber-100 text-amber-900 w-32">CHỌN KÈO TRẬN</th>
+                                <th class="p-2 border bg-amber-100 text-amber-900 w-28">CHỌN KÈO TRẬN</th>
                                 <th class="p-2 border bg-amber-100 text-amber-900" colspan="2">KÈO BAN ĐẦU</th>
-                                <th class="p-2 border w-20 bg-slate-200 text-slate-800">THAO TÁC</th>
+                                <th class="p-2 border w-12 bg-slate-200 text-slate-800"><i class="fa-solid fa-gear"></i></th>
                             </tr>
                         </thead>
                         <tbody id="day-matches-body"></tbody>
@@ -768,7 +819,7 @@
             </div>
         </section>
 
-        <!-- QUẢN LÝ QUỸ PICK (ĐÃ CẬP NHẬT TỈ MỈ SỬA TIÊU ĐỀ TRẠNG THÁI + OPTION "NO" & "TẠM NGHỈ" + THÊM XOÁ DÒNG) -->
+        <!-- QUẢN LÝ QUỸ PICK -->
         <section id="tab-fund_manager" class="tab-content hidden space-y-6">
             <div class="bg-gradient-to-r from-brand-800 via-brand-700 to-court-600 text-white p-5 rounded-2xl shadow-md flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="flex items-center space-x-3">
@@ -779,6 +830,16 @@
                         <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Quản Lý Quỹ Pickleball</h1>
                         <p class="text-xs text-brand-100">Hệ thống theo dõi Thu Chi & Hội Phí Tự Động</p>
                     </div>
+                </div>
+
+                <div class="flex items-center gap-2 bg-white/10 p-2 rounded-xl backdrop-blur-md border border-white/20">
+                    <span id="fund-admin-status-badge" class="text-xs font-bold text-yellow-300 flex items-center gap-1">
+                        <i class="fa-solid fa-lock text-red-300"></i> Admin Quỹ:
+                    </span>
+                    <input type="password" id="fund-admin-pass-input" placeholder="Pass Admin..." class="w-24 text-xs p-1 border rounded bg-white text-slate-800 outline-none focus:ring-1 focus:ring-yellow-400">
+                    <button onclick="checkFundAdminPassword()" class="bg-yellow-500 hover:bg-yellow-400 text-slate-900 text-xs px-2.5 py-1 rounded font-extrabold shadow">
+                        Mở Khóa
+                    </button>
                 </div>
                 
                 <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
@@ -801,7 +862,7 @@
                             <i class="fa-solid fa-vault text-xl"></i>
                         </div>
                     </div>
-                    <div class="mt-3 text-xs text-slate-400">Click để chỉnh sửa số dư đầu kỳ</div>
+                    <div class="mt-3 text-xs text-slate-400">Cần quyền Admin để chỉnh sửa</div>
                 </div>
 
                 <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm relative overflow-hidden group">
@@ -815,7 +876,7 @@
                         </div>
                     </div>
                     <div class="mt-3 text-xs text-slate-400 flex items-center gap-1">
-                        <i class="fa-solid fa-circle-info text-emerald-500"></i> Tự động cộng từ dòng TỔNG BTC THU VỀ của các ngày
+                        <i class="fa-solid fa-circle-info text-emerald-500"></i> Tự động cộng từ dòng TỔNG BTC THU VỀ
                     </div>
                 </div>
 
@@ -851,7 +912,8 @@
             </div>
 
             <!-- NHẬT KÝ THU / CHI -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="flex flex-col gap-6">
+                <!-- NHẬT KÝ THU -->
                 <section class="bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col">
                     <div class="p-5 border-b border-slate-100 flex justify-between items-center">
                         <div>
@@ -859,7 +921,7 @@
                                 <i class="fa-solid fa-circle-arrow-down text-emerald-600"></i>
                                 <span>Nhật Ký Khoản Thu</span>
                             </h2>
-                            <p class="text-xs text-slate-500 mt-0.5">Thu thủ công & Tự động đồng bộ từ dòng TỔNG BTC THU VỀ</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Thu thủ công & Tự động đồng bộ số dương từ dòng TỔNG BTC THU VỀ</p>
                         </div>
                         <button onclick="openFundModal('income')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm">
                             <i class="fa-solid fa-plus"></i>
@@ -868,14 +930,15 @@
                     </div>
 
                     <div class="flex-1 overflow-x-auto custom-scrollbar max-h-96">
-                        <table class="w-full text-left text-sm">
+                        <table class="w-full text-left text-sm border-collapse">
                             <thead class="bg-slate-50 text-slate-600 font-semibold sticky top-0 border-b border-slate-200">
                                 <tr>
-                                    <th class="py-2.5 px-3">Ngày</th>
-                                    <th class="py-2.5 px-3">Nội dung</th>
-                                    <th class="py-2.5 px-3 text-right">Số tiền</th>
-                                    <th class="py-2.5 px-3">Nguồn thu / Pick thủ</th>
-                                    <th class="py-2.5 px-3 text-center">Thao tác</th>
+                                    <th class="py-2.5 px-3 w-28 whitespace-nowrap">Ngày</th>
+                                    <th class="py-2.5 px-3 min-w-[220px]">Nội dung</th>
+                                    <th class="py-2.5 px-3 text-right w-32 whitespace-nowrap">Số tiền</th>
+                                    <th class="py-2.5 px-3 w-36 whitespace-nowrap">Nguồn thu / Pick thủ</th>
+                                    <th class="py-2.5 px-3 min-w-[200px]">Ghi chú</th>
+                                    <th class="py-2.5 px-3 text-center w-24 whitespace-nowrap">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody id="income-list" class="divide-y divide-slate-100"></tbody>
@@ -888,6 +951,7 @@
                     </div>
                 </section>
 
+                <!-- NHẬT KÝ CHI -->
                 <section class="bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col">
                     <div class="p-5 border-b border-slate-100 flex justify-between items-center">
                         <div>
@@ -904,14 +968,15 @@
                     </div>
 
                     <div class="flex-1 overflow-x-auto custom-scrollbar max-h-96">
-                        <table class="w-full text-left text-sm">
+                        <table class="w-full text-left text-sm border-collapse">
                             <thead class="bg-slate-50 text-slate-600 font-semibold sticky top-0 border-b border-slate-200">
                                 <tr>
-                                    <th class="py-2.5 px-3">Ngày</th>
-                                    <th class="py-2.5 px-3">Nội dung</th>
-                                    <th class="py-2.5 px-3 text-right">Số tiền</th>
-                                    <th class="py-2.5 px-3">Hạng mục / Pick thủ</th>
-                                    <th class="py-2.5 px-3 text-center">Thao tác</th>
+                                    <th class="py-2.5 px-3 w-28 whitespace-nowrap">Ngày</th>
+                                    <th class="py-2.5 px-3 min-w-[220px]">Nội dung</th>
+                                    <th class="py-2.5 px-3 text-right w-32 whitespace-nowrap">Số tiền</th>
+                                    <th class="py-2.5 px-3 w-36 whitespace-nowrap">Hạng mục / Pick thủ</th>
+                                    <th class="py-2.5 px-3 min-w-[200px]">Ghi chú</th>
+                                    <th class="py-2.5 px-3 text-center w-24 whitespace-nowrap">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody id="expense-list" class="divide-y divide-slate-100"></tbody>
@@ -925,7 +990,7 @@
                 </section>
             </div>
 
-            <!-- BẢNG QUẢN LÝ QUỸ: CẬP NHẬT TỰ ĐỔI CỘT TÊN TRẠNG THÁI + OPTION NO/TẠM NGHỈ + THÊM XOÁ DÒNG -->
+            <!-- BẢNG CÁC QUÝ -->
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
                 <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
@@ -933,69 +998,32 @@
                             <i class="fa-solid fa-users text-brand-600"></i>
                             <span>Danh Sách Pick Thủ CLB & Tiền Sân Các Quý</span>
                         </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Click vào tiêu đề để sửa chữ. Bấm nút Thêm Pick Thủ để tạo mới hoặc Xóa dòng trực tiếp.</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Click tên cột để sửa. Dùng nút "➕ Thêm Cột Quý Mới" nếu cần mở rộng.</p>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                        <button onclick="addNewFundPlayerPrompt()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow flex items-center gap-1.5">
-                            <i class="fa-solid fa-user-plus"></i>
-                            <span>➕ Thêm Pick Thủ Vào Quỹ</span>
+                        <button onclick="addNewQuarterColumn()" class="bg-teal-700 hover:bg-teal-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow flex items-center gap-1.5">
+                            <i class="fa-solid fa-folder-plus text-yellow-300"></i>
+                            <span>➕ Thêm Cột Quý Mới</span>
                         </button>
 
-                        <div class="relative flex-1 sm:w-48">
+                        <button onclick="addNewFundPlayerPrompt()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <span>➕ Thêm Pick Thủ</span>
+                        </button>
+
+                        <div class="relative flex-1 sm:w-44">
                             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                            <input type="text" id="member-search" oninput="renderFundMembers()" placeholder="Tìm tên Pick thủ..." class="w-full pl-9 pr-3 py-1.5 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <input type="text" id="member-search" oninput="renderFundMembers()" placeholder="Tìm Pick thủ..." class="w-full pl-9 pr-3 py-1.5 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
-                        <select id="member-filter" onchange="renderFundMembers()" class="py-1.5 px-3 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            <option value="all">Tất cả trạng thái</option>
-                            <option value="q1_pending">Chưa đóng Quý 1</option>
-                            <option value="q2_pending">Chưa đóng Quý 2</option>
-                            <option value="q3_pending">Chưa đóng Quý 3</option>
-                            <option value="q4_pending">Chưa đóng Quý 4</option>
-                        </select>
                     </div>
                 </div>
 
                 <div class="overflow-x-auto custom-scrollbar">
                     <table class="w-full text-left text-sm">
                         <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
-                            <tr>
-                                <th class="py-3 px-3 w-10 text-center">STT</th>
-                                <th class="py-3 px-3">Tên Pick Thủ</th>
-                                
-                                <!-- TIÊU ĐỀ SỐ TIỀN VÀ TRẠNG THÁI QUÝ 1 -->
-                                <th class="py-2 px-2 text-center bg-teal-50/80 border-x border-teal-100 min-w-[120px]">
-                                    <input type="text" id="col-title-q1" onchange="updateQuarterTitle('q1', this.value)" class="w-full text-center bg-transparent border-b border-teal-300 font-bold text-teal-900 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột">
-                                </th>
-                                <th class="py-2 px-2 text-center bg-teal-50/50 min-w-[110px]">
-                                    <input type="text" id="col-status-title-q1" onchange="updateQuarterTitle('status_q1', this.value)" class="w-full text-center bg-transparent border-b border-teal-300 font-bold text-teal-800 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột Trạng Thái">
-                                </th>
-
-                                <!-- TIÊU ĐỀ SỐ TIỀN VÀ TRẠNG THÁI QUÝ 2 -->
-                                <th class="py-2 px-2 text-center bg-amber-50/80 border-x border-amber-100 min-w-[120px]">
-                                    <input type="text" id="col-title-q2" onchange="updateQuarterTitle('q2', this.value)" class="w-full text-center bg-transparent border-b border-amber-300 font-bold text-amber-900 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột">
-                                </th>
-                                <th class="py-2 px-2 text-center bg-amber-50/50 min-w-[110px]">
-                                    <input type="text" id="col-status-title-q2" onchange="updateQuarterTitle('status_q2', this.value)" class="w-full text-center bg-transparent border-b border-amber-300 font-bold text-amber-800 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột Trạng Thái">
-                                </th>
-
-                                <!-- TIÊU ĐỀ SỐ TIỀN VÀ TRẠNG THÁI QUÝ 3 -->
-                                <th class="py-2 px-2 text-center bg-purple-50/80 border-x border-purple-100 min-w-[120px]">
-                                    <input type="text" id="col-title-q3" onchange="updateQuarterTitle('q3', this.value)" class="w-full text-center bg-transparent border-b border-purple-300 font-bold text-purple-900 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột">
-                                </th>
-                                <th class="py-2 px-2 text-center bg-purple-50/50 min-w-[110px]">
-                                    <input type="text" id="col-status-title-q3" onchange="updateQuarterTitle('status_q3', this.value)" class="w-full text-center bg-transparent border-b border-purple-300 font-bold text-purple-800 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột Trạng Thái">
-                                </th>
-
-                                <!-- TIÊU ĐỀ SỐ TIỀN VÀ TRẠNG THÁI QUÝ 4 -->
-                                <th class="py-2 px-2 text-center bg-blue-50/80 border-x border-blue-100 min-w-[120px]">
-                                    <input type="text" id="col-title-q4" onchange="updateQuarterTitle('q4', this.value)" class="w-full text-center bg-transparent border-b border-blue-300 font-bold text-blue-900 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột">
-                                </th>
-                                <th class="py-2 px-2 text-center bg-blue-50/50 min-w-[110px]">
-                                    <input type="text" id="col-status-title-q4" onchange="updateQuarterTitle('status_q4', this.value)" class="w-full text-center bg-transparent border-b border-blue-300 font-bold text-blue-800 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Nhấp để sửa tên cột Trạng Thái">
-                                </th>
-                                
-                                <th class="py-3 px-3 text-center min-w-[100px]">Thao Tác Dòng</th>
+                            <tr id="member-list-thead-tr">
+                                <!-- DYNAMIC HEADERS -->
                             </tr>
                         </thead>
                         <tbody id="member-list" class="divide-y divide-slate-100"></tbody>
@@ -1045,7 +1073,7 @@
         </div>
     </div>
 
-    <!-- MODAL SỬA CẶP VĐV MINIGAME 2 -->
+    <!-- MODAL SỬA CẶP VĐV MINIGAME BẢNG & VÒNG TRÒN -->
     <div id="m2-edit-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 text-slate-800">
             <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
@@ -1070,7 +1098,7 @@
         </div>
     </div>
 
-    <!-- MODAL THÊM / SỬA KHOẢN THU CHI QUỸ -->
+    <!-- MODAL THÊM KHOẢN THU CHI QUẤY -->
     <div id="fund-modal-backdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-slate-100">
             <div id="fund-modal-header" class="p-4 bg-emerald-600 text-white flex justify-between items-center">
@@ -1093,7 +1121,7 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Nội Dung Chi Tiết</label>
-                    <input type="text" id="tx-desc" placeholder="Ví dụ: Mua bóng Pickleball thi đấu..." required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    <textarea id="tx-desc" rows="2" placeholder="Ví dụ: Thu tiền kèo ngày 1/10/26..." required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
                 </div>
 
                 <div>
@@ -1109,7 +1137,7 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Ghi Chú</label>
-                    <input type="text" id="tx-note" placeholder="Chuyển khoản / Tiền mặt / Hóa đơn" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                    <textarea id="tx-note" rows="2" placeholder="Chuyển khoản / Tiền mặt / Ghi chú..." class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
                 </div>
 
                 <div class="flex justify-end gap-2 pt-2">
@@ -1129,6 +1157,9 @@
         window.isAdminUnlocked = false;
         window.ADMIN_PASSWORD = "123456";
 
+        /* QUẢN LÝ TẠO CÁC MINIGAME ĐỘNG */
+        window.createdMinigames = JSON.parse(localStorage.getItem('pb_created_minigames')) || [];
+
         function checkAdminPassword() {
             const inputPass = document.getElementById('admin-pass-input').value;
             if (inputPass === window.ADMIN_PASSWORD) {
@@ -1138,10 +1169,110 @@
                     badge.innerHTML = `<i class="fa-solid fa-lock-open text-emerald-600"></i> Đã Mở Khóa Admin:`;
                     badge.className = "text-xs font-bold text-emerald-700 flex items-center gap-1";
                 }
-                alert("🔑 Xác thực Admin thành công! Bạn có thể tích chọn cột Thực Tế.");
+                alert("🔑 Xác thực Admin thành công!");
                 renderDayDetailView();
+                renderHomeClosestDateView();
             } else {
                 alert("❌ Mật khẩu Admin không đúng!");
+            }
+        }
+
+        function checkFundAdminPassword() {
+            const inputPass = document.getElementById('fund-admin-pass-input').value;
+            if (inputPass === window.ADMIN_PASSWORD) {
+                window.isAdminUnlocked = true;
+                const badge = document.getElementById('fund-admin-status-badge');
+                const badgeDay = document.getElementById('admin-status-badge');
+                if(badge) {
+                    badge.innerHTML = `<i class="fa-solid fa-lock-open text-emerald-300"></i> Admin Quỹ: Mở Khóa`;
+                    badge.className = "text-xs font-extrabold text-emerald-300 flex items-center gap-1";
+                }
+                if(badgeDay) {
+                    badgeDay.innerHTML = `<i class="fa-solid fa-lock-open text-emerald-600"></i> Đã Mở Khóa Admin:`;
+                    badgeDay.className = "text-xs font-bold text-emerald-700 flex items-center gap-1";
+                }
+                alert("🔑 Xác thực Admin thành công!");
+                updateFundDashboard();
+                renderDayDetailView();
+                renderHomeClosestDateView();
+            } else {
+                alert("❌ Mật khẩu Admin không đúng!");
+            }
+        }
+
+        function requireAdminAuth(actionCallback) {
+            if (window.isAdminUnlocked) {
+                actionCallback();
+            } else {
+                const pass = prompt("🔒 Vui lòng nhập mật khẩu Admin để thực hiện:");
+                if (pass === window.ADMIN_PASSWORD) {
+                    window.isAdminUnlocked = true;
+                    alert("🔑 Xác thực Admin thành công!");
+                    actionCallback();
+                } else if (pass !== null) {
+                    alert("❌ Mật khẩu Admin không đúng!");
+                }
+            }
+        }
+
+        /* HÀM TẠO MINIGAME MỚI */
+        function createNewMinigame(type) {
+            closeAllDropdowns();
+            const typeText = type === 'team' ? 'Minigame Team (Đấu Đội A vs B)' : 'Minigame Bảng & Vòng Tròn (Vòng Bảng + Knockout)';
+            const name = prompt(`Nhập tên Giải/Minigame mới (${typeText}):`);
+            if (name && name.trim() !== '') {
+                const newGame = {
+                    id: 'mg_' + Date.now(),
+                    name: name.trim(),
+                    type: type, // 'team' hoặc 'bracket'
+                    createdAt: new Date().toISOString()
+                };
+                window.createdMinigames.push(newGame);
+                localStorage.setItem('pb_created_minigames', JSON.stringify(window.createdMinigames));
+                renderDynamicMinigameList();
+                autoBackupData();
+                if(window.syncToFirebase) window.syncToFirebase();
+                alert(`✨ Đã khởi tạo thành công: ${newGame.name}!`);
+            }
+        }
+
+        function renderDynamicMinigameList() {
+            const container = document.getElementById('dynamic-minigame-list');
+            if(!container) return;
+            if(window.createdMinigames.length === 0) {
+                container.innerHTML = `<div class="px-3 py-1 text-[11px] text-slate-400 italic">Chưa tạo thêm giải đấu nào</div>`;
+                return;
+            }
+            container.innerHTML = window.createdMinigames.map(mg => `
+                <div class="dropdown-item flex items-center justify-between" onclick="openCustomMinigame('${mg.id}')">
+                    <span class="flex items-center gap-1.5 truncate">
+                        <i class="fa-solid ${mg.type === 'team' ? 'fa-people-group text-amber-600' : 'fa-diagram-project text-emerald-600'}"></i>
+                        <span>${mg.name}</span>
+                    </span>
+                    <button onclick="deleteCustomMinigame('${mg.id}', event)" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            `).join('');
+        }
+
+        function openCustomMinigame(id) {
+            closeAllDropdowns();
+            const mg = window.createdMinigames.find(item => item.id === id);
+            if (mg) {
+                if(mg.type === 'team') showTab('minigame1');
+                else showTab('minigame2');
+                alert(`🎮 Đã chuyển sang quản lý: ${mg.name}`);
+            }
+        }
+
+        function deleteCustomMinigame(id, e) {
+            e.stopPropagation();
+            const mg = window.createdMinigames.find(item => item.id === id);
+            if (mg && confirm(`Bạn có chắc muốn XÓA MiniGame "${mg.name}" khỏi danh sách?`)) {
+                window.createdMinigames = window.createdMinigames.filter(item => item.id !== id);
+                localStorage.setItem('pb_created_minigames', JSON.stringify(window.createdMinigames));
+                renderDynamicMinigameList();
+                autoBackupData();
+                if(window.syncToFirebase) window.syncToFirebase();
             }
         }
 
@@ -1213,44 +1344,416 @@
             "1/10/26": { btcNoteAdminOption: "YES" }
         };
 
-        // --- TÙY CHỈNH TIÊU ĐỀ SỐ TIỀN & TRẠNG THÁI CÁC QUÝ ---
-        window.quarterTitles = JSON.parse(localStorage.getItem('pb_quarter_titles')) || {
-            q1: "Tiền Sân Quý 1",
-            status_q1: "Trạng Thái Q1",
-            q2: "Tiền Sân Quý 2",
-            status_q2: "Trạng Thái Q2",
-            q3: "Tiền Sân Quý 3",
-            status_q3: "Trạng Thái Q3",
-            q4: "Tiền Sân Quý 4 (800k)",
-            status_q4: "Trạng Thái Q4"
-        };
+        window.activeQuarterColumns = JSON.parse(localStorage.getItem('pb_active_quarter_cols')) || [
+            { id: "q1", title: "Tiền Sân Quý 1", statusTitle: "Trạng Thái Q1", defaultAmt: 800000, bgColor: "teal" }
+        ];
 
         window.initialFund = Number(localStorage.getItem('pb_initial_fund')) || 500000;
 
         const defaultFundIncomes = [
-            { id: 1, date: "2026-01-05", desc: "Thu tiền quỹ Q4 - Tiến Thọ", amount: 800000, source: "Tiến Thọ", note: "Chuyển khoản" },
-            { id: 2, date: "2026-01-06", desc: "Thu tiền quỹ Q4 - Châu Sĩ", amount: 800000, source: "Châu Sĩ", note: "Tiền mặt" },
-            { id: 3, date: "2026-01-10", desc: "Thu tiền giao lưu vãng lai", amount: 200000, source: "Khách vãng lai / Khác", note: "Thu theo buổi" }
+            { id: 1, date: "2026-01-05", desc: "Thu tiền quỹ Q1 - Tiến Thọ", amount: 800000, source: "Tiến Thọ", note: "Chuyển khoản ngân hàng VPBank" },
+            { id: 2, date: "2026-01-06", desc: "Thu tiền quỹ Q1 - Châu Sĩ", amount: 800000, source: "Châu Sĩ", note: "Thanh toán bằng tiền mặt" }
         ];
 
         const defaultFundExpenses = [
-            { id: 1, date: "2026-01-02", desc: "Thanh toán tiền thuê sân Tháng 1", amount: 1200000, source: "Khách vãng lai / Khác", note: "Hóa đơn #01" },
-            { id: 2, date: "2026-01-15", desc: "Mua bóng Pickleball thi đấu", amount: 450000, source: "Khách vãng lai / Khác", note: "Chuyển khoản" }
+            { id: 1, date: "2026-01-02", desc: "Thanh toán tiền thuê sân Tháng 1", amount: 1200000, source: "Khách vãng lai / Khác", note: "Hóa đơn thanh toán tiền sân định kỳ" }
         ];
 
         window.fundFeeStatus = JSON.parse(localStorage.getItem('pb_fee_status')) || {};
         window.fundIncomes = JSON.parse(localStorage.getItem('pb_incomes')) || defaultFundIncomes;
         window.fundExpenses = JSON.parse(localStorage.getItem('pb_expenses')) || defaultFundExpenses;
+        window.autoIncomeNotes = JSON.parse(localStorage.getItem('pb_auto_income_notes')) || {};
+
+        function getClosestDateToToday() {
+            if (!window.dates || window.dates.length === 0) return null;
+            if (window.dates.length === 1) return window.dates[0];
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            let closestDateStr = window.dates[0];
+            let minDiff = Infinity;
+
+            const parseDateString = (dStr) => {
+                if (!dStr) return new Date(0);
+                const parts = dStr.split('/');
+                if (parts.length === 3) {
+                    let day = parseInt(parts[0], 10);
+                    let month = parseInt(parts[1], 10) - 1;
+                    let year = parseInt(parts[2], 10);
+                    if (year < 100) year += 2000;
+                    return new Date(year, month, day);
+                }
+                return new Date(dStr);
+            };
+
+            window.dates.forEach(dStr => {
+                const dObj = parseDateString(dStr);
+                const diff = Math.abs(dObj.getTime() - today.getTime());
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestDateStr = dStr;
+                }
+            });
+
+            return closestDateStr;
+        }
+
+        function renderHomeClosestDateView() {
+            const container = document.getElementById('home-closest-date-container');
+            const titleEl = document.getElementById('home-closest-date-title');
+            if (!container) return;
+
+            const closestDate = getClosestDateToToday();
+            if (!closestDate) {
+                if(titleEl) titleEl.innerText = "Chưa có dữ liệu";
+                container.innerHTML = `<div class="p-6 text-center text-slate-400 bg-slate-50 rounded-xl">Chưa có ngày nào được tạo trong hệ thống.</div>`;
+                return;
+            }
+
+            if(titleEl) titleEl.innerText = closestDate;
+
+            const matches = window.matchesData[closestDate] || [];
+
+            let matchesTableRows = '';
+            let stats = {};
+            window.players.forEach(p => { stats[p.name] = { played: 0, winK: 0, loseK: 0, total: 0 }; });
+
+            matches.forEach((m, idx) => {
+                const val1 = (m.score1 || "").toString().trim();
+                const val2 = (m.score2 || "").toString().trim();
+                const s1 = parseInt(val1);
+                const s2 = parseInt(val2);
+
+                let keo1 = "", keo2 = "";
+                const mMode = m.keoMode || window.dateKeoMode[closestDate] || 'default';
+                let winAmt = 5, loseAmt = -15;
+
+                if (mMode === 'k25') { winAmt = 0; loseAmt = -25; }
+                else if (mMode === 'free') {
+                    winAmt = parseFloat(m.customWin) || 0;
+                    loseAmt = parseFloat(m.customLose) || 0;
+                    if (loseAmt > 0) loseAmt = -loseAmt;
+                }
+
+                if(!isNaN(s1) && !isNaN(s2)) {
+                    let isHam = (s1 === 0 || s2 === 0);
+                    let effWin = isHam ? (winAmt > 0 ? winAmt * 2 : 0) : winAmt;
+                    let effLose = isHam ? loseAmt * 2 : loseAmt;
+
+                    if(s1 > s2) { keo1 = effWin; keo2 = effLose; }
+                    else if(s2 > s1) { keo1 = effLose; keo2 = effWin; }
+                    else { keo1 = 0; keo2 = 0; }
+
+                    const pair1 = [m.c1_p1, m.c1_p2].filter(Boolean);
+                    const pair2 = [m.c2_p1, m.c2_p2].filter(Boolean);
+
+                    if(s1 > s2) {
+                        pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].winK += effWin; stats[v].total += effWin; } });
+                        pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].loseK += effLose; stats[v].total += effLose; } });
+                    } else if(s2 > s1) {
+                        pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].winK += effWin; stats[v].total += effWin; } });
+                        pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].loseK += effLose; stats[v].total += effLose; } });
+                    }
+                }
+
+                const buildPlayerSelectHome = (val, field) => {
+                    let opts = `<option value="">-- Chọn Pick --</option>`;
+                    window.players.forEach(p => {
+                        opts += `<option value="${p.name}" ${p.name === val ? 'selected' : ''}>${p.name}</option>`;
+                    });
+                    return `<select onchange="updateMatchDataForDate('${closestDate}', ${idx}, '${field}', this.value)" class="player-select-btn text-[11px] border rounded p-1 outline-none w-full bg-white shadow-sm">
+                        ${opts}
+                    </select>`;
+                };
+
+                const isHam1 = (val1 === "0" || s1 === 0);
+                const isHam2 = (val2 === "0" || s2 === 0);
+
+                const score1Inner = isHam1 
+                    ? `<span class="ham-text">HẦM</span>` 
+                    : `<input type="text" class="score-input" value="${m.score1 || ''}" onchange="updateMatchDataForDate('${closestDate}', ${idx}, 'score1', this.value)">`;
+
+                const score2Inner = isHam2 
+                    ? `<span class="ham-text">HẦM</span>` 
+                    : `<input type="text" class="score-input" value="${m.score2 || ''}" onchange="updateMatchDataForDate('${closestDate}', ${idx}, 'score2', this.value)">`;
+
+                let keoCellUI = `
+                    <select onchange="updateMatchKeoModeForDate('${closestDate}', ${idx}, this.value)" class="text-[10px] sm:text-[11px] font-bold p-0.5 border rounded bg-amber-50 outline-none w-full text-amber-900 border-amber-300">
+                        <option value="default" ${mMode==='default'?'selected':''}>Kèo (+5k/-15k)</option>
+                        <option value="k25" ${mMode==='k25'?'selected':''}>Kèo 25k (0k/-25k)</option>
+                        <option value="free" ${mMode==='free'?'selected':''}>Kèo Tự Do</option>
+                    </select>
+                `;
+
+                if (mMode === 'free') {
+                    keoCellUI += `
+                        <div class="flex items-center justify-center gap-1 mt-1">
+                            <span class="text-[10px] text-emerald-700 font-bold">+</span>
+                            <input type="number" class="keo-custom-input text-emerald-700" value="${m.customWin !== undefined ? m.customWin : 5}" onchange="updateMatchDataForDate('${closestDate}', ${idx}, 'customWin', this.value)" title="Tiền thắng">
+                            <span class="text-[10px] text-red-600 font-bold">/</span>
+                            <input type="number" class="keo-custom-input text-red-600" value="${m.customLose !== undefined ? m.customLose : -15}" onchange="updateMatchDataForDate('${closestDate}', ${idx}, 'customLose', this.value)" title="Tiền thua">
+                        </div>
+                    `;
+                }
+
+                matchesTableRows += `
+                    <tr class="hover:bg-slate-50 text-center">
+                        <td class="font-bold text-slate-700 whitespace-nowrap px-1">Trận ${idx + 1}</td>
+                        <td class="p-1">${buildPlayerSelectHome(m.c1_p1, 'c1_p1')}</td>
+                        <td class="p-1">${buildPlayerSelectHome(m.c1_p2, 'c1_p2')}</td>
+                        <td class="p-1 bg-purple-50/40 border-x border-purple-200">
+                            <div class="flex items-center justify-center gap-0.5">
+                                <div onclick="if(${isHam1}) updateMatchDataForDate('${closestDate}', ${idx}, 'score1', '')">${score1Inner}</div>
+                                <span class="font-black text-slate-400 px-0.5">-</span>
+                                <div onclick="if(${isHam2}) updateMatchDataForDate('${closestDate}', ${idx}, 'score2', '')">${score2Inner}</div>
+                            </div>
+                        </td>
+                        <td class="p-1">${buildPlayerSelectHome(m.c2_p1, 'c2_p1')}</td>
+                        <td class="p-1">${buildPlayerSelectHome(m.c2_p2, 'c2_p2')}</td>
+                        <td class="p-1 bg-amber-50/50">${keoCellUI}</td>
+                        <td class="p-1 font-extrabold ${keo1 > 0 ? 'txt-win' : (keo1 < 0 ? 'txt-lose' : '')}">${keo1 !== '' ? keo1 + 'K' : '---'}</td>
+                        <td class="p-1 font-extrabold ${keo2 > 0 ? 'txt-win' : (keo2 < 0 ? 'txt-lose' : '')}">${keo2 !== '' ? keo2 + 'K' : '---'}</td>
+                        <td class="p-1 text-center whitespace-nowrap">
+                            <button onclick="deleteMatchFromDate('${closestDate}', ${idx})" class="text-slate-400 hover:text-red-600 font-bold p-1 transition-colors" title="Xóa trận đấu">
+                                <i class="fa-solid fa-trash-can text-sm"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            if(!matchesTableRows) {
+                matchesTableRows = `<tr><td colspan="10" class="p-4 text-center text-slate-400">Chưa có trận đấu nào được tạo trong ngày này.</td></tr>`;
+            }
+
+            let summaryRows = '';
+            let sumBringBack = 0, sumThucThu = 0, sumAmThucTe = 0;
+
+            window.players.forEach(p => {
+                const st = stats[p.name];
+                if(st.played > 0) {
+                    const payKey = `${closestDate}_${p.name}`;
+                    const isPaid = window.paymentStatus[payKey] || false;
+
+                    let bringBack = 0;
+                    if(st.played >= 4 && st.total > 0) { bringBack = st.total; sumBringBack += bringBack; }
+                    if(st.total < 0) { sumAmThucTe += st.total; if(isPaid) sumThucThu += Math.abs(st.total); }
+
+                    let noteText = "";
+                    if(st.total < 0) {
+                        noteText = isPaid ? `<span class="note-paid"><i class="fa-solid fa-check"></i> Đã nộp</span>` : `<span class="note-unpaid"><i class="fa-solid fa-xmark"></i> Chưa nộp</span>`;
+                    } else if(st.total > 0) {
+                        noteText = isPaid ? `<span class="note-paid"><i class="fa-solid fa-check"></i> Đã nhận</span>` : `<span class="note-unpaid"><i class="fa-solid fa-clock"></i> Chưa nhận</span>`;
+                    }
+
+                    const disabledAttr = window.isAdminUnlocked ? '' : 'disabled title="Cần mật khẩu Admin để sửa"';
+
+                    summaryRows += `
+                        <tr class="hover:bg-slate-50 text-center">
+                            <td class="p-2 border text-left pl-3"><span class="player-tag">${p.name}</span></td>
+                            <td class="p-2 border">${st.played}</td>
+                            <td class="p-2 border txt-win">${st.winK > 0 ? '+' + st.winK + 'K' : ''}</td>
+                            <td class="p-2 border txt-lose">${st.loseK < 0 ? st.loseK + 'K' : ''}</td>
+                            <td class="p-2 border text-blue-600 font-bold">${bringBack > 0 ? '+' + bringBack + 'K' : ''}</td>
+                            <td class="p-2 border font-extrabold ${st.total < 0 ? 'txt-lose' : (st.total > 0 ? 'txt-win' : '')}">${st.total !== 0 ? (st.total > 0 ? '+' + st.total + 'K' : st.total + 'K') : '0K'}</td>
+                            <td class="p-2 border bg-amber-50/30">
+                                <input type="checkbox" ${isPaid ? 'checked' : ''} ${disabledAttr} onclick="togglePaymentStatus('${payKey}')" class="w-4 h-4 cursor-pointer accent-emerald-600">
+                            </td>
+                            <td class="p-2 border">${noteText}</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            let btcThuVe = sumAmThucTe + sumBringBack;
+            let quyCon = sumThucThu - Math.abs(btcThuVe);
+
+            const pStatus = window.paymentStatus[closestDate];
+            const currentOption = (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption) ? pStatus.btcNoteAdminOption : "YES";
+
+            container.innerHTML = `
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-5">
+                    <div>
+                        <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b gap-2">
+                            <h4 class="font-bold text-sm text-slate-700 flex items-center gap-1.5">
+                                <i class="fa-solid fa-table-list text-blue-600"></i> BẢNG DÂN TRẬN PICK NGÀY ${closestDate}
+                            </h4>
+                            <div class="flex items-center gap-2">
+                                <select onchange="applyKeoToAllMatchesForDate('${closestDate}', this.value)" class="text-xs p-1 border rounded bg-white font-bold outline-none border-amber-400 text-slate-800 cursor-pointer">
+                                    <option value="default" ${(window.dateKeoMode[closestDate]||'default')==='default'?'selected':''}>Kèo (+5k/-15k)</option>
+                                    <option value="k25" ${(window.dateKeoMode[closestDate]||'default')==='k25'?'selected':''}>Kèo 25k (0k/-25k)</option>
+                                    <option value="free" ${(window.dateKeoMode[closestDate]||'default')==='free'?'selected':''}>Kèo Tự Do</option>
+                                </select>
+                                <button onclick="addMatchToDate('${closestDate}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-2.5 py-1 rounded shadow font-bold flex items-center gap-1">
+                                    <i class="fa-solid fa-plus"></i> Thêm Trận
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="smooth-scroll border border-slate-200 rounded-lg bg-white shadow-sm">
+                            <table class="w-full text-xs min-w-[780px] border-collapse text-center">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 font-bold">
+                                        <th class="p-2 border w-10">STT</th>
+                                        <th class="p-2 border bg-emerald-50 text-emerald-900" colspan="2">CẶP PICK 1</th>
+                                        <th class="p-2 border bg-purple-100 text-purple-900 w-20">TỶ SỐ</th>
+                                        <th class="p-2 border bg-red-50 text-red-900" colspan="2">CẶP PICK 2</th>
+                                        <th class="p-2 border bg-amber-50 text-amber-900 w-28">CHỌN KÈO TRẬN</th>
+                                        <th class="p-2 border bg-amber-50 text-amber-900" colspan="2">KÈO BAN ĐẦU</th>
+                                        <th class="p-2 border w-12 bg-slate-200 text-slate-800"><i class="fa-solid fa-gear"></i></th>
+                                    </tr>
+                                </thead>
+                                <tbody>${matchesTableRows}</tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-700 mb-2 flex items-center gap-1.5">
+                            <i class="fa-solid fa-calculator text-indigo-600"></i> BẢNG TỔNG HỢP THƯỞNG PHẠT KÈO NGÀY ${closestDate}
+                        </h4>
+                        <div class="smooth-scroll border border-slate-200 rounded-lg bg-white shadow-sm">
+                            <table class="w-full text-xs min-w-[650px] border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 font-bold text-center">
+                                        <th class="p-2 border w-28 text-left pl-3">PICK THỦ</th>
+                                        <th class="p-2 border w-16">TRẬN</th>
+                                        <th class="p-2 border w-20">THẮNG</th>
+                                        <th class="p-2 border w-20">THUA</th>
+                                        <th class="p-2 border w-24">MANG VỀ</th>
+                                        <th class="p-2 border w-20">TỔNG</th>
+                                        <th class="p-2 border w-20 bg-amber-50 text-amber-900">THỰC TẾ</th>
+                                        <th class="p-2 border w-28">TRẠNG THÁI</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${summaryRows || `<tr><td colspan="8" class="p-4 text-center text-slate-400">Chưa có kết quả tổng hợp.</td></tr>`}
+                                    <tr class="bg-slate-100 font-extrabold text-center">
+                                        <td class="p-2 border text-left text-red-600 pl-3">TỔNG BTC THU VỀ</td>
+                                        <td class="p-2 border" colspan="3"></td>
+                                        <td class="p-2 border text-blue-700">+${sumBringBack}K</td>
+                                        <td class="p-2 border text-red-600">${btcThuVe}K</td>
+                                        <td class="p-2 border text-blue-700">+${sumThucThu}K</td>
+                                        <td class="p-2 border text-slate-600 whitespace-nowrap">
+                                            <select onchange="handleBtcNoteChangeForDate('${closestDate}', this)" class="text-xs font-bold p-1 border rounded bg-white text-emerald-700 outline-none">
+                                                <option value="YES" ${currentOption==='YES'?'selected':''}>YES (Chuyển tổng ngày)</option>
+                                                <option value="NO" ${currentOption==='NO'?'selected':''}>NO (Không chuyển)</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-slate-100 font-extrabold text-center">
+                                        <td class="p-2 border text-left text-red-600 pl-3" colspan="4">Quỹ Còn</td>
+                                        <td class="p-2 border text-red-600 text-sm" colspan="2">${quyCon}K</td>
+                                        <td class="p-2 border" colspan="2"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function addMatchToDate(dateStr) {
+            if(!window.matchesData[dateStr]) window.matchesData[dateStr] = [];
+            const nextId = window.matchesData[dateStr].length + 1;
+            const globalMode = window.dateKeoMode[dateStr] || 'default';
+            window.matchesData[dateStr].push({ 
+                id: nextId, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "",
+                keoMode: globalMode, customWin: globalMode === 'k25' ? 0 : 5, customLose: globalMode === 'k25' ? -25 : -15
+            });
+            refreshAllViews();
+            autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function deleteMatchFromDate(dateStr, index) {
+            if(confirm(`Bạn có chắc chắn muốn XÓA Trận ${index + 1}?`)) {
+                if(window.matchesData[dateStr]) {
+                    window.matchesData[dateStr].splice(index, 1);
+                    refreshAllViews();
+                    autoBackupData();
+                    if(window.syncToFirebase) window.syncToFirebase();
+                }
+            }
+        }
+
+        function updateMatchDataForDate(dateStr, index, field, value) {
+            if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
+                window.matchesData[dateStr][index][field] = value;
+                refreshAllViews();
+                autoBackupData();
+                if(window.syncToFirebase) window.syncToFirebase();
+            }
+        }
+
+        function updateMatchKeoModeForDate(dateStr, index, modeVal) {
+            if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
+                const m = window.matchesData[dateStr][index];
+                m.keoMode = modeVal;
+                if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
+                else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
+                refreshAllViews();
+                autoBackupData();
+                if(window.syncToFirebase) window.syncToFirebase();
+            }
+        }
+
+        function applyKeoToAllMatchesForDate(dateStr, modeVal) {
+            window.dateKeoMode[dateStr] = modeVal;
+            const matches = window.matchesData[dateStr] || [];
+            matches.forEach(m => {
+                m.keoMode = modeVal;
+                if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
+                else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
+            });
+            refreshAllViews();
+            autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function handleBtcNoteChangeForDate(dateStr, selectEl) {
+            if (!window.paymentStatus) window.paymentStatus = {};
+            if (!window.paymentStatus[dateStr] || typeof window.paymentStatus[dateStr] !== 'object') {
+                window.paymentStatus[dateStr] = {};
+            }
+            window.paymentStatus[dateStr].btcNoteAdminOption = selectEl.value;
+            refreshAllViews();
+            autoBackupData();
+            if (window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function goToClosestDateTab() {
+            const closestDate = getClosestDateToToday();
+            if (closestDate) {
+                selectDateView(closestDate);
+            }
+        }
+
+        function updateAutoIncomeNote(dateStr, noteVal) {
+            requireAdminAuth(() => {
+                window.autoIncomeNotes[dateStr] = noteVal;
+                localStorage.setItem('pb_auto_income_notes', JSON.stringify(window.autoIncomeNotes));
+                autoBackupData();
+                if(window.syncToFirebase) window.syncToFirebase();
+            });
+        }
 
         function getBtcThuVeForDate(dateStr) {
             const matches = window.matchesData[dateStr] || [];
+            if (!matches || matches.length === 0) return 0;
+
             let statsDay = {};
-            window.players.forEach(p => { statsDay[p.name] = { played: 0, total: 0 }; });
+            (window.players || []).forEach(p => { 
+                if (p && p.name) statsDay[p.name.trim()] = { played: 0, total: 0 }; 
+            });
 
             matches.forEach(m => {
                 const s1 = parseInt(m.score1);
                 const s2 = parseInt(m.score2);
-                const mMode = m.keoMode || window.dateKeoMode[dateStr] || 'default';
+                const mMode = m.keoMode || (window.dateKeoMode ? window.dateKeoMode[dateStr] : 'default') || 'default';
+                
                 let winAmt = 5, loseAmt = -15;
                 if (mMode === "k25") { winAmt = 0; loseAmt = -25; }
                 else if (mMode === "free") {
@@ -1260,25 +1763,25 @@
                 }
 
                 if (!isNaN(s1) && !isNaN(s2)) {
-                    const pair1 = [m.c1_p1, m.c1_p2].filter(Boolean);
-                    const pair2 = [m.c2_p1, m.c2_p2].filter(Boolean);
+                    const pair1 = [m.c1_p1, m.c1_p2].filter(Boolean).map(x => x.trim());
+                    const pair2 = [m.c2_p1, m.c2_p2].filter(Boolean).map(x => x.trim());
                     let isHam = (s1 === 0 || s2 === 0);
                     let effWin = isHam ? (winAmt > 0 ? winAmt * 2 : 0) : winAmt;
                     let effLose = isHam ? loseAmt * 2 : loseAmt;
 
                     if (s1 > s2) {
-                        pair1.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effWin; } });
-                        pair2.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effLose; } });
+                        pair1.forEach(v => { if (!statsDay[v]) statsDay[v] = { played: 0, total: 0 }; statsDay[v].played++; statsDay[v].total += effWin; });
+                        pair2.forEach(v => { if (!statsDay[v]) statsDay[v] = { played: 0, total: 0 }; statsDay[v].played++; statsDay[v].total += effLose; });
                     } else if (s2 > s1) {
-                        pair2.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effWin; } });
-                        pair1.forEach(v => { if (statsDay[v]) { statsDay[v].played++; statsDay[v].total += effLose; } });
+                        pair2.forEach(v => { if (!statsDay[v]) statsDay[v] = { played: 0, total: 0 }; statsDay[v].played++; statsDay[v].total += effWin; });
+                        pair1.forEach(v => { if (!statsDay[v]) statsDay[v] = { played: 0, total: 0 }; statsDay[v].played++; statsDay[v].total += effLose; });
                     }
                 }
             });
 
             let sumAmDay = 0, sumBringBackDay = 0;
-            window.players.forEach(p => {
-                let st = statsDay[p.name];
+            Object.keys(statsDay).forEach(pName => {
+                let st = statsDay[pName];
                 if (st.played > 0) {
                     if (st.total < 0) sumAmDay += st.total;
                     else if (st.played >= 4 && st.total > 0) sumBringBackDay += st.total;
@@ -1289,64 +1792,113 @@
         }
 
         function updateInitialFund(val) {
-            window.initialFund = Number(val) || 0;
-            localStorage.setItem('pb_initial_fund', window.initialFund);
-            calculateFundSummary();
-            autoBackupData();
-            if(window.syncToFirebase) window.syncToFirebase();
-        }
-
-        function updateQuarterTitle(qKey, val) {
-            const newTitle = val.trim();
-            if(newTitle) {
-                window.quarterTitles[qKey] = newTitle;
-                localStorage.setItem('pb_quarter_titles', JSON.stringify(window.quarterTitles));
+            requireAdminAuth(() => {
+                window.initialFund = Number(val) || 0;
+                localStorage.setItem('pb_initial_fund', window.initialFund);
+                calculateFundSummary();
                 autoBackupData();
                 if(window.syncToFirebase) window.syncToFirebase();
+            });
+        }
+
+        function addNewQuarterColumn() {
+            requireAdminAuth(() => {
+                const num = window.activeQuarterColumns.length + 1;
+                const qId = `q_${Date.now()}`;
+                const colors = ["amber", "purple", "blue", "teal", "emerald", "indigo", "rose"];
+                const chosenColor = colors[(num - 1) % colors.length];
+
+                const qTitle = prompt(`Nhập tên hiển thị cho Cột Quý Mới (VD: Tiền Sân Quý ${num}):`, `Tiền Sân Quý ${num}`);
+                if (!qTitle) return;
+
+                window.activeQuarterColumns.push({
+                    id: qId,
+                    title: qTitle.trim(),
+                    statusTitle: `Trạng Thái Q${num}`,
+                    defaultAmt: 800000,
+                    bgColor: chosenColor
+                });
+
+                saveQuarterColsConfig();
                 renderFundMembers();
-            }
+            });
+        }
+
+        function deleteQuarterColumn(qId, title) {
+            requireAdminAuth(() => {
+                if (confirm(`Bạn có chắc chắn muốn XÓA cột "${title}" này khỏi Bảng Quỹ?`)) {
+                    window.activeQuarterColumns = window.activeQuarterColumns.filter(col => col.id !== qId);
+                    saveQuarterColsConfig();
+                    renderFundMembers();
+                }
+            });
+        }
+
+        function updateDynamicQuarterTitle(qId, field, value) {
+            requireAdminAuth(() => {
+                const col = window.activeQuarterColumns.find(c => c.id === qId);
+                if (col) {
+                    col[field] = value.trim();
+                    saveQuarterColsConfig();
+                }
+            });
+        }
+
+        function saveQuarterColsConfig() {
+            localStorage.setItem('pb_active_quarter_cols', JSON.stringify(window.activeQuarterColumns));
+            autoBackupData();
+            if (window.syncToFirebase) window.syncToFirebase();
         }
 
         function updateQuarterAmountDirect(playerId, qKey, val) {
-            const numVal = Number(val) || 0;
-            window.fundFeeStatus[`${playerId}_${qKey}_amt`] = numVal;
-            saveFundData();
+            requireAdminAuth(() => {
+                const numVal = Number(val) || 0;
+                window.fundFeeStatus[`${playerId}_${qKey}_amt`] = numVal;
+                saveFundData();
+            });
         }
 
         function updateQuarterStatusDirect(playerId, qKey, val) {
-            window.fundFeeStatus[`${playerId}_${qKey}_status`] = val;
-            saveFundData();
+            requireAdminAuth(() => {
+                window.fundFeeStatus[`${playerId}_${qKey}_status`] = val;
+                saveFundData();
+            });
         }
 
         function addNewFundPlayerPrompt() {
-            const name = prompt("Nhập tên Pick thủ mới muốn thêm vào danh sách Quỹ:");
-            if (name && name.trim() !== "") {
-                const trimmed = name.trim();
-                const existing = window.players.find(p => p.name.toLowerCase() === trimmed.toLowerCase());
-                if (existing) {
-                    alert("Pick thủ này đã có trong danh sách!");
-                } else {
-                    const newPlayer = { id: Date.now(), name: trimmed, gender: "Nam" };
-                    window.players.push(newPlayer);
-                    refreshAllViews();
-                    saveFundData();
+            requireAdminAuth(() => {
+                const name = prompt("Nhập tên Pick thủ mới muốn thêm vào danh sách Quỹ:");
+                if (name && name.trim() !== "") {
+                    const trimmed = name.trim();
+                    const existing = window.players.find(p => p.name.toLowerCase() === trimmed.toLowerCase());
+                    if (existing) {
+                        alert("Pick thủ này đã có trong danh sách!");
+                    } else {
+                        const newPlayer = { id: Date.now(), name: trimmed, gender: "Nam" };
+                        window.players.push(newPlayer);
+                        refreshAllViews();
+                        saveFundData();
+                    }
                 }
-            }
+            });
         }
 
         function deleteFundPlayerRow(playerId) {
-            const p = window.players.find(item => item.id === playerId);
-            if (p && confirm(`Bạn có chắc chắn muốn XÓA Pick thủ "${p.name}" khỏi danh sách?`)) {
-                window.players = window.players.filter(item => item.id !== playerId);
-                refreshAllViews();
-                saveFundData();
-            }
+            requireAdminAuth(() => {
+                const p = window.players.find(item => item.id === playerId);
+                if (p && confirm(`Bạn có chắc chắn muốn XÓA Pick thủ "${p.name}" khỏi danh sách?`)) {
+                    window.players = window.players.filter(item => item.id !== playerId);
+                    refreshAllViews();
+                    saveFundData();
+                }
+            });
         }
 
         function saveFundData() {
             localStorage.setItem('pb_fee_status', JSON.stringify(window.fundFeeStatus));
             localStorage.setItem('pb_incomes', JSON.stringify(window.fundIncomes));
             localStorage.setItem('pb_expenses', JSON.stringify(window.fundExpenses));
+            localStorage.setItem('pb_auto_income_notes', JSON.stringify(window.autoIncomeNotes));
             updateFundDashboard();
             autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
@@ -1378,13 +1930,17 @@
             let totalManualIncome = window.fundIncomes.reduce((sum, item) => sum + Number(item.amount), 0);
 
             let autoDailyIncomeTotal = 0;
-            window.dates.forEach(d => {
-                const pStatus = window.paymentStatus[d];
-                const isTransferYes = (!pStatus || typeof pStatus !== 'object' || pStatus.btcNoteAdminOption !== "NO");
+            (window.dates || []).forEach(d => {
+                const pStatus = window.paymentStatus ? window.paymentStatus[d] : null;
+                let isTransferYes = true;
+                if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
+                    isTransferYes = false;
+                }
+                
                 if (isTransferYes) {
                     let dayNetK = getBtcThuVeForDate(d);
-                    if (dayNetK > 0) {
-                        autoDailyIncomeTotal += (dayNetK * 1000);
+                    if (dayNetK !== 0) {
+                        autoDailyIncomeTotal += Math.abs(dayNetK * 1000);
                     }
                 }
             });
@@ -1409,129 +1965,85 @@
 
         function renderFundMembers() {
             const searchEl = document.getElementById('member-search');
-            const filterEl = document.getElementById('member-filter');
             const tbody = document.getElementById('member-list');
+            const theadTr = document.getElementById('member-list-thead-tr');
             const tfoot = document.getElementById('member-list-foot');
-            if(!tbody) return;
+            if(!tbody || !theadTr) return;
 
-            const tq1 = document.getElementById('col-title-q1');
-            const tq2 = document.getElementById('col-title-q2');
-            const tq3 = document.getElementById('col-title-q3');
-            const tq4 = document.getElementById('col-title-q4');
+            let headerHtml = `
+                <th class="py-3 px-3 w-10 text-center">STT</th>
+                <th class="py-3 px-3 min-w-[140px]">Tên Pick Thủ</th>
+            `;
 
-            const stq1 = document.getElementById('col-status-title-q1');
-            const stq2 = document.getElementById('col-status-title-q2');
-            const stq3 = document.getElementById('col-status-title-q3');
-            const stq4 = document.getElementById('col-status-title-q4');
-
-            if(tq1 && document.activeElement !== tq1) tq1.value = window.quarterTitles.q1;
-            if(tq2 && document.activeElement !== tq2) tq2.value = window.quarterTitles.q2;
-            if(tq3 && document.activeElement !== tq3) tq3.value = window.quarterTitles.q3;
-            if(tq4 && document.activeElement !== tq4) tq4.value = window.quarterTitles.q4;
-
-            if(stq1 && document.activeElement !== stq1) stq1.value = window.quarterTitles.status_q1 || "Trạng Thái Q1";
-            if(stq2 && document.activeElement !== stq2) stq2.value = window.quarterTitles.status_q2 || "Trạng Thái Q2";
-            if(stq3 && document.activeElement !== stq3) stq3.value = window.quarterTitles.status_q3 || "Trạng Thái Q3";
-            if(stq4 && document.activeElement !== stq4) stq4.value = window.quarterTitles.status_q4 || "Trạng Thái Q4";
-
-            const search = searchEl ? searchEl.value.toLowerCase() : '';
-            const filter = filterEl ? filterEl.value : 'all';
-            
-            tbody.innerHTML = '';
-
-            const filtered = window.players.filter(p => {
-                const matchSearch = p.name.toLowerCase().includes(search);
-                const q1Status = window.fundFeeStatus[`${p.id}_q1_status`] || (window.fundFeeStatus[`${p.id}_q1`] ? "paid" : "unpaid");
-                const q2Status = window.fundFeeStatus[`${p.id}_q2_status`] || (window.fundFeeStatus[`${p.id}_q2`] ? "paid" : "unpaid");
-                const q3Status = window.fundFeeStatus[`${p.id}_q3_status`] || (window.fundFeeStatus[`${p.id}_q3`] ? "paid" : "unpaid");
-                const q4Status = window.fundFeeStatus[`${p.id}_q4_status`] || (window.fundFeeStatus[`${p.id}_q4`] ? "paid" : "unpaid");
-
-                let matchFilter = true;
-                if(filter === 'q1_pending') matchFilter = (q1Status === 'unpaid');
-                if(filter === 'q2_pending') matchFilter = (q2Status === 'unpaid');
-                if(filter === 'q3_pending') matchFilter = (q3Status === 'unpaid');
-                if(filter === 'q4_pending') matchFilter = (q4Status === 'unpaid');
-
-                return matchSearch && matchFilter;
+            window.activeQuarterColumns.forEach(col => {
+                const c = col.bgColor || "teal";
+                headerHtml += `
+                    <th class="py-2 px-2 text-center bg-${c}-50/80 border-x border-${c}-100 min-w-[130px]">
+                        <div class="flex items-center justify-between gap-1">
+                            <input type="text" value="${col.title}" onchange="updateDynamicQuarterTitle('${col.id}', 'title', this.value)" class="w-full text-center bg-transparent border-b border-${c}-300 font-bold text-${c}-900 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Sửa tên cột">
+                            ${window.activeQuarterColumns.length > 1 ? `<button onclick="deleteQuarterColumn('${col.id}', '${col.title}')" class="text-rose-500 hover:text-rose-700 text-[10px] p-0.5" title="Xóa cột này"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        </div>
+                    </th>
+                    <th class="py-2 px-2 text-center bg-${c}-50/50 min-w-[110px]">
+                        <input type="text" value="${col.statusTitle}" onchange="updateDynamicQuarterTitle('${col.id}', 'statusTitle', this.value)" class="w-full text-center bg-transparent border-b border-${c}-300 font-bold text-${c}-800 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Sửa tên Trạng Thái">
+                    </th>
+                `;
             });
 
+            headerHtml += `<th class="py-3 px-3 text-center min-w-[90px]">Thao Tác</th>`;
+            theadTr.innerHTML = headerHtml;
+
+            const search = searchEl ? searchEl.value.toLowerCase() : '';
+            tbody.innerHTML = '';
+
+            const filtered = window.players.filter(p => p.name.toLowerCase().includes(search));
+
             if(filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="11" class="text-center py-6 text-slate-400">Không tìm thấy Pick thủ nào.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="${3 + window.activeQuarterColumns.length * 2}" class="text-center py-6 text-slate-400">Không tìm thấy Pick thủ nào.</td></tr>`;
                 if(tfoot) tfoot.innerHTML = '';
                 return;
             }
 
-            let sumQ1Collected = 0;
-            let sumQ2Collected = 0;
-            let sumQ3Collected = 0;
-            let sumQ4Collected = 0;
+            let collectedTotals = {};
+            window.activeQuarterColumns.forEach(col => { collectedTotals[col.id] = 0; });
 
             filtered.forEach((p, idx) => {
-                const q1Status = window.fundFeeStatus[`${p.id}_q1_status`] || (window.fundFeeStatus[`${p.id}_q1`] ? "paid" : "unpaid");
-                const q2Status = window.fundFeeStatus[`${p.id}_q2_status`] || (window.fundFeeStatus[`${p.id}_q2`] ? "paid" : "unpaid");
-                const q3Status = window.fundFeeStatus[`${p.id}_q3_status`] || (window.fundFeeStatus[`${p.id}_q3`] ? "paid" : "unpaid");
-                const q4Status = window.fundFeeStatus[`${p.id}_q4_status`] || (window.fundFeeStatus[`${p.id}_q4`] ? "paid" : "unpaid");
-
-                const q1Amt = window.fundFeeStatus[`${p.id}_q1_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q1_amt`] : 0;
-                const q2Amt = window.fundFeeStatus[`${p.id}_q2_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q2_amt`] : 500000;
-                const q3Amt = window.fundFeeStatus[`${p.id}_q3_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q3_amt`] : 0;
-                const q4Amt = window.fundFeeStatus[`${p.id}_q4_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q4_amt`] : 800000;
-
-                if(q1Status === "paid") sumQ1Collected += q1Amt;
-                if(q2Status === "paid") sumQ2Collected += q2Amt;
-                if(q3Status === "paid") sumQ3Collected += q3Amt;
-                if(q4Status === "paid") sumQ4Collected += q4Amt;
-
-                const buildStatusSelect = (qKey, currentStatus) => {
-                    return `
-                        <select onchange="updateQuarterStatusDirect(${p.id}, '${qKey}', this.value)" class="text-xs font-bold p-1 rounded-full border outline-none cursor-pointer ${
-                            currentStatus === 'paid' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
-                            currentStatus === 'unpaid' ? 'bg-rose-100 text-rose-800 border-rose-300' :
-                            currentStatus === 'pause' ? 'bg-amber-100 text-amber-800 border-amber-300' :
-                            'bg-slate-200 text-slate-700 border-slate-300'
-                        }">
-                            <option value="no" ${currentStatus === 'no' ? 'selected' : ''}>NO (Chưa đến)</option>
-                            <option value="unpaid" ${currentStatus === 'unpaid' ? 'selected' : ''}>Chưa đóng</option>
-                            <option value="paid" ${currentStatus === 'paid' ? 'selected' : ''}>Đã đóng</option>
-                            <option value="pause" ${currentStatus === 'pause' ? 'selected' : ''}>Tạm nghỉ</option>
-                        </select>
-                    `;
-                };
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 transition-colors";
-                tr.innerHTML = `
+                let rowHtml = `
                     <td class="py-3 px-3 text-center font-medium text-slate-500">${idx + 1}</td>
                     <td class="py-3 px-3"><span class="player-tag">${p.name}</span></td>
-                    
-                    <td class="py-2 px-2 text-center bg-teal-50/20">
-                        <input type="number" step="10000" value="${q1Amt}" onchange="updateQuarterAmountDirect(${p.id}, 'q1', this.value)" class="w-24 text-center font-bold text-teal-900 border rounded px-1 py-0.5 bg-white focus:ring-1 focus:ring-teal-500 outline-none text-xs">
-                    </td>
-                    <td class="py-2 px-2 text-center bg-teal-50/20">
-                        ${buildStatusSelect('q1', q1Status)}
-                    </td>
+                `;
 
-                    <td class="py-2 px-2 text-center bg-amber-50/20">
-                        <input type="number" step="10000" value="${q2Amt}" onchange="updateQuarterAmountDirect(${p.id}, 'q2', this.value)" class="w-24 text-center font-bold text-amber-900 border rounded px-1 py-0.5 bg-white focus:ring-1 focus:ring-amber-500 outline-none text-xs">
-                    </td>
-                    <td class="py-2 px-2 text-center bg-amber-50/20">
-                        ${buildStatusSelect('q2', q2Status)}
-                    </td>
+                window.activeQuarterColumns.forEach(col => {
+                    const qKey = col.id;
+                    const c = col.bgColor || "teal";
+                    const currentStatus = window.fundFeeStatus[`${p.id}_${qKey}_status`] || (window.fundFeeStatus[`${p.id}_${qKey}`] ? "paid" : "unpaid");
+                    const currentAmt = window.fundFeeStatus[`${p.id}_${qKey}_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_${qKey}_amt`] : col.defaultAmt;
 
-                    <td class="py-2 px-2 text-center bg-purple-50/20">
-                        <input type="number" step="10000" value="${q3Amt}" onchange="updateQuarterAmountDirect(${p.id}, 'q3', this.value)" class="w-24 text-center font-bold text-purple-900 border rounded px-1 py-0.5 bg-white focus:ring-1 focus:ring-purple-500 outline-none text-xs">
-                    </td>
-                    <td class="py-2 px-2 text-center bg-purple-50/20">
-                        ${buildStatusSelect('q3', q3Status)}
-                    </td>
+                    if(currentStatus === "paid") {
+                        collectedTotals[qKey] += currentAmt;
+                    }
 
-                    <td class="py-2 px-2 text-center bg-blue-50/20">
-                        <input type="number" step="10000" value="${q4Amt}" onchange="updateQuarterAmountDirect(${p.id}, 'q4', this.value)" class="w-24 text-center font-bold text-blue-900 border rounded px-1 py-0.5 bg-white focus:ring-1 focus:ring-blue-500 outline-none text-xs">
-                    </td>
-                    <td class="py-2 px-2 text-center bg-blue-50/20">
-                        ${buildStatusSelect('q4', q4Status)}
-                    </td>
+                    rowHtml += `
+                        <td class="py-2 px-2 text-center bg-${c}-50/20">
+                            <input type="number" step="10000" value="${currentAmt}" onchange="updateQuarterAmountDirect(${p.id}, '${qKey}', this.value)" class="w-24 text-center font-bold text-${c}-900 border rounded px-1 py-0.5 bg-white focus:ring-1 focus:ring-${c}-500 outline-none text-xs">
+                        </td>
+                        <td class="py-2 px-2 text-center bg-${c}-50/20">
+                            <select onchange="updateQuarterStatusDirect(${p.id}, '${qKey}', this.value)" class="text-xs font-bold p-1 rounded-full border outline-none cursor-pointer ${
+                                currentStatus === 'paid' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
+                                currentStatus === 'unpaid' ? 'bg-rose-100 text-rose-800 border-rose-300' :
+                                currentStatus === 'pause' ? 'bg-amber-100 text-amber-800 border-amber-300' :
+                                'bg-slate-200 text-slate-700 border-slate-300'
+                            }">
+                                <option value="no" ${currentStatus === 'no' ? 'selected' : ''}>NO (Chưa đến)</option>
+                                <option value="unpaid" ${currentStatus === 'unpaid' ? 'selected' : ''}>Chưa đóng</option>
+                                <option value="paid" ${currentStatus === 'paid' ? 'selected' : ''}>Đã đóng</option>
+                                <option value="pause" ${currentStatus === 'pause' ? 'selected' : ''}>Tạm nghỉ</option>
+                            </select>
+                        </td>
+                    `;
+                });
 
+                rowHtml += `
                     <td class="py-3 px-3 text-center">
                         <button onclick="deleteFundPlayerRow(${p.id})" class="text-red-600 hover:text-red-800 font-bold text-xs bg-red-50 border border-red-200 px-2 py-1 rounded-lg shadow-sm hover:bg-red-100 transition-colors flex items-center gap-1 mx-auto" title="Xóa Pick thủ này khỏi Quỹ">
                             <i class="fa-solid fa-trash-can"></i>
@@ -1539,31 +2051,39 @@
                         </button>
                     </td>
                 `;
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors";
+                tr.innerHTML = rowHtml;
                 tbody.appendChild(tr);
             });
 
-            const totalCourtIncome = sumQ1Collected + sumQ2Collected + sumQ3Collected + sumQ4Collected;
+            let grandTotalCollected = Object.values(collectedTotals).reduce((a, b) => a + b, 0);
             const totalExpense = window.fundExpenses.reduce((sum, item) => sum + Number(item.amount), 0);
-            const netCourt = totalCourtIncome - totalExpense;
+            const netCourt = grandTotalCollected - totalExpense;
 
             if(tfoot) {
+                let footQuarterCells = window.activeQuarterColumns.map(col => {
+                    const c = col.bgColor || "teal";
+                    return `<td class="py-2.5 px-3 text-center text-${c}-800 font-extrabold" colspan="2">${col.title}: ${formatVND(collectedTotals[col.id])}</td>`;
+                }).join('');
+
+                const colSpanCount = 1 + window.activeQuarterColumns.length * 2;
+
                 tfoot.innerHTML = `
                     <tr class="bg-emerald-50/80 text-emerald-900">
                         <td class="py-2.5 px-3 text-center font-bold" colspan="2">TỔNG THU THỰC TẾ:</td>
-                        <td class="py-2.5 px-3 text-center text-teal-800 font-extrabold" colspan="2">Q1: ${formatVND(sumQ1Collected)}</td>
-                        <td class="py-2.5 px-3 text-center text-amber-800 font-extrabold" colspan="2">Q2: ${formatVND(sumQ2Collected)}</td>
-                        <td class="py-2.5 px-3 text-center text-purple-800 font-extrabold" colspan="2">Q3: ${formatVND(sumQ3Collected)}</td>
-                        <td class="py-2.5 px-3 text-center text-blue-800 font-extrabold" colspan="2">Q4: ${formatVND(sumQ4Collected)}</td>
-                        <td class="py-2.5 px-3 text-center text-emerald-700 font-black">${formatVND(totalCourtIncome)}</td>
+                        ${footQuarterCells}
+                        <td class="py-2.5 px-3 text-center text-emerald-700 font-black">${formatVND(grandTotalCollected)}</td>
                     </tr>
                     <tr class="bg-rose-50/80 text-rose-900">
-                        <td class="py-2.5 px-3 text-center font-bold" colspan="2">DÒNG CHI QUỸ:</td>
-                        <td class="py-2.5 px-3 text-right font-extrabold" colspan="8">Tổng Các Khoản Chi Tiền Sân & Sinh Hoạt:</td>
+                        <td class="py-2.5 px-3 text-center font-bold" colspan="2">DÒNG CHI QUẤY:</td>
+                        <td class="py-2.5 px-3 text-right font-extrabold" colspan="${colSpanCount - 1}">Tổng Các Khoản Chi Tiền Sân & Sinh Hoạt:</td>
                         <td class="py-2.5 px-3 text-center text-rose-600 font-black">-${formatVND(totalExpense)}</td>
                     </tr>
                     <tr class="bg-slate-200/80 text-slate-900">
                         <td class="py-3 px-3 text-center font-black" colspan="2">THU - CHI CÒN LẠI:</td>
-                        <td class="py-3 px-3 text-center font-black text-base ${netCourt >= 0 ? 'text-emerald-700' : 'text-rose-700'}" colspan="9">
+                        <td class="py-3 px-3 text-center font-black text-base ${netCourt >= 0 ? 'text-emerald-700' : 'text-rose-700'}" colspan="${colSpanCount}">
                             ${formatVND(netCourt)}
                         </td>
                     </tr>
@@ -1573,53 +2093,76 @@
 
         function renderFundIncomes() {
             const tbody = document.getElementById('income-list');
-            if(!tbody) return;
+            if (!tbody) return;
             tbody.innerHTML = '';
 
-            window.dates.forEach(d => {
-                const pStatus = window.paymentStatus[d];
-                const isTransferYes = (!pStatus || typeof pStatus !== 'object' || pStatus.btcNoteAdminOption !== "NO");
+            (window.dates || []).forEach(d => {
+                const pStatus = window.paymentStatus ? window.paymentStatus[d] : null;
+                let isTransferYes = true;
+                
+                if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
+                    isTransferYes = false;
+                }
+
                 if (isTransferYes) {
                     let dayNetK = getBtcThuVeForDate(d);
-                    if (dayNetK > 0) {
+                    if (dayNetK !== 0) {
+                        const positiveAmount = Math.abs(dayNetK) * 1000;
+                        const currentCustomNote = window.autoIncomeNotes[d] !== undefined ? window.autoIncomeNotes[d] : "Đồng bộ tự động từ trận đấu";
+
                         const trAuto = document.createElement('tr');
-                        trAuto.className = "bg-emerald-50/70 font-semibold text-xs border-b border-emerald-100";
+                        trAuto.className = "bg-emerald-50/80 font-semibold text-xs border-b border-emerald-200/80 hover:bg-emerald-100/80 transition-colors";
                         trAuto.innerHTML = `
                             <td class="py-2.5 px-3 text-slate-600 whitespace-nowrap">${d}</td>
-                            <td class="py-2.5 px-3 text-emerald-900 font-bold">TỔNG BTC THU VỀ Ngày ${d}</td>
-                            <td class="py-2.5 px-3 text-right font-black text-emerald-700 whitespace-nowrap">+${formatVND(dayNetK * 1000)}</td>
-                            <td class="py-2.5 px-3 text-slate-600">Tự động chuyển từ Bảng Chi Tiết Ngày</td>
-                            <td class="py-2.5 px-3 text-center"><span class="text-[10px] bg-emerald-200 text-emerald-800 px-1.5 py-0.5 rounded font-bold">TỰ ĐỘNG (NOTE=YES)</span></td>
+                            <td class="py-2.5 px-3 text-emerald-950 font-bold wrap-content-cell min-w-[220px]">
+                                <div class="flex items-center gap-1.5">
+                                    <i class="fa-solid fa-coins text-amber-500 flex-shrink-0"></i>
+                                    <span>Thu tiền kèo Ngày ${d}</span>
+                                </div>
+                            </td>
+                            <td class="py-2.5 px-3 text-right font-black text-emerald-700 whitespace-nowrap">+${formatVND(positiveAmount)}</td>
+                            <td class="py-2.5 px-3 text-slate-600 whitespace-nowrap"><span class="player-tag">BTC CLB</span></td>
+                            <td class="py-2.5 px-3 min-w-[200px]">
+                                <textarea onchange="updateAutoIncomeNote('${d}', this.value)" rows="1" class="w-full bg-white border border-emerald-300 rounded px-2 py-1 text-xs text-slate-700 font-medium focus:outline-none focus:ring-1 focus:ring-emerald-500 shadow-sm" placeholder="Nhập ghi chú chi tiết...">${currentCustomNote}</textarea>
+                            </td>
+                            <td class="py-2.5 px-3 text-center whitespace-nowrap">
+                                <button onclick="alert('Dòng này tự động cập nhật số tiền từ Bảng Chi Tiết Ngày ${d}.')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors">
+                                    <i class="fa-solid fa-pencil"></i>
+                                </button>
+                                <button onclick="requireAdminAuth(() => { if(confirm('Để ẩn khoản thu tự động Ngày ${d}, bạn có muốn đổi trạng thái NOTE của ngày này thành NO?')) { if(!window.paymentStatus['${d}']) window.paymentStatus['${d}'] = {}; window.paymentStatus['${d}'].btcNoteAdminOption = 'NO'; refreshAllViews(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase(); } })" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </td>
                         `;
                         tbody.appendChild(trAuto);
                     }
                 }
             });
 
-            if(window.fundIncomes.length === 0 && tbody.children.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">Chưa có khoản thu nào.</td></tr>`;
-                return;
-            }
-
-            window.fundIncomes.forEach(item => {
+            (window.fundIncomes || []).forEach(item => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors";
                 tr.innerHTML = `
                     <td class="py-2.5 px-3 text-xs text-slate-500 whitespace-nowrap">${formatDate(item.date)}</td>
-                    <td class="py-2.5 px-3 font-medium text-slate-800">${item.desc}</td>
+                    <td class="py-2.5 px-3 font-medium text-slate-800 wrap-content-cell min-w-[220px]">${item.desc}</td>
                     <td class="py-2.5 px-3 text-right font-semibold text-emerald-600 whitespace-nowrap">+${formatVND(item.amount)}</td>
-                    <td class="py-2.5 px-3 text-xs"><span class="player-tag">${item.source}</span></td>
+                    <td class="py-2.5 px-3 text-xs whitespace-nowrap"><span class="player-tag">${item.source}</span></td>
+                    <td class="py-2.5 px-3 text-xs text-slate-600 wrap-content-cell min-w-[200px]">${item.note || '---'}</td>
                     <td class="py-2.5 px-3 text-center whitespace-nowrap">
-                        <button onclick="openEditFundModal(${item.id}, 'income')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors" title="Chỉnh sửa">
+                        <button onclick="openEditFundModal(${item.id}, 'income')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors">
                             <i class="fa-solid fa-pencil"></i>
                         </button>
-                        <button onclick="deleteFundTx(${item.id}, 'income')" class="text-slate-400 hover:text-rose-500 p-1 transition-colors" title="Xóa">
+                        <button onclick="deleteFundTx(${item.id}, 'income')" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
+
+            if (tbody.children.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Chưa có khoản thu nào.</td></tr>`;
+            }
         }
 
         function renderFundExpenses() {
@@ -1628,7 +2171,7 @@
             tbody.innerHTML = '';
 
             if(window.fundExpenses.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">Chưa có khoản chi nào.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Chưa có khoản chi nào.</td></tr>`;
                 return;
             }
 
@@ -1637,14 +2180,15 @@
                 tr.className = "hover:bg-slate-50 transition-colors";
                 tr.innerHTML = `
                     <td class="py-2.5 px-3 text-xs text-slate-500 whitespace-nowrap">${formatDate(item.date)}</td>
-                    <td class="py-2.5 px-3 font-medium text-slate-800">${item.desc}</td>
+                    <td class="py-2.5 px-3 font-medium text-slate-800 wrap-content-cell min-w-[220px]">${item.desc}</td>
                     <td class="py-2.5 px-3 text-right font-semibold text-rose-600 whitespace-nowrap">-${formatVND(item.amount)}</td>
-                    <td class="py-2.5 px-3 text-xs"><span class="player-tag">${item.source}</span></td>
+                    <td class="py-2.5 px-3 text-xs whitespace-nowrap"><span class="player-tag">${item.source}</span></td>
+                    <td class="py-2.5 px-3 text-xs text-slate-600 wrap-content-cell min-w-[200px]">${item.note || '---'}</td>
                     <td class="py-2.5 px-3 text-center whitespace-nowrap">
-                        <button onclick="openEditFundModal(${item.id}, 'expense')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors" title="Chỉnh sửa">
+                        <button onclick="openEditFundModal(${item.id}, 'expense')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors">
                             <i class="fa-solid fa-pencil"></i>
                         </button>
-                        <button onclick="deleteFundTx(${item.id}, 'expense')" class="text-slate-400 hover:text-rose-500 p-1 transition-colors" title="Xóa">
+                        <button onclick="deleteFundTx(${item.id}, 'expense')" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </td>
@@ -1654,65 +2198,69 @@
         }
 
         function openFundModal(type) {
-            const backdrop = document.getElementById('fund-modal-backdrop');
-            const header = document.getElementById('fund-modal-header');
-            const title = document.getElementById('fund-modal-title');
-            const btnSubmit = document.getElementById('fund-btn-submit');
-            const lblSource = document.getElementById('lbl-source');
-            const sourceSelect = document.getElementById('tx-source-select');
+            requireAdminAuth(() => {
+                const backdrop = document.getElementById('fund-modal-backdrop');
+                const header = document.getElementById('fund-modal-header');
+                const title = document.getElementById('fund-modal-title');
+                const btnSubmit = document.getElementById('fund-btn-submit');
+                const lblSource = document.getElementById('lbl-source');
+                const sourceSelect = document.getElementById('tx-source-select');
 
-            if(sourceSelect) {
-                let optionsHtml = `<option value="Khách vãng lai / Khác">-- Khách vãng lai / Khác --</option>`;
-                window.players.forEach(p => {
-                    optionsHtml += `<option value="${p.name}">${p.name}</option>`;
-                });
-                sourceSelect.innerHTML = optionsHtml;
-            }
-            
-            const form = document.getElementById('fund-transaction-form');
-            if(form) {
-                form.querySelector('#tx-id').value = '';
-                form.querySelector('#tx-type').value = type;
-                form.querySelector('#tx-date').value = new Date().toISOString().split('T')[0];
-                form.querySelector('#tx-desc').value = '';
-                form.querySelector('#tx-amount').value = '';
-                form.querySelector('#tx-note').value = '';
-            }
+                if(sourceSelect) {
+                    let optionsHtml = `<option value="Khách vãng lai / Khác">-- Khách vãng lai / Khác --</option>`;
+                    window.players.forEach(p => {
+                        optionsHtml += `<option value="${p.name}">${p.name}</option>`;
+                    });
+                    sourceSelect.innerHTML = optionsHtml;
+                }
+                
+                const form = document.getElementById('fund-transaction-form');
+                if(form) {
+                    form.querySelector('#tx-id').value = '';
+                    form.querySelector('#tx-type').value = type;
+                    form.querySelector('#tx-date').value = new Date().toISOString().split('T')[0];
+                    form.querySelector('#tx-desc').value = '';
+                    form.querySelector('#tx-amount').value = '';
+                    form.querySelector('#tx-note').value = '';
+                }
 
-            if(type === 'income') {
-                header.className = "p-4 bg-emerald-600 text-white flex justify-between items-center";
-                title.innerHTML = '<i class="fa-solid fa-circle-arrow-down"></i> Thêm Khoản Thu Mới';
-                btnSubmit.className = "px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm";
-                btnSubmit.innerText = "Lưu Khoản Thu";
-                if(lblSource) lblSource.innerText = "Nguồn Thu / Pick Thủ";
-            } else {
-                header.className = "p-4 bg-rose-600 text-white flex justify-between items-center";
-                title.innerHTML = '<i class="fa-solid fa-circle-arrow-up"></i> Thêm Khoản Chi Mới';
-                btnSubmit.className = "px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm";
-                btnSubmit.innerText = "Lưu Khoản Chi";
-                if(lblSource) lblSource.innerText = "Hạng Mục Chi / Pick Thủ Nhận";
-            }
+                if(type === 'income') {
+                    header.className = "p-4 bg-emerald-600 text-white flex justify-between items-center";
+                    title.innerHTML = '<i class="fa-solid fa-circle-arrow-down"></i> Thêm Khoản Thu Mới';
+                    btnSubmit.className = "px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm";
+                    btnSubmit.innerText = "Lưu Khoản Thu";
+                    if(lblSource) lblSource.innerText = "Nguồn Thu / Pick Thủ";
+                } else {
+                    header.className = "p-4 bg-rose-600 text-white flex justify-between items-center";
+                    title.innerHTML = '<i class="fa-solid fa-circle-arrow-up"></i> Thêm Khoản Chi Mới';
+                    btnSubmit.className = "px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm";
+                    btnSubmit.innerText = "Lưu Khoản Chi";
+                    if(lblSource) lblSource.innerText = "Hạng Mục Chi / Pick Thủ Nhận";
+                }
 
-            backdrop.classList.remove('hidden');
+                backdrop.classList.remove('hidden');
+            });
         }
 
         function openEditFundModal(id, type) {
-            const list = type === 'income' ? window.fundIncomes : window.fundExpenses;
-            const item = list.find(x => x.id === id);
-            if(!item) return;
+            requireAdminAuth(() => {
+                const list = type === 'income' ? window.fundIncomes : window.fundExpenses;
+                const item = list.find(x => x.id === id);
+                if(!item) return;
 
-            openFundModal(type);
+                openFundModal(type);
 
-            const form = document.getElementById('fund-transaction-form');
-            form.querySelector('#tx-id').value = item.id;
-            form.querySelector('#tx-date').value = item.date;
-            form.querySelector('#tx-desc').value = item.desc;
-            form.querySelector('#tx-amount').value = item.amount;
-            form.querySelector('#tx-source-select').value = item.source || "Khách vãng lai / Khác";
-            form.querySelector('#tx-note').value = item.note || "";
+                const form = document.getElementById('fund-transaction-form');
+                form.querySelector('#tx-id').value = item.id;
+                form.querySelector('#tx-date').value = item.date;
+                form.querySelector('#tx-desc').value = item.desc;
+                form.querySelector('#tx-amount').value = item.amount;
+                form.querySelector('#tx-source-select').value = item.source || "Khách vãng lai / Khác";
+                form.querySelector('#tx-note').value = item.note || "";
 
-            const title = document.getElementById('fund-modal-title');
-            title.innerHTML = type === 'income' ? '<i class="fa-solid fa-pen-to-square"></i> Sửa Khoản Thu' : '<i class="fa-solid fa-pen-to-square"></i> Sửa Khoản Chi';
+                const title = document.getElementById('fund-modal-title');
+                title.innerHTML = type === 'income' ? '<i class="fa-solid fa-pen-to-square"></i> Sửa Khoản Thu' : '<i class="fa-solid fa-pen-to-square"></i> Sửa Khoản Chi';
+            });
         }
 
         function closeFundModal() {
@@ -1748,25 +2296,38 @@
         }
 
         function deleteFundTx(id, type) {
-            if(confirm("Bạn có muốn xóa giao dịch này khỏi hệ thống Quỹ Pick?")) {
-                if(type === 'income') {
-                    window.fundIncomes = window.fundIncomes.filter(i => i.id !== id);
-                } else {
-                    window.fundExpenses = window.fundExpenses.filter(i => i.id !== id);
+            requireAdminAuth(() => {
+                if(confirm("Bạn có muốn xóa giao dịch này?")) {
+                    if(type === 'income') {
+                        window.fundIncomes = window.fundIncomes.filter(i => i.id !== id);
+                    } else {
+                        window.fundExpenses = window.fundExpenses.filter(i => i.id !== id);
+                    }
+                    saveFundData();
                 }
-                saveFundData();
-            }
+            });
         }
 
         function exportFundToExcel() {
             let totalManualIncome = window.fundIncomes.reduce((sum, item) => sum + Number(item.amount), 0);
             let autoDailyIncomeTotal = 0;
-            window.dates.forEach(d => {
-                const pStatus = window.paymentStatus[d];
-                const isTransferYes = (!pStatus || typeof pStatus !== 'object' || pStatus.btcNoteAdminOption !== "NO");
+            let autoIncomeRows = [];
+
+            (window.dates || []).forEach(d => {
+                const pStatus = window.paymentStatus ? window.paymentStatus[d] : null;
+                let isTransferYes = true;
+                if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
+                    isTransferYes = false;
+                }
+
                 if (isTransferYes) {
                     let dayNetK = getBtcThuVeForDate(d);
-                    if (dayNetK > 0) autoDailyIncomeTotal += (dayNetK * 1000);
+                    if (dayNetK !== 0) {
+                        const amt = Math.abs(dayNetK) * 1000;
+                        autoDailyIncomeTotal += amt;
+                        const noteVal = window.autoIncomeNotes[d] !== undefined ? window.autoIncomeNotes[d] : "Đồng bộ tự động từ trận đấu";
+                        autoIncomeRows.push([autoIncomeRows.length + 1, d, `Thu tiền kèo Ngày ${d}`, amt, "BTC CLB", noteVal]);
+                    }
                 }
             });
 
@@ -1775,37 +2336,42 @@
             const currentBalance = window.initialFund + grandTotalIncome - totalExpense;
 
             const summaryData = [
-                ["BÁO CÁO TỔNG QUAN QUỸ PICKLEBALL"],
+                ["BÁO CÁO TỔNG QUAN QUẤY PICKLEBALL"],
                 [],
                 ["Hạng mục", "Số tiền (VNĐ)", "Ghi chú"],
                 ["Quỹ đầu kỳ", window.initialFund, "Tồn quỹ kỳ trước chuyển sang"],
-                ["Tổng thu trong kỳ", grandTotalIncome, "Bao gồm thu thủ công & tự động từ TỔNG BTC THU VỀ các ngày NOTE=YES"],
+                ["Tổng thu trong kỳ", grandTotalIncome, "Bao gồm thu thủ công & tự động"],
                 ["Tổng chi trong kỳ", totalExpense, "Tự động tính từ Nhật ký Chi"],
-                ["SỐ DƯ QUỸ HIỆN TẠI", currentBalance, "Công thức: Đầu kỳ + Thu - Chi"]
+                ["SỐ DƯ QUẤY HIỆN TẠI", currentBalance, "Công thức: Đầu kỳ + Thu - Chi"]
             ];
 
             const statusMap = { paid: "Đã đóng", unpaid: "Chưa đóng", pause: "Tạm nghỉ", no: "NO (Chưa đến)" };
 
+            let dynamicHeaderExcel = ["STT", "Tên Pick Thủ"];
+            window.activeQuarterColumns.forEach(col => {
+                dynamicHeaderExcel.push(`${col.title} (VNĐ)`);
+                dynamicHeaderExcel.push(col.statusTitle);
+            });
+
             const memberData = [
-                ["STT", "Tên Pick Thủ", `${window.quarterTitles.q1} (VNĐ)`, window.quarterTitles.status_q1 || "Trạng thái Q1", `${window.quarterTitles.q2} (VNĐ)`, window.quarterTitles.status_q2 || "Trạng thái Q2", `${window.quarterTitles.q3} (VNĐ)`, window.quarterTitles.status_q3 || "Trạng thái Q3", `${window.quarterTitles.q4} (VNĐ)`, window.quarterTitles.status_q4 || "Trạng thái Q4"],
-                ...window.players.map((p, i) => [
-                    i + 1, 
-                    p.name, 
-                    window.fundFeeStatus[`${p.id}_q1_amt`] || 0,
-                    statusMap[window.fundFeeStatus[`${p.id}_q1_status`] || (window.fundFeeStatus[`${p.id}_q1`] ? "paid" : "unpaid")],
-                    window.fundFeeStatus[`${p.id}_q2_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q2_amt`] : 500000, 
-                    statusMap[window.fundFeeStatus[`${p.id}_q2_status`] || (window.fundFeeStatus[`${p.id}_q2`] ? "paid" : "unpaid")],
-                    window.fundFeeStatus[`${p.id}_q3_amt`] || 0,
-                    statusMap[window.fundFeeStatus[`${p.id}_q3_status`] || (window.fundFeeStatus[`${p.id}_q3`] ? "paid" : "unpaid")],
-                    window.fundFeeStatus[`${p.id}_q4_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_q4_amt`] : 800000, 
-                    statusMap[window.fundFeeStatus[`${p.id}_q4_status`] || (window.fundFeeStatus[`${p.id}_q4`] ? "paid" : "unpaid")]
-                ])
+                dynamicHeaderExcel,
+                ...window.players.map((p, i) => {
+                    let row = [i + 1, p.name];
+                    window.activeQuarterColumns.forEach(col => {
+                        const qKey = col.id;
+                        const amt = window.fundFeeStatus[`${p.id}_${qKey}_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_${qKey}_amt`] : col.defaultAmt;
+                        const st = statusMap[window.fundFeeStatus[`${p.id}_${qKey}_status`] || (window.fundFeeStatus[`${p.id}_${qKey}`] ? "paid" : "unpaid")];
+                        row.push(amt, st);
+                    });
+                    return row;
+                })
             ];
 
             const incomeData = [
                 ["STT", "Ngày tháng", "Nội dung thu", "Số tiền (VNĐ)", "Nguồn/Pick thủ", "Ghi chú"],
-                ...window.fundIncomes.map((item, i) => [i + 1, formatDate(item.date), item.desc, item.amount, item.source, item.note]),
-                ["", "", "TỔNG CỘNG THU THỦ CÔNG", totalManualIncome, "", ""]
+                ...autoIncomeRows,
+                ...window.fundIncomes.map((item, i) => [autoIncomeRows.length + i + 1, formatDate(item.date), item.desc, item.amount, item.source, item.note]),
+                ["", "", "TỔNG CỘNG THU QUẤY", grandTotalIncome, "", ""]
             ];
 
             const expenseData = [
@@ -1867,6 +2433,7 @@
                 }));
                 window.dateKeoMode[dateStr] = "default";
                 selectDateView(dateStr);
+                updateFundDashboard();
                 autoBackupData();
                 if(window.syncToFirebase) window.syncToFirebase();
             }
@@ -1886,6 +2453,7 @@
                 delete window.matchesData[oldDate];
                 delete window.dateKeoMode[oldDate];
                 selectDateView(trimmed);
+                updateFundDashboard();
                 autoBackupData();
                 if(window.syncToFirebase) window.syncToFirebase();
             }
@@ -1900,6 +2468,7 @@
                 delete window.dateKeoMode[dateToDelete];
                 if (window.dates.length > 0) selectDateView(window.dates[0]);
                 else showTab('home');
+                updateFundDashboard();
                 autoBackupData();
                 if(window.syncToFirebase) window.syncToFirebase();
             }
@@ -1930,96 +2499,38 @@
         function triggerRestoreJSON() { triggerRestoreInput(); }
 
         function addMatchToCurrentDate() {
-            const dateStr = window.currentSelectedDate;
-            if(!window.matchesData[dateStr]) window.matchesData[dateStr] = [];
-            const nextId = window.matchesData[dateStr].length + 1;
-            const globalMode = window.dateKeoMode[dateStr] || 'default';
-            window.matchesData[dateStr].push({ 
-                id: nextId, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "",
-                keoMode: globalMode, customWin: globalMode === 'k25' ? 0 : 5, customLose: globalMode === 'k25' ? -25 : -15
-            });
-            renderDayDetailView();
-            updateFundDashboard();
-            autoBackupData();
-            if(window.syncToFirebase) window.syncToFirebase();
+            addMatchToDate(window.currentSelectedDate);
         }
 
         function deleteMatchFromCurrentDate(index) {
-            const dateStr = window.currentSelectedDate;
-            if(confirm(`Bạn có chắc chắn muốn XÓA Trận ${index + 1}?`)) {
-                if(window.matchesData[dateStr]) {
-                    window.matchesData[dateStr].splice(index, 1);
-                    renderDayDetailView();
-                    updateFundDashboard();
-                    autoBackupData();
-                    if(window.syncToFirebase) window.syncToFirebase();
-                }
-            }
+            deleteMatchFromDate(window.currentSelectedDate, index);
         }
 
         function updateMatchData(index, field, value) {
-            const dateStr = window.currentSelectedDate;
-            if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
-                window.matchesData[dateStr][index][field] = value;
-                renderDayDetailView();
-                updateFundDashboard();
-                autoBackupData();
-                if(window.syncToFirebase) window.syncToFirebase();
-            }
+            updateMatchDataForDate(window.currentSelectedDate, index, field, value);
         }
 
         function applyKeoToAllMatchesInDate(modeVal) {
-            const dateStr = window.currentSelectedDate;
-            window.dateKeoMode[dateStr] = modeVal;
-            const matches = window.matchesData[dateStr] || [];
-            matches.forEach(m => {
-                m.keoMode = modeVal;
-                if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
-                else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
-            });
-            renderDayDetailView();
-            updateFundDashboard();
-            autoBackupData();
-            if(window.syncToFirebase) window.syncToFirebase();
+            applyKeoToAllMatchesForDate(window.currentSelectedDate, modeVal);
         }
 
         function updateMatchKeoMode(index, modeVal) {
-            const dateStr = window.currentSelectedDate;
-            if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
-                const m = window.matchesData[dateStr][index];
-                m.keoMode = modeVal;
-                if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
-                else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
-                renderDayDetailView();
-                updateFundDashboard();
-                autoBackupData();
-                if(window.syncToFirebase) window.syncToFirebase();
-            }
+            updateMatchKeoModeForDate(window.currentSelectedDate, index, modeVal);
         }
 
         function togglePaymentStatus(payKey) {
             if (!window.isAdminUnlocked) {
-                alert("🔒 Bạn cần nhập Pass Admin ở phía trên để tích xác nhận nộp/chưa nộp!");
+                alert("🔒 Bạn cần nhập Pass Admin ở phía trên!");
                 return;
             }
             window.paymentStatus[payKey] = !window.paymentStatus[payKey];
-            renderDayDetailView();
-            updateFundDashboard();
+            refreshAllViews();
             autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
         function handleBtcNoteChange(selectEl) {
-            const dateStr = window.currentSelectedDate;
-            if(!window.paymentStatus[dateStr] || typeof window.paymentStatus[dateStr] !== 'object') {
-                window.paymentStatus[dateStr] = {};
-            }
-            window.paymentStatus[dateStr].btcNoteAdminOption = selectEl.value;
-            renderDayDetailView();
-            renderTongHopTab();
-            updateFundDashboard();
-            autoBackupData();
-            if(window.syncToFirebase) window.syncToFirebase();
+            handleBtcNoteChangeForDate(window.currentSelectedDate, selectEl);
         }
 
         function renderDayDetailView() {
@@ -2081,7 +2592,7 @@
                     window.players.forEach(p => {
                         opts += `<option value="${p.name}" ${p.name === val ? 'selected' : ''}>${p.name}</option>`;
                     });
-                    return `<select onchange="updateMatchData(${idx}, '${field}', this.value)" class="player-select-btn text-[11px] border rounded p-1 outline-none w-full bg-white shadow-sm">
+                    return `<select onchange="updateMatchDataForDate('${dateStr}', ${idx}, '${field}', this.value)" class="player-select-btn text-[11px] border rounded p-1 outline-none w-full bg-white shadow-sm">
                         ${opts}
                     </select>`;
                 };
@@ -2091,15 +2602,15 @@
 
                 const score1Inner = isHam1 
                     ? `<span class="ham-text">HẦM</span>` 
-                    : `<input type="text" class="score-input" value="${m.score1 || ''}" onchange="updateMatchData(${idx}, 'score1', this.value)">`;
+                    : `<input type="text" class="score-input" value="${m.score1 || ''}" onchange="updateMatchDataForDate('${dateStr}', ${idx}, 'score1', this.value)">`;
 
                 const score2Inner = isHam2 
                     ? `<span class="ham-text">HẦM</span>` 
-                    : `<input type="text" class="score-input" value="${m.score2 || ''}" onchange="updateMatchData(${idx}, 'score2', this.value)">`;
+                    : `<input type="text" class="score-input" value="${m.score2 || ''}" onchange="updateMatchDataForDate('${dateStr}', ${idx}, 'score2', this.value)">`;
 
                 let keoCellUI = `
-                    <select onchange="updateMatchKeoMode(${idx}, this.value)" class="text-[10px] sm:text-[11px] font-bold p-0.5 border rounded bg-amber-50 outline-none w-full text-amber-900 border-amber-300">
-                        <option value="default" ${mMode==='default'?'selected':''}>Mặc định (+5k/-15k)</option>
+                    <select onchange="updateMatchKeoModeForDate('${dateStr}', ${idx}, this.value)" class="text-[10px] sm:text-[11px] font-bold p-0.5 border rounded bg-amber-50 outline-none w-full text-amber-900 border-amber-300">
+                        <option value="default" ${mMode==='default'?'selected':''}>Kèo (+5k/-15k)</option>
                         <option value="k25" ${mMode==='k25'?'selected':''}>Kèo 25k (0k/-25k)</option>
                         <option value="free" ${mMode==='free'?'selected':''}>Kèo Tự Do</option>
                     </select>
@@ -2109,9 +2620,9 @@
                     keoCellUI += `
                         <div class="flex items-center justify-center gap-1 mt-1">
                             <span class="text-[10px] text-emerald-700 font-bold">+</span>
-                            <input type="number" class="keo-custom-input text-emerald-700" value="${m.customWin !== undefined ? m.customWin : 5}" onchange="updateMatchData(${idx}, 'customWin', this.value)" title="Tiền thắng">
+                            <input type="number" class="keo-custom-input text-emerald-700" value="${m.customWin !== undefined ? m.customWin : 5}" onchange="updateMatchDataForDate('${dateStr}', ${idx}, 'customWin', this.value)" title="Tiền thắng">
                             <span class="text-[10px] text-red-600 font-bold">/</span>
-                            <input type="number" class="keo-custom-input text-red-600" value="${m.customLose !== undefined ? m.customLose : -15}" onchange="updateMatchData(${idx}, 'customLose', this.value)" title="Tiền thua">
+                            <input type="number" class="keo-custom-input text-red-600" value="${m.customLose !== undefined ? m.customLose : -15}" onchange="updateMatchDataForDate('${dateStr}', ${idx}, 'customLose', this.value)" title="Tiền thua">
                         </div>
                     `;
                 }
@@ -2124,9 +2635,9 @@
                         
                         <td class="p-1 bg-purple-50/40 border-x border-purple-200">
                             <div class="flex items-center justify-center gap-0.5">
-                                <div onclick="if(${isHam1}) updateMatchData(${idx}, 'score1', '')">${score1Inner}</div>
+                                <div onclick="if(${isHam1}) updateMatchDataForDate('${dateStr}', ${idx}, 'score1', '')">${score1Inner}</div>
                                 <span class="font-black text-slate-400 px-0.5">-</span>
-                                <div onclick="if(${isHam2}) updateMatchData(${idx}, 'score2', '')">${score2Inner}</div>
+                                <div onclick="if(${isHam2}) updateMatchDataForDate('${dateStr}', ${idx}, 'score2', '')">${score2Inner}</div>
                             </div>
                         </td>
 
@@ -2136,9 +2647,9 @@
                         <td class="p-1 bg-amber-50/50">${keoCellUI}</td>
                         <td class="p-1 font-extrabold ${keo1 > 0 ? 'txt-win' : (keo1 < 0 ? 'txt-lose' : '')}">${keo1}</td>
                         <td class="p-1 font-extrabold ${keo2 > 0 ? 'txt-win' : (keo2 < 0 ? 'txt-lose' : '')}">${keo2}</td>
-                        <td class="p-1 whitespace-nowrap">
-                            <button onclick="deleteMatchFromCurrentDate(${idx})" class="text-red-600 hover:text-red-800 font-bold text-xs px-2 py-1 bg-red-50 rounded border border-red-200 shadow-sm transition-all hover:bg-red-100">
-                                <i class="fa-solid fa-trash"></i> Xóa
+                        <td class="p-1 text-center whitespace-nowrap">
+                            <button onclick="deleteMatchFromDate('${dateStr}', ${idx})" class="text-slate-400 hover:text-red-600 font-bold p-1 transition-colors" title="Xóa trận đấu">
+                                <i class="fa-solid fa-trash-can text-sm"></i>
                             </button>
                         </td>
                     </tr>
@@ -2203,7 +2714,7 @@
                     <td class="p-2 border text-red-600">${btcThuVe}</td>
                     <td class="p-2 border text-blue-700">${sumThucThu}</td>
                     <td class="p-2 border whitespace-nowrap">
-                        <select onchange="handleBtcNoteChange(this)" class="text-xs font-bold p-1 border rounded bg-white text-emerald-700 outline-none">
+                        <select onchange="handleBtcNoteChangeForDate('${dateStr}', this)" class="text-xs font-bold p-1 border rounded bg-white text-emerald-700 outline-none">
                             <option value="YES" ${currentOption==='YES'?'selected':''}>YES (Chuyển tổng ngày)</option>
                             <option value="NO" ${currentOption==='NO'?'selected':''}>NO (Không chuyển)</option>
                         </select>
@@ -2247,7 +2758,10 @@
             activeDates.forEach(d => {
                 const matches = window.matchesData[d] || [];
                 const pStatus = window.paymentStatus[d];
-                const isTransferYes = (!pStatus || typeof pStatus !== 'object' || pStatus.btcNoteAdminOption !== "NO");
+                let isTransferYes = true;
+                if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
+                    isTransferYes = false;
+                }
 
                 let statsDay = {};
                 vdvList.forEach(v => { statsDay[v] = { played: 0, total: 0 }; });
@@ -2637,6 +3151,7 @@
                     appName: "CLB-PICKLEBALL-CMTD",
                     exportDate: new Date().toISOString(),
                     players: window.players,
+                    createdMinigames: window.createdMinigames,
                     m1TeamA: window.m1TeamA,
                     m1TeamB: window.m1TeamB,
                     m1Matches: window.m1Matches,
@@ -2648,11 +3163,12 @@
                     matchesData: window.matchesData,
                     dateKeoMode: window.dateKeoMode,
                     paymentStatus: window.paymentStatus,
-                    quarterTitles: window.quarterTitles,
+                    activeQuarterColumns: window.activeQuarterColumns,
                     initialFund: window.initialFund,
                     fundFeeStatus: window.fundFeeStatus,
                     fundIncomes: window.fundIncomes,
                     fundExpenses: window.fundExpenses,
+                    autoIncomeNotes: window.autoIncomeNotes,
                     knockoutScores: {
                         bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
                         bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
@@ -2670,6 +3186,7 @@
             try {
                 const data = JSON.parse(rawData);
                 if (data.players) window.players = data.players;
+                if (data.createdMinigames) window.createdMinigames = data.createdMinigames;
                 if (data.m1TeamA) window.m1TeamA = data.m1TeamA;
                 if (data.m1TeamB) window.m1TeamB = data.m1TeamB;
                 if (data.m1Matches) window.m1Matches = data.m1Matches;
@@ -2681,11 +3198,12 @@
                 if (data.matchesData) window.matchesData = data.matchesData;
                 if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
                 if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
-                if (data.quarterTitles) window.quarterTitles = data.quarterTitles;
+                if (data.activeQuarterColumns) window.activeQuarterColumns = data.activeQuarterColumns;
                 if (data.initialFund !== undefined) window.initialFund = data.initialFund;
                 if (data.fundFeeStatus) window.fundFeeStatus = data.fundFeeStatus;
                 if (data.fundIncomes) window.fundIncomes = data.fundIncomes;
                 if (data.fundExpenses) window.fundExpenses = data.fundExpenses;
+                if (data.autoIncomeNotes) window.autoIncomeNotes = data.autoIncomeNotes;
 
                 refreshAllViews();
                 if (!silent) alert("Đã nạp thành công dữ liệu từ Auto-Backup!");
@@ -2698,6 +3216,7 @@
                 appName: "CLB-PICKLEBALL-CMTD",
                 exportDate: new Date().toISOString(),
                 players: window.players,
+                createdMinigames: window.createdMinigames,
                 m1TeamA: window.m1TeamA,
                 m1TeamB: window.m1TeamB,
                 m1Matches: window.m1Matches,
@@ -2709,11 +3228,12 @@
                 matchesData: window.matchesData,
                 dateKeoMode: window.dateKeoMode,
                 paymentStatus: window.paymentStatus,
-                quarterTitles: window.quarterTitles,
+                activeQuarterColumns: window.activeQuarterColumns,
                 initialFund: window.initialFund,
                 fundFeeStatus: window.fundFeeStatus,
                 fundIncomes: window.fundIncomes,
                 fundExpenses: window.fundExpenses,
+                autoIncomeNotes: window.autoIncomeNotes,
                 knockoutScores: {
                     bk1: [getVal('bk1-s1'), getVal('bk1-s2')],
                     bk2: [getVal('bk2-s1'), getVal('bk2-s2')],
@@ -2739,6 +3259,7 @@
                 try {
                     const data = JSON.parse(e.target.result);
                     if (data.players) window.players = data.players;
+                    if (data.createdMinigames) window.createdMinigames = data.createdMinigames;
                     if (data.m1TeamA) window.m1TeamA = data.m1TeamA;
                     if (data.m1TeamB) window.m1TeamB = data.m1TeamB;
                     if (data.m1Matches) window.m1Matches = data.m1Matches;
@@ -2750,11 +3271,12 @@
                     if (data.matchesData) window.matchesData = data.matchesData;
                     if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
                     if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
-                    if (data.quarterTitles) window.quarterTitles = data.quarterTitles;
+                    if (data.activeQuarterColumns) window.activeQuarterColumns = data.activeQuarterColumns;
                     if (data.initialFund !== undefined) window.initialFund = data.initialFund;
                     if (data.fundFeeStatus) window.fundFeeStatus = data.fundFeeStatus;
                     if (data.fundIncomes) window.fundIncomes = data.fundIncomes;
                     if (data.fundExpenses) window.fundExpenses = data.fundExpenses;
+                    if (data.autoIncomeNotes) window.autoIncomeNotes = data.autoIncomeNotes;
 
                     refreshAllViews();
                     autoBackupData();
@@ -2777,6 +3299,7 @@
             const activeBtn = document.getElementById(`btn-${tabId}`);
             if (activeBtn) activeBtn.classList.add('bg-slate-700', 'text-yellow-400');
 
+            if(tabId === 'home') renderHomeClosestDateView();
             if(tabId === 'tonghop') renderTongHopTab();
             if(tabId === 'day_detail') renderDayDetailView();
             if(tabId === 'fund_manager') updateFundDashboard();
@@ -2790,6 +3313,8 @@
             renderDayDetailView();
             renderTongHopTab();
             updateFundDashboard();
+            renderHomeClosestDateView();
+            renderDynamicMinigameList();
         }
 
         function renderPlayers() {
@@ -2853,7 +3378,7 @@
         }
 
         function deletePlayer(id) {
-            if(confirm('Bạn có chắc muốn xoá VĐV này khỏi danh sách?')) {
+            if(confirm('Bạn có chắc muốn xoá VĐV này?')) {
                 window.players = window.players.filter(p => p.id != id);
                 refreshAllViews();
                 autoBackupData();
@@ -3032,6 +3557,7 @@
 
                 await setDoc(doc(db, "minigame", "app_state"), {
                     players: window.players,
+                    createdMinigames: window.createdMinigames,
                     m1TeamA: window.m1TeamA,
                     m1TeamB: window.m1TeamB,
                     m1Matches: window.m1Matches,
@@ -3043,14 +3569,15 @@
                     matchesData: window.matchesData,
                     dateKeoMode: window.dateKeoMode,
                     paymentStatus: window.paymentStatus,
-                    quarterTitles: window.quarterTitles,
+                    activeQuarterColumns: window.activeQuarterColumns,
                     initialFund: window.initialFund,
                     fundFeeStatus: window.fundFeeStatus,
                     fundIncomes: window.fundIncomes,
                     fundExpenses: window.fundExpenses,
+                    autoIncomeNotes: window.autoIncomeNotes,
                     knockoutScores: knockoutScores
                 }, { merge: true });
-                console.log("Đã đồng bộ Firestore thành công!");
+                console.log("Đã đồng bộ Firestore!");
             } catch (error) {
                 console.error("Lỗi đồng bộ Firestore:", error);
             }
@@ -3074,6 +3601,7 @@
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     if (data.players) window.players = data.players;
+                    if (data.createdMinigames) window.createdMinigames = data.createdMinigames;
                     if (data.m1TeamA) window.m1TeamA = data.m1TeamA;
                     if (data.m1TeamB) window.m1TeamB = data.m1TeamB;
                     if (data.m1Matches) window.m1Matches = data.m1Matches;
@@ -3085,11 +3613,12 @@
                     if (data.matchesData) window.matchesData = data.matchesData;
                     if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
                     if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
-                    if (data.quarterTitles) window.quarterTitles = data.quarterTitles;
+                    if (data.activeQuarterColumns) window.activeQuarterColumns = data.activeQuarterColumns;
                     if (data.initialFund !== undefined) window.initialFund = data.initialFund;
                     if (data.fundFeeStatus) window.fundFeeStatus = data.fundFeeStatus;
                     if (data.fundIncomes) window.fundIncomes = data.fundIncomes;
                     if (data.fundExpenses) window.fundExpenses = data.fundExpenses;
+                    if (data.autoIncomeNotes) window.autoIncomeNotes = data.autoIncomeNotes;
 
                     if (data.knockoutScores) {
                         const s = data.knockoutScores;
