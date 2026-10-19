@@ -263,7 +263,7 @@
                     <i class="fa-solid fa-users"></i> <span>Pick Thủ</span>
                 </button>
                 
-                <!-- MINIGAME TEAM VỚI DANH SÁCH GIẢI ĐẤU ĐỘC LẬP -->
+                <!-- MINIGAME TEAM -->
                 <div class="relative">
                     <button onclick="toggleMenu('menuNavTeam', event)" id="btn-minigame1" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
                         <i class="fa-solid fa-trophy"></i> <span>MINIGAME TEAM ▾</span>
@@ -282,7 +282,7 @@
                     </div>
                 </div>
                 
-                <!-- MINIGAME BẢNG & VÒNG TRÒN -->
+                <!-- MINIGAME BẢNG -->
                 <div class="relative">
                     <button onclick="toggleMenu('menuNavBracket', event)" id="btn-minigame2" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
                         <i class="fa-solid fa-medal"></i> <span>MINIGAME BẢNG & VÒNG TRÒN ▾</span>
@@ -514,7 +514,7 @@
                         <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
                             <i class="fa-solid fa-users text-blue-600"></i> Danh Sách Pick Thủ CLB
                         </h2>
-                        <p class="text-xs text-slate-500">Quản lý danh sách thành viên tham gia giải đấu</p>
+                        <p class="text-xs text-slate-500">Quản lý danh sách thành viên tham gia giải đấu và quỹ</p>
                     </div>
                     <button onclick="openPlayerModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 shadow">
                         <i class="fa-solid fa-plus"></i> Thêm Pick Thủ
@@ -539,7 +539,6 @@
 
         <!-- MINIGAME TEAM -->
         <section id="tab-minigame1" class="tab-content hidden space-y-6">
-            <!-- THANH TIÊU ĐỀ GIẢI HIỆN TẠI TRONG TAB -->
             <div class="bg-amber-500/10 border border-amber-400/40 rounded-xl p-3 flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-2">
                     <span class="text-xs font-black uppercase text-amber-900 bg-amber-400/30 px-2.5 py-1 rounded-md">GIẢI TEAM HIỆN TẠI:</span>
@@ -554,7 +553,6 @@
                 </button>
             </div>
 
-            <!-- PHẦN 1: ĐĂNG KÝ DANH SÁCH VĐV MỖI TEAM -->
             <div class="bg-white rounded-xl shadow-md p-4 md:p-6 text-slate-800">
                 <h2 class="text-base md:text-lg font-black text-slate-800 mb-1 flex items-center gap-2 border-b pb-2">
                     <i class="fa-solid fa-users text-blue-600"></i> <span id="roster-title-text">1. ĐĂNG KÝ DANH SÁCH VĐV TEAM (8 VĐV / TEAM: 5 NAM + 3 NỮ)</span>
@@ -562,33 +560,26 @@
                 <p class="text-xs text-slate-500 mb-4">* VĐV đã được chọn ở **Team A** sẽ tự động ẩn khỏi danh sách chọn của **Team B** để không trùng lặp VĐV giữa 2 đội.</p>
 
                 <div class="roster-grid" id="roster-container-grid">
-                    <!-- TEAM A -->
                     <div class="team-box border-blue-200 bg-blue-50/40">
                         <h3 class="font-extrabold text-blue-900 text-sm mb-3 flex items-center justify-between">
                             <span><i class="fa-solid fa-shield-halved text-blue-600"></i> TEAM A</span>
                             <span id="team-a-badge" class="text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">5 Nam - 3 Nữ</span>
                         </h3>
                         
-                        <div id="team-a-inputs-container" class="space-y-1">
-                            <!-- Render động theo giải -->
-                        </div>
+                        <div id="team-a-inputs-container" class="space-y-1"></div>
                     </div>
 
-                    <!-- TEAM B -->
                     <div class="team-box border-orange-200 bg-orange-50/40">
                         <h3 class="font-extrabold text-orange-900 text-sm mb-3 flex items-center justify-between">
                             <span><i class="fa-solid fa-shield-halved text-orange-600"></i> TEAM B</span>
                             <span id="team-b-badge" class="text-xs text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">5 Nam - 3 Nữ</span>
                         </h3>
 
-                        <div id="team-b-inputs-container" class="space-y-1">
-                            <!-- Render động theo giải -->
-                        </div>
+                        <div id="team-b-inputs-container" class="space-y-1"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- PHẦN 2: BẢNG SƠ ĐỒ CẶP THI ĐẤU -->
             <div class="bg-white rounded-xl shadow-md p-4 md:p-6 text-slate-800">
                 <h2 class="text-base md:text-lg font-black text-slate-800 mb-3 flex items-center gap-2 border-b pb-2">
                     <i class="fa-solid fa-diagram-project text-amber-600"></i> 2. SƠ ĐỒ CẶP THI ĐẤU MỖI TEAM
@@ -607,7 +598,6 @@
                 </div>
             </div>
 
-            <!-- PHẦN 3: LỊCH THI ĐẤU & BẢNG ĐIỂM SỐ -->
             <div class="bg-white rounded-xl shadow-md p-4 md:p-6 text-slate-800">
                 <h2 class="text-base md:text-lg font-black text-slate-800 mb-3 flex items-center gap-2 border-b pb-2">
                     <i class="fa-solid fa-calendar-days text-indigo-600"></i> 3. LỊCH THI ĐẤU CHI TIẾT CÁC TRẬN
@@ -633,7 +623,6 @@
                 </div>
             </div>
 
-            <!-- PHẦN 4: TỔNG KẾT KẾT QUẢ -->
             <div class="bg-white rounded-xl shadow-md p-4 md:p-6 text-slate-800">
                 <h2 class="text-base md:text-lg font-black text-slate-800 mb-3 flex items-center gap-2 border-b pb-2">
                     <i class="fa-solid fa-chart-pie text-emerald-600"></i> 4. TỔNG KẾT TỔNG TRẬN THẮNG
@@ -1004,7 +993,7 @@
                         </div>
                     </div>
                     <div class="mt-3 text-xs text-slate-400 flex items-center gap-1">
-                        <i class="fa-solid fa-circle-info text-emerald-500"></i> Tổng tiền sân các Quý + Kèo + Thu khác
+                        <i class="fa-solid fa-circle-info text-emerald-500"></i> Tiền sân các Quý + Kèo + Thu khác
                     </div>
                 </div>
 
@@ -1049,7 +1038,7 @@
                                 <i class="fa-solid fa-circle-arrow-down text-emerald-600"></i>
                                 <span>Nhật Ký Khoản Thu</span>
                             </h2>
-                            <p class="text-xs text-slate-500 mt-0.5">Thu thủ công & Tự động đồng bộ Tiền Sân Các Quý + Tiền Kèo các ngày</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Tự động cộng Tiền Sân Các Quý + Tiền Kèo + Thu thủ công</p>
                         </div>
                         <button onclick="openFundModal('income')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm">
                             <i class="fa-solid fa-plus"></i>
@@ -1126,7 +1115,7 @@
                             <i class="fa-solid fa-users text-brand-600"></i>
                             <span>Danh Sách Pick Thủ CLB & Tiền Sân Các Quý</span>
                         </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Click tên cột để sửa. Tiền thu được từ từng Quý sẽ tự động cập nhật vào Nhật Ký Khoản Thu.</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Click tên cột để sửa. Tiền thu được từ từng Quý sẽ tự động đồng bộ vào Nhật Ký Khoản Thu ở trên.</p>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
@@ -1199,7 +1188,6 @@
         </div>
     </div>
 
-    <!-- MODAL SỬA CẶP VĐV MINIGAME BẢNG & VÒNG TRÒN -->
     <div id="m2-edit-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 text-slate-800">
             <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
@@ -1282,7 +1270,6 @@
         window.isAdminUnlocked = false;
         window.ADMIN_PASSWORD = "123456";
 
-        /* QUẢN LÝ DANH SÁCH VÀ CHỌN CÁC MINIGAME ĐỘNG */
         window.createdMinigames = JSON.parse(localStorage.getItem('pb_created_minigames')) || [
             { id: 'mg_2010', name: 'MINIGAME 20/10 (5 Nam, 3 Nữ)', type: 'team' },
             { id: 'mg_hualac', name: 'Hòa Lạc Open (Team 2 Bảng, 8 VĐV)', type: 'team' },
@@ -1500,7 +1487,7 @@
             }
         }
 
-        window.players = [
+        window.players = JSON.parse(localStorage.getItem('pb_players_list')) || [
             { id: 1, name: "Tiến Thọ", gender: "Nam" },
             { id: 2, name: "Châu Sĩ", gender: "Nam" },
             { id: 3, name: "Vân Đình", gender: "Nữ" },
@@ -1520,9 +1507,6 @@
             { id: 17, name: "Hạnh", gender: "Nữ" },
             { id: 18, name: "Minh Vương", gender: "Nam" }
         ];
-
-        const masterMenList = window.players.filter(p => p.gender === 'Nam').map(p => p.name);
-        const masterWomenList = window.players.filter(p => p.gender === 'Nữ').map(p => p.name);
 
         window.teamScoresState = {};
 
@@ -2085,8 +2069,8 @@
                     } else {
                         const newPlayer = { id: Date.now(), name: trimmed, gender: "Nam" };
                         window.players.push(newPlayer);
+                        savePlayersData();
                         refreshAllViews();
-                        saveFundData();
                     }
                 }
             });
@@ -2097,10 +2081,16 @@
                 const p = window.players.find(item => item.id === playerId);
                 if (p && confirm(`Bạn có chắc chắn muốn XÓA Pick thủ "${p.name}" khỏi danh sách?`)) {
                     window.players = window.players.filter(item => item.id !== playerId);
+                    savePlayersData();
                     refreshAllViews();
-                    saveFundData();
                 }
             });
+        }
+
+        function savePlayersData() {
+            localStorage.setItem('pb_players_list', JSON.stringify(window.players));
+            autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
         }
 
         function saveFundData() {
@@ -2132,9 +2122,9 @@
                 (window.players || []).forEach(p => {
                     const qKey = col.id;
                     const currentStatus = window.fundFeeStatus[`${p.id}_${qKey}_status`] || (window.fundFeeStatus[`${p.id}_${qKey}`] ? "paid" : "unpaid");
-                    const currentAmt = window.fundFeeStatus[`${p.id}_${qKey}_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_${qKey}_amt`] : col.defaultAmt;
+                    const currentAmt = window.fundFeeStatus[`${p.id}_${qKey}_amt`] !== undefined ? Number(window.fundFeeStatus[`${p.id}_${qKey}_amt`]) : Number(col.defaultAmt || 0);
                     if (currentStatus === "paid") {
-                        colSum += Number(currentAmt);
+                        colSum += currentAmt;
                     }
                 });
                 totals[col.id] = colSum;
@@ -2156,9 +2146,9 @@
         function calculateFundSummary() {
             let totalManualIncome = window.fundIncomes.reduce((sum, item) => sum + Number(item.amount), 0);
 
-            // 1. Tính tổng tự động từ tiền sân Các Quý
+            // 1. Tính tổng thực tế thu từ Tiền Sân Các Quý
             const quarterTotals = getQuarterCollectedTotals();
-            let totalQuartersIncome = Object.values(quarterTotals).reduce((a, b) => a + b, 0);
+            let totalQuartersIncome = Object.values(quarterTotals).reduce((a, b) => a + Number(b), 0);
 
             // 2. Tính tổng tự động từ Kèo các ngày
             let autoDailyIncomeTotal = 0;
@@ -2177,11 +2167,11 @@
                 }
             });
 
-            // Tổng Thu = Tiền Quý + Kèo Các Ngày + Thu Thủ Công
+            // Tổng Thu = Tiền Các Quý + Kèo Các Ngày + Thu Thủ Công
             const grandTotalIncome = totalManualIncome + totalQuartersIncome + autoDailyIncomeTotal;
             const totalExpense = window.fundExpenses.reduce((sum, item) => sum + Number(item.amount), 0);
             
-            // SỐ DƯ QUỸ HIỆN TẠI = Quỹ Đầu Kỳ + Tổng Thu - Tổng Chi (Hạch toán Thừa/Thiếu)
+            // SỐ DƯ QUỸ HIỆN TẠI = Quỹ Đầu Kỳ + Tổng Thu - Tổng Chi
             const currentBalance = window.initialFund + grandTotalIncome - totalExpense;
 
             const elInc = document.getElementById('stat-income');
@@ -2239,8 +2229,7 @@
                 return;
             }
 
-            let collectedTotals = {};
-            window.activeQuarterColumns.forEach(col => { collectedTotals[col.id] = 0; });
+            let collectedTotalsAll = getQuarterCollectedTotals();
 
             filtered.forEach((p, idx) => {
                 let rowHtml = `
@@ -2253,10 +2242,6 @@
                     const c = col.bgColor || "teal";
                     const currentStatus = window.fundFeeStatus[`${p.id}_${qKey}_status`] || (window.fundFeeStatus[`${p.id}_${qKey}`] ? "paid" : "unpaid");
                     const currentAmt = window.fundFeeStatus[`${p.id}_${qKey}_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_${qKey}_amt`] : col.defaultAmt;
-
-                    if(currentStatus === "paid") {
-                        collectedTotals[qKey] += Number(currentAmt);
-                    }
 
                     rowHtml += `
                         <td class="py-2 px-2 text-center bg-${c}-50/20">
@@ -2293,14 +2278,14 @@
                 tbody.appendChild(tr);
             });
 
-            let grandTotalCollected = Object.values(collectedTotals).reduce((a, b) => a + b, 0);
+            let grandTotalCollected = Object.values(collectedTotalsAll).reduce((a, b) => a + Number(b), 0);
             const totalExpense = window.fundExpenses.reduce((sum, item) => sum + Number(item.amount), 0);
             const netCourt = grandTotalCollected - totalExpense;
 
             if(tfoot) {
                 let footQuarterCells = window.activeQuarterColumns.map(col => {
                     const c = col.bgColor || "teal";
-                    return `<td class="py-2.5 px-3 text-center text-${c}-800 font-extrabold" colspan="2">${col.title}: ${formatVND(collectedTotals[col.id])}</td>`;
+                    return `<td class="py-2.5 px-3 text-center text-${c}-800 font-extrabold" colspan="2">${col.title}: ${formatVND(collectedTotalsAll[col.id] || 0)}</td>`;
                 }).join('');
 
                 const colSpanCount = 1 + window.activeQuarterColumns.length * 2;
@@ -2331,14 +2316,13 @@
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            // A. ĐỒNG BỘ TỰ ĐỘNG TIỀN SÂN CÁC QUÝ VÀO NHẬT KÝ THU
             const quarterTotals = getQuarterCollectedTotals();
             (window.activeQuarterColumns || []).forEach(col => {
                 const totalAmt = quarterTotals[col.id] || 0;
                 const trQ = document.createElement('tr');
                 trQ.className = "bg-teal-50/80 font-semibold text-xs border-b border-teal-200/80 hover:bg-teal-100/80 transition-colors";
                 trQ.innerHTML = `
-                    <td class="py-2.5 px-3 text-slate-500 whitespace-nowrap">Định kỳ Quý</td>
+                    <td class="py-2.5 px-3 text-slate-500 whitespace-nowrap">Theo Quý</td>
                     <td class="py-2.5 px-3 text-teal-950 font-bold wrap-content-cell min-w-[220px]">
                         <div class="flex items-center gap-1.5">
                             <i class="fa-solid fa-vault text-teal-600 flex-shrink-0"></i>
@@ -2357,7 +2341,6 @@
                 tbody.appendChild(trQ);
             });
 
-            // B. ĐỒNG BỘ TỰ ĐỘNG TIỀN KÈO TỪ CÁC NGÀY ĐẤU
             (window.dates || []).forEach(d => {
                 const pStatus = window.paymentStatus ? window.paymentStatus[d] : null;
                 let isTransferYes = true;
@@ -2401,7 +2384,6 @@
                 }
             });
 
-            // C. CÁC KHOẢN THU THỦ CÔNG
             (window.fundIncomes || []).forEach(item => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors";
@@ -2575,18 +2557,16 @@
             let totalManualIncome = window.fundIncomes.reduce((sum, item) => sum + Number(item.amount), 0);
             
             const quarterTotals = getQuarterCollectedTotals();
-            let totalQuartersIncome = Object.values(quarterTotals).reduce((a, b) => a + b, 0);
+            let totalQuartersIncome = Object.values(quarterTotals).reduce((a, b) => a + Number(b), 0);
 
             let autoDailyIncomeTotal = 0;
             let autoIncomeRows = [];
 
-            // A. Hàng Tiền sân Các Quý
             (window.activeQuarterColumns || []).forEach(col => {
                 const qAmt = quarterTotals[col.id] || 0;
                 autoIncomeRows.push([autoIncomeRows.length + 1, "Định kỳ Quý", col.title, qAmt, "Pick Thủ CLB", "Tự động tính từ Bảng Các Quý"]);
             });
 
-            // B. Hàng Tiền Kèo Các Ngày
             (window.dates || []).forEach(d => {
                 const pStatus = window.paymentStatus ? window.paymentStatus[d] : null;
                 let isTransferYes = true;
@@ -3408,7 +3388,6 @@
             renderM2(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
         }
 
-        /* ================= LOGIC XỬ LÝ MINIGAME TEAM ĐỘNG ================= */
         function getActiveTeamConfig() {
             const mgId = window.currentTeamMinigameId;
             if (mgId === 'mg_hualac') {
@@ -3474,6 +3453,9 @@
             document.getElementById('team-a-badge').innerText = config.badgeText;
             document.getElementById('team-b-badge').innerText = config.badgeText;
 
+            const masterMenList = window.players.filter(p => p.gender === 'Nam').map(p => p.name);
+            const masterWomenList = window.players.filter(p => p.gender === 'Nữ').map(p => p.name);
+
             let htmlA = `<div class="text-xs font-bold text-blue-800 mb-1">Cơ cấu VĐV Nam (${config.menCount} Nam):</div>`;
             for(let i=1; i<=config.menCount; i++) {
                 htmlA += `<div class="form-group"><label>A - Nam ${i}:</label><select id="a_nam_${i}" onchange="updateTeamRosterOptions()"></select></div>`;
@@ -3523,6 +3505,9 @@
 
         function updateTeamRosterOptions() {
             const config = getActiveTeamConfig();
+            const masterMenList = window.players.filter(p => p.gender === 'Nam').map(p => p.name);
+            const masterWomenList = window.players.filter(p => p.gender === 'Nữ').map(p => p.name);
+
             let menIdsA = [], womenIdsA = [], menIdsB = [], womenIdsB = [];
             for(let i=1; i<=config.menCount; i++) menIdsA.push(`a_nam_${i}`);
             for(let i=1; i<=config.womenCount; i++) womenIdsA.push(`a_nu_${i}`);
@@ -3884,10 +3869,9 @@
                 window.players.push({ id: Date.now(), name: name, gender: gender });
             }
 
+            savePlayersData();
             closePlayerModal(); 
             refreshAllViews();
-            autoBackupData();
-            if(window.syncToFirebase) window.syncToFirebase();
         }
 
         function editPlayer(id) {
@@ -3904,9 +3888,8 @@
         function deletePlayer(id) {
             if(confirm('Bạn có chắc muốn xoá VĐV này?')) {
                 window.players = window.players.filter(p => p.id != id);
+                savePlayersData();
                 refreshAllViews();
-                autoBackupData();
-                if(window.syncToFirebase) window.syncToFirebase();
             }
         }
 
