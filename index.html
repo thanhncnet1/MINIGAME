@@ -38,7 +38,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- SheetJS (XLSX) cho chức năng xuất Excel -->
+    <!-- SheetJS (XLSX) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     
     <style>
@@ -64,7 +64,7 @@
         }
 
         .player-cell {
-            min-width: 110px;
+            min-width: 120px;
             font-weight: 600;
         }
 
@@ -80,7 +80,7 @@
         .player-tag:hover, .player-select-btn:hover {
             background-color: #fef08a !important;
             color: #0369a1 !important;
-            transform: scale(1.05);
+            transform: scale(1.03);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
         }
 
@@ -94,7 +94,7 @@
             position: absolute;
             top: 100%;
             left: 0;
-            min-width: 220px;
+            min-width: 240px;
             background: #ffffff;
             border-radius: 8px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
@@ -111,6 +111,7 @@
             cursor: pointer;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 6px;
             color: #334155;
         }
@@ -186,7 +187,6 @@
             background: #94a3b8;
         }
 
-        /* Định dạng nội dung dài cho Nhật ký Thu Chi */
         .wrap-content-cell {
             white-space: normal !important;
             word-break: break-word !important;
@@ -223,15 +223,42 @@
                 <button onclick="showTab('players')" id="btn-players" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
                     <i class="fa-solid fa-users"></i> <span>Pick Thủ</span>
                 </button>
-                <button onclick="showTab('minigame1')" id="btn-minigame1" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
-                    <i class="fa-solid fa-trophy"></i> <span>MINIGAME 1</span>
-                </button>
-                <button onclick="showTab('minigame2')" id="btn-minigame2" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
-                    <i class="fa-solid fa-medal"></i> <span>MINIGAME 2</span>
-                </button>
+                
+                <!-- MINIGAME TEAM VỚI DROPDOWN QUẢN LÝ ĐỘC LẬP TỪNG GIẢI -->
+                <div class="relative">
+                    <button onclick="toggleMenu('menuNavTeam', event)" id="btn-minigame1" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
+                        <i class="fa-solid fa-trophy"></i> <span>MINIGAME TEAM ▾</span>
+                    </button>
+                    <div class="dropdown-menu" id="menuNavTeam">
+                        <div class="dropdown-item" onclick="openCreateTournamentPage('team')">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-plus-circle text-amber-600"></i> ➕ Tạo Giải Team Mới</span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase">Danh Sách Giải Team:</div>
+                        <div id="nav-m1-dropdown-list"></div>
+                    </div>
+                </div>
+                
+                <!-- MINIGAME BẢNG & VÒNG TRÒN -->
+                <div class="relative">
+                    <button onclick="toggleMenu('menuNavBracket', event)" id="btn-minigame2" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
+                        <i class="fa-solid fa-medal"></i> <span>MINIGAME BẢNG & VÒNG TRÒN ▾</span>
+                    </button>
+                    <div class="dropdown-menu" id="menuNavBracket">
+                        <div class="dropdown-item" onclick="showTab('minigame2'); closeAllDropdowns();">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-diagram-project text-emerald-600"></i> Bảng Đấu & Knockout</span>
+                        </div>
+                        <div class="dropdown-item" onclick="openCreateTournamentPage('bracket')">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-plus-circle text-amber-600"></i> Tạo Giải Bảng Mới</span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase">Danh Sách Giải Vòng Bảng:</div>
+                        <div id="nav-m2-dropdown-list"></div>
+                    </div>
+                </div>
 
                 <button onclick="showTab('fund_manager')" id="btn-fund_manager" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-teal-800 text-teal-100 border border-teal-400/40 font-bold shadow-sm">
-                    <i class="fa-solid fa-vault text-yellow-300"></i> <span>QUẢN LÝ QUỸ PICK</span>
+                    <i class="fa-solid fa-vault text-yellow-300"></i> <span>QUẢN LÝ QUỸ PICK</span>
                 </button>
 
                 <button onclick="showTab('tonghop')" id="btn-tonghop" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-indigo-800 text-indigo-100 border border-indigo-400/40 font-bold shadow-sm">
@@ -312,15 +339,15 @@
                     <div onclick="showTab('minigame1')" class="cursor-pointer bg-amber-50/80 border border-amber-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
                         <div class="my-auto">
                             <i class="fa-solid fa-people-group text-4xl text-amber-600 mb-3 group-hover:scale-110 transition-transform block"></i>
-                            <h3 class="font-bold text-base md:text-lg text-slate-800">MINIGAME 1</h3>
-                            <p class="text-xs text-slate-500 mt-2">Đấu Team A vs Team B (Lịch 24 trận & Tổng hợp)</p>
+                            <h3 class="font-bold text-base md:text-lg text-slate-800">MINIGAME TEAM</h3>
+                            <p class="text-xs text-slate-500 mt-2">Đấu Team A vs Team B (Lịch thi đấu & Tổng hợp)</p>
                         </div>
                     </div>
 
                     <div onclick="showTab('minigame2')" class="cursor-pointer bg-emerald-50/80 border border-emerald-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
                         <div class="my-auto">
                             <i class="fa-solid fa-diagram-project text-4xl text-emerald-600 mb-3 group-hover:scale-110 transition-transform block"></i>
-                            <h3 class="font-bold text-base md:text-lg text-slate-800">MINIGAME 2</h3>
+                            <h3 class="font-bold text-base md:text-lg text-slate-800">MINIGAME BẢNG & VÒNG TRÒN</h3>
                             <p class="text-xs text-slate-500 mt-2">Vòng Bảng A-B, Vòng Vòng Tròn, Bán Kết, Chung Kết</p>
                         </div>
                     </div>
@@ -342,7 +369,7 @@
                     </div>
                 </div>
 
-                <!-- BỘ KHUÂN HIỂN THỊ CHI TIẾT NGÀY GẦN NHẤT TRỰC TIẾP TẠI TRANG CHỦ -->
+                <!-- KHU VỰC CHI TIẾT NGÀY GẦN NHẤT TƯƠNG TÁC TẠI TRANG CHỦ -->
                 <div class="mt-8 text-left border-t border-slate-200 pt-6">
                     <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
                         <div class="flex items-center gap-2">
@@ -351,17 +378,16 @@
                             </span>
                             <h3 class="text-lg md:text-xl font-extrabold text-slate-800 flex items-center gap-2">
                                 <i class="fa-solid fa-calendar-check text-blue-600"></i>
-                                <span>DIỄN BIẾN NGÀY GẦN NHẤT: <span id="home-closest-date-title" class="text-blue-700 underline decoration-yellow-400">---</span></span>
+                                <span>BẢNG THỐNG KÊ TRẬN PICK NGÀY <span id="home-closest-date-title" class="text-blue-700 underline decoration-yellow-400">---</span></span>
                             </h3>
                         </div>
                         <button onclick="goToClosestDateTab()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-lg shadow font-bold flex items-center gap-1.5 transition-all">
-                            <i class="fa-solid fa-up-right-from-square"></i> Quản Lý Chi Tiết Ngày
+                            <i class="fa-solid fa-up-right-from-square"></i> Quản Lý Chi Tiết Ngày Full
                         </button>
                     </div>
 
-                    <!-- CONTAINER CHỨA NỘI DUNG CHI TIẾT NGÀY GẦN NHẤT -->
                     <div id="home-closest-date-container" class="space-y-6">
-                        <!-- Render động qua hàm renderHomeClosestDateView() -->
+                        <!-- Render động -->
                     </div>
                 </div>
 
@@ -387,6 +413,59 @@
             </div>
         </section>
 
+        <!-- TRANG TẠO GIẢI ĐẤU MỚI (PAGE CHUYÊN BIỆT) -->
+        <section id="tab-create_tournament" class="tab-content hidden">
+            <div class="bg-white/95 rounded-xl shadow-md p-6 max-w-3xl mx-auto text-slate-800">
+                <div class="flex items-center justify-between mb-6 pb-4 border-b">
+                    <h2 class="text-2xl font-black text-amber-600 flex items-center gap-2">
+                        <i class="fa-solid fa-trophy text-amber-500"></i> TẠO GIẢI ĐẤU MINIGAME MỚI
+                    </h2>
+                    <button onclick="history.back()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs px-3 py-1.5 rounded-lg font-bold">
+                        <i class="fa-solid fa-arrow-left"></i> Quay lại
+                    </button>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">Tên Giải Đấu / Minigame</label>
+                        <input type="text" id="new-tourney-name" placeholder="Ví dụ: Giải Hòa Lạc Open, Minigame 20/10..." class="w-full border rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-amber-500 font-semibold">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Chọn Thể Thức Thi Đấu</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <label class="border rounded-xl p-4 flex items-start gap-3 cursor-pointer hover:bg-amber-50 transition border-slate-300 has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50/50">
+                                <input type="radio" name="tourney-type" value="team" checked class="mt-1 accent-amber-600">
+                                <div>
+                                    <div class="font-bold text-slate-800 text-sm">MINIGAME TEAM</div>
+                                    <p class="text-xs text-slate-500 mt-0.5">Chia 2 Đội A & B, đấu theo lượt & tính tổng hiệu số thắng thua độc lập.</p>
+                                </div>
+                            </label>
+                            <label class="border rounded-xl p-4 flex items-start gap-3 cursor-pointer hover:bg-emerald-50 transition border-slate-300 has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50/50">
+                                <input type="radio" name="tourney-type" value="bracket" class="mt-1 accent-emerald-600">
+                                <div>
+                                    <div class="font-bold text-slate-800 text-sm">MINIGAME BẢNG & VÒNG TRÒN</div>
+                                    <p class="text-xs text-slate-500 mt-0.5">Chia các Cặp đấu Bảng A - B, thi đấu Vòng tròn & Knockout Bán kết/Chung kết.</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">Ghi Chú / Mô Tả Giải</label>
+                        <textarea id="new-tourney-desc" rows="2" placeholder="Nhập thêm thời gian, địa điểm, giải thưởng..." class="w-full border rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+                    </div>
+
+                    <div class="pt-4 border-t flex justify-end gap-3">
+                        <button onclick="showTab('home')" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-lg">Hủy</button>
+                        <button onclick="submitNewTournament()" class="px-6 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-sm font-extrabold rounded-lg shadow-md flex items-center gap-2">
+                            <i class="fa-solid fa-plus-circle"></i> Bắt Đầu Khởi Tạo Giải Đấu
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- DANH SÁCH PICK THỦ -->
         <section id="tab-players" class="tab-content hidden">
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
@@ -395,7 +474,7 @@
                         <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
                             <i class="fa-solid fa-users text-blue-600"></i> Danh Sách Pick Thủ CLB
                         </h2>
-                        <p class="text-xs text-slate-500">Quản lý danh sách thành viên tham gia giải đấu (Đồng bộ toàn bộ giao diện)</p>
+                        <p class="text-xs text-slate-500">Quản lý danh sách thành viên tham gia giải đấu</p>
                     </div>
                     <button onclick="openPlayerModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 shadow">
                         <i class="fa-solid fa-plus"></i> Thêm Pick Thủ
@@ -418,104 +497,115 @@
             </div>
         </section>
 
-        <!-- MINIGAME 1 -->
+        <!-- MINIGAME TEAM (MỖI GIẢI TEAM CÓ RSTER VÀ 15 TRẬN ĐẤU HOÀN TOÀN ĐỘC LẬP) -->
         <section id="tab-minigame1" class="tab-content hidden">
-            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
-                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
-                    <i class="fa-solid fa-users-rectangle text-amber-600"></i> Danh Sách Pick Thủ Chia 2 Team (A & B)
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="border border-blue-200 bg-blue-50/50 rounded-lg p-4">
-                        <div class="flex justify-between items-center mb-3">
-                            <h4 class="font-bold text-blue-800 uppercase flex items-center gap-2">
-                                <i class="fa-solid fa-shield-halved"></i> Team A (<span id="team-A-count">0</span> VĐV)
-                            </h4>
-                            <button onclick="addTeamMember('A')" class="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700">
-                                <i class="fa-solid fa-plus"></i> Thêm VĐV
-                            </button>
-                        </div>
-                        <div id="team-A-list" class="space-y-2"></div>
-                    </div>
-                    <div class="border border-orange-200 bg-orange-50/50 rounded-lg p-4">
-                        <div class="flex justify-between items-center mb-3">
-                            <h4 class="font-bold text-orange-800 uppercase flex items-center gap-2">
-                                <i class="fa-solid fa-shield-halved"></i> Team B (<span id="team-B-count">0</span> VĐV)
-                            </h4>
-                            <button onclick="addTeamMember('B')" class="text-xs bg-orange-600 text-white px-2 py-1 rounded hover:bg-orange-700">
-                                <i class="fa-solid fa-plus"></i> Thêm VĐV
-                            </button>
-                        </div>
-                        <div id="team-B-list" class="space-y-2"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
-                <div class="flex justify-between items-center mb-3">
-                    <div>
-                        <h2 class="text-xl md:text-2xl font-black text-blue-900 tracking-wide uppercase">LỊCH THI ĐẤU MINIGAME 1 (<span id="m1-match-count">24</span> TRẬN)</h2>
-                        <p class="text-xs italic text-slate-500">Tên Pick Thủ được cập nhật đồng bộ từ Danh sách Pick Thủ.</p>
-                    </div>
-                    <button onclick="addM1Match()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded shadow flex items-center gap-1 font-bold">
-                        <i class="fa-solid fa-plus"></i> Thêm Trận
+            <!-- THANH TIÊU ĐỀ GIẢI HIỆN TẠI TRONG TAB -->
+            <div class="bg-amber-500/10 border border-amber-400/40 rounded-xl p-3 mb-4 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-black uppercase text-amber-900 bg-amber-400/30 px-2.5 py-1 rounded-md">GIẢI TEAM HIỆN TẠI:</span>
+                    <h2 id="current-m1-tourney-name" class="text-base md:text-lg font-black text-amber-900">Minigame 20/10</h2>
+                    <button onclick="renameCurrentMinigame('team')" class="text-slate-600 hover:text-amber-800 text-xs px-1.5 py-0.5 rounded border border-amber-300 bg-white" title="Sửa tên giải này trực tiếp">
+                        <i class="fa-solid fa-pen-to-square"></i> Sửa tên
                     </button>
                 </div>
 
+                <button onclick="openCreateTournamentPage('team')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-2 rounded-lg font-extrabold shadow flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus-circle"></i> <span>➕ Tạo Giải Team Mới</span>
+                </button>
+            </div>
+
+            <!-- PHẦN 1: ĐĂNG KÝ DANH SÁCH VẬN ĐỘNG VIÊN (ĐỘC LẬP THEO TỪNG GIẢI) -->
+            <div class="card bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
+                <h2 style="font-size: 18px; color: #1f4e79; border-bottom: 2px solid #1f4e79; padding-bottom: 8px; margin-top: 0; margin-bottom: 15px;">1. ĐĂNG KÝ DANH SÁCH VẬN ĐỘNG VIÊN (TEAM ĐỘC LẬP)</h2>
+                <p style="font-size: 13px; color: #555; margin-bottom: 15px;">* VĐV đã chọn ở Team A sẽ tự động ẩn khỏi danh sách chọn của Team B cho giải đấu này.</p>
+                
+                <div class="roster-grid grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Team A Roster -->
+                    <div class="team-box bg-[#f9fbfd] border border-[#d9d9d9] rounded-md p-4">
+                        <h3 style="color: #2f5597; margin-top: 0; font-weight: bold; font-size: 15px; margin-bottom: 10px;">Team A Roster</h3>
+                        <h4 style="font-size: 13px; color: #2f5597; font-weight: bold; margin-bottom: 5px;">Nam (3 người)</h4>
+                        <div class="form-group mb-2.5 flex items-center justify-between"><label class="font-semibold text-[13px] flex-1">A-Nam 1:</label><select id="a_nam_1" onchange="onTeamRosterChanged()" class="flex-2 p-1.5 border border-[#d9d9d9] rounded text-[13px] bg-white"></select></div>
+                        <div class="form-group mb-2.5 flex items-center justify-between"><label class="font-semibold text-[13px] flex-1">A-Nam 2:</label><select id="a_nam_2" onchange="onTeamRosterChanged()" class="flex-2 p-1.5 border border-[#d9d9d9] rounded text-[13px] bg-white"></select></div>
+                        <div class="form-group mb-2.5 flex items-center justify-between"><label class="font-semibold text-[13px] flex-1">A-Nam 3:</label><select id="a_nam_3" onchange="onTeamRosterChanged()" class="flex-2 p-1.5 border border-[#d9d9d9] rounded text-[13px] bg-white"></select></div>
+
+                        <h4 style="font-size: 13px; color: #c55a11; font-weight: bold; margin-top: 15px; margin-bottom: 5px;">Nữ (3 người)</h4>
+                        <div class="form-group mb-2.5 flex items-center justify-between"><label class="font-semibold text-[13px] flex-1">A-Nữ 1:</label><select id="a_nu_1" onchange="onTeamRosterChanged()" class="flex-2 p-1.5 border border-[#d9d9d9] rounded text-[13px] bg-white"></select></div>
+                        <div class="form-group mb-2.5 flex items-center justify-between"><label class="font-semibold text-[13px] flex-1">A-Nữ 2:</label><select id="a_nu_2" onchange="onTeamRosterChanged()" class="flex-2 p-1.5 border border-[#d9d9d9] rounded text-[13px] bg-white"></select></div>
+                        <div class="form-group mb-2.5 flex items-center justify-between"><label class="font-semibold text-[13px] flex-1">A-Nữ 3:</label><select id="a_nu_3" onchange="onTeamRosterChanged()" class="flex-2 p-1.5 border border-[#d9d9d9] rounded text-[13px] bg-white"></select></div>
+                    </div>
+
+                    <!-- Team B Roster -->
+                    <div class="team-box bg-[#f9fbfd] border border-[#d9d9d9] rounded-md p-4">
+                        <h3 style="color: #c55a11; margin-top: 0; font-weight: bold; font-size: 15px; margin-bottom: 10px;">Team B Roster</h3>
+                        <h4 style="font-size: 13px; color: #2f5597; font-weight: bold; margin-bottom: 5px;">Nam (3 người)</h4>
+                        <div class="form-group mb-2.5 flex items-center justify-between"><label class="font-semibold text-[13px] flex-1">B-Nam 1:</label><select id="b_nam_1" onchange="onTeamRosterChanged()" class="flex-2 p-1.5 border border-[#d9d9d9] rounded text-[13px] bg-white"></select></div>
+                        <div class="form-group mb-2.5 flex items-center justify-between"><label class="font-semibold text-[13px] flex-1">B-Nam 2:</label><select id="b_nam_2" onchange="onTeamRosterChanged()" class="flex-2 p-1.5 border border-[#d9d9d9] rounded text-[13px] bg-white"></select></div>
+                        <div class="form-group mb-2.5 flex items-center justify-between"><label class="font-semibold text-[13px] flex-1">B-Nam 3:</label><select id="b_nam_3" onchange="onTeamRosterChanged()" class="flex-2 p-1.5 border border-[#d9d9d9] rounded text-[13px] bg-white"></select></div>
+
+                        <h4 style="font-size: 13px; color: #c55a11; font-weight: bold; margin-top: 15px; margin-bottom: 5px;">Nữ (3 người)</h4>
+                        <div class="form-group mb-2.5 flex items-center justify-between"><label class="font-semibold text-[13px] flex-1">B-Nữ 1:</label><select id="b_nu_1" onchange="onTeamRosterChanged()" class="flex-2 p-1.5 border border-[#d9d9d9] rounded text-[13px] bg-white"></select></div>
+                        <div class="form-group mb-2.5 flex items-center justify-between"><label class="font-semibold text-[13px] flex-1">B-Nữ 2:</label><select id="b_nu_2" onchange="onTeamRosterChanged()" class="flex-2 p-1.5 border border-[#d9d9d9] rounded text-[13px] bg-white"></select></div>
+                        <div class="form-group mb-2.5 flex items-center justify-between"><label class="font-semibold text-[13px] flex-1">B-Nữ 3:</label><select id="b_nu_3" onchange="onTeamRosterChanged()" class="flex-2 p-1.5 border border-[#d9d9d9] rounded text-[13px] bg-white"></select></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PHẦN 2: LỊCH THI ĐẤU 15 TRẬN ĐỘC LẬP -->
+            <div class="card bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
+                <h2 style="font-size: 18px; color: #1f4e79; border-bottom: 2px solid #1f4e79; padding-bottom: 8px; margin-top: 0; margin-bottom: 15px;">2. LỊCH THI ĐẤU CHI TIẾT (15 TRẬN ĐỘC LẬP)</h2>
                 <div class="smooth-scroll">
-                    <table class="w-full excel-table border-collapse">
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px;">
                         <thead>
-                            <tr>
-                                <th class="w-10">STT</th>
-                                <th class="w-12">Lượt</th>
-                                <th class="w-12">Sân</th>
-                                <th class="w-36">Nội dung</th>
-                                <th class="player-cell">Đội A - VĐV 1</th>
-                                <th class="player-cell">Đội A - VĐV 2</th>
-                                <th class="w-12">Tỷ số A</th>
-                                <th class="w-8">VS</th>
-                                <th class="w-12">Tỷ số B</th>
-                                <th class="player-cell">Đội B - VĐV 1</th>
-                                <th class="player-cell">Đội B - VĐV 2</th>
-                                <th class="w-20">Đội thắng</th>
-                                <th class="w-16">Hiệu số A-B</th>
-                                <th class="w-12">Điểm A</th>
-                                <th class="w-12">Điểm B</th>
-                                <th class="w-20">Trạng thái</th>
-                                <th class="w-12">Thao tác</th>
+                            <tr style="background-color: #d9e1f2; color: #1f4e79; font-weight: bold;">
+                                <th style="border: 1px solid #d9d9d9; padding: 10px; text-align: center;">STT</th>
+                                <th style="border: 1px solid #d9d9d9; padding: 10px; text-align: center;">Nội dung</th>
+                                <th style="border: 1px solid #d9d9d9; padding: 10px; text-align: center;">Đội A (Cặp đấu)</th>
+                                <th style="border: 1px solid #d9d9d9; padding: 10px; text-align: center;">VS</th>
+                                <th style="border: 1px solid #d9d9d9; padding: 10px; text-align: center;">Đội B (Cặp đấu)</th>
+                                <th style="border: 1px solid #d9d9d9; padding: 10px; text-align: center;">Tỷ số A</th>
+                                <th style="border: 1px solid #d9d9d9; padding: 10px; text-align: center;">Tỷ số B</th>
+                                <th style="border: 1px solid #d9d9d9; padding: 10px; text-align: center;">Đội Thắng</th>
+                                <th style="border: 1px solid #d9d9d9; padding: 10px; text-align: center;">Ghi chú</th>
                             </tr>
                         </thead>
-                        <tbody id="m1-schedule-body"></tbody>
+                        <tbody id="match-table-body">
+                            <!-- Rendered dynamically -->
+                        </tbody>
                     </table>
                 </div>
             </div>
 
-            <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
-                <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
-                    <i class="fa-solid fa-chart-pie text-indigo-600"></i> Bảng Tổng Hợp Chung Minigame 1
-                </h3>
-                <div class="smooth-scroll">
-                    <table class="w-full text-center border-collapse border border-slate-300">
-                        <thead>
-                            <tr class="bg-slate-800 text-white text-sm">
-                                <th class="p-2 border">Team</th>
-                                <th class="p-2 border">Số Trận Đã Đánh</th>
-                                <th class="p-2 border">Điểm Số</th>
-                                <th class="p-2 border">Hiệu Số Tổng</th>
-                                <th class="p-2 border">Trạng Thái Hiện Tại</th>
-                            </tr>
-                        </thead>
-                        <tbody id="m1-summary-body" class="text-sm font-semibold"></tbody>
-                    </table>
+            <!-- PHẦN 3: TỔNG KẾT KẾT QUẢ -->
+            <div class="card bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
+                <h2 style="font-size: 18px; color: #1f4e79; border-bottom: 2px solid #1f4e79; padding-bottom: 8px; margin-top: 0; margin-bottom: 15px;">3. TỔNG KẾT KẾT QUẢ</h2>
+                <div class="summary-box flex justify-around bg-[#e2efda] border border-[#c8e1b9] p-4 rounded-md font-bold text-base text-[#375623]">
+                    <div>Tổng Trận Thắng Team A: <span id="wins-team-a">0</span></div>
+                    <div>Tổng Trận Thắng Team B: <span id="wins-team-b">0</span></div>
                 </div>
             </div>
         </section>
 
-        <!-- MINIGAME 2 -->
+        <!-- MINIGAME BẢNG & VÒNG TRÒN -->
         <section id="tab-minigame2" class="tab-content hidden">
+            <!-- THANH TIÊU ĐỀ GIẢI HIỆN TẠI TRONG TAB -->
+            <div class="bg-emerald-500/10 border border-emerald-400/40 rounded-xl p-3 mb-4 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-black uppercase text-emerald-900 bg-emerald-400/30 px-2.5 py-1 rounded-md">GIẢI HIỆN TẠI:</span>
+                    <h2 id="current-m2-tourney-name" class="text-base md:text-lg font-black text-emerald-900">Phú Thọ Open (Bảng & Vòng Tròn)</h2>
+                    <button onclick="renameCurrentMinigame('bracket')" class="text-slate-600 hover:text-emerald-800 text-xs px-1.5 py-0.5 rounded border border-emerald-300 bg-white" title="Sửa tên giải này trực tiếp">
+                        <i class="fa-solid fa-pen-to-square"></i> Sửa tên
+                    </button>
+                </div>
+
+                <button onclick="openCreateTournamentPage('bracket')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-lg font-extrabold shadow flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus-circle"></i> <span>➕ Tạo Giải Bảng Mới</span>
+                </button>
+            </div>
+
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
                 <div class="flex flex-wrap justify-between items-center mb-4 border-b pb-3 gap-2">
                     <h2 class="text-xl font-bold text-slate-800 uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-trophy text-yellow-500"></i> Lịch Thi Đấu Giải Phú Thọ Open (Minigame 2)
+                        <i class="fa-solid fa-trophy text-yellow-500"></i> Lịch Thi Đấu Minigame Bảng & Vòng Tròn
                     </h2>
                     <div class="flex gap-2">
                         <button onclick="addPairM2('A')" class="bg-blue-600 text-white text-xs px-3 py-1.5 rounded hover:bg-blue-700 flex items-center gap-1 font-semibold">
@@ -696,7 +786,7 @@
                     </div>
 
                     <div class="border rounded overflow-hidden bg-amber-100/90 border-amber-300 shadow-sm">
-                        <div class="bg-amber-600 text-white text-xs font-bold p-1.5 text-center">BẢNG CHUNG CUỘC MINIGAME 2</div>
+                        <div class="bg-amber-600 text-white text-xs font-bold p-1.5 text-center">BẢNG CHUNG CUỘC MINIGAME BẢNG & VÒNG TRÒN</div>
                         <table class="w-full text-xs border-collapse">
                             <tbody>
                                 <tr class="border-b border-amber-200">
@@ -723,7 +813,7 @@
             <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 text-slate-800">
                 <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b gap-2">
                     <h2 class="text-base md:text-lg font-black text-slate-800 uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-calendar-day text-blue-600"></i> BẢNG THỐNG KÊ TRẬN PICK - NGÀY <span id="current-date-title" class="text-blue-700">1/10/26</span>
+                        <i class="fa-solid fa-calendar-day text-blue-600"></i> BẢNG THỐNG KÊ TRẬN PICK NGÀY <span id="current-date-title" class="text-blue-700">1/10/26</span>
                     </h2>
                     <div class="flex items-center gap-2">
                         <button onclick="addMatchToCurrentDate()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg shadow font-bold flex items-center gap-1">
@@ -737,8 +827,8 @@
                         <i class="fa-solid fa-coins"></i> KÈO ÁP DỤNG TOÀN NGÀY:
                     </span>
                     <select id="keo-mode-select" onchange="applyKeoToAllMatchesInDate(this.value)" class="text-xs p-1.5 border rounded bg-white font-bold outline-none border-amber-400 text-slate-800 cursor-pointer">
-                        <option value="default">Kèo Mặc Định (Thắng +5k / Thua -15k)</option>
-                        <option value="k25">Kèo 25k (Thắng 0k / Thua -25k)</option>
+                        <option value="default">Kèo (+5k/-15k)</option>
+                        <option value="k25">Kèo 25k (0k/-25k)</option>
                         <option value="free">Kèo Tự Do (Tùy chỉnh riêng từng trận)</option>
                     </select>
                 </div>
@@ -747,13 +837,13 @@
                     <table class="w-full min-w-[780px] text-center border-collapse border border-slate-300 text-xs">
                         <thead>
                             <tr class="bg-slate-100 text-slate-700 font-bold">
-                                <th class="p-2 border w-12">STT</th>
+                                <th class="p-2 border w-10">STT</th>
                                 <th class="p-2 border bg-emerald-100 text-emerald-900" colspan="2">CẶP PICK 1</th>
-                                <th class="p-2 border bg-purple-100 text-purple-900 w-24">TỶ SỐ</th>
+                                <th class="p-2 border bg-purple-100 text-purple-900 w-20">TỶ SỐ</th>
                                 <th class="p-2 border bg-red-100 text-red-900" colspan="2">CẶP PICK 2</th>
-                                <th class="p-2 border bg-amber-100 text-amber-900 w-32">CHỌN KÈO TRẬN</th>
+                                <th class="p-2 border bg-amber-100 text-amber-900 w-28">CHỌN KÈO TRẬN</th>
                                 <th class="p-2 border bg-amber-100 text-amber-900" colspan="2">KÈO BAN ĐẦU</th>
-                                <th class="p-2 border w-20 bg-slate-200 text-slate-800">THAO TÁC</th>
+                                <th class="p-2 border w-12 bg-slate-200 text-slate-800"><i class="fa-solid fa-gear"></i></th>
                             </tr>
                         </thead>
                         <tbody id="day-matches-body"></tbody>
@@ -798,7 +888,7 @@
             </div>
         </section>
 
-        <!-- QUẢN LÝ QUỸ PICK -->
+        <!-- QUẢN LÝ QUỸ PICK -->
         <section id="tab-fund_manager" class="tab-content hidden space-y-6">
             <div class="bg-gradient-to-r from-brand-800 via-brand-700 to-court-600 text-white p-5 rounded-2xl shadow-md flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="flex items-center space-x-3">
@@ -809,6 +899,16 @@
                         <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Quản Lý Quỹ Pickleball</h1>
                         <p class="text-xs text-brand-100">Hệ thống theo dõi Thu Chi & Hội Phí Tự Động</p>
                     </div>
+                </div>
+
+                <div class="flex items-center gap-2 bg-white/10 p-2 rounded-xl backdrop-blur-md border border-white/20">
+                    <span id="fund-admin-status-badge" class="text-xs font-bold text-yellow-300 flex items-center gap-1">
+                        <i class="fa-solid fa-lock text-red-300"></i> Admin Quỹ:
+                    </span>
+                    <input type="password" id="fund-admin-pass-input" placeholder="Pass Admin..." class="w-24 text-xs p-1 border rounded bg-white text-slate-800 outline-none focus:ring-1 focus:ring-yellow-400">
+                    <button onclick="checkFundAdminPassword()" class="bg-yellow-500 hover:bg-yellow-400 text-slate-900 text-xs px-2.5 py-1 rounded font-extrabold shadow">
+                        Mở Khóa
+                    </button>
                 </div>
                 
                 <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
@@ -831,7 +931,7 @@
                             <i class="fa-solid fa-vault text-xl"></i>
                         </div>
                     </div>
-                    <div class="mt-3 text-xs text-slate-400">Click để chỉnh sửa số dư đầu kỳ</div>
+                    <div class="mt-3 text-xs text-slate-400">Cần quyền Admin để chỉnh sửa</div>
                 </div>
 
                 <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm relative overflow-hidden group">
@@ -845,7 +945,7 @@
                         </div>
                     </div>
                     <div class="mt-3 text-xs text-slate-400 flex items-center gap-1">
-                        <i class="fa-solid fa-circle-info text-emerald-500"></i> Tự động cộng giá trị tuyệt đối từ dòng TỔNG BTC THU VỀ
+                        <i class="fa-solid fa-circle-info text-emerald-500"></i> Tự động cộng từ dòng TỔNG BTC THU VỀ
                     </div>
                 </div>
 
@@ -882,7 +982,7 @@
 
             <!-- NHẬT KÝ THU / CHI -->
             <div class="flex flex-col gap-6">
-                <!-- BẢNG NHẬT KÝ KHOẢN THU -->
+                <!-- NHẬT KÝ THU -->
                 <section class="bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col">
                     <div class="p-5 border-b border-slate-100 flex justify-between items-center">
                         <div>
@@ -920,7 +1020,7 @@
                     </div>
                 </section>
 
-                <!-- BẢNG NHẬT KÝ KHOẢN CHI -->
+                <!-- NHẬT KÝ CHI -->
                 <section class="bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col">
                     <div class="p-5 border-b border-slate-100 flex justify-between items-center">
                         <div>
@@ -959,7 +1059,7 @@
                 </section>
             </div>
 
-            <!-- BẢNG QUẢN LÝ QUỸ CÁC QUÝ -->
+            <!-- BẢNG CÁC QUÝ -->
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
                 <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
@@ -967,7 +1067,7 @@
                             <i class="fa-solid fa-users text-brand-600"></i>
                             <span>Danh Sách Pick Thủ CLB & Tiền Sân Các Quý</span>
                         </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Click tên cột để sửa. Dùng nút "➕ Thêm Cột Quý Mới" nếu cần mở rộng thêm các Quý tiếp theo.</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Click tên cột để sửa. Dùng nút "➕ Thêm Cột Quý Mới" nếu cần mở rộng.</p>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
@@ -992,7 +1092,7 @@
                     <table class="w-full text-left text-sm">
                         <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
                             <tr id="member-list-thead-tr">
-                                <!-- DYNAMIC HEADERS RENDER HERE -->
+                                <!-- DYNAMIC HEADERS -->
                             </tr>
                         </thead>
                         <tbody id="member-list" class="divide-y divide-slate-100"></tbody>
@@ -1042,7 +1142,7 @@
         </div>
     </div>
 
-    <!-- MODAL SỬA CẶP VĐV MINIGAME 2 -->
+    <!-- MODAL SỬA CẶP VĐV MINIGAME BẢNG & VÒNG TRÒN -->
     <div id="m2-edit-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 text-slate-800">
             <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
@@ -1067,7 +1167,7 @@
         </div>
     </div>
 
-    <!-- MODAL THÊM / SỬA KHOẢN THU CHI QUỸ -->
+    <!-- MODAL THÊM KHOẢN THU CHI QUẤY -->
     <div id="fund-modal-backdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-slate-100">
             <div id="fund-modal-header" class="p-4 bg-emerald-600 text-white flex justify-between items-center">
@@ -1106,7 +1206,7 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Ghi Chú</label>
-                    <textarea id="tx-note" rows="2" placeholder="Chuyển khoản / Tiền mặt / Hóa đơn / Nội dung ghi chú chi tiết..." class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
+                    <textarea id="tx-note" rows="2" placeholder="Chuyển khoản / Tiền mặt / Ghi chú..." class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
                 </div>
 
                 <div class="flex justify-end gap-2 pt-2">
@@ -1126,6 +1226,19 @@
         window.isAdminUnlocked = false;
         window.ADMIN_PASSWORD = "123456";
 
+        /* QUẢN LÝ DANH SÁCH VÀ CHỌN CÁC MINIGAME ĐỘNG (ĐÃ CÓ SẴN 2 NÚT HÒA LẠC OPEN VÀ MINIGAME 20/10) */
+        window.createdMinigames = JSON.parse(localStorage.getItem('pb_created_minigames')) || [
+            { id: 'mg_team_hoalac', name: 'Hòa Lạc Open', type: 'team' },
+            { id: 'mg_team_2010', name: 'Minigame 20/10', type: 'team' },
+            { id: 'mg_bracket_default', name: 'Phú Thọ Open (Bảng & Vòng Tròn)', type: 'bracket' }
+        ];
+
+        window.currentTeamMinigameId = localStorage.getItem('pb_current_team_mg_id') || 'mg_team_2010';
+        window.currentBracketMinigameId = localStorage.getItem('pb_current_bracket_mg_id') || 'mg_bracket_default';
+
+        /* LƯU TRỮ DỮ LIỆU TEAM ĐỘC LẬP CHO TỪNG GIẢI TEAM (ROSTER VÀ TỶ SỐ 15 TRẬN) */
+        window.teamTourneyData = JSON.parse(localStorage.getItem('pb_team_tourney_data')) || {};
+
         function checkAdminPassword() {
             const inputPass = document.getElementById('admin-pass-input').value;
             if (inputPass === window.ADMIN_PASSWORD) {
@@ -1135,10 +1248,202 @@
                     badge.innerHTML = `<i class="fa-solid fa-lock-open text-emerald-600"></i> Đã Mở Khóa Admin:`;
                     badge.className = "text-xs font-bold text-emerald-700 flex items-center gap-1";
                 }
-                alert("🔑 Xác thực Admin thành công! Bạn có thể tích chọn cột Thực Tế.");
+                alert("🔑 Xác thực Admin thành công!");
                 renderDayDetailView();
+                renderHomeClosestDateView();
             } else {
                 alert("❌ Mật khẩu Admin không đúng!");
+            }
+        }
+
+        function checkFundAdminPassword() {
+            const inputPass = document.getElementById('fund-admin-pass-input').value;
+            if (inputPass === window.ADMIN_PASSWORD) {
+                window.isAdminUnlocked = true;
+                const badge = document.getElementById('fund-admin-status-badge');
+                const badgeDay = document.getElementById('admin-status-badge');
+                if(badge) {
+                    badge.innerHTML = `<i class="fa-solid fa-lock-open text-emerald-300"></i> Admin Quỹ: Mở Kh khóa`;
+                    badge.className = "text-xs font-extrabold text-emerald-300 flex items-center gap-1";
+                }
+                if(badgeDay) {
+                    badgeDay.innerHTML = `<i class="fa-solid fa-lock-open text-emerald-600"></i> Đã Mở Khóa Admin:`;
+                    badgeDay.className = "text-xs font-bold text-emerald-700 flex items-center gap-1";
+                }
+                alert("🔑 Xác thực Admin thành công!");
+                updateFundDashboard();
+                renderDayDetailView();
+                renderHomeClosestDateView();
+            } else {
+                alert("❌ Mật khẩu Admin không đúng!");
+            }
+        }
+
+        function requireAdminAuth(actionCallback) {
+            if (window.isAdminUnlocked) {
+                actionCallback();
+            } else {
+                const pass = prompt("🔒 Vui lòng nhập mật khẩu Admin để thực hiện:");
+                if (pass === window.ADMIN_PASSWORD) {
+                    window.isAdminUnlocked = true;
+                    alert("🔑 Xác thực Admin thành công!");
+                    actionCallback();
+                } else if (pass !== null) {
+                    alert("❌ Mật khẩu Admin không đúng!");
+                }
+            }
+        }
+
+        /* HÀM MỞ TRANG TẠO GIẢI ĐẤU MỚI */
+        function openCreateTournamentPage(defaultType = 'team') {
+            closeAllDropdowns();
+            showTab('create_tournament');
+            const radio = document.querySelector(`input[name="tourney-type"][value="${defaultType}"]`);
+            if (radio) radio.checked = true;
+            document.getElementById('new-tourney-name').value = '';
+            document.getElementById('new-tourney-desc').value = '';
+        }
+
+        function submitNewTournament() {
+            const nameInput = document.getElementById('new-tourney-name').value.trim();
+            const typeInput = document.querySelector('input[name="tourney-type"]:checked').value;
+
+            if (!nameInput) {
+                alert("⚠️ Vui lòng nhập tên giải đấu!");
+                return;
+            }
+
+            const newTourney = {
+                id: 'mg_' + Date.now(),
+                name: nameInput,
+                type: typeInput,
+                createdAt: new Date().toISOString()
+            };
+
+            window.createdMinigames.push(newTourney);
+            localStorage.setItem('pb_created_minigames', JSON.stringify(window.createdMinigames));
+
+            if (typeInput === 'team') {
+                window.currentTeamMinigameId = newTourney.id;
+                localStorage.setItem('pb_current_team_mg_id', newTourney.id);
+                showTab('minigame1');
+            } else {
+                window.currentBracketMinigameId = newTourney.id;
+                localStorage.setItem('pb_current_bracket_mg_id', newTourney.id);
+                showTab('minigame2');
+            }
+
+            renderDynamicMinigameDropdowns();
+            autoBackupData();
+            if (window.syncToFirebase) window.syncToFirebase();
+            alert(`🎉 Đã khởi tạo thành công Giải đấu: ${newTourney.name}!`);
+        }
+
+        function renderDynamicMinigameDropdowns() {
+            const containerTeam = document.getElementById('nav-m1-dropdown-list');
+            const containerBracket = document.getElementById('nav-m2-dropdown-list');
+
+            const teamList = window.createdMinigames.filter(m => m.type === 'team');
+            const bracketList = window.createdMinigames.filter(m => m.type === 'bracket');
+
+            const currentTeamMg = teamList.find(m => m.id === window.currentTeamMinigameId) || teamList[0];
+            const currentBracketMg = bracketList.find(m => m.id === window.currentBracketMinigameId) || bracketList[0];
+
+            if (currentTeamMg) {
+                window.currentTeamMinigameId = currentTeamMg.id;
+                const el = document.getElementById('current-m1-tourney-name');
+                if(el) el.innerText = currentTeamMg.name;
+            }
+
+            if (currentBracketMg) {
+                window.currentBracketMinigameId = currentBracketMg.id;
+                const el = document.getElementById('current-m2-tourney-name');
+                if(el) el.innerText = currentBracketMg.name;
+            }
+
+            if (containerTeam) {
+                containerTeam.innerHTML = teamList.map(mg => `
+                    <div class="dropdown-item ${mg.id === window.currentTeamMinigameId ? 'bg-amber-100 font-bold text-amber-900' : ''}" onclick="selectMinigameActive('${mg.id}', 'team')">
+                        <span class="truncate flex items-center gap-1.5"><i class="fa-solid fa-people-group text-amber-600"></i> ${mg.name}</span>
+                        <div class="flex items-center gap-1">
+                            <button onclick="renameMinigameById('${mg.id}', event)" class="text-blue-600 hover:text-blue-800 p-1" title="Sửa tên"><i class="fa-solid fa-pen"></i></button>
+                            ${teamList.length > 1 ? `<button onclick="deleteMinigameById('${mg.id}', event)" class="text-red-500 hover:text-red-700 p-1" title="Xóa giải"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            if (containerBracket) {
+                containerBracket.innerHTML = bracketList.map(mg => `
+                    <div class="dropdown-item ${mg.id === window.currentBracketMinigameId ? 'bg-emerald-100 font-bold text-emerald-900' : ''}" onclick="selectMinigameActive('${mg.id}', 'bracket')">
+                        <span class="truncate flex items-center gap-1.5"><i class="fa-solid fa-diagram-project text-emerald-600"></i> ${mg.name}</span>
+                        <div class="flex items-center gap-1">
+                            <button onclick="renameMinigameById('${mg.id}', event)" class="text-blue-600 hover:text-blue-800 p-1" title="Sửa tên"><i class="fa-solid fa-pen"></i></button>
+                            ${bracketList.length > 1 ? `<button onclick="deleteMinigameById('${mg.id}', event)" class="text-red-500 hover:text-red-700 p-1" title="Xóa giải"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function selectMinigameActive(id, type) {
+            closeAllDropdowns();
+            if (type === 'team') {
+                window.currentTeamMinigameId = id;
+                localStorage.setItem('pb_current_team_mg_id', id);
+                showTab('minigame1');
+                initMinigame2010();
+            } else {
+                window.currentBracketMinigameId = id;
+                localStorage.setItem('pb_current_bracket_mg_id', id);
+                showTab('minigame2');
+                renderM2();
+            }
+            renderDynamicMinigameDropdowns();
+        }
+
+        function renameCurrentMinigame(type) {
+            const currentId = type === 'team' ? window.currentTeamMinigameId : window.currentBracketMinigameId;
+            renameMinigameById(currentId);
+        }
+
+        function renameMinigameById(id, e) {
+            if(e) e.stopPropagation();
+            closeAllDropdowns();
+            const mg = window.createdMinigames.find(item => item.id === id);
+            if (mg) {
+                const newName = prompt(`Nhập tên mới cho giải "${mg.name}":`, mg.name);
+                if (newName && newName.trim() !== '' && newName !== mg.name) {
+                    mg.name = newName.trim();
+                    localStorage.setItem('pb_created_minigames', JSON.stringify(window.createdMinigames));
+                    renderDynamicMinigameDropdowns();
+                    autoBackupData();
+                    if (window.syncToFirebase) window.syncToFirebase();
+                }
+            }
+        }
+
+        function deleteMinigameById(id, e) {
+            if(e) e.stopPropagation();
+            closeAllDropdowns();
+            const mg = window.createdMinigames.find(item => item.id === id);
+            if (mg && confirm(`Bạn có chắc chắn muốn XÓA giải đấu "${mg.name}"?`)) {
+                window.createdMinigames = window.createdMinigames.filter(item => item.id !== id);
+                localStorage.setItem('pb_created_minigames', JSON.stringify(window.createdMinigames));
+
+                if (window.teamTourneyData[id]) delete window.teamTourneyData[id];
+                localStorage.setItem('pb_team_tourney_data', JSON.stringify(window.teamTourneyData));
+
+                const remainingTeam = window.createdMinigames.filter(m => m.type === 'team');
+                const remainingBracket = window.createdMinigames.filter(m => m.type === 'bracket');
+
+                if (remainingTeam.length > 0) window.currentTeamMinigameId = remainingTeam[0].id;
+                if (remainingBracket.length > 0) window.currentBracketMinigameId = remainingBracket[0].id;
+
+                renderDynamicMinigameDropdowns();
+                refreshAllViews();
+                autoBackupData();
+                if (window.syncToFirebase) window.syncToFirebase();
             }
         }
 
@@ -1163,17 +1468,31 @@
             { id: 18, name: "Minh Vương", gender: "Nam" }
         ];
 
-        window.m1TeamA = ["Tiến Thọ", "Châu Sĩ", "Vân Đình", "Ly", "Phú Mỗ", "Hà Giấy", "Long Diễm", "Tuấn La", "Hạnh"];
-        window.m1TeamB = ["Trí Đô", "Thành Sóc", "Quỳnh Cool", "Hải Hà", "Dũng Ngạc", "Lợi Trì", "Thành Đàm", "Điền Chèm", "Minh Vương"];
-
-        window.m1Matches = [
-            { id:1, luot:1, san:1, content:"Nam xoay vòng", a1:"Tiến Thọ", a2:"Châu Sĩ", scoreA:"", scoreB:"", b1:"Trí Đô", b2:"Thành Sóc" },
-            { id:2, luot:1, san:2, content:"Nữ xoay vòng", a1:"Vân Đình", a2:"Ly", scoreA:"", scoreB:"", b1:"Quỳnh Cool", b2:"Hải Hà" },
-            { id:3, luot:1, san:3, content:"Nam xoay vòng", a1:"Phú Mỗ", a2:"Hà Giấy", scoreA:"", scoreB:"", b1:"Dũng Ngạc", b2:"Lợi Trì" },
-            { id:4, luot:2, san:1, content:"Nam xoay vòng", a1:"Long Diễm", a2:"Châu Sĩ", scoreA:"", scoreB:"", b1:"Thành Đàm", b2:"Thành Sóc" },
-            { id:5, luot:2, san:2, content:"Nam-Nữ không xoay vòng", a1:"Tuấn La", a2:"Ly", scoreA:"", scoreB:"", b1:"Điền Chèm", b2:"Hải Hà" },
-            { id:6, luot:2, san:3, content:"Nam-Nữ không xoay vòng", a1:"Hà Giấy", a2:"Vân Đình", scoreA:"", scoreB:"", b1:"Lợi Trì", b2:"Quỳnh Cool" }
+        /* --- CẤU TRÚC 15 TRẬN ĐẤU TEAM --- */
+        const matchesTemplate2010 = [
+            { stt: 1, category: "Đôi Nam", pA1: "a_nam_1", pA2: "a_nam_2", pB1: "b_nam_1", pB2: "b_nam_2", note: "Nội dung Đôi Nam - Trận 1" },
+            { stt: 2, category: "Đôi Nam", pA1: "a_nam_2", pA2: "a_nam_3", pB1: "b_nam_2", pB2: "b_nam_3", note: "Nội dung Đôi Nam - Trận 2" },
+            { stt: 3, category: "Đôi Nam", pA1: "a_nam_1", pA2: "a_nam_3", pB1: "b_nam_1", pB2: "b_nam_3", note: "Nội dung Đôi Nam - Trận 3" },
+            { stt: 4, category: "Đôi Nam", pA1: "a_nam_1", pA2: "a_nam_2", pB1: "b_nam_2", pB2: "b_nam_3", note: "Nội dung Đôi Nam - Trận 4" },
+            { stt: 5, category: "Đôi Nam", pA1: "a_nam_2", pA2: "a_nam_3", pB1: "b_nam_1", pB2: "b_nam_3", note: "Nội dung Đôi Nam - Trận 5" },
+            { stt: 6, category: "Đôi Nam", pA1: "a_nam_1", pA2: "a_nam_3", pB1: "b_nam_1", pB2: "b_nam_2", note: "Nội dung Đôi Nam - Trận 6" },
+            
+            { stt: 7, category: "Đôi Nữ", pA1: "a_nu_1", pA2: "a_nu_2", pB1: "b_nu_1", pB2: "b_nu_2", note: "Nội dung Đôi Nữ - Trận 1" },
+            { stt: 8, category: "Đôi Nữ", pA1: "a_nu_2", pA2: "a_nu_3", pB1: "b_nu_2", pB2: "b_nu_3", note: "Nội dung Đôi Nữ - Trận 2" },
+            { stt: 9, category: "Đôi Nữ", pA1: "a_nu_1", pA2: "a_nu_3", pB1: "b_nu_1", pB2: "b_nu_3", note: "Nội dung Đôi Nữ - Trận 3" },
+            { stt: 10, category: "Đôi Nữ", pA1: "a_nu_1", pA2: "a_nu_2", pB1: "b_nu_2", pB2: "b_nu_3", note: "Nội dung Đôi Nữ - Trận 4" },
+            { stt: 11, category: "Đôi Nữ", pA1: "a_nu_2", pA2: "a_nu_3", pB1: "b_nu_1", pB2: "b_nu_3", note: "Nội dung Đôi Nữ - Trận 5" },
+            { stt: 12, category: "Đôi Nữ", pA1: "a_nu_1", pA2: "a_nu_3", pB1: "b_nu_1", pB2: "b_nu_2", note: "Nội dung Đôi Nữ - Trận 6" },
+            
+            { stt: 13, category: "Đôi Nam Nữ", pA1: "a_nam_1", pA2: "a_nu_1", pB1: "b_nam_1", pB2: "b_nu_1", note: "Nội dung Nam Nữ - Trận 1" },
+            { stt: 14, category: "Đôi Nam Nữ", pA1: "a_nam_2", pA2: "a_nu_2", pB1: "b_nam_2", pB2: "b_nu_2", note: "Nội dung Nam Nữ - Trận 2" },
+            { stt: 15, category: "Đôi Nam Nữ", pA1: "a_nam_3", pA2: "a_nu_3", pB1: "b_nam_3", pB2: "b_nu_3", note: "Nội dung Nam Nữ - Trận 3" }
         ];
+
+        const teamA_men_ids = ['a_nam_1', 'a_nam_2', 'a_nam_3'];
+        const teamA_women_ids = ['a_nu_1', 'a_nu_2', 'a_nu_3'];
+        const teamB_men_ids = ['b_nam_1', 'b_nam_2', 'b_nam_3'];
+        const teamB_women_ids = ['b_nu_1', 'b_nu_2', 'b_nu_3'];
 
         window.m2PairsA = [
             { p1: "Tiến Thọ", p2: "Châu Sĩ" },
@@ -1218,13 +1537,11 @@
 
         const defaultFundIncomes = [
             { id: 1, date: "2026-01-05", desc: "Thu tiền quỹ Q1 - Tiến Thọ", amount: 800000, source: "Tiến Thọ", note: "Chuyển khoản ngân hàng VPBank" },
-            { id: 2, date: "2026-01-06", desc: "Thu tiền quỹ Q1 - Châu Sĩ", amount: 800000, source: "Châu Sĩ", note: "Thanh toán bằng tiền mặt trực tiếp tại sân" },
-            { id: 3, date: "2026-01-10", desc: "Thu tiền giao lưu vãng lai", amount: 200000, source: "Khách vãng lai / Khác", note: "Thu theo buổi giao lưu cuối tuần" }
+            { id: 2, date: "2026-01-06", desc: "Thu tiền quỹ Q1 - Châu Sĩ", amount: 800000, source: "Châu Sĩ", note: "Thanh toán bằng tiền mặt" }
         ];
 
         const defaultFundExpenses = [
-            { id: 1, date: "2026-01-02", desc: "Thanh toán tiền thuê sân Tháng 1", amount: 1200000, source: "Khách vãng lai / Khác", note: "Hóa đơn thanh toán tiền sân định kỳ" },
-            { id: 2, date: "2026-01-15", desc: "Mua bóng Pickleball thi đấu", amount: 450000, source: "Khách vãng lai / Khác", note: "Mua 2 hộp bóng Pickleball chuyên dụng 40 lỗ" }
+            { id: 1, date: "2026-01-02", desc: "Thanh toán tiền thuê sân Tháng 1", amount: 1200000, source: "Khách vãng lai / Khác", note: "Hóa đơn thanh toán tiền sân định kỳ" }
         ];
 
         window.fundFeeStatus = JSON.parse(localStorage.getItem('pb_fee_status')) || {};
@@ -1232,7 +1549,233 @@
         window.fundExpenses = JSON.parse(localStorage.getItem('pb_expenses')) || defaultFundExpenses;
         window.autoIncomeNotes = JSON.parse(localStorage.getItem('pb_auto_income_notes')) || {};
 
-        /* 📍 HÀM XÁC ĐỊNH NGÀY GẦN NHẤT SO VỚI NGÀY HIỆN TẠI */
+        function getCurrentTeamData() {
+            const mgId = window.currentTeamMinigameId;
+            if (!window.teamTourneyData[mgId]) {
+                const menNames = window.players.filter(p => p.gender === "Nam").map(p => p.name);
+                const womenNames = window.players.filter(p => p.gender === "Nữ").map(p => p.name);
+                const allNames = window.players.map(p => p.name);
+                const masterMen = menNames.length > 0 ? menNames : allNames;
+                const masterWomen = womenNames.length > 0 ? womenNames : allNames;
+
+                window.teamTourneyData[mgId] = {
+                    roster: {
+                        a_nam_1: masterMen[0] || "",
+                        a_nam_2: masterMen[1] || "",
+                        a_nam_3: masterMen[2] || "",
+                        a_nu_1: masterWomen[0] || "",
+                        a_nu_2: masterWomen[1] || "",
+                        a_nu_3: masterWomen[2] || "",
+                        b_nam_1: masterMen[3] || masterMen[0] || "",
+                        b_nam_2: masterMen[4] || masterMen[1] || "",
+                        b_nam_3: masterMen[5] || masterMen[2] || "",
+                        b_nu_1: masterWomen[3] || masterWomen[0] || "",
+                        b_nu_2: masterWomen[4] || masterWomen[1] || "",
+                        b_nu_3: masterWomen[5] || masterWomen[2] || ""
+                    },
+                    scores: {}
+                };
+            }
+            return window.teamTourneyData[mgId];
+        }
+
+        function initMinigame2010() {
+            const menNames = window.players.filter(p => p.gender === "Nam").map(p => p.name);
+            const womenNames = window.players.filter(p => p.gender === "Nữ").map(p => p.name);
+            const allNames = window.players.map(p => p.name);
+
+            const masterMenList = menNames.length > 0 ? menNames : allNames;
+            const masterWomenList = womenNames.length > 0 ? womenNames : allNames;
+
+            const tData = getCurrentTeamData();
+            const r = tData.roster;
+
+            setSelectData('a_nam_1', masterMenList, r.a_nam_1);
+            setSelectData('a_nam_2', masterMenList, r.a_nam_2);
+            setSelectData('a_nam_3', masterMenList, r.a_nam_3);
+
+            setSelectData('a_nu_1', masterWomenList, r.a_nu_1);
+            setSelectData('a_nu_2', masterWomenList, r.a_nu_2);
+            setSelectData('a_nu_3', masterWomenList, r.a_nu_3);
+
+            setSelectData('b_nam_1', masterMenList, r.b_nam_1);
+            setSelectData('b_nam_2', masterMenList, r.b_nam_2);
+            setSelectData('b_nam_3', masterMenList, r.b_nam_3);
+
+            setSelectData('b_nu_1', masterWomenList, r.b_nu_1);
+            setSelectData('b_nu_2', masterWomenList, r.b_nu_2);
+            setSelectData('b_nu_3', masterWomenList, r.b_nu_3);
+
+            renderMatches2010();
+            updateRosterOptions();
+        }
+
+        function setSelectData(elementId, masterList, currentVal) {
+            const select = document.getElementById(elementId);
+            if (!select) return;
+            select.innerHTML = '';
+            masterList.forEach((name) => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.textContent = name;
+                if (name === currentVal) opt.selected = true;
+                select.appendChild(opt);
+            });
+            if (!select.value && masterList.length > 0) {
+                select.value = masterList[0];
+            }
+        }
+
+        function onTeamRosterChanged() {
+            const tData = getCurrentTeamData();
+            teamA_men_ids.forEach(id => tData.roster[id] = document.getElementById(id)?.value || "");
+            teamA_women_ids.forEach(id => tData.roster[id] = document.getElementById(id)?.value || "");
+            teamB_men_ids.forEach(id => tData.roster[id] = document.getElementById(id)?.value || "");
+            teamB_women_ids.forEach(id => tData.roster[id] = document.getElementById(id)?.value || "");
+
+            localStorage.setItem('pb_team_tourney_data', JSON.stringify(window.teamTourneyData));
+            updateRosterOptions();
+            autoBackupData();
+            if (window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function updateRosterOptions() {
+            const menNames = window.players.filter(p => p.gender === "Nam").map(p => p.name);
+            const womenNames = window.players.filter(p => p.gender === "Nữ").map(p => p.name);
+            const allNames = window.players.map(p => p.name);
+
+            const masterMenList = menNames.length > 0 ? menNames : allNames;
+            const masterWomenList = womenNames.length > 0 ? womenNames : allNames;
+
+            const allA_men = teamA_men_ids.map(id => document.getElementById(id)?.value).filter(Boolean);
+            const allA_women = teamA_women_ids.map(id => document.getElementById(id)?.value).filter(Boolean);
+            const allB_men = teamB_men_ids.map(id => document.getElementById(id)?.value).filter(Boolean);
+            const allB_women = teamB_women_ids.map(id => document.getElementById(id)?.value).filter(Boolean);
+
+            refreshDropdownGroup(teamA_men_ids, masterMenList, allB_men);
+            refreshDropdownGroup(teamA_women_ids, masterWomenList, allB_women);
+            refreshDropdownGroup(teamB_men_ids, masterMenList, allA_men);
+            refreshDropdownGroup(teamB_women_ids, masterWomenList, allA_women);
+
+            updateMatchPairNames2010();
+            calculateScores2010();
+        }
+
+        function refreshDropdownGroup(groupIds, masterList, excludeList) {
+            groupIds.forEach(id => {
+                const select = document.getElementById(id);
+                if(!select) return;
+                const currentVal = select.value;
+                
+                select.innerHTML = '';
+                masterList.forEach(name => {
+                    if (name === currentVal || !excludeList.includes(name)) {
+                        const opt = document.createElement('option');
+                        opt.value = name;
+                        opt.textContent = name;
+                        if (name === currentVal) opt.selected = true;
+                        select.appendChild(opt);
+                    }
+                });
+                if(!select.value && select.options.length > 0) select.selectedIndex = 0;
+            });
+        }
+
+        function renderMatches2010() {
+            const tbody = document.getElementById('match-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+
+            const tData = getCurrentTeamData();
+
+            matchesTemplate2010.forEach((m) => {
+                const sA = tData.scores[`score_a_${m.stt}`] !== undefined ? tData.scores[`score_a_${m.stt}`] : '';
+                const sB = tData.scores[`score_b_${m.stt}`] !== undefined ? tData.scores[`score_b_${m.stt}`] : '';
+
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = "1px solid #d9d9d9";
+                tr.innerHTML = `
+                    <td style="border: 1px solid #d9d9d9; padding: 10px; text-align: center;"><b>${m.stt}</b></td>
+                    <td style="border: 1px solid #d9d9d9; padding: 10px; text-align: center;">${m.category}</td>
+                    <td style="border: 1px solid #d9d9d9; padding: 10px; text-align: center;"><span id="match_a_${m.stt}" class="font-bold text-blue-800">-</span></td>
+                    <td style="border: 1px solid #d9d9d9; padding: 10px; text-align: center;"><b>VS</b></td>
+                    <td style="border: 1px solid #d9d9d9; padding: 10px; text-align: center;"><span id="match_b_${m.stt}" class="font-bold text-orange-800">-</span></td>
+                    <td style="border: 1px solid #d9d9d9; padding: 10px; text-align: center;"><input type="number" min="0" class="score-input w-12 p-1 text-center border rounded" id="score_a_${m.stt}" value="${sA}" oninput="onTeamScoreChanged(${m.stt})"></td>
+                    <td style="border: 1px solid #d9d9d9; padding: 10px; text-align: center;"><input type="number" min="0" class="score-input w-12 p-1 text-center border rounded" id="score_b_${m.stt}" value="${sB}" oninput="onTeamScoreChanged(${m.stt})"></td>
+                    <td style="border: 1px solid #d9d9d9; padding: 10px; text-align: center;"><span class="winner-badge font-bold" id="winner_${m.stt}">-</span></td>
+                    <td style="border: 1px solid #d9d9d9; padding: 10px; text-align: left; font-size: 12px; color: #555;">${m.note}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            updateMatchPairNames2010();
+            calculateScores2010();
+        }
+
+        function onTeamScoreChanged(stt) {
+            const tData = getCurrentTeamData();
+            tData.scores[`score_a_${stt}`] = document.getElementById(`score_a_${stt}`)?.value || '';
+            tData.scores[`score_b_${stt}`] = document.getElementById(`score_b_${stt}`)?.value || '';
+
+            localStorage.setItem('pb_team_tourney_data', JSON.stringify(window.teamTourneyData));
+            calculateScores2010();
+            autoBackupData();
+            if (window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function updateMatchPairNames2010() {
+            matchesTemplate2010.forEach(m => {
+                const nameA1 = document.getElementById(m.pA1)?.value || "(Chưa chọn)";
+                const nameA2 = document.getElementById(m.pA2)?.value || "(Chưa chọn)";
+                const nameB1 = document.getElementById(m.pB1)?.value || "(Chưa chọn)";
+                const nameB2 = document.getElementById(m.pB2)?.value || "(Chưa chọn)";
+
+                const elA = document.getElementById(`match_a_${m.stt}`);
+                const elB = document.getElementById(`match_b_${m.stt}`);
+                if(elA) elA.textContent = `${nameA1} + ${nameA2}`;
+                if(elB) elB.textContent = `${nameB1} + ${nameB2}`;
+            });
+        }
+
+        function calculateScores2010() {
+            let teamAWins = 0;
+            let teamBWins = 0;
+
+            matchesTemplate2010.forEach(m => {
+                const scoreAInput = document.getElementById(`score_a_${m.stt}`)?.value;
+                const scoreBInput = document.getElementById(`score_b_${m.stt}`)?.value;
+                const winnerSpan = document.getElementById(`winner_${m.stt}`);
+                if(!winnerSpan) return;
+
+                if (scoreAInput !== "" && scoreBInput !== "" && scoreAInput !== undefined && scoreBInput !== undefined) {
+                    const scoreA = parseInt(scoreAInput);
+                    const scoreB = parseInt(scoreBInput);
+
+                    if (!isNaN(scoreA) && !isNaN(scoreB)) {
+                        if (scoreA > scoreB) {
+                            winnerSpan.textContent = "Team A";
+                            winnerSpan.style.color = "#2f5597";
+                            teamAWins++;
+                        } else if (scoreB > scoreA) {
+                            winnerSpan.textContent = "Team B";
+                            winnerSpan.style.color = "#c55a11";
+                            teamBWins++;
+                        } else {
+                            winnerSpan.textContent = "Hòa";
+                            winnerSpan.style.color = "#555";
+                        }
+                    }
+                } else {
+                    winnerSpan.textContent = "-";
+                    winnerSpan.style.color = "#555";
+                }
+            });
+
+            const winAEl = document.getElementById('wins-team-a');
+            const winBEl = document.getElementById('wins-team-b');
+            if(winAEl) winAEl.textContent = teamAWins;
+            if(winBEl) winBEl.textContent = teamBWins;
+        }
+
         function getClosestDateToToday() {
             if (!window.dates || window.dates.length === 0) return null;
             if (window.dates.length === 1) return window.dates[0];
@@ -1268,7 +1811,6 @@
             return closestDateStr;
         }
 
-        /* 📍 HIỂN THỊ DIỄN BIẾN NGÀY GẦN NHẤT RA TRANG CHỦ */
         function renderHomeClosestDateView() {
             const container = document.getElementById('home-closest-date-container');
             const titleEl = document.getElementById('home-closest-date-title');
@@ -1284,8 +1826,11 @@
             if(titleEl) titleEl.innerText = closestDate;
 
             const matches = window.matchesData[closestDate] || [];
-            
+
             let matchesTableRows = '';
+            let stats = {};
+            window.players.forEach(p => { stats[p.name] = { played: 0, winK: 0, loseK: 0, total: 0 }; });
+
             matches.forEach((m, idx) => {
                 const val1 = (m.score1 || "").toString().trim();
                 const val2 = (m.score2 || "").toString().trim();
@@ -1311,57 +1856,6 @@
                     if(s1 > s2) { keo1 = effWin; keo2 = effLose; }
                     else if(s2 > s1) { keo1 = effLose; keo2 = effWin; }
                     else { keo1 = 0; keo2 = 0; }
-                }
-
-                const c1_p1 = m.c1_p1 ? `<span class="player-tag">${m.c1_p1}</span>` : '---';
-                const c1_p2 = m.c1_p2 ? `<span class="player-tag">${m.c1_p2}</span>` : '---';
-                const c2_p1 = m.c2_p1 ? `<span class="player-tag">${m.c2_p1}</span>` : '---';
-                const c2_p2 = m.c2_p2 ? `<span class="player-tag">${m.c2_p2}</span>` : '---';
-
-                const scoreStr = (val1 === "0" || s1 === 0) && (val2 === "0" || s2 === 0) 
-                    ? `<span class="ham-text px-2 inline-block">HẦM - HẦM</span>` 
-                    : (val1 === "0" || s1 === 0) ? `<span class="ham-text px-1 inline-block">HẦM</span> - <span class="font-black text-blue-800 text-sm">${m.score2}</span>`
-                    : (val2 === "0" || s2 === 0) ? `<span class="font-black text-blue-800 text-sm">${m.score1}</span> - <span class="ham-text px-1 inline-block">HẦM</span>`
-                    : (m.score1 || m.score2) ? `<span class="font-black text-purple-900 text-sm">${m.score1 || 0} - ${m.score2 || 0}</span>` : `---`;
-
-                matchesTableRows += `
-                    <tr class="hover:bg-slate-50 text-center">
-                        <td class="p-2 font-bold text-slate-700">Trận ${idx + 1}</td>
-                        <td class="p-2">${c1_p1}</td>
-                        <td class="p-2">${c1_p2}</td>
-                        <td class="p-2 bg-purple-50/50 font-bold border-x border-purple-200">${scoreStr}</td>
-                        <td class="p-2">${c2_p1}</td>
-                        <td class="p-2">${c2_p2}</td>
-                        <td class="p-2 font-extrabold ${keo1 > 0 ? 'txt-win' : (keo1 < 0 ? 'txt-lose' : '')}">${keo1 !== '' ? keo1 + 'K' : '---'}</td>
-                        <td class="p-2 font-extrabold ${keo2 > 0 ? 'txt-win' : (keo2 < 0 ? 'txt-lose' : '')}">${keo2 !== '' ? keo2 + 'K' : '---'}</td>
-                    </tr>
-                `;
-            });
-
-            if(!matchesTableRows) {
-                matchesTableRows = `<tr><td colspan="8" class="p-4 text-center text-slate-400">Chưa có trận đấu nào được tạo.</td></tr>`;
-            }
-
-            let stats = {};
-            window.players.forEach(p => { stats[p.name] = { played: 0, winK: 0, loseK: 0, total: 0 }; });
-
-            matches.forEach((m) => {
-                const s1 = parseInt(m.score1);
-                const s2 = parseInt(m.score2);
-                const mMode = m.keoMode || window.dateKeoMode[closestDate] || 'default';
-                let winAmt = 5, loseAmt = -15;
-
-                if (mMode === 'k25') { winAmt = 0; loseAmt = -25; }
-                else if (mMode === 'free') {
-                    winAmt = parseFloat(m.customWin) || 0;
-                    loseAmt = parseFloat(m.customLose) || 0;
-                    if (loseAmt > 0) loseAmt = -loseAmt;
-                }
-
-                if(!isNaN(s1) && !isNaN(s2)) {
-                    let isHam = (s1 === 0 || s2 === 0);
-                    let effWin = isHam ? (winAmt > 0 ? winAmt * 2 : 0) : winAmt;
-                    let effLose = isHam ? loseAmt * 2 : loseAmt;
 
                     const pair1 = [m.c1_p1, m.c1_p2].filter(Boolean);
                     const pair2 = [m.c2_p1, m.c2_p2].filter(Boolean);
@@ -1374,7 +1868,76 @@
                         pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].loseK += effLose; stats[v].total += effLose; } });
                     }
                 }
+
+                const buildPlayerSelectHome = (val, field) => {
+                    let opts = `<option value="">-- Chọn Pick --</option>`;
+                    window.players.forEach(p => {
+                        opts += `<option value="${p.name}" ${p.name === val ? 'selected' : ''}>${p.name}</option>`;
+                    });
+                    return `<select onchange="updateMatchDataForDate('${closestDate}', ${idx}, '${field}', this.value)" class="player-select-btn text-[11px] border rounded p-1 outline-none w-full bg-white shadow-sm">
+                        ${opts}
+                    </select>`;
+                };
+
+                const isHam1 = (val1 === "0" || s1 === 0);
+                const isHam2 = (val2 === "0" || s2 === 0);
+
+                const score1Inner = isHam1 
+                    ? `<span class="ham-text">HẦM</span>` 
+                    : `<input type="text" class="score-input" value="${m.score1 || ''}" onchange="updateMatchDataForDate('${closestDate}', ${idx}, 'score1', this.value)">`;
+
+                const score2Inner = isHam2 
+                    ? `<span class="ham-text">HẦM</span>` 
+                    : `<input type="text" class="score-input" value="${m.score2 || ''}" onchange="updateMatchDataForDate('${closestDate}', ${idx}, 'score2', this.value)">`;
+
+                let keoCellUI = `
+                    <select onchange="updateMatchKeoModeForDate('${closestDate}', ${idx}, this.value)" class="text-[10px] sm:text-[11px] font-bold p-0.5 border rounded bg-amber-50 outline-none w-full text-amber-900 border-amber-300">
+                        <option value="default" ${mMode==='default'?'selected':''}>Kèo (+5k/-15k)</option>
+                        <option value="k25" ${mMode==='k25'?'selected':''}>Kèo 25k (0k/-25k)</option>
+                        <option value="free" ${mMode==='free'?'selected':''}>Kèo Tự Do</option>
+                    </select>
+                `;
+
+                if (mMode === 'free') {
+                    keoCellUI += `
+                        <div class="flex items-center justify-center gap-1 mt-1">
+                            <span class="text-[10px] text-emerald-700 font-bold">+</span>
+                            <input type="number" class="keo-custom-input text-emerald-700" value="${m.customWin !== undefined ? m.customWin : 5}" onchange="updateMatchDataForDate('${closestDate}', ${idx}, 'customWin', this.value)" title="Tiền thắng">
+                            <span class="text-[10px] text-red-600 font-bold">/</span>
+                            <input type="number" class="keo-custom-input text-red-600" value="${m.customLose !== undefined ? m.customLose : -15}" onchange="updateMatchDataForDate('${closestDate}', ${idx}, 'customLose', this.value)" title="Tiền thua">
+                        </div>
+                    `;
+                }
+
+                matchesTableRows += `
+                    <tr class="hover:bg-slate-50 text-center">
+                        <td class="font-bold text-slate-700 whitespace-nowrap px-1">Trận ${idx + 1}</td>
+                        <td class="p-1">${buildPlayerSelectHome(m.c1_p1, 'c1_p1')}</td>
+                        <td class="p-1">${buildPlayerSelectHome(m.c1_p2, 'c1_p2')}</td>
+                        <td class="p-1 bg-purple-50/40 border-x border-purple-200">
+                            <div class="flex items-center justify-center gap-0.5">
+                                <div onclick="if(${isHam1}) updateMatchDataForDate('${closestDate}', ${idx}, 'score1', '')">${score1Inner}</div>
+                                <span class="font-black text-slate-400 px-0.5">-</span>
+                                <div onclick="if(${isHam2}) updateMatchDataForDate('${closestDate}', ${idx}, 'score2', '')">${score2Inner}</div>
+                            </div>
+                        </td>
+                        <td class="p-1">${buildPlayerSelectHome(m.c2_p1, 'c2_p1')}</td>
+                        <td class="p-1">${buildPlayerSelectHome(m.c2_p2, 'c2_p2')}</td>
+                        <td class="p-1 bg-amber-50/50">${keoCellUI}</td>
+                        <td class="p-1 font-extrabold ${keo1 > 0 ? 'txt-win' : (keo1 < 0 ? 'txt-lose' : '')}">${keo1 !== '' ? keo1 + 'K' : '---'}</td>
+                        <td class="p-1 font-extrabold ${keo2 > 0 ? 'txt-win' : (keo2 < 0 ? 'txt-lose' : '')}">${keo2 !== '' ? keo2 + 'K' : '---'}</td>
+                        <td class="p-1 text-center whitespace-nowrap">
+                            <button onclick="deleteMatchFromDate('${closestDate}', ${idx})" class="text-slate-400 hover:text-red-600 font-bold p-1 transition-colors" title="Xóa trận đấu">
+                                <i class="fa-solid fa-trash-can text-sm"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
             });
+
+            if(!matchesTableRows) {
+                matchesTableRows = `<tr><td colspan="10" class="p-4 text-center text-slate-400">Chưa có trận đấu nào được tạo trong ngày này.</td></tr>`;
+            }
 
             let summaryRows = '';
             let sumBringBack = 0, sumThucThu = 0, sumAmThucTe = 0;
@@ -1396,6 +1959,8 @@
                         noteText = isPaid ? `<span class="note-paid"><i class="fa-solid fa-check"></i> Đã nhận</span>` : `<span class="note-unpaid"><i class="fa-solid fa-clock"></i> Chưa nhận</span>`;
                     }
 
+                    const disabledAttr = window.isAdminUnlocked ? '' : 'disabled title="Cần mật khẩu Admin để sửa"';
+
                     summaryRows += `
                         <tr class="hover:bg-slate-50 text-center">
                             <td class="p-2 border text-left pl-3"><span class="player-tag">${p.name}</span></td>
@@ -1405,7 +1970,7 @@
                             <td class="p-2 border text-blue-600 font-bold">${bringBack > 0 ? '+' + bringBack + 'K' : ''}</td>
                             <td class="p-2 border font-extrabold ${st.total < 0 ? 'txt-lose' : (st.total > 0 ? 'txt-win' : '')}">${st.total !== 0 ? (st.total > 0 ? '+' + st.total + 'K' : st.total + 'K') : '0K'}</td>
                             <td class="p-2 border bg-amber-50/30">
-                                <span class="font-bold text-xs ${isPaid ? 'text-emerald-700' : 'text-slate-400'}">${isPaid ? '✔️ Đã duyệt' : '❌ Chưa'}</span>
+                                <input type="checkbox" ${isPaid ? 'checked' : ''} ${disabledAttr} onclick="togglePaymentStatus('${payKey}')" class="w-4 h-4 cursor-pointer accent-emerald-600">
                             </td>
                             <td class="p-2 border">${noteText}</td>
                         </tr>
@@ -1416,22 +1981,39 @@
             let btcThuVe = sumAmThucTe + sumBringBack;
             let quyCon = sumThucThu - Math.abs(btcThuVe);
 
+            const pStatus = window.paymentStatus[closestDate];
+            const currentOption = (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption) ? pStatus.btcNoteAdminOption : "YES";
+
             container.innerHTML = `
                 <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-5">
                     <div>
-                        <h4 class="font-bold text-sm text-slate-700 mb-2 flex items-center gap-1.5">
-                            <i class="fa-solid fa-table-list text-blue-600"></i> BẢNG DÂN TRẬN PICK NGÀY ${closestDate}
-                        </h4>
+                        <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b gap-2">
+                            <h4 class="font-bold text-sm text-slate-700 flex items-center gap-1.5">
+                                <i class="fa-solid fa-table-list text-blue-600"></i> BẢNG DÂN TRẬN PICK NGÀY ${closestDate}
+                            </h4>
+                            <div class="flex items-center gap-2">
+                                <select onchange="applyKeoToAllMatchesForDate('${closestDate}', this.value)" class="text-xs p-1 border rounded bg-white font-bold outline-none border-amber-400 text-slate-800 cursor-pointer">
+                                    <option value="default" ${(window.dateKeoMode[closestDate]||'default')==='default'?'selected':''}>Kèo (+5k/-15k)</option>
+                                    <option value="k25" ${(window.dateKeoMode[closestDate]||'default')==='k25'?'selected':''}>Kèo 25k (0k/-25k)</option>
+                                    <option value="free" ${(window.dateKeoMode[closestDate]||'default')==='free'?'selected':''}>Kèo Tự Do</option>
+                                </select>
+                                <button onclick="addMatchToDate('${closestDate}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-2.5 py-1 rounded shadow font-bold flex items-center gap-1">
+                                    <i class="fa-solid fa-plus"></i> Thêm Trận
+                                </button>
+                            </div>
+                        </div>
+
                         <div class="smooth-scroll border border-slate-200 rounded-lg bg-white shadow-sm">
-                            <table class="w-full text-xs min-w-[650px] border-collapse">
+                            <table class="w-full text-xs min-w-[780px] border-collapse text-center">
                                 <thead>
                                     <tr class="bg-slate-100 text-slate-700 font-bold">
-                                        <th class="p-2 border w-12">STT</th>
-                                        <th class="p-2 border bg-emerald-50 text-emerald-900" colspan="2">CẶP 1</th>
+                                        <th class="p-2 border w-10">STT</th>
+                                        <th class="p-2 border bg-emerald-50 text-emerald-900" colspan="2">CẶP PICK 1</th>
                                         <th class="p-2 border bg-purple-100 text-purple-900 w-20">TỶ SỐ</th>
-                                        <th class="p-2 border bg-red-50 text-red-900" colspan="2">CẶP 2</th>
-                                        <th class="p-2 border bg-amber-50 text-amber-900 w-20">KÈO 1</th>
-                                        <th class="p-2 border bg-amber-50 text-amber-900 w-20">KÈO 2</th>
+                                        <th class="p-2 border bg-red-50 text-red-900" colspan="2">CẶP PICK 2</th>
+                                        <th class="p-2 border bg-amber-50 text-amber-900 w-28">CHỌN KÈO TRẬN</th>
+                                        <th class="p-2 border bg-amber-50 text-amber-900" colspan="2">KÈO BAN ĐẦU</th>
+                                        <th class="p-2 border w-12 bg-slate-200 text-slate-800"><i class="fa-solid fa-gear"></i></th>
                                     </tr>
                                 </thead>
                                 <tbody>${matchesTableRows}</tbody>
@@ -1465,7 +2047,17 @@
                                         <td class="p-2 border text-blue-700">+${sumBringBack}K</td>
                                         <td class="p-2 border text-red-600">${btcThuVe}K</td>
                                         <td class="p-2 border text-blue-700">+${sumThucThu}K</td>
-                                        <td class="p-2 border text-slate-600">QUỸ CÒN: <span class="text-red-600 font-black">${quyCon}K</span></td>
+                                        <td class="p-2 border text-slate-600 whitespace-nowrap">
+                                            <select onchange="handleBtcNoteChangeForDate('${closestDate}', this)" class="text-xs font-bold p-1 border rounded bg-white text-emerald-700 outline-none">
+                                                <option value="YES" ${currentOption==='YES'?'selected':''}>YES (Chuyển tổng ngày)</option>
+                                                <option value="NO" ${currentOption==='NO'?'selected':''}>NO (Không chuyển)</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-slate-100 font-extrabold text-center">
+                                        <td class="p-2 border text-left text-red-600 pl-3" colspan="4">Quỹ Còn</td>
+                                        <td class="p-2 border text-red-600 text-sm" colspan="2">${quyCon}K</td>
+                                        <td class="p-2 border" colspan="2"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -1473,6 +2065,75 @@
                     </div>
                 </div>
             `;
+        }
+
+        function addMatchToDate(dateStr) {
+            if(!window.matchesData[dateStr]) window.matchesData[dateStr] = [];
+            const nextId = window.matchesData[dateStr].length + 1;
+            const globalMode = window.dateKeoMode[dateStr] || 'default';
+            window.matchesData[dateStr].push({ 
+                id: nextId, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "",
+                keoMode: globalMode, customWin: globalMode === 'k25' ? 0 : 5, customLose: globalMode === 'k25' ? -25 : -15
+            });
+            refreshAllViews();
+            autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function deleteMatchFromDate(dateStr, index) {
+            if(confirm(`Bạn có chắc chắn muốn XÓA Trận ${index + 1}?`)) {
+                if(window.matchesData[dateStr]) {
+                    window.matchesData[dateStr].splice(index, 1);
+                    refreshAllViews();
+                    autoBackupData();
+                    if(window.syncToFirebase) window.syncToFirebase();
+                }
+            }
+        }
+
+        function updateMatchDataForDate(dateStr, index, field, value) {
+            if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
+                window.matchesData[dateStr][index][field] = value;
+                refreshAllViews();
+                autoBackupData();
+                if(window.syncToFirebase) window.syncToFirebase();
+            }
+        }
+
+        function updateMatchKeoModeForDate(dateStr, index, modeVal) {
+            if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
+                const m = window.matchesData[dateStr][index];
+                m.keoMode = modeVal;
+                if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
+                else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
+                refreshAllViews();
+                autoBackupData();
+                if(window.syncToFirebase) window.syncToFirebase();
+            }
+        }
+
+        function applyKeoToAllMatchesForDate(dateStr, modeVal) {
+            window.dateKeoMode[dateStr] = modeVal;
+            const matches = window.matchesData[dateStr] || [];
+            matches.forEach(m => {
+                m.keoMode = modeVal;
+                if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
+                else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
+            });
+            refreshAllViews();
+            autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function handleBtcNoteChangeForDate(dateStr, selectEl) {
+            if (!window.paymentStatus) window.paymentStatus = {};
+            if (!window.paymentStatus[dateStr] || typeof window.paymentStatus[dateStr] !== 'object') {
+                window.paymentStatus[dateStr] = {};
+            }
+            window.paymentStatus[dateStr].btcNoteAdminOption = selectEl.value;
+            refreshAllViews();
+            autoBackupData();
+            if (window.syncToFirebase) window.syncToFirebase();
         }
 
         function goToClosestDateTab() {
@@ -1483,10 +2144,12 @@
         }
 
         function updateAutoIncomeNote(dateStr, noteVal) {
-            window.autoIncomeNotes[dateStr] = noteVal;
-            localStorage.setItem('pb_auto_income_notes', JSON.stringify(window.autoIncomeNotes));
-            autoBackupData();
-            if(window.syncToFirebase) window.syncToFirebase();
+            requireAdminAuth(() => {
+                window.autoIncomeNotes[dateStr] = noteVal;
+                localStorage.setItem('pb_auto_income_notes', JSON.stringify(window.autoIncomeNotes));
+                autoBackupData();
+                if(window.syncToFirebase) window.syncToFirebase();
+            });
         }
 
         function getBtcThuVeForDate(dateStr) {
@@ -1541,48 +2204,56 @@
         }
 
         function updateInitialFund(val) {
-            window.initialFund = Number(val) || 0;
-            localStorage.setItem('pb_initial_fund', window.initialFund);
-            calculateFundSummary();
-            autoBackupData();
-            if(window.syncToFirebase) window.syncToFirebase();
+            requireAdminAuth(() => {
+                window.initialFund = Number(val) || 0;
+                localStorage.setItem('pb_initial_fund', window.initialFund);
+                calculateFundSummary();
+                autoBackupData();
+                if(window.syncToFirebase) window.syncToFirebase();
+            });
         }
 
         function addNewQuarterColumn() {
-            const num = window.activeQuarterColumns.length + 1;
-            const qId = `q_${Date.now()}`;
-            const colors = ["amber", "purple", "blue", "teal", "emerald", "indigo", "rose"];
-            const chosenColor = colors[(num - 1) % colors.length];
+            requireAdminAuth(() => {
+                const num = window.activeQuarterColumns.length + 1;
+                const qId = `q_${Date.now()}`;
+                const colors = ["amber", "purple", "blue", "teal", "emerald", "indigo", "rose"];
+                const chosenColor = colors[(num - 1) % colors.length];
 
-            const qTitle = prompt(`Nhập tên hiển thị cho Cột Quý Mới (VD: Tiền Sân Quý ${num}):`, `Tiền Sân Quý ${num}`);
-            if (!qTitle) return;
+                const qTitle = prompt(`Nhập tên hiển thị cho Cột Quý Mới (VD: Tiền Sân Quý ${num}):`, `Tiền Sân Quý ${num}`);
+                if (!qTitle) return;
 
-            window.activeQuarterColumns.push({
-                id: qId,
-                title: qTitle.trim(),
-                statusTitle: `Trạng Thái Q${num}`,
-                defaultAmt: 800000,
-                bgColor: chosenColor
+                window.activeQuarterColumns.push({
+                    id: qId,
+                    title: qTitle.trim(),
+                    statusTitle: `Trạng Thái Q${num}`,
+                    defaultAmt: 800000,
+                    bgColor: chosenColor
+                });
+
+                saveQuarterColsConfig();
+                renderFundMembers();
             });
-
-            saveQuarterColsConfig();
-            renderFundMembers();
         }
 
         function deleteQuarterColumn(qId, title) {
-            if (confirm(`Bạn có chắc chắn muốn XÓA cột "${title}" này khỏi Bảng Quỹ?`)) {
-                window.activeQuarterColumns = window.activeQuarterColumns.filter(col => col.id !== qId);
-                saveQuarterColsConfig();
-                renderFundMembers();
-            }
+            requireAdminAuth(() => {
+                if (confirm(`Bạn có chắc chắn muốn XÓA cột "${title}" này khỏi Bảng Quỹ?`)) {
+                    window.activeQuarterColumns = window.activeQuarterColumns.filter(col => col.id !== qId);
+                    saveQuarterColsConfig();
+                    renderFundMembers();
+                }
+            });
         }
 
         function updateDynamicQuarterTitle(qId, field, value) {
-            const col = window.activeQuarterColumns.find(c => c.id === qId);
-            if (col) {
-                col[field] = value.trim();
-                saveQuarterColsConfig();
-            }
+            requireAdminAuth(() => {
+                const col = window.activeQuarterColumns.find(c => c.id === qId);
+                if (col) {
+                    col[field] = value.trim();
+                    saveQuarterColsConfig();
+                }
+            });
         }
 
         function saveQuarterColsConfig() {
@@ -1592,39 +2263,47 @@
         }
 
         function updateQuarterAmountDirect(playerId, qKey, val) {
-            const numVal = Number(val) || 0;
-            window.fundFeeStatus[`${playerId}_${qKey}_amt`] = numVal;
-            saveFundData();
+            requireAdminAuth(() => {
+                const numVal = Number(val) || 0;
+                window.fundFeeStatus[`${playerId}_${qKey}_amt`] = numVal;
+                saveFundData();
+            });
         }
 
         function updateQuarterStatusDirect(playerId, qKey, val) {
-            window.fundFeeStatus[`${playerId}_${qKey}_status`] = val;
-            saveFundData();
+            requireAdminAuth(() => {
+                window.fundFeeStatus[`${playerId}_${qKey}_status`] = val;
+                saveFundData();
+            });
         }
 
         function addNewFundPlayerPrompt() {
-            const name = prompt("Nhập tên Pick thủ mới muốn thêm vào danh sách Quỹ:");
-            if (name && name.trim() !== "") {
-                const trimmed = name.trim();
-                const existing = window.players.find(p => p.name.toLowerCase() === trimmed.toLowerCase());
-                if (existing) {
-                    alert("Pick thủ này đã có trong danh sách!");
-                } else {
-                    const newPlayer = { id: Date.now(), name: trimmed, gender: "Nam" };
-                    window.players.push(newPlayer);
-                    refreshAllViews();
-                    saveFundData();
+            requireAdminAuth(() => {
+                const name = prompt("Nhập tên Pick thủ mới muốn thêm vào danh sách Quỹ:");
+                if (name && name.trim() !== "") {
+                    const trimmed = name.trim();
+                    const existing = window.players.find(p => p.name.toLowerCase() === trimmed.toLowerCase());
+                    if (existing) {
+                        alert("Pick thủ này đã có trong danh sách!");
+                    } else {
+                        const newPlayer = { id: Date.now(), name: trimmed, gender: "Nam" };
+                        window.players.push(newPlayer);
+                        refreshAllViews();
+                        saveFundData();
+                    }
                 }
-            }
+            });
         }
 
         function deleteFundPlayerRow(playerId) {
-            const p = window.players.find(item => item.id === playerId);
-            if (p && confirm(`Bạn có chắc chắn muốn XÓA Pick thủ "${p.name}" khỏi danh sách?`)) {
-                window.players = window.players.filter(item => item.id !== playerId);
-                refreshAllViews();
-                saveFundData();
-            }
+            requireAdminAuth(() => {
+                const p = window.players.find(item => item.id === playerId);
+                if (p && confirm(`Bạn có chắc chắn muốn XÓA Pick thủ "${p.name}" khỏi danh sách?`)) {
+                    window.players = window.players.filter(item => item.id !== playerId);
+                    refreshAllViews();
+                    saveFundData();
+                }
+            });
         }
 
         function saveFundData() {
@@ -1810,7 +2489,7 @@
                         <td class="py-2.5 px-3 text-center text-emerald-700 font-black">${formatVND(grandTotalCollected)}</td>
                     </tr>
                     <tr class="bg-rose-50/80 text-rose-900">
-                        <td class="py-2.5 px-3 text-center font-bold" colspan="2">DÒNG CHI QUỸ:</td>
+                        <td class="py-2.5 px-3 text-center font-bold" colspan="2">DÒNG CHI QUẤY:</td>
                         <td class="py-2.5 px-3 text-right font-extrabold" colspan="${colSpanCount - 1}">Tổng Các Khoản Chi Tiền Sân & Sinh Hoạt:</td>
                         <td class="py-2.5 px-3 text-center text-rose-600 font-black">-${formatVND(totalExpense)}</td>
                     </tr>
@@ -1859,10 +2538,10 @@
                                 <textarea onchange="updateAutoIncomeNote('${d}', this.value)" rows="1" class="w-full bg-white border border-emerald-300 rounded px-2 py-1 text-xs text-slate-700 font-medium focus:outline-none focus:ring-1 focus:ring-emerald-500 shadow-sm" placeholder="Nhập ghi chú chi tiết...">${currentCustomNote}</textarea>
                             </td>
                             <td class="py-2.5 px-3 text-center whitespace-nowrap">
-                                <button onclick="alert('Dòng này tự động cập nhật số tiền từ Bảng Chi Tiết Ngày ${d}. Bạn có thể chỉnh sửa ghi chú ngay tại cột ghi chú hoặc thay đổi kết quả tại ngày tương ứng!')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors" title="Chỉnh sửa">
+                                <button onclick="alert('Dòng này tự động cập nhật số tiền từ Bảng Chi Tiết Ngày ${d}.')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors">
                                     <i class="fa-solid fa-pencil"></i>
                                 </button>
-                                <button onclick="if(confirm('Để ẩn khoản thu tự động Ngày ${d}, bạn có muốn đổi trạng thái NOTE của ngày này thành NO?')) { if(!window.paymentStatus[ '${d}' ]) window.paymentStatus[ '${d}' ] = {}; window.paymentStatus[ '${d}' ].btcNoteAdminOption = 'NO'; refreshAllViews(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase(); }" class="text-slate-400 hover:text-rose-500 p-1 transition-colors" title="Bỏ chuyển về Quỹ">
+                                <button onclick="requireAdminAuth(() => { if(confirm('Để ẩn khoản thu tự động Ngày ${d}, bạn có muốn đổi trạng thái NOTE của ngày này thành NO?')) { if(!window.paymentStatus['${d}']) window.paymentStatus['${d}'] = {}; window.paymentStatus['${d}'].btcNoteAdminOption = 'NO'; refreshAllViews(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase(); } })" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </td>
@@ -1882,10 +2561,10 @@
                     <td class="py-2.5 px-3 text-xs whitespace-nowrap"><span class="player-tag">${item.source}</span></td>
                     <td class="py-2.5 px-3 text-xs text-slate-600 wrap-content-cell min-w-[200px]">${item.note || '---'}</td>
                     <td class="py-2.5 px-3 text-center whitespace-nowrap">
-                        <button onclick="openEditFundModal(${item.id}, 'income')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors" title="Chỉnh sửa">
+                        <button onclick="openEditFundModal(${item.id}, 'income')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors">
                             <i class="fa-solid fa-pencil"></i>
                         </button>
-                        <button onclick="deleteFundTx(${item.id}, 'income')" class="text-slate-400 hover:text-rose-500 p-1 transition-colors" title="Xóa">
+                        <button onclick="deleteFundTx(${item.id}, 'income')" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </td>
@@ -1918,10 +2597,10 @@
                     <td class="py-2.5 px-3 text-xs whitespace-nowrap"><span class="player-tag">${item.source}</span></td>
                     <td class="py-2.5 px-3 text-xs text-slate-600 wrap-content-cell min-w-[200px]">${item.note || '---'}</td>
                     <td class="py-2.5 px-3 text-center whitespace-nowrap">
-                        <button onclick="openEditFundModal(${item.id}, 'expense')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors" title="Chỉnh sửa">
+                        <button onclick="openEditFundModal(${item.id}, 'expense')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors">
                             <i class="fa-solid fa-pencil"></i>
                         </button>
-                        <button onclick="deleteFundTx(${item.id}, 'expense')" class="text-slate-400 hover:text-rose-500 p-1 transition-colors" title="Xóa">
+                        <button onclick="deleteFundTx(${item.id}, 'expense')" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </td>
@@ -1931,65 +2610,69 @@
         }
 
         function openFundModal(type) {
-            const backdrop = document.getElementById('fund-modal-backdrop');
-            const header = document.getElementById('fund-modal-header');
-            const title = document.getElementById('fund-modal-title');
-            const btnSubmit = document.getElementById('fund-btn-submit');
-            const lblSource = document.getElementById('lbl-source');
-            const sourceSelect = document.getElementById('tx-source-select');
+            requireAdminAuth(() => {
+                const backdrop = document.getElementById('fund-modal-backdrop');
+                const header = document.getElementById('fund-modal-header');
+                const title = document.getElementById('fund-modal-title');
+                const btnSubmit = document.getElementById('fund-btn-submit');
+                const lblSource = document.getElementById('lbl-source');
+                const sourceSelect = document.getElementById('tx-source-select');
 
-            if(sourceSelect) {
-                let optionsHtml = `<option value="Khách vãng lai / Khác">-- Khách vãng lai / Khác --</option>`;
-                window.players.forEach(p => {
-                    optionsHtml += `<option value="${p.name}">${p.name}</option>`;
-                });
-                sourceSelect.innerHTML = optionsHtml;
-            }
-            
-            const form = document.getElementById('fund-transaction-form');
-            if(form) {
-                form.querySelector('#tx-id').value = '';
-                form.querySelector('#tx-type').value = type;
-                form.querySelector('#tx-date').value = new Date().toISOString().split('T')[0];
-                form.querySelector('#tx-desc').value = '';
-                form.querySelector('#tx-amount').value = '';
-                form.querySelector('#tx-note').value = '';
-            }
+                if(sourceSelect) {
+                    let optionsHtml = `<option value="Khách vãng lai / Khác">-- Khách vãng lai / Khác --</option>`;
+                    window.players.forEach(p => {
+                        optionsHtml += `<option value="${p.name}">${p.name}</option>`;
+                    });
+                    sourceSelect.innerHTML = optionsHtml;
+                }
+                
+                const form = document.getElementById('fund-transaction-form');
+                if(form) {
+                    form.querySelector('#tx-id').value = '';
+                    form.querySelector('#tx-type').value = type;
+                    form.querySelector('#tx-date').value = new Date().toISOString().split('T')[0];
+                    form.querySelector('#tx-desc').value = '';
+                    form.querySelector('#tx-amount').value = '';
+                    form.querySelector('#tx-note').value = '';
+                }
 
-            if(type === 'income') {
-                header.className = "p-4 bg-emerald-600 text-white flex justify-between items-center";
-                title.innerHTML = '<i class="fa-solid fa-circle-arrow-down"></i> Thêm Khoản Thu Mới';
-                btnSubmit.className = "px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm";
-                btnSubmit.innerText = "Lưu Khoản Thu";
-                if(lblSource) lblSource.innerText = "Nguồn Thu / Pick Thủ";
-            } else {
-                header.className = "p-4 bg-rose-600 text-white flex justify-between items-center";
-                title.innerHTML = '<i class="fa-solid fa-circle-arrow-up"></i> Thêm Khoản Chi Mới';
-                btnSubmit.className = "px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm";
-                btnSubmit.innerText = "Lưu Khoản Chi";
-                if(lblSource) lblSource.innerText = "Hạng Mục Chi / Pick Thủ Nhận";
-            }
+                if(type === 'income') {
+                    header.className = "p-4 bg-emerald-600 text-white flex justify-between items-center";
+                    title.innerHTML = '<i class="fa-solid fa-circle-arrow-down"></i> Thêm Khoản Thu Mới';
+                    btnSubmit.className = "px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm";
+                    btnSubmit.innerText = "Lưu Khoản Thu";
+                    if(lblSource) lblSource.innerText = "Nguồn Thu / Pick Thủ";
+                } else {
+                    header.className = "p-4 bg-rose-600 text-white flex justify-between items-center";
+                    title.innerHTML = '<i class="fa-solid fa-circle-arrow-up"></i> Thêm Khoản Chi Mới';
+                    btnSubmit.className = "px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm";
+                    btnSubmit.innerText = "Lưu Khoản Chi";
+                    if(lblSource) lblSource.innerText = "Hạng Mục Chi / Pick Thủ Nhận";
+                }
 
-            backdrop.classList.remove('hidden');
+                backdrop.classList.remove('hidden');
+            });
         }
 
         function openEditFundModal(id, type) {
-            const list = type === 'income' ? window.fundIncomes : window.fundExpenses;
-            const item = list.find(x => x.id === id);
-            if(!item) return;
+            requireAdminAuth(() => {
+                const list = type === 'income' ? window.fundIncomes : window.fundExpenses;
+                const item = list.find(x => x.id === id);
+                if(!item) return;
 
-            openFundModal(type);
+                openFundModal(type);
 
-            const form = document.getElementById('fund-transaction-form');
-            form.querySelector('#tx-id').value = item.id;
-            form.querySelector('#tx-date').value = item.date;
-            form.querySelector('#tx-desc').value = item.desc;
-            form.querySelector('#tx-amount').value = item.amount;
-            form.querySelector('#tx-source-select').value = item.source || "Khách vãng lai / Khác";
-            form.querySelector('#tx-note').value = item.note || "";
+                const form = document.getElementById('fund-transaction-form');
+                form.querySelector('#tx-id').value = item.id;
+                form.querySelector('#tx-date').value = item.date;
+                form.querySelector('#tx-desc').value = item.desc;
+                form.querySelector('#tx-amount').value = item.amount;
+                form.querySelector('#tx-source-select').value = item.source || "Khách vãng lai / Khác";
+                form.querySelector('#tx-note').value = item.note || "";
 
-            const title = document.getElementById('fund-modal-title');
-            title.innerHTML = type === 'income' ? '<i class="fa-solid fa-pen-to-square"></i> Sửa Khoản Thu' : '<i class="fa-solid fa-pen-to-square"></i> Sửa Khoản Chi';
+                const title = document.getElementById('fund-modal-title');
+                title.innerHTML = type === 'income' ? '<i class="fa-solid fa-pen-to-square"></i> Sửa Khoản Thu' : '<i class="fa-solid fa-pen-to-square"></i> Sửa Khoản Chi';
+            });
         }
 
         function closeFundModal() {
@@ -2025,14 +2708,16 @@
         }
 
         function deleteFundTx(id, type) {
-            if(confirm("Bạn có muốn xóa giao dịch này khỏi hệ thống Quỹ Pick?")) {
-                if(type === 'income') {
-                    window.fundIncomes = window.fundIncomes.filter(i => i.id !== id);
-                } else {
-                    window.fundExpenses = window.fundExpenses.filter(i => i.id !== id);
+            requireAdminAuth(() => {
+                if(confirm("Bạn có muốn xóa giao dịch này?")) {
+                    if(type === 'income') {
+                        window.fundIncomes = window.fundIncomes.filter(i => i.id !== id);
+                    } else {
+                        window.fundExpenses = window.fundExpenses.filter(i => i.id !== id);
+                    }
+                    saveFundData();
                 }
-                saveFundData();
-            }
+            });
         }
 
         function exportFundToExcel() {
@@ -2063,13 +2748,13 @@
             const currentBalance = window.initialFund + grandTotalIncome - totalExpense;
 
             const summaryData = [
-                ["BÁO CÁO TỔNG QUAN QUỸ PICKLEBALL"],
+                ["BÁO CÁO TỔNG QUAN QUẤY PICKLEBALL"],
                 [],
                 ["Hạng mục", "Số tiền (VNĐ)", "Ghi chú"],
                 ["Quỹ đầu kỳ", window.initialFund, "Tồn quỹ kỳ trước chuyển sang"],
-                ["Tổng thu trong kỳ", grandTotalIncome, "Bao gồm thu thủ công & quy đổi tuyệt đối số tiền kèo tự động"],
+                ["Tổng thu trong kỳ", grandTotalIncome, "Bao gồm thu thủ công & tự động"],
                 ["Tổng chi trong kỳ", totalExpense, "Tự động tính từ Nhật ký Chi"],
-                ["SỐ DƯ QUỸ HIỆN TẠI", currentBalance, "Công thức: Đầu kỳ + Thu - Chi"]
+                ["SỐ DƯ QUẤY HIỆN TẠI", currentBalance, "Công thức: Đầu kỳ + Thu - Chi"]
             ];
 
             const statusMap = { paid: "Đã đóng", unpaid: "Chưa đóng", pause: "Tạm nghỉ", no: "NO (Chưa đến)" };
@@ -2098,7 +2783,7 @@
                 ["STT", "Ngày tháng", "Nội dung thu", "Số tiền (VNĐ)", "Nguồn/Pick thủ", "Ghi chú"],
                 ...autoIncomeRows,
                 ...window.fundIncomes.map((item, i) => [autoIncomeRows.length + i + 1, formatDate(item.date), item.desc, item.amount, item.source, item.note]),
-                ["", "", "TỔNG CỘNG THU QUỸ", grandTotalIncome, "", ""]
+                ["", "", "TỔNG CỘNG THU QUẤY", grandTotalIncome, "", ""]
             ];
 
             const expenseData = [
@@ -2226,98 +2911,38 @@
         function triggerRestoreJSON() { triggerRestoreInput(); }
 
         function addMatchToCurrentDate() {
-            const dateStr = window.currentSelectedDate;
-            if(!window.matchesData[dateStr]) window.matchesData[dateStr] = [];
-            const nextId = window.matchesData[dateStr].length + 1;
-            const globalMode = window.dateKeoMode[dateStr] || 'default';
-            window.matchesData[dateStr].push({ 
-                id: nextId, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "",
-                keoMode: globalMode, customWin: globalMode === 'k25' ? 0 : 5, customLose: globalMode === 'k25' ? -25 : -15
-            });
-            renderDayDetailView();
-            updateFundDashboard();
-            autoBackupData();
-            if(window.syncToFirebase) window.syncToFirebase();
+            addMatchToDate(window.currentSelectedDate);
         }
 
         function deleteMatchFromCurrentDate(index) {
-            const dateStr = window.currentSelectedDate;
-            if(confirm(`Bạn có chắc chắn muốn XÓA Trận ${index + 1}?`)) {
-                if(window.matchesData[dateStr]) {
-                    window.matchesData[dateStr].splice(index, 1);
-                    renderDayDetailView();
-                    updateFundDashboard();
-                    autoBackupData();
-                    if(window.syncToFirebase) window.syncToFirebase();
-                }
-            }
+            deleteMatchFromDate(window.currentSelectedDate, index);
         }
 
         function updateMatchData(index, field, value) {
-            const dateStr = window.currentSelectedDate;
-            if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
-                window.matchesData[dateStr][index][field] = value;
-                renderDayDetailView();
-                updateFundDashboard();
-                autoBackupData();
-                if(window.syncToFirebase) window.syncToFirebase();
-            }
+            updateMatchDataForDate(window.currentSelectedDate, index, field, value);
         }
 
         function applyKeoToAllMatchesInDate(modeVal) {
-            const dateStr = window.currentSelectedDate;
-            window.dateKeoMode[dateStr] = modeVal;
-            const matches = window.matchesData[dateStr] || [];
-            matches.forEach(m => {
-                m.keoMode = modeVal;
-                if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
-                else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
-            });
-            renderDayDetailView();
-            updateFundDashboard();
-            autoBackupData();
-            if(window.syncToFirebase) window.syncToFirebase();
+            applyKeoToAllMatchesForDate(window.currentSelectedDate, modeVal);
         }
 
         function updateMatchKeoMode(index, modeVal) {
-            const dateStr = window.currentSelectedDate;
-            if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
-                const m = window.matchesData[dateStr][index];
-                m.keoMode = modeVal;
-                if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
-                else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
-                renderDayDetailView();
-                updateFundDashboard();
-                autoBackupData();
-                if(window.syncToFirebase) window.syncToFirebase();
-            }
+            updateMatchKeoModeForDate(window.currentSelectedDate, index, modeVal);
         }
 
         function togglePaymentStatus(payKey) {
             if (!window.isAdminUnlocked) {
-                alert("🔒 Bạn cần nhập Pass Admin ở phía trên để tích xác nhận nộp/chưa nộp!");
+                alert("🔒 Bạn cần nhập Pass Admin ở phía trên!");
                 return;
             }
             window.paymentStatus[payKey] = !window.paymentStatus[payKey];
-            renderDayDetailView();
-            updateFundDashboard();
+            refreshAllViews();
             autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
         }
 
         function handleBtcNoteChange(selectEl) {
-            const dateStr = window.currentSelectedDate;
-            if (!window.paymentStatus) window.paymentStatus = {};
-            
-            if (!window.paymentStatus[dateStr] || typeof window.paymentStatus[dateStr] !== 'object') {
-                window.paymentStatus[dateStr] = {};
-            }
-            
-            window.paymentStatus[dateStr].btcNoteAdminOption = selectEl.value;
-            
-            refreshAllViews();
-            autoBackupData();
-            if (window.syncToFirebase) window.syncToFirebase();
+            handleBtcNoteChangeForDate(window.currentSelectedDate, selectEl);
         }
 
         function renderDayDetailView() {
@@ -2379,7 +3004,7 @@
                     window.players.forEach(p => {
                         opts += `<option value="${p.name}" ${p.name === val ? 'selected' : ''}>${p.name}</option>`;
                     });
-                    return `<select onchange="updateMatchData(${idx}, '${field}', this.value)" class="player-select-btn text-[11px] border rounded p-1 outline-none w-full bg-white shadow-sm">
+                    return `<select onchange="updateMatchDataForDate('${dateStr}', ${idx}, '${field}', this.value)" class="player-select-btn text-[11px] border rounded p-1 outline-none w-full bg-white shadow-sm">
                         ${opts}
                     </select>`;
                 };
@@ -2389,15 +3014,15 @@
 
                 const score1Inner = isHam1 
                     ? `<span class="ham-text">HẦM</span>` 
-                    : `<input type="text" class="score-input" value="${m.score1 || ''}" onchange="updateMatchData(${idx}, 'score1', this.value)">`;
+                    : `<input type="text" class="score-input" value="${m.score1 || ''}" onchange="updateMatchDataForDate('${dateStr}', ${idx}, 'score1', this.value)">`;
 
                 const score2Inner = isHam2 
                     ? `<span class="ham-text">HẦM</span>` 
-                    : `<input type="text" class="score-input" value="${m.score2 || ''}" onchange="updateMatchData(${idx}, 'score2', this.value)">`;
+                    : `<input type="text" class="score-input" value="${m.score2 || ''}" onchange="updateMatchDataForDate('${dateStr}', ${idx}, 'score2', this.value)">`;
 
                 let keoCellUI = `
-                    <select onchange="updateMatchKeoMode(${idx}, this.value)" class="text-[10px] sm:text-[11px] font-bold p-0.5 border rounded bg-amber-50 outline-none w-full text-amber-900 border-amber-300">
-                        <option value="default" ${mMode==='default'?'selected':''}>Mặc định (+5k/-15k)</option>
+                    <select onchange="updateMatchKeoModeForDate('${dateStr}', ${idx}, this.value)" class="text-[10px] sm:text-[11px] font-bold p-0.5 border rounded bg-amber-50 outline-none w-full text-amber-900 border-amber-300">
+                        <option value="default" ${mMode==='default'?'selected':''}>Kèo (+5k/-15k)</option>
                         <option value="k25" ${mMode==='k25'?'selected':''}>Kèo 25k (0k/-25k)</option>
                         <option value="free" ${mMode==='free'?'selected':''}>Kèo Tự Do</option>
                     </select>
@@ -2407,9 +3032,9 @@
                     keoCellUI += `
                         <div class="flex items-center justify-center gap-1 mt-1">
                             <span class="text-[10px] text-emerald-700 font-bold">+</span>
-                            <input type="number" class="keo-custom-input text-emerald-700" value="${m.customWin !== undefined ? m.customWin : 5}" onchange="updateMatchData(${idx}, 'customWin', this.value)" title="Tiền thắng">
+                            <input type="number" class="keo-custom-input text-emerald-700" value="${m.customWin !== undefined ? m.customWin : 5}" onchange="updateMatchDataForDate('${dateStr}', ${idx}, 'customWin', this.value)" title="Tiền thắng">
                             <span class="text-[10px] text-red-600 font-bold">/</span>
-                            <input type="number" class="keo-custom-input text-red-600" value="${m.customLose !== undefined ? m.customLose : -15}" onchange="updateMatchData(${idx}, 'customLose', this.value)" title="Tiền thua">
+                            <input type="number" class="keo-custom-input text-red-600" value="${m.customLose !== undefined ? m.customLose : -15}" onchange="updateMatchDataForDate('${dateStr}', ${idx}, 'customLose', this.value)" title="Tiền thua">
                         </div>
                     `;
                 }
@@ -2422,9 +3047,9 @@
                         
                         <td class="p-1 bg-purple-50/40 border-x border-purple-200">
                             <div class="flex items-center justify-center gap-0.5">
-                                <div onclick="if(${isHam1}) updateMatchData(${idx}, 'score1', '')">${score1Inner}</div>
+                                <div onclick="if(${isHam1}) updateMatchDataForDate('${dateStr}', ${idx}, 'score1', '')">${score1Inner}</div>
                                 <span class="font-black text-slate-400 px-0.5">-</span>
-                                <div onclick="if(${isHam2}) updateMatchData(${idx}, 'score2', '')">${score2Inner}</div>
+                                <div onclick="if(${isHam2}) updateMatchDataForDate('${dateStr}', ${idx}, 'score2', '')">${score2Inner}</div>
                             </div>
                         </td>
 
@@ -2434,9 +3059,9 @@
                         <td class="p-1 bg-amber-50/50">${keoCellUI}</td>
                         <td class="p-1 font-extrabold ${keo1 > 0 ? 'txt-win' : (keo1 < 0 ? 'txt-lose' : '')}">${keo1}</td>
                         <td class="p-1 font-extrabold ${keo2 > 0 ? 'txt-win' : (keo2 < 0 ? 'txt-lose' : '')}">${keo2}</td>
-                        <td class="p-1 whitespace-nowrap">
-                            <button onclick="deleteMatchFromCurrentDate(${idx})" class="text-red-600 hover:text-red-800 font-bold text-xs px-2 py-1 bg-red-50 rounded border border-red-200 shadow-sm transition-all hover:bg-red-100">
-                                <i class="fa-solid fa-trash"></i> Xóa
+                        <td class="p-1 text-center whitespace-nowrap">
+                            <button onclick="deleteMatchFromDate('${dateStr}', ${idx})" class="text-slate-400 hover:text-red-600 font-bold p-1 transition-colors" title="Xóa trận đấu">
+                                <i class="fa-solid fa-trash-can text-sm"></i>
                             </button>
                         </td>
                     </tr>
@@ -2501,7 +3126,7 @@
                     <td class="p-2 border text-red-600">${btcThuVe}</td>
                     <td class="p-2 border text-blue-700">${sumThucThu}</td>
                     <td class="p-2 border whitespace-nowrap">
-                        <select onchange="handleBtcNoteChange(this)" class="text-xs font-bold p-1 border rounded bg-white text-emerald-700 outline-none">
+                        <select onchange="handleBtcNoteChangeForDate('${dateStr}', this)" class="text-xs font-bold p-1 border rounded bg-white text-emerald-700 outline-none">
                             <option value="YES" ${currentOption==='YES'?'selected':''}>YES (Chuyển tổng ngày)</option>
                             <option value="NO" ${currentOption==='NO'?'selected':''}>NO (Không chuyển)</option>
                         </select>
@@ -2513,8 +3138,6 @@
                     <td class="p-2 border" colspan="2"></td>
                 </tr>
             `;
-
-            renderHomeClosestDateView();
         }
 
         function renderTongHopTab() {
@@ -2940,9 +3563,10 @@
                     appName: "CLB-PICKLEBALL-CMTD",
                     exportDate: new Date().toISOString(),
                     players: window.players,
-                    m1TeamA: window.m1TeamA,
-                    m1TeamB: window.m1TeamB,
-                    m1Matches: window.m1Matches,
+                    createdMinigames: window.createdMinigames,
+                    currentTeamMinigameId: window.currentTeamMinigameId,
+                    currentBracketMinigameId: window.currentBracketMinigameId,
+                    teamTourneyData: window.teamTourneyData,
                     m2PairsA: window.m2PairsA,
                     m2PairsB: window.m2PairsB,
                     m2ScoresA: window.m2ScoresA,
@@ -2974,9 +3598,10 @@
             try {
                 const data = JSON.parse(rawData);
                 if (data.players) window.players = data.players;
-                if (data.m1TeamA) window.m1TeamA = data.m1TeamA;
-                if (data.m1TeamB) window.m1TeamB = data.m1TeamB;
-                if (data.m1Matches) window.m1Matches = data.m1Matches;
+                if (data.createdMinigames) window.createdMinigames = data.createdMinigames;
+                if (data.currentTeamMinigameId) window.currentTeamMinigameId = data.currentTeamMinigameId;
+                if (data.currentBracketMinigameId) window.currentBracketMinigameId = data.currentBracketMinigameId;
+                if (data.teamTourneyData) window.teamTourneyData = data.teamTourneyData;
                 if (data.m2PairsA) window.m2PairsA = data.m2PairsA;
                 if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
                 if (data.m2ScoresA) window.m2ScoresA = data.m2ScoresA;
@@ -3003,9 +3628,10 @@
                 appName: "CLB-PICKLEBALL-CMTD",
                 exportDate: new Date().toISOString(),
                 players: window.players,
-                m1TeamA: window.m1TeamA,
-                m1TeamB: window.m1TeamB,
-                m1Matches: window.m1Matches,
+                createdMinigames: window.createdMinigames,
+                currentTeamMinigameId: window.currentTeamMinigameId,
+                currentBracketMinigameId: window.currentBracketMinigameId,
+                teamTourneyData: window.teamTourneyData,
                 m2PairsA: window.m2PairsA,
                 m2PairsB: window.m2PairsB,
                 m2ScoresA: window.m2ScoresA,
@@ -3045,9 +3671,10 @@
                 try {
                     const data = JSON.parse(e.target.result);
                     if (data.players) window.players = data.players;
-                    if (data.m1TeamA) window.m1TeamA = data.m1TeamA;
-                    if (data.m1TeamB) window.m1TeamB = data.m1TeamB;
-                    if (data.m1Matches) window.m1Matches = data.m1Matches;
+                    if (data.createdMinigames) window.createdMinigames = data.createdMinigames;
+                    if (data.currentTeamMinigameId) window.currentTeamMinigameId = data.currentTeamMinigameId;
+                    if (data.currentBracketMinigameId) window.currentBracketMinigameId = data.currentBracketMinigameId;
+                    if (data.teamTourneyData) window.teamTourneyData = data.teamTourneyData;
                     if (data.m2PairsA) window.m2PairsA = data.m2PairsA;
                     if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
                     if (data.m2ScoresA) window.m2ScoresA = data.m2ScoresA;
@@ -3088,17 +3715,23 @@
             if(tabId === 'tonghop') renderTongHopTab();
             if(tabId === 'day_detail') renderDayDetailView();
             if(tabId === 'fund_manager') updateFundDashboard();
+            if(tabId === 'minigame1') {
+                renderDynamicMinigameDropdowns();
+                initMinigame2010();
+            }
+            if(tabId === 'minigame2') renderDynamicMinigameDropdowns();
         }
 
         function refreshAllViews() {
             renderPlayers();
-            renderMinigame1();
+            initMinigame2010();
             renderM2();
             renderDatesMenuList();
             renderDayDetailView();
             renderTongHopTab();
             updateFundDashboard();
             renderHomeClosestDateView();
+            renderDynamicMinigameDropdowns();
         }
 
         function renderPlayers() {
@@ -3162,145 +3795,12 @@
         }
 
         function deletePlayer(id) {
-            if(confirm('Bạn có chắc muốn xoá VĐV này khỏi danh sách?')) {
+            if(confirm('Bạn có chắc muốn xoá VĐV này?')) {
                 window.players = window.players.filter(p => p.id != id);
                 refreshAllViews();
                 autoBackupData();
                 if(window.syncToFirebase) window.syncToFirebase();
             }
-        }
-
-        function renderMinigame1() {
-            const listA = document.getElementById('team-A-list');
-            const listB = document.getElementById('team-B-list');
-            if(!listA || !listB) return;
-            listA.innerHTML = ''; listB.innerHTML = '';
-
-            document.getElementById('team-A-count').innerText = window.m1TeamA.length;
-            document.getElementById('team-B-count').innerText = window.m1TeamB.length;
-
-            const availableForA = window.players.filter(p => !window.m1TeamB.includes(p.name));
-            const availableForB = window.players.filter(p => !window.m1TeamA.includes(p.name));
-
-            window.m1TeamA.forEach((currentName, i) => {
-                let options = availableForA.map(p => `<option value="${p.name}" ${p.name === currentName ? 'selected' : ''}>${p.name}</option>`).join('');
-                listA.innerHTML += `
-                    <div class="flex items-center justify-between bg-white px-2 py-1 rounded border border-blue-200 text-sm gap-2 shadow-sm">
-                        <span class="font-bold text-blue-800 w-6">${i+1}.</span>
-                        <select onchange="updateTeamMember('A', ${i}, this.value)" class="player-select-btn flex-grow bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs">${options}</select>
-                        <button onclick="removeTeamMember('A', ${i})" class="text-red-500 text-xs p-1"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-                `;
-            });
-
-            window.m1TeamB.forEach((currentName, i) => {
-                let options = availableForB.map(p => `<option value="${p.name}" ${p.name === currentName ? 'selected' : ''}>${p.name}</option>`).join('');
-                listB.innerHTML += `
-                    <div class="flex items-center justify-between bg-white px-2 py-1 rounded border border-orange-200 text-sm gap-2 shadow-sm">
-                        <span class="font-bold text-orange-800 w-6">${i+1}.</span>
-                        <select onchange="updateTeamMember('B', ${i}, this.value)" class="player-select-btn flex-grow bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs">${options}</select>
-                        <button onclick="removeTeamMember('B', ${i})" class="text-red-500 text-xs p-1"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-                `;
-            });
-
-            const body = document.getElementById('m1-schedule-body');
-            body.innerHTML = '';
-            document.getElementById('m1-match-count').innerText = window.m1Matches.length;
-
-            let scoreCountA = 0, scoreCountB = 0, totalDiffA = 0, playedMatches = 0;
-
-            window.m1Matches.forEach((m, idx) => {
-                const sA = m.scoreA !== "" ? parseInt(m.scoreA) : null;
-                const sB = m.scoreB !== "" ? parseInt(m.scoreB) : null;
-                let winner = "---", diff = "---", ptsA = 0, ptsB = 0, status = "<span class='text-slate-400'>Chưa đấu</span>";
-
-                if (sA !== null && sB !== null && !isNaN(sA) && !isNaN(sB)) {
-                    playedMatches++;
-                    const d = sA - sB; diff = d > 0 ? `+${d}` : `${d}`; totalDiffA += d;
-                    if (sA > sB) { winner = "Đội A"; ptsA = 1; scoreCountA += 1; status = "<span class='text-emerald-600 font-bold'>Xong</span>"; }
-                    else if (sB > sA) { winner = "Đội B"; ptsB = 1; scoreCountB += 1; status = "<span class='text-emerald-600 font-bold'>Xong</span>"; }
-                    else { winner = "Hòa"; status = "<span class='text-amber-600 font-bold'>Xong</span>"; }
-                }
-
-                const buildSelect = (teamList, selectedVal, field, matchId) => {
-                    let opts = `<option value="">--Chọn--</option>`;
-                    teamList.forEach(name => { opts += `<option value="${name}" ${name === selectedVal ? 'selected' : ''}>${name}</option>`; });
-                    return `<select onchange="updateM1MatchPlayer(${matchId}, '${field}', this.value)" class="player-select-btn bg-white border rounded px-1 py-0.5 text-xs">${opts}</select>`;
-                };
-
-                body.innerHTML += `
-                    <tr class="hover:bg-slate-50 text-center">
-                        <td class="font-bold">${idx + 1}</td>
-                        <td class="font-semibold text-blue-900">${m.luot}</td>
-                        <td class="font-semibold text-slate-700">${m.san}</td>
-                        <td class="text-left px-2">${m.content}</td>
-                        <td class="text-left px-1">${buildSelect(window.m1TeamA, m.a1, 'a1', m.id)}</td>
-                        <td class="text-left px-1">${buildSelect(window.m1TeamA, m.a2, 'a2', m.id)}</td>
-                        <td><input type="number" value="${m.scoreA}" onchange="updateM1Score(${m.id}, 'A', this.value)" class="text-center font-bold text-blue-900"></td>
-                        <td class="font-bold text-slate-400">vs</td>
-                        <td><input type="number" value="${m.scoreB}" onchange="updateM1Score(${m.id}, 'B', this.value)" class="text-center font-bold text-orange-900"></td>
-                        <td class="text-left px-1">${buildSelect(window.m1TeamB, m.b1, 'b1', m.id)}</td>
-                        <td class="text-left px-1">${buildSelect(window.m1TeamB, m.b2, 'b2', m.id)}</td>
-                        <td class="font-bold">${winner}</td>
-                        <td class="font-semibold">${diff}</td>
-                        <td class="font-bold text-blue-700">${ptsA}</td>
-                        <td class="font-bold text-orange-700">${ptsB}</td>
-                        <td>${status}</td>
-                        <td><button onclick="deleteM1Match(${m.id})" class="text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button></td>
-                    </tr>
-                `;
-            });
-
-            const sumBody = document.getElementById('m1-summary-body');
-            sumBody.innerHTML = `
-                <tr class="bg-blue-50 text-blue-900"><td class="p-3 border font-extrabold">TEAM A</td><td class="p-3 border">${playedMatches}</td><td class="p-3 border text-lg font-black">${scoreCountA}</td><td class="p-3 border">${totalDiffA > 0 ? '+' + totalDiffA : totalDiffA}</td><td class="p-3 border">${scoreCountA > scoreCountB ? '<span class="text-emerald-600">Đang Dẫn Trước</span>' : '<span class="text-red-500">Đang Bị Dẫn</span>'}</td></tr>
-                <tr class="bg-orange-50 text-orange-900"><td class="p-3 border font-extrabold">TEAM B</td><td class="p-3 border">${playedMatches}</td><td class="p-3 border text-lg font-black">${scoreCountB}</td><td class="p-3 border">${-totalDiffA}</td><td class="p-3 border">${scoreCountB > scoreCountA ? '<span class="text-emerald-600">Đang Dẫn Trước</span>' : '<span class="text-red-500">Đang Bị Dẫn</span>'}</td></tr>
-            `;
-        }
-
-        function updateTeamMember(team, index, newName) {
-            if (team === 'A') window.m1TeamA[index] = newName;
-            else window.m1TeamB[index] = newName;
-            renderMinigame1(); autoBackupData();
-            if(window.syncToFirebase) window.syncToFirebase();
-        }
-
-        function updateM1MatchPlayer(matchId, field, value) {
-            const m = window.m1Matches.find(item => item.id === matchId);
-            if (m) { m[field] = value; renderMinigame1(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase(); }
-        }
-
-        function updateM1Score(id, team, val) {
-            const m = window.m1Matches.find(item => item.id === id);
-            if(m) { if(team === 'A') m.scoreA = val; if(team === 'B') m.scoreB = val; renderMinigame1(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase(); }
-        }
-
-        function addM1Match() {
-            const nextId = window.m1Matches.length ? Math.max(...window.m1Matches.map(m=>m.id)) + 1 : 1;
-            window.m1Matches.push({ id: nextId, luot: 1, san: 1, content: "Đôi Nam/Nữ", a1: "", a2: "", scoreA: "", scoreB: "", b1: "", b2: "" });
-            renderMinigame1(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
-        }
-
-        function deleteM1Match(id) {
-            if(confirm('Bạn có chắc muốn xóa trận đấu này?')) {
-                window.m1Matches = window.m1Matches.filter(m => m.id !== id);
-                renderMinigame1(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
-            }
-        }
-
-        function addTeamMember(team) {
-            const available = window.players.filter(p => !window.m1TeamA.includes(p.name) && !window.m1TeamB.includes(p.name));
-            if (available.length === 0) return alert("Không còn VĐV khả dụng!");
-            if (team === 'A') window.m1TeamA.push(available[0].name);
-            else window.m1TeamB.push(available[0].name);
-            renderMinigame1(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
-        }
-
-        function removeTeamMember(team, index) {
-            if(team === 'A') window.m1TeamA.splice(index, 1);
-            else window.m1TeamB.splice(index, 1);
-            renderMinigame1(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
         }
 
         window.onload = function() {
@@ -3341,9 +3841,10 @@
 
                 await setDoc(doc(db, "minigame", "app_state"), {
                     players: window.players,
-                    m1TeamA: window.m1TeamA,
-                    m1TeamB: window.m1TeamB,
-                    m1Matches: window.m1Matches,
+                    createdMinigames: window.createdMinigames,
+                    currentTeamMinigameId: window.currentTeamMinigameId,
+                    currentBracketMinigameId: window.currentBracketMinigameId,
+                    teamTourneyData: window.teamTourneyData,
                     m2PairsA: window.m2PairsA,
                     m2PairsB: window.m2PairsB,
                     m2ScoresA: window.m2ScoresA,
@@ -3360,7 +3861,7 @@
                     autoIncomeNotes: window.autoIncomeNotes,
                     knockoutScores: knockoutScores
                 }, { merge: true });
-                console.log("Đã đồng bộ Firestore thành công!");
+                console.log("Đã đồng bộ Firestore!");
             } catch (error) {
                 console.error("Lỗi đồng bộ Firestore:", error);
             }
@@ -3384,9 +3885,10 @@
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     if (data.players) window.players = data.players;
-                    if (data.m1TeamA) window.m1TeamA = data.m1TeamA;
-                    if (data.m1TeamB) window.m1TeamB = data.m1TeamB;
-                    if (data.m1Matches) window.m1Matches = data.m1Matches;
+                    if (data.createdMinigames) window.createdMinigames = data.createdMinigames;
+                    if (data.currentTeamMinigameId) window.currentTeamMinigameId = data.currentTeamMinigameId;
+                    if (data.currentBracketMinigameId) window.currentBracketMinigameId = data.currentBracketMinigameId;
+                    if (data.teamTourneyData) window.teamTourneyData = data.teamTourneyData;
                     if (data.m2PairsA) window.m2PairsA = data.m2PairsA;
                     if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
                     if (data.m2ScoresA) window.m2ScoresA = data.m2ScoresA;
