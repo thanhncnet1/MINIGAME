@@ -803,21 +803,49 @@
                         </div>
                     </div>
 
-                    <!-- BẢNG TỔNG HỢP KÈO THU CHI CHO MINIGAME BẢNG & VÒNG TRÒN -->
+                    <!-- BẢNG TỔNG HỢP KÈO THU CHI CHO MINIGAME BẢNG & VÒNG TRÒN (THỐNG KÊ THEO TỪNG VĐV) -->
                     <div class="border rounded overflow-hidden shadow-sm bg-white">
                         <div class="bg-slate-800 text-white text-xs font-bold p-2 text-center flex items-center justify-center gap-1.5">
                             <i class="fa-solid fa-chart-pie text-yellow-400"></i> BẢNG TỔNG HỢP KÈO THU CHI MINIGAME BẢNG & VÒNG TRÒN
                         </div>
+
+                        <div class="flex flex-wrap items-center justify-between gap-2 p-2 border-b bg-slate-50">
+                            <div class="flex items-center gap-2 bg-slate-100 px-2 py-1 rounded-lg border border-slate-300">
+                                <span id="m2-admin-status-badge" class="text-[11px] font-bold text-slate-600 flex items-center gap-1">
+                                    <i class="fa-solid fa-lock text-red-500"></i> Mở Khóa Admin Tích Nộp:
+                                </span>
+                                <input type="password" id="m2-admin-pass-input" placeholder="Nhập Pass..." class="w-24 text-xs p-1 border rounded outline-none focus:ring-1 focus:ring-blue-500">
+                                <button onclick="checkM2AdminPassword()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded font-bold shadow">Xác Nhận</button>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-1.5 bg-amber-50 border border-amber-200 rounded-lg px-2 py-1">
+                                <span class="text-[11px] font-bold text-amber-900"><i class="fa-solid fa-coins"></i> Loại kèo:</span>
+                                <select id="m2-keo-mode-select" onchange="setM2KeoMode(this.value)" class="text-[11px] font-bold p-1 border rounded bg-white text-amber-900 border-amber-300 outline-none">
+                                    <option value="default">Kèo (+5k/-15k)</option>
+                                    <option value="k25">Kèo 25k (0k/-25k)</option>
+                                    <option value="free">Kèo Tự Do</option>
+                                </select>
+                                <div id="m2-keo-custom-box" class="hidden items-center gap-1">
+                                    <span class="text-[11px] text-emerald-700 font-bold">+</span>
+                                    <input type="number" id="m2-keo-custom-win" class="w-12 text-xs p-1 border rounded text-emerald-700 font-bold" onchange="setM2CustomKeo()" title="Tiền thắng">
+                                    <span class="text-[11px] text-red-600 font-bold">/</span>
+                                    <input type="number" id="m2-keo-custom-lose" class="w-12 text-xs p-1 border rounded text-red-600 font-bold" onchange="setM2CustomKeo()" title="Tiền thua">
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-[10px] italic text-slate-500 px-2 pt-1">Thống kê từng VĐV theo lịch thi đấu vòng bảng. Tỷ số 0 = HẦM (nhân đôi tiền kèo). Chỉ tính trận đã nhập đủ tỷ số.</p>
+
                         <div class="smooth-scroll">
-                            <table class="w-full text-xs text-center border-collapse">
+                            <table class="w-full min-w-[600px] text-xs text-center border-collapse">
                                 <thead>
                                     <tr class="bg-slate-100 text-slate-700 font-bold">
-                                        <th class="p-2 border text-left pl-3">Cặp VĐV</th>
-                                        <th class="p-2 border w-16">Bảng</th>
-                                        <th class="p-2 border w-16">Số Trận</th>
-                                        <th class="p-2 border w-16">Thắng</th>
-                                        <th class="p-2 border w-16">Thua</th>
-                                        <th class="p-2 border w-24">Tổng Tiền Kèo</th>
+                                        <th class="p-2 border w-28 text-left pl-3">PICK THỦ</th>
+                                        <th class="p-2 border w-16">SỐ TRẬN</th>
+                                        <th class="p-2 border w-20">THẮNG/K</th>
+                                        <th class="p-2 border w-20">THUA/K</th>
+                                        <th class="p-2 border w-24">MANG VỀ</th>
+                                        <th class="p-2 border w-20">TỔNG</th>
+                                        <th class="p-2 border w-20 bg-amber-100 text-amber-900">THỰC TẾ (ADMIN)</th>
+                                        <th class="p-2 border w-28">NOTE</th>
                                     </tr>
                                 </thead>
                                 <tbody id="m2-keo-summary-body" class="font-semibold"></tbody>
@@ -1525,6 +1553,7 @@
 
         window.m2ScoresA = {};
         window.m2ScoresB = {};
+        window.m2KeoState = { keoMode: 'default', customWin: 5, customLose: -15, payStatus: {}, btcOption: 'YES' };
 
         window.dates = ["1/10/26"];
         window.currentSelectedDate = "1/10/26";
@@ -3375,67 +3404,230 @@
             renderM2KeoSummary(schedA, schedB);
         }
 
+        /* ---------- KÈO THU CHI MINIGAME BẢNG & VÒNG TRÒN (giống bảng tổng hợp thu chi chi tiết ngày) ---------- */
+        function ensureM2KeoState() {
+            if (!window.m2KeoState || typeof window.m2KeoState !== 'object') window.m2KeoState = {};
+            const d = window.m2KeoState;
+            if (!d.keoMode) d.keoMode = 'default';
+            if (d.customWin === undefined) d.customWin = 5;
+            if (d.customLose === undefined) d.customLose = -15;
+            if (!d.payStatus || typeof d.payStatus !== 'object') d.payStatus = {};
+            if (!d.btcOption) d.btcOption = 'YES';
+        }
+
+        function getM2KeoConfig() {
+            ensureM2KeoState();
+            const d = window.m2KeoState;
+            if (d.keoMode === 'k25') return { win: 0, lose: -25 };
+            if (d.keoMode === 'free') {
+                let w = parseFloat(d.customWin) || 0;
+                let l = parseFloat(d.customLose) || 0;
+                if (l > 0) l = -l;
+                return { win: w, lose: l };
+            }
+            return { win: 5, lose: -15 };
+        }
+
+        function persistM2() {
+            autoBackupData();
+            if (window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function setM2KeoMode(mode) {
+            ensureM2KeoState();
+            window.m2KeoState.keoMode = mode;
+            persistM2();
+            renderM2();
+        }
+
+        function setM2CustomKeo() {
+            ensureM2KeoState();
+            window.m2KeoState.customWin = parseFloat(document.getElementById('m2-keo-custom-win').value) || 0;
+            window.m2KeoState.customLose = parseFloat(document.getElementById('m2-keo-custom-lose').value) || 0;
+            persistM2();
+            renderM2();
+        }
+
+        function refreshAdminBadgesM2() {
+            const badge = document.getElementById('m2-admin-status-badge');
+            if (!badge) return;
+            if (window.isAdminUnlocked) {
+                badge.innerHTML = `<i class="fa-solid fa-lock-open text-emerald-600"></i> Đã Mở Khóa Admin:`;
+                badge.className = "text-[11px] font-bold text-emerald-700 flex items-center gap-1";
+            } else {
+                badge.innerHTML = `<i class="fa-solid fa-lock text-red-500"></i> Mở Khóa Admin Tích Nộp:`;
+                badge.className = "text-[11px] font-bold text-slate-600 flex items-center gap-1";
+            }
+        }
+
+        function checkM2AdminPassword() {
+            const inputPass = document.getElementById('m2-admin-pass-input').value;
+            if (inputPass === window.ADMIN_PASSWORD) {
+                window.isAdminUnlocked = true;
+                alert("🔑 Xác thực Admin thành công!");
+                refreshAdminBadgesM2();
+                if (typeof refreshAdminBadgesM1 === 'function') refreshAdminBadgesM1();
+                renderM2();
+                if (typeof renderM1ScheduleTeam === 'function') renderM1ScheduleTeam();
+                if (typeof renderDayDetailView === 'function') renderDayDetailView();
+                if (typeof renderHomeClosestDateView === 'function') renderHomeClosestDateView();
+            } else {
+                alert("❌ Mật khẩu Admin không đúng!");
+            }
+        }
+
+        function toggleM2Payment(name) {
+            if (!window.isAdminUnlocked) {
+                alert("🔒 Bạn cần nhập Pass Admin ở phía trên!");
+                return;
+            }
+            ensureM2KeoState();
+            const ps = window.m2KeoState.payStatus;
+            ps[name] = !ps[name];
+            persistM2();
+            renderM2();
+        }
+
+        function setM2BtcOption(val) {
+            ensureM2KeoState();
+            window.m2KeoState.btcOption = val;
+            persistM2();
+            renderM2();
+        }
+
         function renderM2KeoSummary(schedA, schedB) {
             const summaryBody = document.getElementById('m2-keo-summary-body');
             if (!summaryBody) return;
+            ensureM2KeoState();
 
-            let allPairsMap = {};
-            
-            window.m2PairsA.forEach((p, idx) => {
-                let name = `${p.p1} - ${p.p2}`;
-                allPairsMap[name] = { name: name, group: 'A', played: 0, win: 0, lose: 0, money: 0 };
+            // đồng bộ ô chọn loại kèo & trạng thái admin
+            const modeSel = document.getElementById('m2-keo-mode-select');
+            if (modeSel) modeSel.value = window.m2KeoState.keoMode;
+            const customBox = document.getElementById('m2-keo-custom-box');
+            if (customBox) {
+                if (window.m2KeoState.keoMode === 'free') { customBox.classList.remove('hidden'); customBox.classList.add('flex'); }
+                else { customBox.classList.add('hidden'); customBox.classList.remove('flex'); }
+            }
+            const cw = document.getElementById('m2-keo-custom-win');
+            const cl = document.getElementById('m2-keo-custom-lose');
+            if (cw && document.activeElement !== cw) cw.value = window.m2KeoState.customWin;
+            if (cl && document.activeElement !== cl) cl.value = window.m2KeoState.customLose;
+            refreshAdminBadgesM2();
+
+            // khởi tạo thống kê theo từng VĐV (tách từ các cặp)
+            let stats = {};
+            const addPlayer = (name, group) => {
+                if (!name) return;
+                if (!stats[name]) stats[name] = { name, groups: [], played: 0, winK: 0, loseK: 0, total: 0 };
+                if (!stats[name].groups.includes(group)) stats[name].groups.push(group);
+            };
+            window.m2PairsA.forEach(p => { addPlayer(p.p1, 'A'); addPlayer(p.p2, 'A'); });
+            window.m2PairsB.forEach(p => { addPlayer(p.p1, 'B'); addPlayer(p.p2, 'B'); });
+
+            // map tên cặp -> danh sách VĐV
+            let pairPlayers = {};
+            [...window.m2PairsA, ...window.m2PairsB].forEach(p => {
+                pairPlayers[`${p.p1} - ${p.p2}`] = [p.p1, p.p2].filter(Boolean);
             });
 
-            window.m2PairsB.forEach((p, idx) => {
-                let name = `${p.p1} - ${p.p2}`;
-                allPairsMap[name] = { name: name, group: 'B', played: 0, win: 0, lose: 0, money: 0 };
-            });
+            const cfg = getM2KeoConfig();
 
-            const processPairMatch = (t1Name, t2Name, s1Str, s2Str, winK = 5, loseK = -15) => {
-                if (s1Str !== '' && s2Str !== '' && !isNaN(s1Str) && !isNaN(s2Str)) {
-                    let s1 = parseInt(s1Str);
-                    let s2 = parseInt(s2Str);
-                    if (allPairsMap[t1Name]) {
-                        allPairsMap[t1Name].played++;
-                        if (s1 > s2) { allPairsMap[t1Name].win++; allPairsMap[t1Name].money += winK; }
-                        else if (s1 < s2) { allPairsMap[t1Name].lose++; allPairsMap[t1Name].money += loseK; }
-                    }
-                    if (allPairsMap[t2Name]) {
-                        allPairsMap[t2Name].played++;
-                        if (s2 > s1) { allPairsMap[t2Name].win++; allPairsMap[t2Name].money += winK; }
-                        else if (s2 < s1) { allPairsMap[t2Name].lose++; allPairsMap[t2Name].money += loseK; }
-                    }
-                }
+            const processMatch = (t1Name, t2Name, s1Str, s2Str) => {
+                if (s1Str === undefined || s2Str === undefined || s1Str === '' || s2Str === '' || isNaN(s1Str) || isNaN(s2Str)) return;
+                const s1 = parseInt(s1Str), s2 = parseInt(s2Str);
+                if (s1 === s2) return;
+                const isHam = (s1 === 0 || s2 === 0);
+                const effWin = isHam ? (cfg.win > 0 ? cfg.win * 2 : 0) : cfg.win;
+                const effLose = isHam ? cfg.lose * 2 : cfg.lose;
+                const apply = (pairName, isWin) => {
+                    (pairPlayers[pairName] || []).forEach(n => {
+                        const st = stats[n];
+                        if (!st) return;
+                        st.played++;
+                        if (isWin) st.winK += effWin; else st.loseK += effLose;
+                        st.total += isWin ? effWin : effLose;
+                    });
+                };
+                apply(t1Name, s1 > s2);
+                apply(t2Name, s2 > s1);
             };
 
-            schedA.forEach(m => {
-                let s1 = window.m2ScoresA[m.key + '_1'];
-                let s2 = window.m2ScoresA[m.key + '_2'];
-                processPairMatch(m.t1Name, m.t2Name, s1, s2);
-            });
+            schedA.forEach(m => processMatch(m.t1Name, m.t2Name, window.m2ScoresA[m.key + '_1'], window.m2ScoresA[m.key + '_2']));
+            schedB.forEach(m => processMatch(m.t1Name, m.t2Name, window.m2ScoresB[m.key + '_1'], window.m2ScoresB[m.key + '_2']));
 
-            schedB.forEach(m => {
-                let s1 = window.m2ScoresB[m.key + '_1'];
-                let s2 = window.m2ScoresB[m.key + '_2'];
-                processPairMatch(m.t1Name, m.t2Name, s1, s2);
-            });
+            const payStatus = window.m2KeoState.payStatus;
+            const disabledAttr = window.isAdminUnlocked ? '' : 'disabled title="Cần mật khẩu Admin để sửa"';
 
-            summaryBody.innerHTML = '';
-            Object.values(allPairsMap).forEach(item => {
-                let moneyStr = item.money !== 0 ? (item.money > 0 ? `+${item.money}K` : `${item.money}K`) : '0K';
-                let moneyCls = item.money > 0 ? 'txt-win' : (item.money < 0 ? 'txt-lose' : '');
+            let sumBringBack = 0, sumThucThu = 0, sumAmThucTe = 0;
+            let rows = '';
 
-                summaryBody.innerHTML += `
+            Object.values(stats).forEach(st => {
+                if (st.played <= 0) return;
+                const isPaid = !!payStatus[st.name];
+
+                let bringBack = 0;
+                if (st.played >= 4 && st.total > 0) { bringBack = st.total; sumBringBack += bringBack; }
+                if (st.total < 0) { sumAmThucTe += st.total; if (isPaid) sumThucThu += Math.abs(st.total); }
+
+                let noteText = "";
+                if (st.total < 0) {
+                    noteText = isPaid ? `<span class="note-paid">Đã nộp</span>` : `<span class="note-unpaid">Chưa nộp</span>`;
+                } else if (st.total > 0) {
+                    noteText = isPaid ? `<span class="note-paid">Đã nhận</span>` : `<span class="note-unpaid">Chưa nhận</span>`;
+                }
+
+                const safeName = String(st.name).replace(/'/g, "\\'");
+                const grpLabel = st.groups.join('/');
+                const grpCls = st.groups.length > 1 ? 'text-slate-600' : (st.groups[0] === 'A' ? 'text-blue-600' : 'text-orange-600');
+                rows += `
                     <tr class="hover:bg-slate-50">
-                        <td class="p-2 border text-left pl-3 font-bold text-blue-900">${item.name}</td>
-                        <td class="p-2 border font-bold">Bảng ${item.group}</td>
-                        <td class="p-2 border">${item.played}</td>
-                        <td class="p-2 border txt-win">${item.win}</td>
-                        <td class="p-2 border txt-lose">${item.lose}</td>
-                        <td class="p-2 border font-extrabold ${moneyCls}">${moneyStr}</td>
+                        <td class="p-2 border text-left whitespace-nowrap pl-3">
+                            <span class="player-tag">${st.name}</span>
+                            <span class="ml-1 text-[10px] font-black ${grpCls}">(${grpLabel})</span>
+                        </td>
+                        <td class="p-2 border">${st.played}</td>
+                        <td class="p-2 border txt-win">${st.winK > 0 ? st.winK : ''}</td>
+                        <td class="p-2 border txt-lose">${st.loseK < 0 ? st.loseK : ''}</td>
+                        <td class="p-2 border text-blue-600 font-bold">${bringBack > 0 ? bringBack : ''}</td>
+                        <td class="p-2 border font-extrabold ${st.total < 0 ? 'txt-lose' : (st.total > 0 ? 'txt-win' : '')}">${st.total}</td>
+                        <td class="p-2 border bg-amber-50/30">
+                            <input type="checkbox" ${isPaid ? 'checked' : ''} ${disabledAttr} onclick="toggleM2Payment('${safeName}')" class="w-4 h-4 cursor-pointer accent-emerald-600">
+                        </td>
+                        <td class="p-2 border whitespace-nowrap">${noteText}</td>
                     </tr>
                 `;
             });
+
+            if (!rows) {
+                rows = `<tr><td colspan="8" class="p-4 text-center text-slate-400 font-normal">Chưa có trận nào nhập tỷ số để thống kê kèo.</td></tr>`;
+            }
+
+            const btcThuVe = sumAmThucTe + sumBringBack;
+            const quyCon = sumThucThu - Math.abs(btcThuVe);
+            const currentOption = window.m2KeoState.btcOption || 'YES';
+
+            summaryBody.innerHTML = rows + `
+                <tr class="bg-slate-100 font-extrabold">
+                    <td class="p-2 border text-left text-red-600 whitespace-nowrap pl-3">TỔNG BTC THU VỀ</td>
+                    <td class="p-2 border"></td>
+                    <td class="p-2 border"></td>
+                    <td class="p-2 border"></td>
+                    <td class="p-2 border text-blue-700">${sumBringBack}</td>
+                    <td class="p-2 border text-red-600">${btcThuVe}</td>
+                    <td class="p-2 border text-blue-700">${sumThucThu}</td>
+                    <td class="p-2 border whitespace-nowrap">
+                        <select onchange="setM2BtcOption(this.value)" class="text-xs font-bold p-1 border rounded bg-white text-emerald-700 outline-none">
+                            <option value="YES" ${currentOption === 'YES' ? 'selected' : ''}>YES (Chuyển tổng)</option>
+                            <option value="NO" ${currentOption === 'NO' ? 'selected' : ''}>NO (Không chuyển)</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr class="bg-slate-100 font-extrabold">
+                    <td class="p-2 border text-left text-red-600 pl-3" colspan="4">Quỹ Còn</td>
+                    <td class="p-2 border text-red-600 text-sm" colspan="2">${quyCon}</td>
+                    <td class="p-2 border" colspan="2"></td>
+                </tr>
+            `;
         }
 
         function updateM2Score(group, key, val) {
@@ -3782,6 +3974,8 @@
                 window.isAdminUnlocked = true;
                 alert("🔑 Xác thực Admin thành công!");
                 refreshAdminBadgesM1();
+                if (typeof refreshAdminBadgesM2 === 'function') refreshAdminBadgesM2();
+                if (typeof renderM2 === 'function') renderM2();
                 renderM1ScheduleTeam();
                 if (typeof renderDayDetailView === 'function') renderDayDetailView();
                 if (typeof renderHomeClosestDateView === 'function') renderHomeClosestDateView();
@@ -3954,6 +4148,7 @@
                     m2PairsB: window.m2PairsB,
                     m2ScoresA: window.m2ScoresA,
                     m2ScoresB: window.m2ScoresB,
+                    m2KeoState: window.m2KeoState,
                     dates: window.dates,
                     matchesData: window.matchesData,
                     dateKeoMode: window.dateKeoMode,
@@ -3991,6 +4186,7 @@
                 if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
                 if (data.m2ScoresA) window.m2ScoresA = data.m2ScoresA;
                 if (data.m2ScoresB) window.m2ScoresB = data.m2ScoresB;
+                if (data.m2KeoState) window.m2KeoState = data.m2KeoState;
                 if (data.dates) window.dates = data.dates;
                 if (data.matchesData) window.matchesData = data.matchesData;
                 if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
@@ -4020,6 +4216,7 @@
                 m2PairsB: window.m2PairsB,
                 m2ScoresA: window.m2ScoresA,
                 m2ScoresB: window.m2ScoresB,
+                    m2KeoState: window.m2KeoState,
                 dates: window.dates,
                 matchesData: window.matchesData,
                 dateKeoMode: window.dateKeoMode,
@@ -4065,6 +4262,7 @@
                     if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
                     if (data.m2ScoresA) window.m2ScoresA = data.m2ScoresA;
                     if (data.m2ScoresB) window.m2ScoresB = data.m2ScoresB;
+                if (data.m2KeoState) window.m2KeoState = data.m2KeoState;
                     if (data.dates) window.dates = data.dates;
                     if (data.matchesData) window.matchesData = data.matchesData;
                     if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
@@ -4229,6 +4427,7 @@
                     m2PairsB: window.m2PairsB,
                     m2ScoresA: window.m2ScoresA,
                     m2ScoresB: window.m2ScoresB,
+                    m2KeoState: window.m2KeoState,
                     dates: window.dates,
                     matchesData: window.matchesData,
                     dateKeoMode: window.dateKeoMode,
@@ -4275,6 +4474,7 @@
                     if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
                     if (data.m2ScoresA) window.m2ScoresA = data.m2ScoresA;
                     if (data.m2ScoresB) window.m2ScoresB = data.m2ScoresB;
+                if (data.m2KeoState) window.m2KeoState = data.m2KeoState;
                     if (data.dates) window.dates = data.dates;
                     if (data.matchesData) window.matchesData = data.matchesData;
                     if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
