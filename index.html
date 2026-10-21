@@ -473,7 +473,7 @@
             <!-- KHU VỰC QUẢN LÝ TẬP TRUNG THÀNH VIÊN 2 ĐỘI -->
             <div class="bg-white rounded-xl shadow-md p-4 md:p-6 text-slate-800">
                 <h3 class="text-base md:text-lg font-extrabold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
-                    <i class="fa-solid fa-users-rectangle text-amber-600"></i> Danh Sách VĐV Chia 2 Team (Mỗi team 9 VĐV: 6 Nam, 3 Nữ)
+                    <i class="fa-solid fa-users-rectangle text-amber-600"></i> Danh Sách VĐV Chia 2 Team (Mỗi team 9 VĐV: 6 Nam, 3 Nữ) - Có nút Bút chì sửa tên
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- TEAM A -->
@@ -546,10 +546,10 @@
                 </div>
             </div>
 
-            <!-- BẢNG TỔNG HỢP XẾP HẠNG THẮNG THUA -->
+            <!-- BẢNG TỔNG HỢP KÈO (ĐÃ ĐỔI TÊN TỪ THƯỞNG PHẠT) -->
             <div class="bg-white rounded-xl shadow-md p-4 md:p-6 text-slate-800">
-                <h3 class="text-base md:text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
-                    <i class="fa-solid fa-chart-pie text-indigo-600"></i> Bảng Tổng Hợp Chung Minigame Team
+                <h3 class="text-base md:text-lg font-extrabold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-pie text-indigo-600"></i> Bảng Tổng Hợp Kèo Minigame Team A & B
                 </h3>
                 <div class="smooth-scroll rounded-lg border border-slate-200">
                     <table class="w-full text-center border-collapse">
@@ -682,8 +682,11 @@
                     </div>
                 </div>
 
+                <!-- BẢNG TỔNG HỢP KÈO VÒNG BẢNG & KNOCKOUT -->
                 <div class="max-w-2xl mx-auto space-y-6 pt-4 border-t">
-                    <h3 class="text-center font-extrabold text-slate-800 text-lg uppercase">VÒNG KNOCKOUT (BÁN KẾT & CHUNG KẾT)</h3>
+                    <h3 class="text-center font-extrabold text-slate-800 text-lg uppercase flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-chart-column text-indigo-600"></i> Bảng Tổng Hợp Kèo Vòng Bảng & Knockout
+                    </h3>
 
                     <div class="border rounded overflow-hidden shadow-sm">
                         <div class="bg-blue-700 text-white text-xs font-bold p-1.5 text-center">VÒNG BÁN KẾT (BK1: Nhất A - Nhì B | BK2: Nhất B - Nhì A)</div>
@@ -768,7 +771,7 @@
                     </div>
 
                     <div class="border rounded overflow-hidden bg-amber-100/90 border-amber-300 shadow-sm">
-                        <div class="bg-amber-600 text-white text-xs font-bold p-1.5 text-center">BẢNG CHUNG CUỘC MINIGAME BẢNG & VÒNG TRÒN</div>
+                        <div class="bg-amber-600 text-white text-xs font-bold p-1.5 text-center">BẢNG KẾT QUẢ CHUNG CUỘC MINIGAME</div>
                         <table class="w-full text-xs border-collapse">
                             <tbody>
                                 <tr class="border-b border-amber-200">
@@ -836,7 +839,7 @@
             <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 text-slate-800">
                 <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b gap-2">
                     <h2 class="text-base md:text-lg font-black text-slate-800 uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-calculator text-indigo-600"></i> BẢNG TỔNG HỢP THÀNH TIỀN & THU CHI
+                        <i class="fa-solid fa-calculator text-indigo-600"></i> BẢNG TỔNG HỢP KÈO THU CHI
                     </h2>
 
                     <div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-300">
@@ -1118,6 +1121,27 @@
             <div class="flex justify-end gap-2 mt-6">
                 <button onclick="closePlayerModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-sm rounded-lg hover:bg-slate-300">Hủy</button>
                 <button onclick="savePlayer()" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 font-semibold">Lưu Pick Thủ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ĐỔI TÊN VĐV TRONG TEAM -->
+    <div id="team-edit-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 text-slate-800">
+            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square text-amber-600"></i> Sửa Tên VĐV Team
+            </h3>
+            <input type="hidden" id="edit-team-group">
+            <input type="hidden" id="edit-team-index">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Họ & Tên Mới</label>
+                    <input type="text" id="edit-team-name-input" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none font-bold">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-6">
+                <button onclick="closeTeamEditModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-sm rounded-lg hover:bg-slate-300 font-semibold">Hủy</button>
+                <button onclick="saveTeamMemberEdit()" class="px-4 py-2 bg-amber-600 text-white text-sm rounded-lg hover:bg-amber-700 font-bold">Lưu Tên</button>
             </div>
         </div>
     </div>
@@ -1690,7 +1714,7 @@
                     <div>
                         <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b gap-2">
                             <h4 class="font-bold text-sm text-slate-700 flex items-center gap-1.5">
-                                <i class="fa-solid fa-table-list text-blue-600"></i> BẢNG DÂN TRẬN PICK NGÀY ${closestDate}
+                                <i class="fa-solid fa-table-list text-blue-600"></i> BẢNG ĐI HÀNH TRẬN PICK NGÀY ${closestDate}
                             </h4>
                             <div class="flex items-center gap-2">
                                 <select onchange="applyKeoToAllMatchesForDate('${closestDate}', this.value)" class="text-xs p-1 border rounded bg-white font-bold outline-none border-amber-400 text-slate-800 cursor-pointer">
@@ -1724,7 +1748,7 @@
 
                     <div>
                         <h4 class="font-bold text-sm text-slate-700 mb-2 flex items-center gap-1.5">
-                            <i class="fa-solid fa-calculator text-indigo-600"></i> BẢNG TỔNG HỢP THƯỞNG PHẠT KÈO NGÀY ${closestDate}
+                            <i class="fa-solid fa-calculator text-indigo-600"></i> BẢNG TỔNG HỢP KÈO THƯỞNG PHẠT NGÀY ${closestDate}
                         </h4>
                         <div class="smooth-scroll border border-slate-200 rounded-lg bg-white shadow-sm">
                             <table class="w-full text-xs min-w-[650px] border-collapse">
@@ -3354,12 +3378,31 @@
             }
         }
 
-        function updateTeamMemberName(team, index, newName) {
-            newName = newName.trim();
-            if (!newName) return;
+        function openTeamEditModal(team, index) {
+            const list = team === 'A' ? window.minigameTeamData.teamA : window.minigameTeamData.teamB;
+            const name = list[index];
+            document.getElementById('edit-team-group').value = team;
+            document.getElementById('edit-team-index').value = index;
+            document.getElementById('edit-team-name-input').value = name;
+            document.getElementById('team-edit-modal').classList.remove('hidden');
+        }
+
+        function closeTeamEditModal() {
+            document.getElementById('team-edit-modal').classList.add('hidden');
+        }
+
+        function saveTeamMemberEdit() {
+            const team = document.getElementById('edit-team-group').value;
+            const index = parseInt(document.getElementById('edit-team-index').value);
+            const newName = document.getElementById('edit-team-name-input').value.trim();
+            if (!newName) return alert('Vui lòng nhập tên VĐV!');
+
             if (team === 'A') window.minigameTeamData.teamA[index] = newName;
             else window.minigameTeamData.teamB[index] = newName;
+
             saveTeamData();
+            closeTeamEditModal();
+            renderTeamListsTeam();
             renderM1ScheduleTeam();
             autoBackupData();
             if(window.syncToFirebase) window.syncToFirebase();
@@ -3377,18 +3420,22 @@
             countB.innerText = window.minigameTeamData.teamB.length;
 
             listA.innerHTML = window.minigameTeamData.teamA.map((name, i) => `
-                <div class="flex items-center gap-2 bg-white p-2 rounded-lg border border-blue-200 shadow-sm">
-                    <span class="text-xs font-bold text-blue-700 w-6">${i + 1}.</span>
-                    <input type="text" value="${name}" onchange="updateTeamMemberName('A', ${i}, this.value)" class="w-full text-xs font-semibold outline-none bg-transparent">
-                    <button onclick="removeTeamMember('A', ${i})" class="text-red-500 hover:text-red-700 text-xs px-1.5"><i class="fa-solid fa-trash"></i></button>
+                <div class="flex items-center justify-between bg-white p-2 rounded-lg border border-blue-200 shadow-sm">
+                    <span class="text-xs font-bold text-blue-700"><span class="w-6 inline-block">${i + 1}.</span> <span class="player-tag">${name}</span></span>
+                    <div class="flex items-center gap-1">
+                        <button onclick="openTeamEditModal('A', ${i})" class="text-blue-600 hover:text-blue-800 text-xs px-1.5 p-1 rounded hover:bg-blue-50 transition" title="Sửa tên VĐV"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="removeTeamMember('A', ${i})" class="text-red-500 hover:text-red-700 text-xs px-1.5 p-1 rounded hover:bg-red-50 transition" title="Xóa VĐV"><i class="fa-solid fa-trash"></i></button>
+                    </div>
                 </div>
             `).join('');
 
             listB.innerHTML = window.minigameTeamData.teamB.map((name, i) => `
-                <div class="flex items-center gap-2 bg-white p-2 rounded-lg border border-orange-200 shadow-sm">
-                    <span class="text-xs font-bold text-orange-700 w-6">${i + 1}.</span>
-                    <input type="text" value="${name}" onchange="updateTeamMemberName('B', ${i}, this.value)" class="w-full text-xs font-semibold outline-none bg-transparent">
-                    <button onclick="removeTeamMember('B', ${i})" class="text-red-500 hover:text-red-700 text-xs px-1.5"><i class="fa-solid fa-trash"></i></button>
+                <div class="flex items-center justify-between bg-white p-2 rounded-lg border border-orange-200 shadow-sm">
+                    <span class="text-xs font-bold text-orange-700"><span class="w-6 inline-block">${i + 1}.</span> <span class="player-tag">${name}</span></span>
+                    <div class="flex items-center gap-1">
+                        <button onclick="openTeamEditModal('B', ${i})" class="text-blue-600 hover:text-blue-800 text-xs px-1.5 p-1 rounded hover:bg-blue-50 transition" title="Sửa tên VĐV"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="removeTeamMember('B', ${i})" class="text-red-500 hover:text-red-700 text-xs px-1.5 p-1 rounded hover:bg-red-50 transition" title="Xóa VĐV"><i class="fa-solid fa-trash"></i></button>
+                    </div>
                 </div>
             `).join('');
         }
