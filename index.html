@@ -546,21 +546,53 @@
                 </div>
             </div>
 
-            <!-- BẢNG TỔNG HỢP KÈO (TEAM A & B) -->
-            <div class="bg-white rounded-xl shadow-md p-4 md:p-6 text-slate-800">
-                <h3 class="text-base md:text-lg font-extrabold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
-                    <i class="fa-solid fa-chart-pie text-indigo-600"></i> Bảng Tổng Hợp Kèo Minigame Team A & B
-                </h3>
-                <div class="smooth-scroll rounded-lg border border-slate-200">
-                    <table class="w-full text-center border-collapse text-xs">
+            <!-- BẢNG TỔNG HỢP KÈO THU CHI (TEAM A & B) - GIỐNG BẢNG TỔNG HỢP THU CHI TRONG CHI TIẾT NGÀY -->
+            <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 text-slate-800">
+                <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b gap-2">
+                    <h2 class="text-base md:text-lg font-black text-slate-800 uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-calculator text-indigo-600"></i> Bảng Tổng Hợp Kèo Minigame Team A & B
+                    </h2>
+
+                    <div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-300">
+                        <span id="m1-admin-status-badge" class="text-xs font-bold text-slate-600 flex items-center gap-1">
+                            <i class="fa-solid fa-lock text-red-500"></i> Mở Khóa Admin Tích Nộp:
+                        </span>
+                        <input type="password" id="m1-admin-pass-input" placeholder="Nhập Pass..." class="w-24 text-xs p-1 border rounded outline-none focus:ring-1 focus:ring-blue-500">
+                        <button onclick="checkM1AdminPassword()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded font-bold shadow">
+                            Xác Nhận
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CHỌN KÈO ÁP DỤNG CHO MINIGAME TEAM -->
+                <div class="flex flex-wrap items-center gap-2 mb-3 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                    <span class="text-xs font-bold text-amber-900"><i class="fa-solid fa-coins"></i> Loại kèo áp dụng cho các trận:</span>
+                    <select id="m1-keo-mode-select" onchange="setM1KeoMode(this.value)" class="text-xs font-bold p-1 border rounded bg-white text-amber-900 border-amber-300 outline-none">
+                        <option value="default">Kèo (+5k/-15k)</option>
+                        <option value="k25">Kèo 25k (0k/-25k)</option>
+                        <option value="free">Kèo Tự Do</option>
+                    </select>
+                    <div id="m1-keo-custom-box" class="hidden items-center gap-1">
+                        <span class="text-[11px] text-emerald-700 font-bold">+</span>
+                        <input type="number" id="m1-keo-custom-win" class="w-14 text-xs p-1 border rounded text-emerald-700 font-bold" onchange="setM1CustomKeo()" title="Tiền thắng">
+                        <span class="text-[11px] text-red-600 font-bold">/</span>
+                        <input type="number" id="m1-keo-custom-lose" class="w-14 text-xs p-1 border rounded text-red-600 font-bold" onchange="setM1CustomKeo()" title="Tiền thua">
+                    </div>
+                    <span class="text-[11px] italic text-slate-500">Tỷ số 0 = HẦM (nhân đôi tiền kèo). Chỉ tính các trận đã nhập đủ tỷ số.</span>
+                </div>
+
+                <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner">
+                    <table class="w-full min-w-[700px] text-center border-collapse border border-slate-300 text-xs">
                         <thead>
-                            <tr class="bg-slate-800 text-white">
-                                <th class="p-2.5 border text-left pl-4">VĐV / THÀNH VIÊN</th>
-                                <th class="p-2.5 border">Team</th>
-                                <th class="p-2.5 border">Số Trận Đánh</th>
-                                <th class="p-2.5 border">Thắng</th>
-                                <th class="p-2.5 border">Thua</th>
-                                <th class="p-2.5 border">Tổng Tiền Kèo</th>
+                            <tr class="bg-slate-100 text-slate-700 font-bold">
+                                <th class="p-2 border w-28 text-left pl-3">PICK THỦ</th>
+                                <th class="p-2 border w-16">SỐ TRẬN</th>
+                                <th class="p-2 border w-20">THẮNG/K</th>
+                                <th class="p-2 border w-20">THUA/K</th>
+                                <th class="p-2 border w-24">MANG VỀ</th>
+                                <th class="p-2 border w-20">TỔNG</th>
+                                <th class="p-2 border w-20 bg-amber-100 text-amber-900">THỰC TẾ (ADMIN)</th>
+                                <th class="p-2 border w-28">NOTE</th>
                             </tr>
                         </thead>
                         <tbody id="m1-keo-summary-body" class="font-semibold"></tbody>
@@ -3586,7 +3618,7 @@
 
             let playerKeoStats = {};
             [...window.minigameTeamData.teamA, ...window.minigameTeamData.teamB].forEach(v => {
-                playerKeoStats[v] = { name: v, team: window.minigameTeamData.teamA.includes(v) ? 'A' : 'B', played: 0, winK: 0, loseK: 0, total: 0, wins: 0, losses: 0 };
+                playerKeoStats[v] = { name: v, team: window.minigameTeamData.teamA.includes(v) ? 'A' : 'B', played: 0, winK: 0, loseK: 0, total: 0 };
             });
 
             tbody.innerHTML = matches.map((m, index) => {
@@ -3606,25 +3638,25 @@
 
                     let pairA = [m.a1, m.a2].filter(Boolean);
                     let pairB = [m.b1, m.b2].filter(Boolean);
-                    let winAmt = 5, loseAmt = -15;
+                    const keoCfg = getM1KeoConfig();
                     const isHam = (sA === 0 || sB === 0);
-                    const effWin = isHam ? winAmt * 2 : winAmt;
-                    const effLose = isHam ? loseAmt * 2 : loseAmt;
+                    const effWin = isHam ? (keoCfg.win > 0 ? keoCfg.win * 2 : 0) : keoCfg.win;
+                    const effLose = isHam ? keoCfg.lose * 2 : keoCfg.lose;
 
                     if (sA > sB) {
                         winnerText = "<span class='txt-win'>Team A</span>";
                         ptsA = 1;
                         teamAWins++;
 
-                        pairA.forEach(p => { if(playerKeoStats[p]) { playerKeoStats[p].played++; playerKeoStats[p].wins++; playerKeoStats[p].winK += effWin; playerKeoStats[p].total += effWin; } });
-                        pairB.forEach(p => { if(playerKeoStats[p]) { playerKeoStats[p].played++; playerKeoStats[p].losses++; playerKeoStats[p].loseK += effLose; playerKeoStats[p].total += effLose; } });
+                        pairA.forEach(p => addM1Keo(playerKeoStats, p, true, effWin));
+                        pairB.forEach(p => addM1Keo(playerKeoStats, p, false, effLose));
                     } else if (sB > sA) {
                         winnerText = "<span class='txt-lose'>Team B</span>";
                         ptsB = 1;
                         teamBWins++;
 
-                        pairB.forEach(p => { if(playerKeoStats[p]) { playerKeoStats[p].played++; playerKeoStats[p].wins++; playerKeoStats[p].winK += effWin; playerKeoStats[p].total += effWin; } });
-                        pairA.forEach(p => { if(playerKeoStats[p]) { playerKeoStats[p].played++; playerKeoStats[p].losses++; playerKeoStats[p].loseK += effLose; playerKeoStats[p].total += effLose; } });
+                        pairB.forEach(p => addM1Keo(playerKeoStats, p, true, effWin));
+                        pairA.forEach(p => addM1Keo(playerKeoStats, p, false, effLose));
                     } else {
                         winnerText = "<span class='text-amber-600 font-bold'>Hòa</span>";
                     }
@@ -3692,70 +3724,193 @@
             renderM1SummaryTeam(playerKeoStats);
         }
 
+        /* ---------- KÈO THU CHI MINIGAME TEAM (giống bảng tổng hợp thu chi chi tiết ngày) ---------- */
+        function ensureM1KeoState() {
+            const d = window.minigameTeamData;
+            if (!d.keoMode) d.keoMode = 'default';
+            if (d.customWin === undefined) d.customWin = 5;
+            if (d.customLose === undefined) d.customLose = -15;
+            if (!d.payStatus || typeof d.payStatus !== 'object') d.payStatus = {};
+            if (!d.btcOption) d.btcOption = 'YES';
+        }
+
+        function getM1KeoConfig() {
+            ensureM1KeoState();
+            const d = window.minigameTeamData;
+            if (d.keoMode === 'k25') return { win: 0, lose: -25 };
+            if (d.keoMode === 'free') {
+                let w = parseFloat(d.customWin) || 0;
+                let l = parseFloat(d.customLose) || 0;
+                if (l > 0) l = -l;
+                return { win: w, lose: l };
+            }
+            return { win: 5, lose: -15 };
+        }
+
+        function addM1Keo(stats, name, isWin, amt) {
+            const st = stats[name];
+            if (!st) return;
+            st.played++;
+            if (isWin) st.winK += amt; else st.loseK += amt;
+            st.total += amt;
+        }
+
+        function persistM1() {
+            saveTeamData();
+            autoBackupData();
+            if (window.syncToFirebase) window.syncToFirebase();
+        }
+
+        function setM1KeoMode(mode) {
+            ensureM1KeoState();
+            window.minigameTeamData.keoMode = mode;
+            persistM1();
+            renderM1ScheduleTeam();
+        }
+
+        function setM1CustomKeo() {
+            ensureM1KeoState();
+            window.minigameTeamData.customWin = parseFloat(document.getElementById('m1-keo-custom-win').value) || 0;
+            window.minigameTeamData.customLose = parseFloat(document.getElementById('m1-keo-custom-lose').value) || 0;
+            persistM1();
+            renderM1ScheduleTeam();
+        }
+
+        function checkM1AdminPassword() {
+            const inputPass = document.getElementById('m1-admin-pass-input').value;
+            if (inputPass === window.ADMIN_PASSWORD) {
+                window.isAdminUnlocked = true;
+                alert("🔑 Xác thực Admin thành công!");
+                refreshAdminBadgesM1();
+                renderM1ScheduleTeam();
+                if (typeof renderDayDetailView === 'function') renderDayDetailView();
+                if (typeof renderHomeClosestDateView === 'function') renderHomeClosestDateView();
+            } else {
+                alert("❌ Mật khẩu Admin không đúng!");
+            }
+        }
+
+        function refreshAdminBadgesM1() {
+            const badge = document.getElementById('m1-admin-status-badge');
+            if (!badge) return;
+            if (window.isAdminUnlocked) {
+                badge.innerHTML = `<i class="fa-solid fa-lock-open text-emerald-600"></i> Đã Mở Khóa Admin:`;
+                badge.className = "text-xs font-bold text-emerald-700 flex items-center gap-1";
+            } else {
+                badge.innerHTML = `<i class="fa-solid fa-lock text-red-500"></i> Mở Khóa Admin Tích Nộp:`;
+                badge.className = "text-xs font-bold text-slate-600 flex items-center gap-1";
+            }
+        }
+
+        function toggleM1Payment(name) {
+            if (!window.isAdminUnlocked) {
+                alert("🔒 Bạn cần nhập Pass Admin ở phía trên!");
+                return;
+            }
+            ensureM1KeoState();
+            const ps = window.minigameTeamData.payStatus;
+            ps[name] = !ps[name];
+            persistM1();
+            renderM1ScheduleTeam();
+        }
+
+        function setM1BtcOption(val) {
+            ensureM1KeoState();
+            window.minigameTeamData.btcOption = val;
+            persistM1();
+            renderM1ScheduleTeam();
+        }
+
         function renderM1SummaryTeam(playerKeoStats) {
             const summaryBody = document.getElementById('m1-keo-summary-body');
             if (!summaryBody) return;
-            summaryBody.innerHTML = '';
-            let sumBringBack = 0, sumCollected = 0, sumNegative = 0;
-            const paymentStatus = window.minigameTeamData.teamPaymentStatus || (window.minigameTeamData.teamPaymentStatus = {});
+            ensureM1KeoState();
 
-            Object.values(playerKeoStats).forEach(item => {
-                if (item.played <= 0) return;
-                const isPaid = !!paymentStatus[item.name];
-                const bringBack = (item.played >= 4 && item.total > 0) ? item.total : 0;
-                sumBringBack += bringBack;
-                if (item.total < 0) {
-                    sumNegative += item.total;
-                    if (isPaid) sumCollected += Math.abs(item.total);
+            // đồng bộ ô chọn loại kèo
+            const modeSel = document.getElementById('m1-keo-mode-select');
+            if (modeSel) modeSel.value = window.minigameTeamData.keoMode;
+            const customBox = document.getElementById('m1-keo-custom-box');
+            if (customBox) {
+                if (window.minigameTeamData.keoMode === 'free') { customBox.classList.remove('hidden'); customBox.classList.add('flex'); }
+                else { customBox.classList.add('hidden'); customBox.classList.remove('flex'); }
+            }
+            const cw = document.getElementById('m1-keo-custom-win');
+            const cl = document.getElementById('m1-keo-custom-lose');
+            if (cw && document.activeElement !== cw) cw.value = window.minigameTeamData.customWin;
+            if (cl && document.activeElement !== cl) cl.value = window.minigameTeamData.customLose;
+            refreshAdminBadgesM1();
+
+            const payStatus = window.minigameTeamData.payStatus;
+            const disabledAttr = window.isAdminUnlocked ? '' : 'disabled title="Cần mật khẩu Admin để sửa"';
+
+            let sumBringBack = 0, sumThucThu = 0, sumAmThucTe = 0;
+            let rows = '';
+
+            Object.values(playerKeoStats).forEach(st => {
+                if (st.played <= 0) return;
+                const isPaid = !!payStatus[st.name];
+
+                let bringBack = 0;
+                if (st.played >= 4 && st.total > 0) { bringBack = st.total; sumBringBack += bringBack; }
+                if (st.total < 0) { sumAmThucTe += st.total; if (isPaid) sumThucThu += Math.abs(st.total); }
+
+                let noteText = "";
+                if (st.total < 0) {
+                    noteText = isPaid ? `<span class="note-paid">Đã nộp</span>` : `<span class="note-unpaid">Chưa nộp</span>`;
+                } else if (st.total > 0) {
+                    noteText = isPaid ? `<span class="note-paid">Đã nhận</span>` : `<span class="note-unpaid">Chưa nhận</span>`;
                 }
-                let noteText = '';
-                if (item.total < 0) noteText = isPaid ? '<span class="note-paid">Đã nộp</span>' : '<span class="note-unpaid">Chưa nộp</span>';
-                else if (item.total > 0) noteText = isPaid ? '<span class="note-paid">Đã nhận</span>' : '<span class="note-unpaid">Chưa nhận</span>';
-                const disabledAttr = window.isAdminUnlocked ? '' : 'disabled title="Cần mật khẩu Admin để sửa"';
-                const moneyClass = item.total < 0 ? 'txt-lose' : (item.total > 0 ? 'txt-win' : '');
-                const playerArg = JSON.stringify(item.name).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-                summaryBody.innerHTML += `
+
+                const safeName = String(st.name).replace(/'/g, "\\'");
+                rows += `
                     <tr class="hover:bg-slate-50">
-                        <td class="p-2 border text-left whitespace-nowrap pl-3"><span class="player-tag">${item.name}</span></td>
-                        <td class="p-2 border">${item.played}</td>
-                        <td class="p-2 border txt-win">${item.winK > 0 ? item.winK : ''}</td>
-                        <td class="p-2 border txt-lose">${item.loseK < 0 ? item.loseK : ''}</td>
+                        <td class="p-2 border text-left whitespace-nowrap pl-3">
+                            <span class="player-tag">${st.name}</span>
+                            <span class="ml-1 text-[10px] font-black ${st.team === 'A' ? 'text-blue-600' : 'text-orange-600'}">(${st.team})</span>
+                        </td>
+                        <td class="p-2 border">${st.played}</td>
+                        <td class="p-2 border txt-win">${st.winK > 0 ? st.winK : ''}</td>
+                        <td class="p-2 border txt-lose">${st.loseK < 0 ? st.loseK : ''}</td>
                         <td class="p-2 border text-blue-600 font-bold">${bringBack > 0 ? bringBack : ''}</td>
-                        <td class="p-2 border font-extrabold ${moneyClass}">${item.total}</td>
-                        <td class="p-2 border bg-amber-50/30"><input type="checkbox" ${isPaid ? 'checked' : ''} ${disabledAttr} onclick='toggleTeamPaymentStatus(${playerArg})' class="w-4 h-4 cursor-pointer accent-emerald-600"></td>
+                        <td class="p-2 border font-extrabold ${st.total < 0 ? 'txt-lose' : (st.total > 0 ? 'txt-win' : '')}">${st.total}</td>
+                        <td class="p-2 border bg-amber-50/30">
+                            <input type="checkbox" ${isPaid ? 'checked' : ''} ${disabledAttr} onclick="toggleM1Payment('${safeName}')" class="w-4 h-4 cursor-pointer accent-emerald-600">
+                        </td>
                         <td class="p-2 border whitespace-nowrap">${noteText}</td>
-                    </tr>`;
+                    </tr>
+                `;
             });
-            const btcThuVe = sumNegative + sumBringBack;
-            const quyCon = sumCollected - Math.abs(btcThuVe);
-            summaryBody.innerHTML += `
+
+            if (!rows) {
+                rows = `<tr><td colspan="8" class="p-4 text-center text-slate-400 font-normal">Chưa có trận nào nhập tỷ số để thống kê kèo.</td></tr>`;
+            }
+
+            const btcThuVe = sumAmThucTe + sumBringBack;
+            const quyCon = sumThucThu - Math.abs(btcThuVe);
+            const currentOption = window.minigameTeamData.btcOption || 'YES';
+
+            summaryBody.innerHTML = rows + `
                 <tr class="bg-slate-100 font-extrabold">
                     <td class="p-2 border text-left text-red-600 whitespace-nowrap pl-3">TỔNG BTC THU VỀ</td>
-                    <td class="p-2 border"></td><td class="p-2 border"></td><td class="p-2 border"></td>
+                    <td class="p-2 border"></td>
+                    <td class="p-2 border"></td>
+                    <td class="p-2 border"></td>
                     <td class="p-2 border text-blue-700">${sumBringBack}</td>
                     <td class="p-2 border text-red-600">${btcThuVe}</td>
-                    <td class="p-2 border text-blue-700">${sumCollected}</td>
-                    <td class="p-2 border text-xs">Kèo mặc định: +5K / -15K; hầm tính gấp đôi</td>
+                    <td class="p-2 border text-blue-700">${sumThucThu}</td>
+                    <td class="p-2 border whitespace-nowrap">
+                        <select onchange="setM1BtcOption(this.value)" class="text-xs font-bold p-1 border rounded bg-white text-emerald-700 outline-none">
+                            <option value="YES" ${currentOption === 'YES' ? 'selected' : ''}>YES (Chuyển tổng)</option>
+                            <option value="NO" ${currentOption === 'NO' ? 'selected' : ''}>NO (Không chuyển)</option>
+                        </select>
+                    </td>
                 </tr>
                 <tr class="bg-slate-100 font-extrabold">
                     <td class="p-2 border text-left text-red-600 pl-3" colspan="4">Quỹ Còn</td>
                     <td class="p-2 border text-red-600 text-sm" colspan="2">${quyCon}</td>
                     <td class="p-2 border" colspan="2"></td>
-                </tr>`;
-        }
-
-        function toggleTeamPaymentStatus(playerName) {
-            if (!window.isAdminUnlocked) {
-                alert('🔒 Bạn cần nhập Pass Admin ở mục Chi Tiết Ngày để xác nhận thu/chi!');
-                renderM1ScheduleTeam();
-                return;
-            }
-            if (!window.minigameTeamData.teamPaymentStatus) window.minigameTeamData.teamPaymentStatus = {};
-            window.minigameTeamData.teamPaymentStatus[playerName] = !window.minigameTeamData.teamPaymentStatus[playerName];
-            saveTeamData();
-            renderM1ScheduleTeam();
-            autoBackupData();
-            if (window.syncToFirebase) window.syncToFirebase();
+                </tr>
+            `;
         }
 
         function exportToExcelTeam() {
