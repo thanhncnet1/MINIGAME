@@ -546,23 +546,24 @@
                 </div>
             </div>
 
-            <!-- BẢNG TỔNG HỢP KÈO (ĐÃ ĐỔI TÊN THÀNH BẢNG TỔNG HỢP KÈO) -->
+            <!-- BẢNG TỔNG HỢP KÈO (TEAM A & B) -->
             <div class="bg-white rounded-xl shadow-md p-4 md:p-6 text-slate-800">
                 <h3 class="text-base md:text-lg font-extrabold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
-                    <i class="fa-solid fa-chart-pie text-indigo-600"></i> Bảng Tổng Hợp Kèo Minigame Team A & B
+                    <i class="fa-solid fa-chart-pie text-indigo-600"></i> Bảng Tổng Hợp Kèo Thu Chi Minigame Team A & B
                 </h3>
                 <div class="smooth-scroll rounded-lg border border-slate-200">
-                    <table class="w-full text-center border-collapse">
+                    <table class="w-full text-center border-collapse text-xs">
                         <thead>
-                            <tr class="bg-slate-800 text-white text-xs md:text-sm">
+                            <tr class="bg-slate-800 text-white">
+                                <th class="p-2.5 border text-left pl-4">VĐV / THÀNH VIÊN</th>
                                 <th class="p-2.5 border">Team</th>
-                                <th class="p-2.5 border">Số Trận Đã Đánh</th>
-                                <th class="p-2.5 border">Điểm Số Tổng</th>
-                                <th class="p-2.5 border">Hiệu Số Tổng</th>
-                                <th class="p-2.5 border">Trạng Thái Hiện Tại</th>
+                                <th class="p-2.5 border">Số Trận Đánh</th>
+                                <th class="p-2.5 border">Thắng</th>
+                                <th class="p-2.5 border">Thua</th>
+                                <th class="p-2.5 border">Tổng Tiền Kèo</th>
                             </tr>
                         </thead>
-                        <tbody id="m1-summary-body" class="text-xs md:text-sm font-semibold"></tbody>
+                        <tbody id="m1-keo-summary-body" class="font-semibold"></tbody>
                     </table>
                 </div>
             </div>
@@ -766,6 +767,28 @@
                                         <td id="ck-team2-name" class="border p-1.5 font-medium">Thắng BK2</td>
                                     </tr>
                                 </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- BẢNG TỔNG HỢP KÈO THU CHI CHO MINIGAME BẢNG & VÒNG TRÒN -->
+                    <div class="border rounded overflow-hidden shadow-sm bg-white">
+                        <div class="bg-slate-800 text-white text-xs font-bold p-2 text-center flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-chart-pie text-yellow-400"></i> BẢNG TỔNG HỢP KÈO THU CHI MINIGAME BẢNG & VÒNG TRÒN
+                        </div>
+                        <div class="smooth-scroll">
+                            <table class="w-full text-xs text-center border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 font-bold">
+                                        <th class="p-2 border text-left pl-3">Cặp VĐV</th>
+                                        <th class="p-2 border w-16">Bảng</th>
+                                        <th class="p-2 border w-16">Số Trận</th>
+                                        <th class="p-2 border w-16">Thắng</th>
+                                        <th class="p-2 border w-16">Thua</th>
+                                        <th class="p-2 border w-24">Tổng Tiền Kèo</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="m2-keo-summary-body" class="font-semibold"></tbody>
                             </table>
                         </div>
                     </div>
@@ -3316,6 +3339,71 @@
             if(document.getElementById('winner-1')) document.getElementById('winner-1').innerText = winner1;
             if(document.getElementById('winner-2')) document.getElementById('winner-2').innerText = winner2;
             if(document.getElementById('winner-3')) document.getElementById('winner-3').innerText = winner3;
+
+            renderM2KeoSummary(schedA, schedB);
+        }
+
+        function renderM2KeoSummary(schedA, schedB) {
+            const summaryBody = document.getElementById('m2-keo-summary-body');
+            if (!summaryBody) return;
+
+            let allPairsMap = {};
+            
+            window.m2PairsA.forEach((p, idx) => {
+                let name = `${p.p1} - ${p.p2}`;
+                allPairsMap[name] = { name: name, group: 'A', played: 0, win: 0, lose: 0, money: 0 };
+            });
+
+            window.m2PairsB.forEach((p, idx) => {
+                let name = `${p.p1} - ${p.p2}`;
+                allPairsMap[name] = { name: name, group: 'B', played: 0, win: 0, lose: 0, money: 0 };
+            });
+
+            const processPairMatch = (t1Name, t2Name, s1Str, s2Str, winK = 5, loseK = -15) => {
+                if (s1Str !== '' && s2Str !== '' && !isNaN(s1Str) && !isNaN(s2Str)) {
+                    let s1 = parseInt(s1Str);
+                    let s2 = parseInt(s2Str);
+                    if (allPairsMap[t1Name]) {
+                        allPairsMap[t1Name].played++;
+                        if (s1 > s2) { allPairsMap[t1Name].win++; allPairsMap[t1Name].money += winK; }
+                        else if (s1 < s2) { allPairsMap[t1Name].lose++; allPairsMap[t1Name].money += loseK; }
+                    }
+                    if (allPairsMap[t2Name]) {
+                        allPairsMap[t2Name].played++;
+                        if (s2 > s1) { allPairsMap[t2Name].win++; allPairsMap[t2Name].money += winK; }
+                        else if (s2 < s1) { allPairsMap[t2Name].lose++; allPairsMap[t2Name].money += loseK; }
+                    }
+                }
+            };
+
+            schedA.forEach(m => {
+                let s1 = window.m2ScoresA[m.key + '_1'];
+                let s2 = window.m2ScoresA[m.key + '_2'];
+                processPairMatch(m.t1Name, m.t2Name, s1, s2);
+            });
+
+            schedB.forEach(m => {
+                let s1 = window.m2ScoresB[m.key + '_1'];
+                let s2 = window.m2ScoresB[m.key + '_2'];
+                processPairMatch(m.t1Name, m.t2Name, s1, s2);
+            });
+
+            summaryBody.innerHTML = '';
+            Object.values(allPairsMap).forEach(item => {
+                let moneyStr = item.money !== 0 ? (item.money > 0 ? `+${item.money}K` : `${item.money}K`) : '0K';
+                let moneyCls = item.money > 0 ? 'txt-win' : (item.money < 0 ? 'txt-lose' : '');
+
+                summaryBody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-2 border text-left pl-3 font-bold text-blue-900">${item.name}</td>
+                        <td class="p-2 border font-bold">Bảng ${item.group}</td>
+                        <td class="p-2 border">${item.played}</td>
+                        <td class="p-2 border txt-win">${item.win}</td>
+                        <td class="p-2 border txt-lose">${item.lose}</td>
+                        <td class="p-2 border font-extrabold ${moneyCls}">${moneyStr}</td>
+                    </tr>
+                `;
+            });
         }
 
         function updateM2Score(group, key, val) {
@@ -3496,6 +3584,11 @@
             let totalPtsA = 0;
             let totalPtsB = 0;
 
+            let playerKeoStats = {};
+            [...window.minigameTeamData.teamA, ...window.minigameTeamData.teamB].forEach(v => {
+                playerKeoStats[v] = { team: window.minigameTeamData.teamA.includes(v) ? 'A' : 'B', played: 0, win: 0, lose: 0, money: 0 };
+            });
+
             tbody.innerHTML = matches.map((m, index) => {
                 const sA = (m.scoreA !== "" && m.scoreA !== null) ? parseInt(m.scoreA) : null;
                 const sB = (m.scoreB !== "" && m.scoreB !== null) ? parseInt(m.scoreB) : null;
@@ -3511,14 +3604,24 @@
                     const diff = sA - sB;
                     diffText = (diff > 0 ? "+" : "") + diff;
 
+                    let pairA = [m.a1, m.a2].filter(Boolean);
+                    let pairB = [m.b1, m.b2].filter(Boolean);
+                    let winAmt = 5, loseAmt = -15;
+
                     if (sA > sB) {
                         winnerText = "<span class='txt-win'>Team A</span>";
                         ptsA = 1;
                         teamAWins++;
+
+                        pairA.forEach(p => { if(playerKeoStats[p]) { playerKeoStats[p].played++; playerKeoStats[p].win++; playerKeoStats[p].money += winAmt; } });
+                        pairB.forEach(p => { if(playerKeoStats[p]) { playerKeoStats[p].played++; playerKeoStats[p].lose++; playerKeoStats[p].money += loseAmt; } });
                     } else if (sB > sA) {
                         winnerText = "<span class='txt-lose'>Team B</span>";
                         ptsB = 1;
                         teamBWins++;
+
+                        pairB.forEach(p => { if(playerKeoStats[p]) { playerKeoStats[p].played++; playerKeoStats[p].win++; playerKeoStats[p].money += winAmt; } });
+                        pairA.forEach(p => { if(playerKeoStats[p]) { playerKeoStats[p].played++; playerKeoStats[p].lose++; playerKeoStats[p].money += loseAmt; } });
                     } else {
                         winnerText = "<span class='text-amber-600 font-bold'>Hòa</span>";
                     }
@@ -3583,39 +3686,29 @@
                 `;
             }).join('');
 
-            renderM1SummaryTeam(totalPlayed, totalPtsA, totalPtsB, totalDiffA, totalDiffB);
+            renderM1SummaryTeam(playerKeoStats);
         }
 
-        function renderM1SummaryTeam(totalPlayed, ptsA, ptsB, diffA, diffB) {
-            const summaryBody = document.getElementById('m1-summary-body');
+        function renderM1SummaryTeam(playerKeoStats) {
+            const summaryBody = document.getElementById('m1-keo-summary-body');
             if(!summaryBody) return;
 
-            let statusA = "Hòa", statusB = "Hòa";
+            summaryBody.innerHTML = '';
+            Object.values(playerKeoStats).forEach(item => {
+                let moneyStr = item.money !== 0 ? (item.money > 0 ? `+${item.money}K` : `${item.money}K`) : '0K';
+                let moneyCls = item.money > 0 ? 'txt-win' : (item.money < 0 ? 'txt-lose' : '');
 
-            if (ptsA > ptsB) {
-                statusA = "<span class='text-emerald-600 font-extrabold'>🔥 Dẫn Trước</span>";
-                statusB = "<span class='text-red-500 font-extrabold'>Bị Dẫn</span>";
-            } else if (ptsB > ptsA) {
-                statusB = "<span class='text-emerald-600 font-extrabold'>🔥 Dẫn Trước</span>";
-                statusA = "<span class='text-red-500 font-extrabold'>Bị Dẫn</span>";
-            }
-
-            summaryBody.innerHTML = `
-                <tr class="bg-blue-50/50">
-                    <td class="p-3 font-extrabold text-blue-900 border text-left pl-6"><i class="fa-solid fa-shield-halved text-blue-600"></i> TEAM A</td>
-                    <td class="p-3 border">${totalPlayed}</td>
-                    <td class="p-3 border text-blue-700 font-black text-base">${ptsA}</td>
-                    <td class="p-3 border font-black">${diffA > 0 ? '+' : ''}${diffA}</td>
-                    <td class="p-3 border">${statusA}</td>
-                </tr>
-                <tr class="bg-orange-50/50">
-                    <td class="p-3 font-extrabold text-orange-900 border text-left pl-6"><i class="fa-solid fa-shield-halved text-orange-600"></i> TEAM B</td>
-                    <td class="p-3 border">${totalPlayed}</td>
-                    <td class="p-3 border text-orange-700 font-black text-base">${ptsB}</td>
-                    <td class="p-3 border font-black">${diffB > 0 ? '+' : ''}${diffB}</td>
-                    <td class="p-3 border">${statusB}</td>
-                </tr>
-            `;
+                summaryBody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-2 border text-left pl-4 font-bold text-slate-800"><span class="player-tag">${item.name || ''}</span></td>
+                        <td class="p-2 border font-bold ${item.team === 'A' ? 'text-blue-700' : 'text-orange-700'}">Team ${item.team}</td>
+                        <td class="p-2 border">${item.played}</td>
+                        <td class="p-2 border txt-win">${item.win}</td>
+                        <td class="p-2 border txt-lose">${item.lose}</td>
+                        <td class="p-2 border font-extrabold ${moneyCls}">${moneyStr}</td>
+                    </tr>
+                `;
+            });
         }
 
         function exportToExcelTeam() {
