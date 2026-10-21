@@ -549,7 +549,7 @@
             <!-- BẢNG TỔNG HỢP KÈO (TEAM A & B) -->
             <div class="bg-white rounded-xl shadow-md p-4 md:p-6 text-slate-800">
                 <h3 class="text-base md:text-lg font-extrabold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
-                    <i class="fa-solid fa-chart-pie text-indigo-600"></i> Bảng Tổng Hợp Kèo Thu Chi Minigame Team A & B
+                    <i class="fa-solid fa-chart-pie text-indigo-600"></i> Bảng Tổng Hợp Kèo Minigame Team A & B
                 </h3>
                 <div class="smooth-scroll rounded-lg border border-slate-200">
                     <table class="w-full text-center border-collapse text-xs">
@@ -642,7 +642,6 @@
                                         <th class="p-1 border w-12">KQ 1</th>
                                         <th class="p-1 border w-12">KQ 2</th>
                                         <th class="p-1 border">Đội 2</th>
-                                        <th class="p-1 border w-28">Kèo</th>
                                     </tr>
                                 </thead>
                                 <tbody id="m2-schedule-A"></tbody>
@@ -676,7 +675,6 @@
                                         <th class="p-1 border w-12">KQ 1</th>
                                         <th class="p-1 border w-12">KQ 2</th>
                                         <th class="p-1 border">Đội 2</th>
-                                        <th class="p-1 border w-28">Kèo</th>
                                     </tr>
                                 </thead>
                                 <tbody id="m2-schedule-B"></tbody>
@@ -782,14 +780,12 @@
                             <table class="w-full text-xs text-center border-collapse">
                                 <thead>
                                     <tr class="bg-slate-100 text-slate-700 font-bold">
-                                        <th class="p-2 border text-left pl-3">PICK THỦ</th>
-                                        <th class="p-2 border">SỐ TRẬN</th>
-                                        <th class="p-2 border">THẮNG/K</th>
-                                        <th class="p-2 border">THUA/K</th>
-                                        <th class="p-2 border">MANG VỀ</th>
-                                        <th class="p-2 border">TỔNG</th>
-                                        <th class="p-2 border">THỰC TẾ (ADMIN)</th>
-                                        <th class="p-2 border">NOTE</th>
+                                        <th class="p-2 border text-left pl-3">Cặp VĐV</th>
+                                        <th class="p-2 border w-16">Bảng</th>
+                                        <th class="p-2 border w-16">Số Trận</th>
+                                        <th class="p-2 border w-16">Thắng</th>
+                                        <th class="p-2 border w-16">Thua</th>
+                                        <th class="p-2 border w-24">Tổng Tiền Kèo</th>
                                     </tr>
                                 </thead>
                                 <tbody id="m2-keo-summary-body" class="font-semibold"></tbody>
@@ -1497,9 +1493,6 @@
 
         window.m2ScoresA = {};
         window.m2ScoresB = {};
-        window.m2KeoModes = window.m2KeoModes || {};
-        window.m2PaymentStatus = window.m2PaymentStatus || {};
-        window.m2BtcNoteAdminOption = window.m2BtcNoteAdminOption || "YES";
 
         window.dates = ["1/10/26"];
         window.currentSelectedDate = "1/10/26";
@@ -3197,8 +3190,6 @@
                         }
                     }
 
-                    const keoKeyA = `A_${m.key}`;
-                    const keoA = window.m2KeoModes[keoKeyA] || { mode: 'default', customWin: 5, customLose: -15 };
                     tbodySchedA.innerHTML += `
                         <tr>
                             <td class="border p-1 font-bold">T${m.matchNum}</td>
@@ -3206,14 +3197,6 @@
                             <td class="border p-1"><input type="number" value="${s1}" onchange="updateM2Score('A', '${m.key}_1', this.value)" class="w-10 text-center font-bold"></td>
                             <td class="border p-1"><input type="number" value="${s2}" onchange="updateM2Score('A', '${m.key}_2', this.value)" class="w-10 text-center font-bold"></td>
                             <td class="border p-1 text-left font-bold text-blue-800">${m.t2Name}</td>
-                            <td class="border p-1 bg-amber-50 min-w-[125px]">
-                                <select onchange="updateM2KeoMode('A','${m.key}',this.value)" class="text-[10px] font-bold border rounded p-1 w-full bg-white">
-                                    <option value="default" ${keoA.mode==='default'?'selected':''}>Kèo (+5k/-15k)</option>
-                                    <option value="k25" ${keoA.mode==='k25'?'selected':''}>Kèo 25k (0k/-25k)</option>
-                                    <option value="free" ${keoA.mode==='free'?'selected':''}>Kèo Tự Do</option>
-                                </select>
-                                ${keoA.mode==='free' ? `<div class="flex gap-1 mt-1"><input title="Tiền thắng" type="number" class="w-12 border rounded text-center text-emerald-700" value="${keoA.customWin ?? 5}" onchange="updateM2KeoCustom('A','${m.key}','customWin',this.value)"><input title="Tiền thua" type="number" class="w-12 border rounded text-center text-red-600" value="${keoA.customLose ?? -15}" onchange="updateM2KeoCustom('A','${m.key}','customLose',this.value)"></div>` : ''}
-                            </td>
                         </tr>
                     `;
                 });
@@ -3270,8 +3253,6 @@
                         }
                     }
 
-                    const keoKeyB = `B_${m.key}`;
-                    const keoB = window.m2KeoModes[keoKeyB] || { mode: 'default', customWin: 5, customLose: -15 };
                     tbodySchedB.innerHTML += `
                         <tr>
                             <td class="border p-1 font-bold">T${m.matchNum}</td>
@@ -3279,14 +3260,6 @@
                             <td class="border p-1"><input type="number" value="${s1}" onchange="updateM2Score('B', '${m.key}_1', this.value)" class="w-10 text-center font-bold"></td>
                             <td class="border p-1"><input type="number" value="${s2}" onchange="updateM2Score('B', '${m.key}_2', this.value)" class="w-10 text-center font-bold"></td>
                             <td class="border p-1 text-left font-bold text-orange-800">${m.t2Name}</td>
-                            <td class="border p-1 bg-amber-50 min-w-[125px]">
-                                <select onchange="updateM2KeoMode('B','${m.key}',this.value)" class="text-[10px] font-bold border rounded p-1 w-full bg-white">
-                                    <option value="default" ${keoB.mode==='default'?'selected':''}>Kèo (+5k/-15k)</option>
-                                    <option value="k25" ${keoB.mode==='k25'?'selected':''}>Kèo 25k (0k/-25k)</option>
-                                    <option value="free" ${keoB.mode==='free'?'selected':''}>Kèo Tự Do</option>
-                                </select>
-                                ${keoB.mode==='free' ? `<div class="flex gap-1 mt-1"><input title="Tiền thắng" type="number" class="w-12 border rounded text-center text-emerald-700" value="${keoB.customWin ?? 5}" onchange="updateM2KeoCustom('B','${m.key}','customWin',this.value)"><input title="Tiền thua" type="number" class="w-12 border rounded text-center text-red-600" value="${keoB.customLose ?? -15}" onchange="updateM2KeoCustom('B','${m.key}','customLose',this.value)"></div>` : ''}
-                            </td>
                         </tr>
                     `;
                 });
@@ -3374,124 +3347,63 @@
             const summaryBody = document.getElementById('m2-keo-summary-body');
             if (!summaryBody) return;
 
-            const players = {};
-            const addPlayer = (name, group) => {
-                if (!name) return;
-                if (!players[name]) players[name] = { name, groups: new Set(), played: 0, winK: 0, loseK: 0, total: 0 };
-                players[name].groups.add(group);
-            };
-            [...window.m2PairsA].forEach(p => { addPlayer(p.p1, 'A'); addPlayer(p.p2, 'A'); });
-            [...window.m2PairsB].forEach(p => { addPlayer(p.p1, 'B'); addPlayer(p.p2, 'B'); });
+            let allPairsMap = {};
+            
+            window.m2PairsA.forEach((p, idx) => {
+                let name = `${p.p1} - ${p.p2}`;
+                allPairsMap[name] = { name: name, group: 'A', played: 0, win: 0, lose: 0, money: 0 };
+            });
 
-            const getKeoAmounts = (group, key, s1, s2) => {
-                const cfg = window.m2KeoModes[`${group}_${key}`] || { mode: 'default', customWin: 5, customLose: -15 };
-                let win = 5, lose = -15;
-                if (cfg.mode === 'k25') { win = 0; lose = -25; }
-                else if (cfg.mode === 'free') {
-                    win = Number.parseFloat(cfg.customWin ?? 5) || 0;
-                    lose = Number.parseFloat(cfg.customLose ?? -15) || 0;
-                    if (lose > 0) lose = -lose;
+            window.m2PairsB.forEach((p, idx) => {
+                let name = `${p.p1} - ${p.p2}`;
+                allPairsMap[name] = { name: name, group: 'B', played: 0, win: 0, lose: 0, money: 0 };
+            });
+
+            const processPairMatch = (t1Name, t2Name, s1Str, s2Str, winK = 5, loseK = -15) => {
+                if (s1Str !== '' && s2Str !== '' && !isNaN(s1Str) && !isNaN(s2Str)) {
+                    let s1 = parseInt(s1Str);
+                    let s2 = parseInt(s2Str);
+                    if (allPairsMap[t1Name]) {
+                        allPairsMap[t1Name].played++;
+                        if (s1 > s2) { allPairsMap[t1Name].win++; allPairsMap[t1Name].money += winK; }
+                        else if (s1 < s2) { allPairsMap[t1Name].lose++; allPairsMap[t1Name].money += loseK; }
+                    }
+                    if (allPairsMap[t2Name]) {
+                        allPairsMap[t2Name].played++;
+                        if (s2 > s1) { allPairsMap[t2Name].win++; allPairsMap[t2Name].money += winK; }
+                        else if (s2 < s1) { allPairsMap[t2Name].lose++; allPairsMap[t2Name].money += loseK; }
+                    }
                 }
-                const isHam = (Number(s1) === 0 || Number(s2) === 0);
-                return { win: isHam ? (win > 0 ? win * 2 : 0) : win, lose: isHam ? lose * 2 : lose };
             };
 
-            const processMatch = (group, m) => {
-                const scoreMap = group === 'A' ? window.m2ScoresA : window.m2ScoresB;
-                const raw1 = scoreMap[m.key + '_1'];
-                const raw2 = scoreMap[m.key + '_2'];
-                if (raw1 === undefined || raw2 === undefined || String(raw1).trim() === '' || String(raw2).trim() === '') return;
-                const s1 = Number.parseInt(raw1, 10), s2 = Number.parseInt(raw2, 10);
-                if (Number.isNaN(s1) || Number.isNaN(s2) || s1 === s2) return;
-                const amounts = getKeoAmounts(group, m.key, s1, s2);
-                const winnerName = s1 > s2 ? m.t1Name : m.t2Name;
-                const loserName = s1 > s2 ? m.t2Name : m.t1Name;
-                const winnerAmount = amounts.win, loserAmount = amounts.lose;
-                [winnerName, loserName].forEach((pairName, index) => {
-                    const amount = index === 0 ? winnerAmount : loserAmount;
-                    const pair = [...window.m2PairsA, ...window.m2PairsB].find(p => `${p.p1} - ${p.p2}` === pairName);
-                    if (!pair) return;
-                    [pair.p1, pair.p2].forEach(playerName => {
-                        const st = players[playerName];
-                        if (!st) return;
-                        st.played++;
-                        if (index === 0) st.winK += amount;
-                        else st.loseK += amount;
-                        st.total += amount;
-                    });
-                });
-            };
-            schedA.forEach(m => processMatch('A', m));
-            schedB.forEach(m => processMatch('B', m));
+            schedA.forEach(m => {
+                let s1 = window.m2ScoresA[m.key + '_1'];
+                let s2 = window.m2ScoresA[m.key + '_2'];
+                processPairMatch(m.t1Name, m.t2Name, s1, s2);
+            });
 
-            let sumBringBack = 0, sumThucThu = 0, sumAmThucTe = 0;
+            schedB.forEach(m => {
+                let s1 = window.m2ScoresB[m.key + '_1'];
+                let s2 = window.m2ScoresB[m.key + '_2'];
+                processPairMatch(m.t1Name, m.t2Name, s1, s2);
+            });
+
             summaryBody.innerHTML = '';
-            Object.values(players).forEach(st => {
-                if (st.played === 0) return;
-                const isPaid = !!window.m2PaymentStatus[st.name];
-                const bringBack = (st.played >= 4 && st.total > 0) ? st.total : 0;
-                sumBringBack += bringBack;
-                if (st.total < 0) {
-                    sumAmThucTe += st.total;
-                    if (isPaid) sumThucThu += Math.abs(st.total);
-                }
-                const note = st.total < 0
-                    ? (isPaid ? '<span class="note-paid">Đã nộp</span>' : '<span class="note-unpaid">Chưa nộp</span>')
-                    : st.total > 0 ? (isPaid ? '<span class="note-paid">Đã nhận</span>' : '<span class="note-unpaid">Chưa nhận</span>') : '';
-                const disabledAttr = window.isAdminUnlocked ? '' : 'disabled title="Cần mật khẩu Admin để sửa"';
+            Object.values(allPairsMap).forEach(item => {
+                let moneyStr = item.money !== 0 ? (item.money > 0 ? `+${item.money}K` : `${item.money}K`) : '0K';
+                let moneyCls = item.money > 0 ? 'txt-win' : (item.money < 0 ? 'txt-lose' : '');
+
                 summaryBody.innerHTML += `
                     <tr class="hover:bg-slate-50">
-                        <td class="p-2 border text-left whitespace-nowrap pl-3"><span class="player-tag">${st.name}</span></td>
-                        <td class="p-2 border">${st.played}</td>
-                        <td class="p-2 border txt-win">${st.winK > 0 ? st.winK : ''}</td>
-                        <td class="p-2 border txt-lose">${st.loseK < 0 ? st.loseK : ''}</td>
-                        <td class="p-2 border text-blue-600 font-bold">${bringBack > 0 ? bringBack : ''}</td>
-                        <td class="p-2 border font-extrabold ${st.total < 0 ? 'txt-lose' : (st.total > 0 ? 'txt-win' : '')}">${st.total}</td>
-                        <td class="p-2 border bg-amber-50/30"><input type="checkbox" ${isPaid ? 'checked' : ''} ${disabledAttr} onclick="toggleM2PaymentStatus('${st.name.replace(/'/g, "\\'")}')" class="w-4 h-4 cursor-pointer accent-emerald-600"></td>
-                        <td class="p-2 border whitespace-nowrap">${note}</td>
-                    </tr>`;
+                        <td class="p-2 border text-left pl-3 font-bold text-blue-900">${item.name}</td>
+                        <td class="p-2 border font-bold">Bảng ${item.group}</td>
+                        <td class="p-2 border">${item.played}</td>
+                        <td class="p-2 border txt-win">${item.win}</td>
+                        <td class="p-2 border txt-lose">${item.lose}</td>
+                        <td class="p-2 border font-extrabold ${moneyCls}">${moneyStr}</td>
+                    </tr>
+                `;
             });
-            const btcThuVe = sumAmThucTe + sumBringBack;
-            const quyCon = sumThucThu - Math.abs(btcThuVe);
-            const option = window.m2BtcNoteAdminOption || 'YES';
-            summaryBody.innerHTML += `
-                <tr class="bg-slate-100 font-extrabold">
-                    <td class="p-2 border text-left text-red-600 whitespace-nowrap pl-3">TỔNG BTC THU VỀ</td>
-                    <td class="p-2 border"></td><td class="p-2 border"></td><td class="p-2 border"></td>
-                    <td class="p-2 border text-blue-700">${sumBringBack}</td>
-                    <td class="p-2 border text-red-600">${btcThuVe}</td>
-                    <td class="p-2 border text-blue-700">${sumThucThu}</td>
-                    <td class="p-2 border whitespace-nowrap"><select onchange="handleM2BtcNoteChange(this.value)" class="text-xs font-bold p-1 border rounded bg-white text-emerald-700 outline-none"><option value="YES" ${option==='YES'?'selected':''}>YES (Chuyển tổng ngày)</option><option value="NO" ${option==='NO'?'selected':''}>NO (Không chuyển)</option></select></td>
-                </tr>
-                <tr class="bg-slate-100 font-extrabold"><td class="p-2 border text-left text-red-600 pl-3" colspan="4">Quỹ Còn</td><td class="p-2 border text-red-600 text-sm" colspan="2">${quyCon}</td><td class="p-2 border" colspan="2"></td></tr>`;
-        }
-
-        function updateM2KeoMode(group, key, mode) {
-            if (!window.m2KeoModes) window.m2KeoModes = {};
-            const mapKey = `${group}_${key}`;
-            const old = window.m2KeoModes[mapKey] || {};
-            window.m2KeoModes[mapKey] = { ...old, mode, customWin: old.customWin ?? 5, customLose: old.customLose ?? -15 };
-            renderM2(); autoBackupData(); if (window.syncToFirebase) window.syncToFirebase();
-        }
-
-        function updateM2KeoCustom(group, key, field, value) {
-            if (!window.m2KeoModes) window.m2KeoModes = {};
-            const mapKey = `${group}_${key}`;
-            const old = window.m2KeoModes[mapKey] || { mode: 'free', customWin: 5, customLose: -15 };
-            window.m2KeoModes[mapKey] = { ...old, mode: 'free', [field]: Number.parseFloat(value) || 0 };
-            renderM2(); autoBackupData(); if (window.syncToFirebase) window.syncToFirebase();
-        }
-
-        function toggleM2PaymentStatus(playerName) {
-            if (!window.isAdminUnlocked) { alert('🔒 Bạn cần nhập Pass Admin ở phía trên!'); renderM2(); return; }
-            if (!window.m2PaymentStatus) window.m2PaymentStatus = {};
-            window.m2PaymentStatus[playerName] = !window.m2PaymentStatus[playerName];
-            renderM2(); autoBackupData(); if (window.syncToFirebase) window.syncToFirebase();
-        }
-
-        function handleM2BtcNoteChange(value) {
-            window.m2BtcNoteAdminOption = value;
-            renderM2(); autoBackupData(); if (window.syncToFirebase) window.syncToFirebase();
         }
 
         function updateM2Score(group, key, val) {
@@ -3887,9 +3799,6 @@
                     m2PairsB: window.m2PairsB,
                     m2ScoresA: window.m2ScoresA,
                     m2ScoresB: window.m2ScoresB,
-                    m2KeoModes: window.m2KeoModes,
-                    m2PaymentStatus: window.m2PaymentStatus,
-                    m2BtcNoteAdminOption: window.m2BtcNoteAdminOption,
                     dates: window.dates,
                     matchesData: window.matchesData,
                     dateKeoMode: window.dateKeoMode,
@@ -3927,9 +3836,6 @@
                 if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
                 if (data.m2ScoresA) window.m2ScoresA = data.m2ScoresA;
                 if (data.m2ScoresB) window.m2ScoresB = data.m2ScoresB;
-                    if (data.m2KeoModes) window.m2KeoModes = data.m2KeoModes;
-                    if (data.m2PaymentStatus) window.m2PaymentStatus = data.m2PaymentStatus;
-                    if (data.m2BtcNoteAdminOption) window.m2BtcNoteAdminOption = data.m2BtcNoteAdminOption;
                 if (data.dates) window.dates = data.dates;
                 if (data.matchesData) window.matchesData = data.matchesData;
                 if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
@@ -3959,9 +3865,6 @@
                 m2PairsB: window.m2PairsB,
                 m2ScoresA: window.m2ScoresA,
                 m2ScoresB: window.m2ScoresB,
-                m2KeoModes: window.m2KeoModes,
-                m2PaymentStatus: window.m2PaymentStatus,
-                m2BtcNoteAdminOption: window.m2BtcNoteAdminOption,
                 dates: window.dates,
                 matchesData: window.matchesData,
                 dateKeoMode: window.dateKeoMode,
@@ -4007,9 +3910,6 @@
                     if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
                     if (data.m2ScoresA) window.m2ScoresA = data.m2ScoresA;
                     if (data.m2ScoresB) window.m2ScoresB = data.m2ScoresB;
-                    if (data.m2KeoModes) window.m2KeoModes = data.m2KeoModes;
-                    if (data.m2PaymentStatus) window.m2PaymentStatus = data.m2PaymentStatus;
-                    if (data.m2BtcNoteAdminOption) window.m2BtcNoteAdminOption = data.m2BtcNoteAdminOption;
                     if (data.dates) window.dates = data.dates;
                     if (data.matchesData) window.matchesData = data.matchesData;
                     if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
@@ -4174,9 +4074,6 @@
                     m2PairsB: window.m2PairsB,
                     m2ScoresA: window.m2ScoresA,
                     m2ScoresB: window.m2ScoresB,
-                    m2KeoModes: window.m2KeoModes,
-                    m2PaymentStatus: window.m2PaymentStatus,
-                    m2BtcNoteAdminOption: window.m2BtcNoteAdminOption,
                     dates: window.dates,
                     matchesData: window.matchesData,
                     dateKeoMode: window.dateKeoMode,
@@ -4223,9 +4120,6 @@
                     if (data.m2PairsB) window.m2PairsB = data.m2PairsB;
                     if (data.m2ScoresA) window.m2ScoresA = data.m2ScoresA;
                     if (data.m2ScoresB) window.m2ScoresB = data.m2ScoresB;
-                    if (data.m2KeoModes) window.m2KeoModes = data.m2KeoModes;
-                    if (data.m2PaymentStatus) window.m2PaymentStatus = data.m2PaymentStatus;
-                    if (data.m2BtcNoteAdminOption) window.m2BtcNoteAdminOption = data.m2BtcNoteAdminOption;
                     if (data.dates) window.dates = data.dates;
                     if (data.matchesData) window.matchesData = data.matchesData;
                     if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
