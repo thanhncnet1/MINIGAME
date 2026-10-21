@@ -3586,7 +3586,7 @@
 
             let playerKeoStats = {};
             [...window.minigameTeamData.teamA, ...window.minigameTeamData.teamB].forEach(v => {
-                playerKeoStats[v] = { team: window.minigameTeamData.teamA.includes(v) ? 'A' : 'B', played: 0, win: 0, lose: 0, money: 0 };
+                playerKeoStats[v] = { name: v, team: window.minigameTeamData.teamA.includes(v) ? 'A' : 'B', played: 0, winK: 0, loseK: 0, total: 0, wins: 0, losses: 0 };
             });
 
             tbody.innerHTML = matches.map((m, index) => {
@@ -3607,21 +3607,24 @@
                     let pairA = [m.a1, m.a2].filter(Boolean);
                     let pairB = [m.b1, m.b2].filter(Boolean);
                     let winAmt = 5, loseAmt = -15;
+                    const isHam = (sA === 0 || sB === 0);
+                    const effWin = isHam ? winAmt * 2 : winAmt;
+                    const effLose = isHam ? loseAmt * 2 : loseAmt;
 
                     if (sA > sB) {
                         winnerText = "<span class='txt-win'>Team A</span>";
                         ptsA = 1;
                         teamAWins++;
 
-                        pairA.forEach(p => { if(playerKeoStats[p]) { playerKeoStats[p].played++; playerKeoStats[p].win++; playerKeoStats[p].money += winAmt; } });
-                        pairB.forEach(p => { if(playerKeoStats[p]) { playerKeoStats[p].played++; playerKeoStats[p].lose++; playerKeoStats[p].money += loseAmt; } });
+                        pairA.forEach(p => { if(playerKeoStats[p]) { playerKeoStats[p].played++; playerKeoStats[p].wins++; playerKeoStats[p].winK += effWin; playerKeoStats[p].total += effWin; } });
+                        pairB.forEach(p => { if(playerKeoStats[p]) { playerKeoStats[p].played++; playerKeoStats[p].losses++; playerKeoStats[p].loseK += effLose; playerKeoStats[p].total += effLose; } });
                     } else if (sB > sA) {
                         winnerText = "<span class='txt-lose'>Team B</span>";
                         ptsB = 1;
                         teamBWins++;
 
-                        pairB.forEach(p => { if(playerKeoStats[p]) { playerKeoStats[p].played++; playerKeoStats[p].win++; playerKeoStats[p].money += winAmt; } });
-                        pairA.forEach(p => { if(playerKeoStats[p]) { playerKeoStats[p].played++; playerKeoStats[p].lose++; playerKeoStats[p].money += loseAmt; } });
+                        pairB.forEach(p => { if(playerKeoStats[p]) { playerKeoStats[p].played++; playerKeoStats[p].wins++; playerKeoStats[p].winK += effWin; playerKeoStats[p].total += effWin; } });
+                        pairA.forEach(p => { if(playerKeoStats[p]) { playerKeoStats[p].played++; playerKeoStats[p].losses++; playerKeoStats[p].loseK += effLose; playerKeoStats[p].total += effLose; } });
                     } else {
                         winnerText = "<span class='text-amber-600 font-bold'>Hòa</span>";
                     }
@@ -3691,24 +3694,68 @@
 
         function renderM1SummaryTeam(playerKeoStats) {
             const summaryBody = document.getElementById('m1-keo-summary-body');
-            if(!summaryBody) return;
-
+            if (!summaryBody) return;
             summaryBody.innerHTML = '';
-            Object.values(playerKeoStats).forEach(item => {
-                let moneyStr = item.money !== 0 ? (item.money > 0 ? `+${item.money}K` : `${item.money}K`) : '0K';
-                let moneyCls = item.money > 0 ? 'txt-win' : (item.money < 0 ? 'txt-lose' : '');
+            let sumBringBack = 0, sumCollected = 0, sumNegative = 0;
+            const paymentStatus = window.minigameTeamData.teamPaymentStatus || (window.minigameTeamData.teamPaymentStatus = {});
 
+            Object.values(playerKeoStats).forEach(item => {
+                if (item.played <= 0) return;
+                const isPaid = !!paymentStatus[item.name];
+                const bringBack = (item.played >= 4 && item.total > 0) ? item.total : 0;
+                sumBringBack += bringBack;
+                if (item.total < 0) {
+                    sumNegative += item.total;
+                    if (isPaid) sumCollected += Math.abs(item.total);
+                }
+                let noteText = '';
+                if (item.total < 0) noteText = isPaid ? '<span class="note-paid">Đã nộp</span>' : '<span class="note-unpaid">Chưa nộp</span>';
+                else if (item.total > 0) noteText = isPaid ? '<span class="note-paid">Đã nhận</span>' : '<span class="note-unpaid">Chưa nhận</span>';
+                const disabledAttr = window.isAdminUnlocked ? '' : 'disabled title="Cần mật khẩu Admin để sửa"';
+                const moneyClass = item.total < 0 ? 'txt-lose' : (item.total > 0 ? 'txt-win' : '');
+                const playerArg = JSON.stringify(item.name).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
                 summaryBody.innerHTML += `
                     <tr class="hover:bg-slate-50">
-                        <td class="p-2 border text-left pl-4 font-bold text-slate-800"><span class="player-tag">${item.name || ''}</span></td>
-                        <td class="p-2 border font-bold ${item.team === 'A' ? 'text-blue-700' : 'text-orange-700'}">Team ${item.team}</td>
+                        <td class="p-2 border text-left whitespace-nowrap pl-3"><span class="player-tag">${item.name}</span></td>
                         <td class="p-2 border">${item.played}</td>
-                        <td class="p-2 border txt-win">${item.win}</td>
-                        <td class="p-2 border txt-lose">${item.lose}</td>
-                        <td class="p-2 border font-extrabold ${moneyCls}">${moneyStr}</td>
-                    </tr>
-                `;
+                        <td class="p-2 border txt-win">${item.winK > 0 ? item.winK : ''}</td>
+                        <td class="p-2 border txt-lose">${item.loseK < 0 ? item.loseK : ''}</td>
+                        <td class="p-2 border text-blue-600 font-bold">${bringBack > 0 ? bringBack : ''}</td>
+                        <td class="p-2 border font-extrabold ${moneyClass}">${item.total}</td>
+                        <td class="p-2 border bg-amber-50/30"><input type="checkbox" ${isPaid ? 'checked' : ''} ${disabledAttr} onclick='toggleTeamPaymentStatus(${playerArg})' class="w-4 h-4 cursor-pointer accent-emerald-600"></td>
+                        <td class="p-2 border whitespace-nowrap">${noteText}</td>
+                    </tr>`;
             });
+            const btcThuVe = sumNegative + sumBringBack;
+            const quyCon = sumCollected - Math.abs(btcThuVe);
+            summaryBody.innerHTML += `
+                <tr class="bg-slate-100 font-extrabold">
+                    <td class="p-2 border text-left text-red-600 whitespace-nowrap pl-3">TỔNG BTC THU VỀ</td>
+                    <td class="p-2 border"></td><td class="p-2 border"></td><td class="p-2 border"></td>
+                    <td class="p-2 border text-blue-700">${sumBringBack}</td>
+                    <td class="p-2 border text-red-600">${btcThuVe}</td>
+                    <td class="p-2 border text-blue-700">${sumCollected}</td>
+                    <td class="p-2 border text-xs">Kèo mặc định: +5K / -15K; hầm tính gấp đôi</td>
+                </tr>
+                <tr class="bg-slate-100 font-extrabold">
+                    <td class="p-2 border text-left text-red-600 pl-3" colspan="4">Quỹ Còn</td>
+                    <td class="p-2 border text-red-600 text-sm" colspan="2">${quyCon}</td>
+                    <td class="p-2 border" colspan="2"></td>
+                </tr>`;
+        }
+
+        function toggleTeamPaymentStatus(playerName) {
+            if (!window.isAdminUnlocked) {
+                alert('🔒 Bạn cần nhập Pass Admin ở mục Chi Tiết Ngày để xác nhận thu/chi!');
+                renderM1ScheduleTeam();
+                return;
+            }
+            if (!window.minigameTeamData.teamPaymentStatus) window.minigameTeamData.teamPaymentStatus = {};
+            window.minigameTeamData.teamPaymentStatus[playerName] = !window.minigameTeamData.teamPaymentStatus[playerName];
+            saveTeamData();
+            renderM1ScheduleTeam();
+            autoBackupData();
+            if (window.syncToFirebase) window.syncToFirebase();
         }
 
         function exportToExcelTeam() {
