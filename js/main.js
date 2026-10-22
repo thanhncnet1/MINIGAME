@@ -1,3 +1,76 @@
+// ==========================================
+// CẤU HÌNH & KHỞI TẠO CLOUD FIRESTORE SYNC
+// ==========================================
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+// Khởi tạo Firebase nếu chưa có
+if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const db = typeof firebase !== 'undefined' ? firebase.firestore() : null;
+
+// Hàm tự động đẩy dữ liệu lên Cloud
+window.syncToFirebase = function() {
+    if (!db) return;
+    const payload = {
+        players: window.players,
+        minigameTeamData: window.minigameTeamData,
+        matchesData: window.matchesData,
+        dates: window.dates,
+        dateKeoMode: window.dateKeoMode,
+        paymentStatus: window.paymentStatus,
+        fundIncomes: window.fundIncomes,
+        fundExpenses: window.fundExpenses,
+        fundFeeStatus: window.fundFeeStatus,
+        activeQuarterColumns: window.activeQuarterColumns,
+        initialFund: window.initialFund,
+        updatedAt: new Date().toISOString()
+    };
+
+    db.collection("club_data").doc("main_config").set(payload, { merge: true })
+        .then(() => {
+            console.log("☁️ Đồng bộ Cloud Firestore thành công!");
+        })
+        .catch((error) => {
+            console.error("❌ Lỗi đồng bộ Firebase: ", error);
+        });
+};
+
+// Hàm tải dữ liệu từ Cloud khi khởi động ứng dụng trên thiết bị mới (điện thoại)
+function loadDataFromFirebase(callback) {
+    if (!db) {
+        if (typeof callback === 'function') callback();
+        return;
+    }
+    db.collection("club_data").doc("main_config").get().then((doc) => {
+        if (doc.exists) {
+            const data = doc.data();
+            if (data.players) { window.players = data.players; localStorage.setItem('pb_players_list', JSON.stringify(data.players)); }
+            if (data.matchesData) window.matchesData = data.matchesData;
+            if (data.dates) window.dates = data.dates;
+            if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
+            if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
+            if (data.fundIncomes) { window.fundIncomes = data.fundIncomes; localStorage.setItem('pb_incomes', JSON.stringify(data.fundIncomes)); }
+            if (data.fundExpenses) { window.fundExpenses = data.fundExpenses; localStorage.setItem('pb_expenses', JSON.stringify(data.fundExpenses)); }
+            if (data.fundFeeStatus) { window.fundFeeStatus = data.fundFeeStatus; localStorage.setItem('pb_fee_status', JSON.stringify(data.fundFeeStatus)); }
+            if (data.activeQuarterColumns) { window.activeQuarterColumns = data.activeQuarterColumns; localStorage.setItem('pb_active_quarter_cols', JSON.stringify(data.activeQuarterColumns)); }
+            if (data.initialFund !== undefined) { window.initialFund = data.initialFund; localStorage.setItem('pb_initial_fund', data.initialFund); }
+            
+            console.log("📥 Đã tải và đồng bộ dữ liệu mới nhất từ Cloud Firestore xuống thiết bị.");
+        }
+        if (typeof callback === 'function') callback();
+    }).catch((error) => {
+        console.warn("⚠️ Không thể kết nối Cloud, sử dụng dữ liệu LocalStorage:", error);
+        if (typeof callback === 'function') callback();
+    });
+}
 /**
  * js/main.js - CLB PICKLEBALL CMTD
  * Quản lý giải đấu, lịch thi đấu, bảng xếp hạng, quỹ và sao lưu dữ liệu.
