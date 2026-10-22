@@ -1,0 +1,121 @@
+<div id="player-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 text-slate-800">
+        <h3 id="modal-title" class="text-lg font-bold text-slate-800 mb-4">Thêm Pick Thủ Mới</h3>
+        <input type="hidden" id="player-id">
+        <div class="space-y-4">
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Họ & Tên VĐV</label>
+                <input type="text" id="player-name" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Nhập tên VĐV...">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Giới Tính</label>
+                <select id="player-gender" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                </select>
+            </div>
+        </div>
+        <div class="flex justify-end gap-2 mt-6">
+            <button onclick="closePlayerModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-sm rounded-lg hover:bg-slate-300">Hủy</button>
+            <button onclick="savePlayer()" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 font-semibold">Lưu Pick Thủ</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL ĐỔI TÊN VĐV TRONG TEAM -->
+<div id="team-edit-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 text-slate-800">
+        <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-pen-to-square text-amber-600"></i> Sửa Tên VĐV Team
+        </h3>
+        <input type="hidden" id="edit-team-group">
+        <input type="hidden" id="edit-team-index">
+        <div class="space-y-4">
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Họ & Tên Mới</label>
+                <input type="text" id="edit-team-name-input" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none font-bold">
+            </div>
+        </div>
+        <div class="flex justify-end gap-2 mt-6">
+            <button onclick="closeTeamEditModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-sm rounded-lg hover:bg-slate-300 font-semibold">Hủy</button>
+            <button onclick="saveTeamMemberEdit()" class="px-4 py-2 bg-amber-600 text-white text-sm rounded-lg hover:bg-amber-700 font-bold">Lưu Tên</button>
+        </div>
+    </div>
+</div>
+
+<div id="m2-edit-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 text-slate-800">
+        <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-pen-to-square text-blue-600"></i> Chỉnh Sửa Tên Cặp VĐV
+        </h3>
+        <input type="hidden" id="m2-edit-group">
+        <input type="hidden" id="m2-edit-index">
+        <div class="space-y-4">
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Tên VĐV 1</label>
+                <input type="text" id="m2-p1-input" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Tên VĐV 2</label>
+                <input type="text" id="m2-p2-input" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            </div>
+        </div>
+        <div class="flex justify-end gap-2 mt-6">
+            <button onclick="closeM2EditModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-sm rounded-lg hover:bg-slate-300">Hủy</button>
+            <button onclick="saveM2PairEdit()" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 font-semibold">Lưu Thay Đổi</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL THÊM KHOẢN THU CHI QUỸ -->
+<div id="fund-modal-backdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-slate-100">
+        <div id="fund-modal-header" class="p-4 bg-emerald-600 text-white flex justify-between items-center">
+            <h3 id="fund-modal-title" class="font-bold text-base flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle"></i> Thêm Khoản Thu Mới
+            </h3>
+            <button onclick="closeFundModal()" class="text-white/80 hover:text-white p-1">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <form id="fund-transaction-form" onsubmit="handleFundFormSubmit(event)" class="p-5 space-y-4">
+            <input type="hidden" id="tx-id" value="">
+            <input type="hidden" id="tx-type" value="income">
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Ngày Tháng</label>
+                <input type="date" id="tx-date" required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Nội Dung Chi Tiết</label>
+                <textarea id="tx-desc" rows="2" placeholder="Ví dụ: Thu tiền kèo ngày 1/10/26..." required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Số Tiền (VNĐ)</label>
+                <input type="number" id="tx-amount" min="1000" step="1000" placeholder="500000" required class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+            </div>
+
+            <div>
+                <label id="lbl-source" class="block text-xs font-semibold text-slate-600 mb-1">Nguồn Thu / Pick Thủ</label>
+                <select id="tx-source-select" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none bg-white font-medium"></select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Ghi Chú</label>
+                <textarea id="tx-note" rows="2" placeholder="Chuyển khoản / Tiền mặt / Ghi chú..." class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" onclick="closeFundModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium text-sm rounded-lg transition-colors">
+                    Hủy
+                </button>
+                <button type="submit" id="fund-btn-submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm">
+                    Lưu Khoản Thu
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
