@@ -58,7 +58,6 @@ function toggleMenu(menuId, event) {
     if (event) event.stopPropagation();
     const menu = document.getElementById(menuId);
     if (!menu) return;
-
     const isVisible = menu.classList.contains('show');
     closeAllDropdowns();
     if (!isVisible) {
@@ -81,12 +80,10 @@ window.addEventListener('popstate', () => {
 function renderPlayersList() {
     const tbody = document.getElementById('player-table-body');
     if (!tbody) return;
-
     if (!window.players || window.players.length === 0) {
         tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">Chưa có VĐV nào trong hệ thống.</td></tr>`;
         return;
     }
-
     tbody.innerHTML = window.players.map((p, idx) => `
         <tr class="hover:bg-slate-50 transition">
             <td class="p-2 border text-center font-bold text-slate-500">${idx + 1}</td>
@@ -113,7 +110,6 @@ function renderPlayersList() {
 function openPlayerModal(player = null) {
     const modal = document.getElementById('player-modal');
     if (!modal) return;
-
     if (player) {
         document.getElementById('modal-title').innerText = "Chỉnh Sửa Pick Thủ";
         document.getElementById('player-id').value = player.id;
@@ -166,7 +162,7 @@ function editPlayer(id) {
 }
 
 function deletePlayer(id) {
-    if (confirm(" Bạn có chắc chắn muốn xóa Pick Thủ này khỏi danh sách CLB?")) {
+    if (confirm("🗑️ Bạn có chắc chắn muốn xóa Pick Thủ này khỏi danh sách CLB?")) {
         window.players = window.players.filter(p => p.id != id);
         savePlayersToStorage();
         renderPlayersList();
@@ -204,7 +200,6 @@ function renderTeamMembers(team) {
     const listEl = document.getElementById(`team-${team}-list`);
     const countEl = document.getElementById(`team-${team}-count`);
     if (!listEl) return;
-
     const memberArray = team === 'A' ? window.minigameTeamData.teamA : window.minigameTeamData.teamB;
     if (countEl) countEl.innerText = memberArray.length;
 
@@ -224,17 +219,15 @@ function addTeamMember(team) {
     if (name && name.trim() !== '') {
         if (team === 'A') window.minigameTeamData.teamA.push(name.trim());
         else window.minigameTeamData.teamB.push(name.trim());
-
         saveM1ToStorage();
         renderMinigame1();
     }
 }
 
 function removeTeamMember(team, idx) {
-    if (confirm(" Xóa VĐV này khỏi Team?")) {
+    if (confirm("🗑️ Xóa VĐV này khỏi Team?")) {
         if (team === 'A') window.minigameTeamData.teamA.splice(idx, 1);
         else window.minigameTeamData.teamB.splice(idx, 1);
-
         saveM1ToStorage();
         renderMinigame1();
     }
@@ -244,7 +237,6 @@ function openTeamEditModal(team, idx) {
     const modal = document.getElementById('team-edit-modal');
     if (!modal) return;
     const name = team === 'A' ? window.minigameTeamData.teamA[idx] : window.minigameTeamData.teamB[idx];
-
     document.getElementById('edit-team-group').value = team;
     document.getElementById('edit-team-index').value = idx;
     document.getElementById('edit-team-name-input').value = name;
@@ -260,12 +252,9 @@ function saveTeamMemberEdit() {
     const team = document.getElementById('edit-team-group').value;
     const idx = parseInt(document.getElementById('edit-team-index').value);
     const newName = document.getElementById('edit-team-name-input').value.trim();
-
     if (!newName) return;
-
     if (team === 'A') window.minigameTeamData.teamA[idx] = newName;
     else window.minigameTeamData.teamB[idx] = newName;
-
     saveM1ToStorage();
     closeTeamEditModal();
     renderMinigame1();
@@ -275,14 +264,12 @@ function renderM1Schedule() {
     const tbody = document.getElementById('m1-schedule-body');
     const countEl = document.getElementById('m1-match-count');
     if (!tbody) return;
-
     const matches = window.minigameTeamData.matches || [];
     if (countEl) countEl.innerText = matches.length;
 
     tbody.innerHTML = matches.map((m, idx) => {
         const sA = m.scoreA !== "" && m.scoreA !== undefined ? parseInt(m.scoreA) : null;
         const sB = m.scoreB !== "" && m.scoreB !== undefined ? parseInt(m.scoreB) : null;
-
         let winner = "---";
         let diffText = "0";
         let pointsA = 0;
@@ -292,7 +279,6 @@ function renderM1Schedule() {
         if (sA !== null && sB !== null && !isNaN(sA) && !isNaN(sB)) {
             const diff = sA - sB;
             diffText = diff > 0 ? `+${diff}` : `${diff}`;
-
             if (sA > sB) {
                 winner = "Đội A";
                 pointsA = 1;
@@ -379,14 +365,13 @@ function addM1Match() {
         b2: window.minigameTeamData.teamB[1] || "",
         note: ""
     };
-
     window.minigameTeamData.matches.push(newMatch);
     saveM1ToStorage();
     renderM1Schedule();
 }
 
 function deleteM1Match(idx) {
-    if (confirm(" Xóa trận đấu này khỏi lịch?")) {
+    if (confirm("🗑️ Xóa trận đấu này khỏi lịch?")) {
         window.minigameTeamData.matches.splice(idx, 1);
         saveM1ToStorage();
         renderM1Schedule();
@@ -430,7 +415,6 @@ function setM1CustomKeo() {
 function renderM1KeoSummary() {
     const tbody = document.getElementById('m1-keo-summary-body');
     if (!tbody) return;
-
     const mode = window.minigameTeamData.keoMode || 'default';
     const matches = window.minigameTeamData.matches || [];
     const allPlayers = [...new Set([...window.minigameTeamData.teamA, ...window.minigameTeamData.teamB])];
@@ -447,15 +431,17 @@ function renderM1KeoSummary() {
 
         let winVal = 5000;
         let loseVal = -15000;
-
-        if (mode === 'k25') { winVal = 0; loseVal = -25000; }
-        else if (mode === 'k0') { winVal = 0; loseVal = 0; }
-        else if (mode === 'free') {
+        if (mode === 'k25') {
+            winVal = 0;
+            loseVal = -25000;
+        } else if (mode === 'k0') {
+            winVal = 0;
+            loseVal = 0;
+        } else if (mode === 'free') {
             winVal = window.minigameTeamData.customWin || 0;
             loseVal = -(window.minigameTeamData.customLose || 0);
         }
 
-        // Tỷ số 0 = HẦM (Nhân đôi tiền thua)
         let isHamA = (sA === 0);
         let isHamB = (sB === 0);
 
@@ -493,7 +479,6 @@ function renderM1KeoSummary() {
         const stat = playerStats[pName];
         const formattedMoney = stat.totalMoney.toLocaleString('vi-VN') + " ₫";
         const moneyClass = stat.totalMoney >= 0 ? 'txt-win' : 'txt-lose';
-
         return `
             <tr>
                 <td class="p-2 border text-left pl-3 font-bold text-slate-800">${pName}</td>
@@ -542,7 +527,6 @@ function exportToExcelTeam() {
         "Đội B - VĐV 1": m.b1,
         "Đội B - VĐV 2": m.b2
     }));
-
     const ws = XLSX.utils.json_to_sheet(sheetData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Minigame Team A-B");
@@ -553,11 +537,22 @@ function exportToExcelTeam() {
    3. MINIGAME BẢNG & VÒNG TRÒN (MINIGAME 2)
    ========================================================================== */
 window.m2Data = JSON.parse(localStorage.getItem('pb_m2_bracket_data')) || {
-    pairsA: [{ id: 1, p1: "Tiến Thọ", p2: "Châu Sĩ" }, { id: 2, p1: "Phú Mỗ", p2: "Hà Giấy" }],
-    pairsB: [{ id: 3, p1: "Trí Đô", p2: "Thành Sóc" }, { id: 4, p1: "Dũng Ngạc", p2: "Lợi Trì" }],
+    pairsA: [
+        { id: 1, p1: "Tiến Thọ", p2: "Châu Sĩ" },
+        { id: 2, p1: "Phú Mỗ", p2: "Hà Giấy" }
+    ],
+    pairsB: [
+        { id: 3, p1: "Trí Đô", p2: "Thành Sóc" },
+        { id: 4, p1: "Dũng Ngạc", p2: "Lợi Trì" }
+    ],
     scheduleA: [],
     scheduleB: [],
-    knockout: { bk1: { s1: '', s2: '' }, bk2: { s1: '', s2: '' }, t3: { s1: '', s2: '' }, ck: { s1: '', s2: '' } }
+    knockout: {
+        bk1: { s1: '', s2: '' },
+        bk2: { s1: '', s2: '' },
+        t3: { s1: '', s2: '' },
+        ck: { s1: '', s2: '' }
+    }
 };
 
 function renderM2() {
@@ -573,7 +568,6 @@ function renderM2Pairs(group) {
     const container = document.getElementById(`m2-pairs-${group}`);
     const countEl = document.getElementById(`count-m2-${group}`);
     if (!container) return;
-
     const list = group === 'A' ? window.m2Data.pairsA : window.m2Data.pairsB;
     if (countEl) countEl.innerText = list.length;
 
@@ -597,7 +591,6 @@ function addPairM2(group) {
     const newPair = { id: Date.now(), p1: p1.trim(), p2: p2.trim() };
     if (group === 'A') window.m2Data.pairsA.push(newPair);
     else window.m2Data.pairsB.push(newPair);
-
     saveM2ToStorage();
     renderM2();
 }
@@ -605,13 +598,11 @@ function addPairM2(group) {
 function openM2EditModal(group, idx) {
     const modal = document.getElementById('m2-edit-modal');
     if (!modal) return;
-
     const item = group === 'A' ? window.m2Data.pairsA[idx] : window.m2Data.pairsB[idx];
     document.getElementById('m2-edit-group').value = group;
     document.getElementById('m2-edit-index').value = idx;
     document.getElementById('m2-p1-input').value = item.p1;
     document.getElementById('m2-p2-input').value = item.p2;
-
     modal.classList.remove('hidden');
 }
 
@@ -625,7 +616,6 @@ function saveM2PairEdit() {
     const idx = parseInt(document.getElementById('m2-edit-index').value);
     const p1 = document.getElementById('m2-p1-input').value.trim();
     const p2 = document.getElementById('m2-p2-input').value.trim();
-
     if (!p1 || !p2) return;
 
     if (group === 'A') {
@@ -635,17 +625,15 @@ function saveM2PairEdit() {
         window.m2Data.pairsB[idx].p1 = p1;
         window.m2Data.pairsB[idx].p2 = p2;
     }
-
     saveM2ToStorage();
     closeM2EditModal();
     renderM2();
 }
 
 function deleteM2Pair(group, idx) {
-    if (confirm(" Xóa cặp đấu này?")) {
+    if (confirm("🗑️ Xóa cặp đấu này?")) {
         if (group === 'A') window.m2Data.pairsA.splice(idx, 1);
         else window.m2Data.pairsB.splice(idx, 1);
-
         saveM2ToStorage();
         renderM2();
     }
@@ -659,32 +647,29 @@ function renderM2ScheduleAndRank(group) {
     const pairs = group === 'A' ? window.m2Data.pairsA : window.m2Data.pairsB;
     let schedule = group === 'A' ? window.m2Data.scheduleA : window.m2Data.scheduleB;
 
-    // Tự động sinh lịch xoay vòng nếu số cặp thay đổi
     if (!schedule || schedule.length === 0) {
         schedule = [];
         let mIdx = 1;
         for (let i = 0; i < pairs.length; i++) {
             for (let j = i + 1; j < pairs.length; j++) {
-                schedule.push({
-                    id: mIdx++,
-                    team1Idx: i,
-                    team2Idx: j,
-                    s1: '',
-                    s2: ''
-                });
+                schedule.push({ id: mIdx++, team1Idx: i, team2Idx: j, s1: '', s2: '' });
             }
         }
         if (group === 'A') window.m2Data.scheduleA = schedule;
         else window.m2Data.scheduleB = schedule;
     }
 
-    // Compute Rankings
-    let ranks = pairs.map((p, idx) => ({ idx, name: `${p.p1} & ${p.p2}`, points: 0, diff: 0, win: 0 }));
+    let ranks = pairs.map((p, idx) => ({
+        idx,
+        name: `${p.p1} & ${p.p2}`,
+        points: 0,
+        diff: 0,
+        win: 0
+    }));
 
     scheduleBody.innerHTML = schedule.map((m, idx) => {
         const team1 = pairs[m.team1Idx] ? `${pairs[m.team1Idx].p1} & ${pairs[m.team1Idx].p2}` : 'N/A';
         const team2 = pairs[m.team2Idx] ? `${pairs[m.team2Idx].p1} & ${pairs[m.team2Idx].p2}` : 'N/A';
-
         const s1 = parseInt(m.s1);
         const s2 = parseInt(m.s2);
 
@@ -692,11 +677,17 @@ function renderM2ScheduleAndRank(group) {
             const diff = s1 - s2;
             if (ranks[m.team1Idx]) {
                 ranks[m.team1Idx].diff += diff;
-                if (s1 > s2) { ranks[m.team1Idx].points += 1; ranks[m.team1Idx].win += 1; }
+                if (s1 > s2) {
+                    ranks[m.team1Idx].points += 1;
+                    ranks[m.team1Idx].win += 1;
+                }
             }
             if (ranks[m.team2Idx]) {
                 ranks[m.team2Idx].diff -= diff;
-                if (s2 > s1) { ranks[m.team2Idx].points += 1; ranks[m.team2Idx].win += 1; }
+                if (s2 > s1) {
+                    ranks[m.team2Idx].points += 1;
+                    ranks[m.team2Idx].win += 1;
+                }
             }
         }
 
@@ -715,7 +706,6 @@ function renderM2ScheduleAndRank(group) {
         `;
     }).join('');
 
-    // Sắp xếp Bảng Xếp Hạng
     ranks.sort((a, b) => b.points - a.points || b.diff - a.diff);
 
     rankBody.innerHTML = ranks.map((r, idx) => `
@@ -727,7 +717,6 @@ function renderM2ScheduleAndRank(group) {
         </tr>
     `).join('');
 
-    // Cập nhật tên vào các trận Knockout
     if (ranks.length >= 2) {
         if (group === 'A') {
             window.m2RankA1 = ranks[0].name;
@@ -759,7 +748,6 @@ function renderM2Knockout() {
     if (bk2T1) bk2T1.innerText = window.m2RankB1 || "Nhất B";
     if (bk2T2) bk2T2.innerText = window.m2RankA2 || "Nhì A";
 
-    // Re-assign values for input boxes from storage
     const ko = window.m2Data.knockout || {};
     ['bk1-s1', 'bk1-s2', 'bk2-s1', 'bk2-s2', 't3-s1', 't3-s2', 'ck-s1', 'ck-s2'].forEach(id => {
         const input = document.getElementById(id);
@@ -808,7 +796,6 @@ function setM2CustomKeo() {
 function renderM2KeoSummary() {
     const tbody = document.getElementById('m2-keo-summary-body');
     if (!tbody) return;
-
     const mode = window.m2Data.keoMode || 'default';
     const allPairs = [...window.m2Data.pairsA, ...window.m2Data.pairsB];
     const allSchedules = [...(window.m2Data.scheduleA || []), ...(window.m2Data.scheduleB || [])];
@@ -826,17 +813,19 @@ function renderM2KeoSummary() {
 
         let winVal = 5000;
         let loseVal = -15000;
-
-        if (mode === 'k25') { winVal = 0; loseVal = -25000; }
-        else if (mode === 'k0') { winVal = 0; loseVal = 0; }
-        else if (mode === 'free') {
+        if (mode === 'k25') {
+            winVal = 0;
+            loseVal = -25000;
+        } else if (mode === 'k0') {
+            winVal = 0;
+            loseVal = 0;
+        } else if (mode === 'free') {
             winVal = window.m2Data.customWin || 0;
             loseVal = -(window.m2Data.customLose || 0);
         }
 
         const isHam1 = (s1 === 0);
         const isHam2 = (s2 === 0);
-
         const groupPairs = window.m2Data.pairsA.concat(window.m2Data.pairsB);
         const pair1 = groupPairs[m.team1Idx];
         const pair2 = groupPairs[m.team2Idx];
@@ -845,18 +834,27 @@ function renderM2KeoSummary() {
             [pair1.p1, pair1.p2].forEach(p => {
                 if (playerStats[p]) {
                     playerStats[p].matchesCount++;
-                    if (s1 > s2) { playerStats[p].winCount++; playerStats[p].totalMoney += winVal; }
-                    else if (s2 > s1) { playerStats[p].loseCount++; playerStats[p].totalMoney += isHam1 ? loseVal * 2 : loseVal; }
+                    if (s1 > s2) {
+                        playerStats[p].winCount++;
+                        playerStats[p].totalMoney += winVal;
+                    } else if (s2 > s1) {
+                        playerStats[p].loseCount++;
+                        playerStats[p].totalMoney += isHam1 ? loseVal * 2 : loseVal;
+                    }
                 }
             });
         }
-
         if (pair2) {
             [pair2.p1, pair2.p2].forEach(p => {
                 if (playerStats[p]) {
                     playerStats[p].matchesCount++;
-                    if (s2 > s1) { playerStats[p].winCount++; playerStats[p].totalMoney += winVal; }
-                    else if (s1 > s2) { playerStats[p].loseCount++; playerStats[p].totalMoney += isHam2 ? loseVal * 2 : loseVal; }
+                    if (s2 > s1) {
+                        playerStats[p].winCount++;
+                        playerStats[p].totalMoney += winVal;
+                    } else if (s1 > s2) {
+                        playerStats[p].loseCount++;
+                        playerStats[p].totalMoney += isHam2 ? loseVal * 2 : loseVal;
+                    }
                 }
             });
         }
@@ -866,7 +864,6 @@ function renderM2KeoSummary() {
         const stat = playerStats[pName];
         const formattedMoney = stat.totalMoney.toLocaleString('vi-VN') + " ₫";
         const moneyClass = stat.totalMoney >= 0 ? 'txt-win' : 'txt-lose';
-
         return `
             <tr>
                 <td class="p-2 border text-left pl-3 font-bold text-slate-800">${pName}</td>
@@ -903,13 +900,11 @@ window.dailyMatchesData = JSON.parse(localStorage.getItem('pb_daily_matches_data
         paidStatus: {}
     }
 };
-
 window.currentActiveDate = localStorage.getItem('pb_current_active_date') || "1/10/26";
 
 function renderDatesMenuList() {
     const menuList = document.getElementById('datesMenuList');
     if (!menuList) return;
-
     const dates = Object.keys(window.dailyMatchesData);
     menuList.innerHTML = dates.map(d => `
         <div class="dropdown-item ${d === window.currentActiveDate ? 'bg-blue-50 text-blue-700 font-bold' : ''}" onclick="selectDateActive('${d}')">
@@ -956,7 +951,6 @@ function renameCurrentDate() {
         const dStr = newDate.trim();
         window.dailyMatchesData[dStr] = window.dailyMatchesData[oldDate];
         delete window.dailyMatchesData[oldDate];
-
         window.currentActiveDate = dStr;
         localStorage.setItem('pb_current_active_date', dStr);
         saveDailyDataToStorage();
@@ -967,14 +961,19 @@ function renameCurrentDate() {
 function deleteCurrentDate() {
     closeAllDropdowns();
     const curDate = window.currentActiveDate;
-    if (confirm(` Bạn có chắc chắn muốn xóa dữ liệu ngày ${curDate}?`)) {
+    if (confirm(`🗑️ Bạn có chắc chắn muốn xóa dữ liệu ngày ${curDate}?`)) {
         delete window.dailyMatchesData[curDate];
         const remaining = Object.keys(window.dailyMatchesData);
         if (remaining.length > 0) {
             window.currentActiveDate = remaining[0];
         } else {
             window.currentActiveDate = "1/10/26";
-            window.dailyMatchesData["1/10/26"] = { note: "YES", keoMode: "default", matches: [], paidStatus: {} };
+            window.dailyMatchesData["1/10/26"] = {
+                note: "YES",
+                keoMode: "default",
+                matches: [],
+                paidStatus: {}
+            };
         }
         saveDailyDataToStorage();
         renderDayDetailView();
@@ -984,7 +983,6 @@ function deleteCurrentDate() {
 function renderDayDetailView() {
     const titleEl = document.getElementById('current-date-title');
     if (titleEl) titleEl.innerText = window.currentActiveDate;
-
     renderDatesMenuList();
     renderDayMatchesTable();
     renderDayKeoSummary();
@@ -993,7 +991,6 @@ function renderDayDetailView() {
 function renderDayMatchesTable() {
     const tbody = document.getElementById('day-matches-body');
     if (!tbody) return;
-
     const dayObj = window.dailyMatchesData[window.currentActiveDate] || { matches: [] };
     const matches = dayObj.matches || [];
 
@@ -1049,7 +1046,6 @@ function updateDayMatchKeo(idx, keoVal) {
 function addMatchToCurrentDate() {
     const dayObj = window.dailyMatchesData[window.currentActiveDate];
     if (!dayObj) return;
-
     dayObj.matches.push({
         id: Date.now(),
         p1: window.players[0] ? window.players[0].name : "",
@@ -1060,14 +1056,13 @@ function addMatchToCurrentDate() {
         p4: window.players[3] ? window.players[3].name : "",
         keo: dayObj.keoMode || "default"
     });
-
     saveDailyDataToStorage();
     renderDayMatchesTable();
 }
 
 function deleteDayMatch(idx) {
     const dayObj = window.dailyMatchesData[window.currentActiveDate];
-    if (dayObj && confirm(" Xóa trận đấu này khỏi ngày?")) {
+    if (dayObj && confirm("🗑️ Xóa trận đấu này khỏi ngày?")) {
         dayObj.matches.splice(idx, 1);
         saveDailyDataToStorage();
         renderDayMatchesTable();
@@ -1091,7 +1086,6 @@ function applyKeoToAllMatchesInDate(keoMode) {
 function renderDayKeoSummary() {
     const tbody = document.getElementById('day-summary-body');
     if (!tbody) return;
-
     const dayObj = window.dailyMatchesData[window.currentActiveDate] || { matches: [], paidStatus: {} };
     const matches = dayObj.matches || [];
 
@@ -1107,41 +1101,52 @@ function renderDayKeoSummary() {
 
         let winVal = 5000;
         let loseVal = -15000;
-
-        if (m.keo === 'k25') { winVal = 0; loseVal = -25000; }
-        else if (m.keo === 'k0') { winVal = 0; loseVal = 0; }
+        if (m.keo === 'k25') {
+            winVal = 0;
+            loseVal = -25000;
+        } else if (m.keo === 'k0') {
+            winVal = 0;
+            loseVal = 0;
+        }
 
         const isHam1 = (s1 === 0);
         const isHam2 = (s2 === 0);
-
         const pair1 = [m.p1, m.p2];
         const pair2 = [m.p3, m.p4];
 
         pair1.forEach(p => {
             if (p && playerStats[p]) {
                 playerStats[p].matchesCount++;
-                if (s1 > s2) { playerStats[p].winCount++; playerStats[p].totalMoney += winVal; }
-                else if (s2 > s1) { playerStats[p].loseCount++; playerStats[p].totalMoney += isHam1 ? loseVal * 2 : loseVal; }
+                if (s1 > s2) {
+                    playerStats[p].winCount++;
+                    playerStats[p].totalMoney += winVal;
+                } else if (s2 > s1) {
+                    playerStats[p].loseCount++;
+                    playerStats[p].totalMoney += isHam1 ? loseVal * 2 : loseVal;
+                }
             }
         });
 
         pair2.forEach(p => {
             if (p && playerStats[p]) {
                 playerStats[p].matchesCount++;
-                if (s2 > s1) { playerStats[p].winCount++; playerStats[p].totalMoney += winVal; }
-                else if (s1 > s2) { playerStats[p].loseCount++; playerStats[p].totalMoney += isHam2 ? loseVal * 2 : loseVal; }
+                if (s2 > s1) {
+                    playerStats[p].winCount++;
+                    playerStats[p].totalMoney += winVal;
+                } else if (s1 > s2) {
+                    playerStats[p].loseCount++;
+                    playerStats[p].totalMoney += isHam2 ? loseVal * 2 : loseVal;
+                }
             }
         });
     });
 
     tbody.innerHTML = Object.keys(playerStats).map(pName => {
         const stat = playerStats[pName];
-        if (stat.matchesCount === 0) return ''; // Bỏ qua VĐV không thi đấu ngày này
-
+        if (stat.matchesCount === 0) return '';
         const isPaid = dayObj.paidStatus[pName] || false;
         const formattedMoney = stat.totalMoney.toLocaleString('vi-VN') + " ₫";
         const moneyClass = stat.totalMoney >= 0 ? 'txt-win' : 'txt-lose';
-
         return `
             <tr>
                 <td class="p-2 border text-left pl-3 font-bold text-slate-800">${pName}</td>
@@ -1208,14 +1213,12 @@ function renderFundSummaryCards() {
 
     let totalIncome = 0;
     let totalExpense = 0;
-
     (window.fundData.transactions || []).forEach(tx => {
         if (tx.type === 'income') totalIncome += parseInt(tx.amount || 0);
         else if (tx.type === 'expense') totalExpense += parseInt(tx.amount || 0);
     });
 
     const balance = (window.fundData.initialFund || 0) + totalIncome - totalExpense;
-
     const incomeEl = document.getElementById('stat-income');
     const expenseEl = document.getElementById('stat-expense');
     const balanceEl = document.getElementById('stat-balance');
@@ -1233,7 +1236,6 @@ function renderFundSummaryCards() {
 function renderFundTransactions() {
     const incBody = document.getElementById('income-list');
     const expBody = document.getElementById('expense-list');
-
     if (!incBody || !expBody) return;
 
     const incomes = (window.fundData.transactions || []).filter(t => t.type === 'income');
@@ -1269,7 +1271,6 @@ function renderFundTransactions() {
 function openFundModal(type) {
     const backdrop = document.getElementById('fund-modal-backdrop');
     if (!backdrop) return;
-
     document.getElementById('tx-type').value = type;
     document.getElementById('tx-date').value = new Date().toISOString().slice(0, 10);
     document.getElementById('tx-desc').value = '';
@@ -1292,7 +1293,6 @@ function openFundModal(type) {
     }
 
     sourceSelect.innerHTML = `<option value="Khác">Khác / Chi Sân</option>` + window.players.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
-
     backdrop.classList.remove('hidden');
 }
 
@@ -1318,7 +1318,6 @@ function handleFundFormSubmit(e) {
     const newTx = { id: Date.now(), type, date, desc, amount, source, note };
     if (!window.fundData.transactions) window.fundData.transactions = [];
     window.fundData.transactions.push(newTx);
-
     saveFundToStorage();
     closeFundModal();
     updateFundDashboard();
@@ -1326,7 +1325,7 @@ function handleFundFormSubmit(e) {
 
 function deleteTransaction(id) {
     requireAdminAuth(() => {
-        if (confirm(" Xóa giao dịch này khỏi Nhật Ký Quỹ?")) {
+        if (confirm("🗑️ Xóa giao dịch này khỏi Nhật Ký Quỹ?")) {
             window.fundData.transactions = window.fundData.transactions.filter(t => t.id !== id);
             saveFundToStorage();
             updateFundDashboard();
@@ -1337,14 +1336,11 @@ function deleteTransaction(id) {
 function renderFundMembers() {
     const trHead = document.getElementById('member-list-thead-tr');
     const tbody = document.getElementById('member-list');
-    const tfoot = document.getElementById('member-list-foot');
-
     if (!trHead || !tbody) return;
 
     const quarters = window.fundData.quarters || ['Quý 1/26', 'Quý 2/26', 'Quý 3/26', 'Quý 4/26'];
     const searchTerm = (document.getElementById('member-search') ? document.getElementById('member-search').value : '').toLowerCase();
 
-    // Table Header
     trHead.innerHTML = `
         <th class="py-2.5 px-3 w-12 text-center">STT</th>
         <th class="py-2.5 px-3 min-w-[160px]">Họ & Tên Pick Thủ</th>
@@ -1356,7 +1352,6 @@ function renderFundMembers() {
     `;
 
     const filteredPlayers = window.players.filter(p => p.name.toLowerCase().includes(searchTerm));
-
     tbody.innerHTML = filteredPlayers.map((p, idx) => `
         <tr class="hover:bg-slate-50 transition border-b">
             <td class="py-2 px-3 text-center font-bold text-slate-400">${idx + 1}</td>
@@ -1378,7 +1373,6 @@ function toggleQuarterPaid(pName, quarter, isChecked) {
     if (!window.fundData.quarterPaid) window.fundData.quarterPaid = {};
     const key = `${pName}_${quarter}`;
     window.fundData.quarterPaid[key] = isChecked;
-
     saveFundToStorage();
     updateFundDashboard();
 }
@@ -1434,9 +1428,7 @@ function exportFundToExcel() {
 function renderTongHopView() {
     const container = document.getElementById('tonghop-content-container');
     if (!container) return;
-
     const dates = Object.keys(window.dailyMatchesData).filter(d => window.dailyMatchesData[d].note === 'YES');
-
     if (dates.length === 0) {
         container.innerHTML = `<div class="p-6 text-center text-slate-500 font-semibold">Chưa có ngày chơi nào được bật trạng thái NOTE = YES.</div>`;
         return;
@@ -1456,8 +1448,13 @@ function renderTongHopView() {
 
             let winVal = 5000;
             let loseVal = -15000;
-            if (m.keo === 'k25') { winVal = 0; loseVal = -25000; }
-            else if (m.keo === 'k0') { winVal = 0; loseVal = 0; }
+            if (m.keo === 'k25') {
+                winVal = 0;
+                loseVal = -25000;
+            } else if (m.keo === 'k0') {
+                winVal = 0;
+                loseVal = 0;
+            }
 
             const pair1 = [m.p1, m.p2];
             const pair2 = [m.p3, m.p4];
@@ -1465,16 +1462,26 @@ function renderTongHopView() {
             pair1.forEach(p => {
                 if (p && summaryMap[p]) {
                     summaryMap[p].totalMatches++;
-                    if (s1 > s2) { summaryMap[p].totalWin++; summaryMap[p].totalMoney += winVal; }
-                    else if (s2 > s1) { summaryMap[p].totalLose++; summaryMap[p].totalMoney += (s1 === 0 ? loseVal * 2 : loseVal); }
+                    if (s1 > s2) {
+                        summaryMap[p].totalWin++;
+                        summaryMap[p].totalMoney += winVal;
+                    } else if (s2 > s1) {
+                        summaryMap[p].totalLose++;
+                        summaryMap[p].totalMoney += (s1 === 0 ? loseVal * 2 : loseVal);
+                    }
                 }
             });
 
             pair2.forEach(p => {
                 if (p && summaryMap[p]) {
                     summaryMap[p].totalMatches++;
-                    if (s2 > s1) { summaryMap[p].totalWin++; summaryMap[p].totalMoney += winVal; }
-                    else if (s1 > s2) { summaryMap[p].totalLose++; summaryMap[p].totalMoney += (s2 === 0 ? loseVal * 2 : loseVal); }
+                    if (s2 > s1) {
+                        summaryMap[p].totalWin++;
+                        summaryMap[p].totalMoney += winVal;
+                    } else if (s1 > s2) {
+                        summaryMap[p].totalLose++;
+                        summaryMap[p].totalMoney += (s2 === 0 ? loseVal * 2 : loseVal);
+                    }
                 }
             });
         });
@@ -1516,12 +1523,10 @@ function renderTongHopView() {
 function renderHomeClosestDateView() {
     const titleEl = document.getElementById('home-closest-date-title');
     const container = document.getElementById('home-closest-date-container');
-
     const dates = Object.keys(window.dailyMatchesData);
     const closestDate = dates[dates.length - 1] || "1/10/26";
 
     if (titleEl) titleEl.innerText = closestDate;
-
     if (!container) return;
 
     const dayObj = window.dailyMatchesData[closestDate] || { matches: [] };
@@ -1596,7 +1601,6 @@ function triggerRestoreInput() {
 function importBackupJSON(event) {
     const file = event.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = function (e) {
         try {
@@ -1613,7 +1617,6 @@ function importBackupJSON(event) {
             saveM2ToStorage();
             saveDailyDataToStorage();
             saveFundToStorage();
-
             refreshAllViews();
             alert("🎉 Đã Phục Hồi (Restore) Dữ Liệu Thành Công!");
         } catch (err) {
@@ -1623,8 +1626,13 @@ function importBackupJSON(event) {
     reader.readAsText(file);
 }
 
-function backupDataJSON() { exportBackupJSON(); }
-function triggerRestoreJSON() { triggerRestoreInput(); }
+function backupDataJSON() {
+    exportBackupJSON();
+}
+
+function triggerRestoreJSON() {
+    triggerRestoreInput();
+}
 
 function refreshAllViews() {
     renderDynamicMinigameDropdowns();
