@@ -1,0 +1,27 @@
+<div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
+    <div class="flex justify-between items-center mb-6 pb-4 border-b">
+        <div>
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-users text-blue-600"></i> Danh Sách Pick Thủ CLB
+            </h2>
+            <p class="text-xs text-slate-500">Quản lý danh sách thành viên tham gia giải đấu và quỹ</p>
+        </div>
+        <button onclick="openPlayerModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 shadow">
+            <i class="fa-solid fa-plus"></i> Thêm Pick Thủ
+        </button>
+    </div>
+
+    <div class="smooth-scroll">
+        <table class="w-full text-left border-collapse border border-slate-200">
+            <thead>
+                <tr class="bg-slate-100 text-slate-700 text-sm">
+                    <th class="p-3 border w-16 text-center">STT</th>
+                    <th class="p-3 border">Tên Pick Thủ</th>
+                    <th class="p-3 border w-28 text-center">Giới tính</th>
+                    <th class="p-3 border text-center w-40">Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody id="player-table-body" class="text-sm divide-y divide-slate-200"></tbody>
+        </table>
+    </div>
+</div>
