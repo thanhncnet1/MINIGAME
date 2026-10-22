@@ -2,12 +2,13 @@
 // CẤU HÌNH & KHỞI TẠO CLOUD FIRESTORE SYNC
 // ==========================================
 const firebaseConfig = {
-    apiKey: "AIzaSyD-VíDụMãApiKeyCủaBạnỞĐây...",
-    authDomain: "minigame-bb991.firebaseapp.com",
-    projectId: "minigame-bb991",
-    storageBucket: "minigame-bb991.appspot.com",
-    messagingSenderId: "123456789012",
-    appId: "1:123456789012:web:abc123xyz"
+  apiKey: "AIzaSyDYCKzobz_fr-1BcHt3TxmOuX1nHCOQFMs",
+  authDomain: "minigame-bb991.firebaseapp.com",
+  projectId: "minigame-bb991",
+  storageBucket: "minigame-bb991.firebasestorage.app",
+  messagingSenderId: "115186520233",
+  appId: "1:115186520233:web:5cfcd1337f1a6ddb9599b8",
+  measurementId: "G-E9VTC723SF"
 };
 
 // Khởi tạo Firebase nếu chưa có
