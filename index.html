@@ -1,10 +1,168 @@
 <!DOCTYPE html>
 <html lang="vi" class="h-full">
 <head>
+<!--[TOC-BEGIN]
+  ╔══════════════════════════════════════════════════════════════════════════════╗
+  ║  MỤC LỤC CÁC KHỐI - CLB-PICKLEBALL-CMTD (1 file, chia khối)                   ║
+  ╚══════════════════════════════════════════════════════════════════════════════╝
+  CÁCH SỬA: dùng Ctrl+F tìm  KHỐI [MÃ-KHỐI]  (ví dụ: KHỐI [M1-04b]).
+  Mỗi khối nằm giữa 2 dòng  ▼ ... BẮT ĐẦU  và  ▲ ... KẾT THÚC. Chỉ sửa NỘI DUNG bên trong khối,
+  không xóa/di chuyển dòng đánh dấu. Giữ nguyên id="..." và tên hàm onclick="..." để không hỏng liên kết.
+  Khối thụt vào = khối con nằm trong khối cha (ví dụ M1-04b nằm trong M1-04, M1-04 nằm trong M1).
+  Mã khối: HEAD/LIB/CSS = đầu trang & kiểu dáng | NAV/HOME/CREATE/PLAYERS/M1/M2/DAY/FUND/TONGHOP/MODAL = giao diện
+           JS-xx = chương trình (mỗi khối là 1 thẻ script riêng, dùng chung biến toàn cục window.*)
+
+  [HEAD-01] Thông tin trang (meta, tiêu đề)
+  [LIB-01] Thư viện Tailwind CSS + cấu hình màu/font
+  [LIB-02] Thư viện Google Fonts (Inter) + Font Awesome icons
+  [LIB-03] Thư viện SheetJS (xuất Excel)
+  [CSS-01] Bảng kiểu Excel (.excel-table)
+  [CSS-02] Ô tên VĐV (.player-cell, .player-tag)
+  [CSS-03] Màu nền các giao diện (theme)
+  [CSS-04] Menu thả xuống (dropdown)
+  [CSS-05] Màu Thắng/Thua & ghi chú nộp tiền
+  [CSS-06] Ô nhập tỷ số, ô nhập kèo, nhãn HẦM
+  [CSS-07] Thanh cuộn & ô tự xuống dòng
+  [BANNER] Ảnh banner đầu trang
+  [NAV] THANH MENU (NAVBAR) - gồm các nút điều hướng
+     [NAV-01] Logo + trạng thái kết nối (mobile)
+     [NAV-02] Nút HOME
+     [NAV-03] Nút PICK THỦ
+     [NAV-04] Nút MINIGAME TEAM A & B
+     [NAV-05] Nút MINIGAME BẢNG & VÒNG TRÒN (menu thả xuống)
+     [NAV-06] Nút QUẢN LÝ QUỸ PICK
+     [NAV-07] Nút TỔNG HỢP CÁC NGÀY
+     [NAV-08] Nút SETTING (menu thả xuống)
+     [NAV-09] Nút CHI TIẾT NGÀY (menu thả xuống)
+     [NAV-10] Nút Backup / Restore
+     [NAV-11] Trạng thái kết nối Firebase (desktop)
+     [NAV-12] Chọn giao diện sáng/tối
+  [HOME] TAB TRANG CHỦ (tab-home)
+     [HOME-01] Lời chào + hướng dẫn
+     [HOME-02] Thẻ tắt: Pick Thủ
+     [HOME-03] Thẻ tắt: Minigame Team A & B
+     [HOME-04] Thẻ tắt: Minigame Bảng & Vòng Tròn
+     [HOME-05] Thẻ tắt: Quản Lý Quỹ Pick
+     [HOME-06] Thẻ tắt: Tổng Hợp Các Ngày
+     [HOME-07] Bảng thống kê trận pick ngày gần nhất
+  [CREATE] TAB TẠO GIẢI ĐẤU MỚI (tab-create_tournament)
+     [CREATE-01] Tiêu đề trang tạo giải
+     [CREATE-02] Form nhập thông tin giải mới
+  [PLAYERS] TAB DANH SÁCH PICK THỦ (tab-players)
+     [PLAYERS-01] Tiêu đề + nút thêm Pick Thủ
+     [PLAYERS-02] Bảng danh sách Pick Thủ
+  [M1] TAB MINIGAME TEAM A & B (tab-minigame1)
+     [M1-01] Tên giải hiện tại + nút Đổi tên / Xuất Excel
+     [M1-02] Danh sách VĐV chia 2 Team
+        [M1-02a] Tiêu đề danh sách VĐV
+        [M1-02b] Team A (danh sách + nút Thêm VĐV)
+        [M1-02c] Team B (danh sách + nút Thêm VĐV)
+     [M1-03] Lịch thi đấu Team A & B
+        [M1-03a] Tiêu đề + nút Thêm Trận Mới
+        [M1-03b] Bảng lịch thi đấu
+     [M1-04] Bảng tổng hợp kèo thu chi Team A & B
+        [M1-04a] Tiêu đề + khóa Admin tích nộp
+        [M1-04b] Chọn loại kèo (gồm Kèo 0K / Kèo Tự Do)
+        [M1-04c] Bảng tổng hợp kèo từng VĐV
+  [M2] TAB MINIGAME BẢNG & VÒNG TRÒN (tab-minigame2)
+     [M2-01] Thanh giải hiện tại + nút Tạo giải mới
+        [M2-01a] Tên giải hiện tại + nút Sửa tên
+        [M2-01b] Nút Tạo Giải Bảng Mới
+     [M2-02] Lịch thi đấu, bảng xếp hạng & knockout
+        [M2-02a] Tiêu đề + nút Thêm Cặp Bảng A/B
+        [M2-02b] Danh sách cặp VĐV Bảng A & Bảng B
+           [M2-02b1] Cặp VĐV Bảng A
+           [M2-02b2] Cặp VĐV Bảng B
+        [M2-02c] Xếp hạng + lịch vòng tròn 2 bảng
+           [M2-02c1] Bảng A (xếp hạng + lịch vòng tròn)
+           [M2-02c2] Bảng B (xếp hạng + lịch vòng tròn)
+        [M2-02d] Tổng hợp kèo vòng bảng & Knockout
+           [M2-02d1] Tiêu đề Knockout
+           [M2-02d2] Vòng Bán Kết (BK1, BK2)
+           [M2-02d3] Tranh 3/4
+           [M2-02d4] Tranh Chung Kết
+           [M2-02d5] Bảng kết quả chung cuộc (Vô địch / Nhì / Hạng 3)
+     [M2-03] Bảng tổng hợp kèo thu chi Minigame Bảng (cuối trang)
+        [M2-03a] Tiêu đề + khóa Admin tích nộp
+        [M2-03b] Chọn loại kèo (gồm Kèo 0K / Kèo Tự Do)
+        [M2-03c] Bảng tổng hợp kèo từng VĐV
+  [DAY] TAB CHI TIẾT NGÀY (tab-day_detail)
+     [DAY-01] Bảng thống kê trận pick trong ngày
+        [DAY-01a] Tiêu đề + nút Thêm Trận
+        [DAY-01b] Chọn kèo áp dụng toàn ngày
+        [DAY-01c] Bảng các trận trong ngày
+     [DAY-02] Bảng tổng hợp thu chi trong ngày
+        [DAY-02a] Tiêu đề bảng tổng hợp thu chi
+        [DAY-02b] Bảng tổng hợp thu chi từng VĐV
+  [FUND] TAB QUẢN LÝ QUỸ PICK (tab-fund_manager)
+     [FUND-01] Tiêu đề quỹ + khóa Admin + nút Xuất Excel
+        [FUND-01a] Logo & tên mục quỹ
+        [FUND-01b] Ô khóa Admin quỹ
+        [FUND-01c] Nút Xuất Excel quỹ
+     [FUND-02] Các thẻ tổng quan quỹ
+        [FUND-02a] Thẻ: Quỹ đầu kỳ / tổng thu
+        [FUND-02b] Thẻ: Tổng chi
+        [FUND-02c] Thẻ: Thu từ ngày / BTC
+        [FUND-02d] Thẻ: Quỹ hiện còn
+     [FUND-03] Nhật ký thu / chi
+        [FUND-03a] Nhật ký THU
+        [FUND-03b] Nhật ký CHI
+     [FUND-04] Bảng các quý (thu quỹ theo VĐV)
+        [FUND-04a] Tiêu đề + nút thêm quý / thêm VĐV
+        [FUND-04b] Bảng quỹ các quý
+  [TONGHOP] TAB TỔNG HỢP CÁC NGÀY (tab-tonghop)
+     [TONGHOP-01] Tiêu đề tổng hợp các ngày
+     [TONGHOP-02] Bảng tổng hợp (nội dung tự sinh)
+  [MODAL-01] Hộp thoại Thêm/Sửa Pick Thủ
+  [MODAL-02] Hộp thoại Đổi tên VĐV trong Team
+  [MODAL-03] Hộp thoại Sửa cặp VĐV Minigame Bảng
+  [MODAL-04] Hộp thoại Thêm/Sửa khoản Thu Chi Quỹ
+  [JS-01] Cấu hình chung: mật khẩu Admin & danh sách giải
+  [JS-02] Xác thực Admin (Quỹ + tích nộp)
+  [JS-03] Tạo giải & quản lý giải Minigame Bảng (đổi tên/xóa/menu)
+  [JS-04] DỮ LIỆU: Danh sách Pick Thủ
+  [JS-05] DỮ LIỆU: Minigame Team A & B
+  [JS-06] DỮ LIỆU: Minigame Bảng & Vòng Tròn
+  [JS-07] DỮ LIỆU: Ngày, trận đấu, tích nộp
+  [JS-08] DỮ LIỆU: Quỹ Pick (thu/chi/quý)
+  [JS-09] TRANG CHỦ: hiển thị bảng ngày gần nhất
+  [JS-10] TRANG CHỦ: thao tác trận & kèo theo ngày
+  [JS-11] QUỸ: tính BTC thu về theo ngày
+  [JS-12] QUỸ: quỹ đầu kỳ, cột quý, thành viên quỹ
+  [JS-13] TIỆN ÍCH: lưu dữ liệu & định dạng tiền/ngày
+  [JS-14] QUỸ: dashboard tổng quan
+  [JS-15] QUỸ: bảng thành viên theo quý
+  [JS-16] QUỸ: nhật ký THU
+  [JS-17] QUỸ: nhật ký CHI
+  [JS-18] QUỸ: hộp thoại thêm/sửa/xóa thu chi
+  [JS-19] QUỸ: xuất Excel
+  [JS-20] MENU: mở/đóng dropdown
+  [JS-21] NGÀY: thêm/đổi tên/xóa tab ngày
+  [JS-22] SETTING: xuất Excel & lối tắt sao lưu
+  [JS-23] CHI TIẾT NGÀY: thao tác trận & tích nộp
+  [JS-24] CHI TIẾT NGÀY: hiển thị bảng
+  [JS-25] TỔNG HỢP CÁC NGÀY: hiển thị
+  [JS-26] MINIGAME BẢNG: cặp VĐV & lịch vòng tròn
+  [JS-27] MINIGAME BẢNG: hiển thị xếp hạng & knockout
+  [JS-28] MINIGAME BẢNG: kèo thu chi & cập nhật tỷ số
+  [JS-29] MINIGAME TEAM: quản lý thành viên Team A/B (gồm mũi tên ↑↓)
+  [JS-30] MINIGAME TEAM: lịch thi đấu
+  [JS-31] MINIGAME TEAM: kèo thu chi
+  [JS-32] MINIGAME TEAM: xuất Excel & render tab
+  [JS-33] SAO LƯU / PHỤC HỒI dữ liệu
+  [JS-34] GIAO DIỆN: đổi theme
+  [JS-35] ĐIỀU HƯỚNG: chuyển tab & làm mới giao diện
+  [JS-36] PICK THỦ: thêm/sửa/xóa
+  [JS-37] KHỞI ĐỘNG: window.onload
+  [JS-38] FIREBASE REALTIME (đồng bộ dữ liệu, module)
+[TOC-END]-->
+    <!-- ▼══════════ KHỐI [HEAD-01] Thông tin trang (meta, tiêu đề) ▼══════════ BẮT ĐẦU -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CLB-PICKLEBALL-CMTD - Quản Lý Giải Đấu & Quỹ</title>
+    <!-- ▲══════════ KẾT THÚC KHỐI [HEAD-01] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [LIB-01] Thư viện Tailwind CSS + cấu hình màu/font ▼══════════ BẮT ĐẦU -->
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -33,14 +191,20 @@
             }
         }
     </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [LIB-01] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [LIB-02] Thư viện Google Fonts (Inter) + Font Awesome icons ▼══════════ BẮT ĐẦU -->
     <!-- Google Fonts Inter & Font Awesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- ▲══════════ KẾT THÚC KHỐI [LIB-02] ▲══════════ -->
     
+    <!-- ▼══════════ KHỐI [LIB-03] Thư viện SheetJS (xuất Excel) ▼══════════ BẮT ĐẦU -->
     <!-- SheetJS (XLSX) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [LIB-03] ▲══════════ -->
     
+    <!-- ▼══════════ KHỐI [CSS-01] Bảng kiểu Excel (.excel-table) ▼══════════ BẮT ĐẦU -->
     <style>
         .excel-table th {
             background-color: #1e3a8a;
@@ -62,7 +226,11 @@
             border-radius: 4px;
             font-size: 0.8rem;
         }
+    </style>
+    <!-- ▲══════════ KẾT THÚC KHỐI [CSS-01] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [CSS-02] Ô tên VĐV (.player-cell, .player-tag) ▼══════════ BẮT ĐẦU -->
+    <style>
         .player-cell {
             min-width: 120px;
             font-weight: 600;
@@ -83,12 +251,20 @@
             transform: scale(1.03);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
         }
+    </style>
+    <!-- ▲══════════ KẾT THÚC KHỐI [CSS-02] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [CSS-03] Màu nền các giao diện (theme) ▼══════════ BẮT ĐẦU -->
+    <style>
         .bg-theme-slate { background-color: #f1f5f9; }
         .bg-theme-dark { background-color: #0f172a; color: #f8fafc; }
         .bg-theme-emerald { background-color: #ecfdf5; }
         .bg-theme-blue { background-color: #eff6ff; }
+    </style>
+    <!-- ▲══════════ KẾT THÚC KHỐI [CSS-03] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [CSS-04] Menu thả xuống (dropdown) ▼══════════ BẮT ĐẦU -->
+    <style>
         .dropdown-menu {
             display: none;
             position: absolute;
@@ -117,12 +293,20 @@
         }
         .dropdown-item:hover { background-color: #f1f5f9; color: #2563eb; }
         .dropdown-divider { height: 1px; background-color: #e2e8f0; margin: 3px 0; }
+    </style>
+    <!-- ▲══════════ KẾT THÚC KHỐI [CSS-04] ▲══════════ -->
         
+    <!-- ▼══════════ KHỐI [CSS-05] Màu Thắng/Thua & ghi chú nộp tiền ▼══════════ BẮT ĐẦU -->
+    <style>
         .txt-win { color: #16a34a; font-weight: 800; }
         .txt-lose { color: #dc2626; font-weight: 800; }
         .note-paid { color: #16a34a; font-weight: 800; }
         .note-unpaid { color: #ef4444; font-weight: 800; }
+    </style>
+    <!-- ▲══════════ KẾT THÚC KHỐI [CSS-05] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [CSS-06] Ô nhập tỷ số, ô nhập kèo, nhãn HẦM ▼══════════ BẮT ĐẦU -->
+    <style>
         .score-input {
             width: 36px !important;
             height: 26px;
@@ -167,7 +351,11 @@
             line-height: 1;
             cursor: pointer;
         }
+    </style>
+    <!-- ▲══════════ KẾT THÚC KHỐI [CSS-06] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [CSS-07] Thanh cuộn & ô tự xuống dòng ▼══════════ BẮT ĐẦU -->
+    <style>
         .smooth-scroll, .custom-scrollbar {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
@@ -193,18 +381,25 @@
             line-height: 1.4;
         }
     </style>
+    <!-- ▲══════════ KẾT THÚC KHỐI [CSS-07] ▲══════════ -->
 </head>
 <body id="app-body" class="bg-theme-slate min-h-screen flex flex-col font-sans transition-colors duration-300 text-slate-800" onclick="closeAllDropdowns()">
 
+    <!-- ■■■■ VÙNG GIAO DIỆN HTML: các khối NAV / HOME / CREATE / PLAYERS / M1 / M2 / DAY / FUND / TONGHOP / MODAL ■■■■ -->
+
+    <!-- ▼══════════ KHỐI [BANNER] Ảnh banner đầu trang ▼══════════ BẮT ĐẦU -->
     <!-- BANNER -->
     <div class="relative w-full bg-slate-900 shadow-md flex justify-center items-center overflow-hidden">
         <img src="banner.jpg" alt="Banner CLB Pickleball CMTD" class="w-full h-auto max-h-48 sm:max-h-64 md:max-h-80 object-cover object-center block">
     </div>
+    <!-- ▲══════════ KẾT THÚC KHỐI [BANNER] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [NAV] THANH MENU (NAVBAR) - gồm các nút điều hướng ▼══════════ BẮT ĐẦU -->
     <!-- NAVBAR -->
     <nav class="bg-slate-800 text-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-2 sm:px-4 flex flex-col md:flex-row items-center justify-between py-2 md:py-0 md:h-16 gap-2">
             
+            <!-- ▼────── KHỐI [NAV-01] Logo + trạng thái kết nối (mobile) ▼────── BẮT ĐẦU -->
             <div class="flex items-center space-x-2 cursor-pointer w-full md:w-auto justify-between md:justify-start" onclick="showTab('home')">
                 <div class="flex items-center space-x-2">
                     <img src="logo1.png" alt="Logo CMTD" class="w-8 h-8 md:w-10 md:h-10 object-contain bg-white/10 rounded-full p-0.5 border border-yellow-400/50 shadow-md">
@@ -215,20 +410,28 @@
                     <span id="status-element-mobile" class="text-[10px] text-yellow-400 font-medium">Online</span>
                 </div>
             </div>
+            <!-- ▲────── KẾT THÚC KHỐI [NAV-01] ▲────── -->
 
             <div class="flex flex-wrap items-center justify-center md:justify-end gap-1.5 sm:gap-2 text-xs md:text-sm font-semibold w-full md:w-auto">
+                <!-- ▼────── KHỐI [NAV-02] Nút HOME ▼────── BẮT ĐẦU -->
                 <button onclick="showTab('home')" id="btn-home" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 text-yellow-400">
                     <i class="fa-solid fa-house"></i> <span>HOME</span>
                 </button>
+                <!-- ▲────── KẾT THÚC KHỐI [NAV-02] ▲────── -->
+                <!-- ▼────── KHỐI [NAV-03] Nút PICK THỦ ▼────── BẮT ĐẦU -->
                 <button onclick="showTab('players')" id="btn-players" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
                     <i class="fa-solid fa-users"></i> <span>Pick Thủ</span>
                 </button>
+                <!-- ▲────── KẾT THÚC KHỐI [NAV-03] ▲────── -->
                 
+                <!-- ▼────── KHỐI [NAV-04] Nút MINIGAME TEAM A & B ▼────── BẮT ĐẦU -->
                 <!-- MINIGAME TEAM -->
                 <button onclick="showTab('minigame1')" id="btn-minigame1" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
                     <i class="fa-solid fa-trophy"></i> <span>MINIGAME TEAM A & B</span>
                 </button>
+                <!-- ▲────── KẾT THÚC KHỐI [NAV-04] ▲────── -->
                 
+                <!-- ▼────── KHỐI [NAV-05] Nút MINIGAME BẢNG & VÒNG TRÒN (menu thả xuống) ▼────── BẮT ĐẦU -->
                 <!-- MINIGAME BẢNG -->
                 <div class="relative">
                     <button onclick="toggleMenu('menuNavBracket', event)" id="btn-minigame2" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1">
@@ -246,15 +449,21 @@
                         <div id="nav-m2-dropdown-list"></div>
                     </div>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [NAV-05] ▲────── -->
 
+                <!-- ▼────── KHỐI [NAV-06] Nút QUẢN LÝ QUỸ PICK ▼────── BẮT ĐẦU -->
                 <button onclick="showTab('fund_manager')" id="btn-fund_manager" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-teal-800 text-teal-100 border border-teal-400/40 font-bold shadow-sm">
                     <i class="fa-solid fa-vault text-yellow-300"></i> <span>QUẢN LÝ QUỸ PICK</span>
                 </button>
+                <!-- ▲────── KẾT THÚC KHỐI [NAV-06] ▲────── -->
 
+                <!-- ▼────── KHỐI [NAV-07] Nút TỔNG HỢP CÁC NGÀY ▼────── BẮT ĐẦU -->
                 <button onclick="showTab('tonghop')" id="btn-tonghop" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-indigo-800 text-indigo-100 border border-indigo-400/40 font-bold shadow-sm">
                     <i class="fa-solid fa-table-list text-yellow-400"></i> <span>📊 TỔNG HỢP CÁC NGÀY</span>
                 </button>
+                <!-- ▲────── KẾT THÚC KHỐI [NAV-07] ▲────── -->
 
+                <!-- ▼────── KHỐI [NAV-08] Nút SETTING (menu thả xuống) ▼────── BẮT ĐẦU -->
                 <div class="relative">
                     <button onclick="toggleMenu('menuSetting', event)" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-slate-700/80 text-amber-300 border border-amber-400/30">
                         <i class="fa-solid fa-gear"></i> <span>SETTING ▾</span>
@@ -270,7 +479,9 @@
                         <div class="dropdown-item" onclick="triggerRestoreJSON()"><i class="fa-solid fa-file-import text-amber-600"></i> 📤 Phục Hồi (Restore JSON)</div>
                     </div>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [NAV-08] ▲────── -->
 
+                <!-- ▼────── KHỐI [NAV-09] Nút CHI TIẾT NGÀY (menu thả xuống) ▼────── BẮT ĐẦU -->
                 <div class="relative">
                     <button onclick="toggleMenu('menuTongHop', event)" id="btn-dates" class="nav-btn hover:bg-slate-700 px-2 py-1.5 rounded-lg transition flex items-center gap-1 bg-slate-700/80 text-blue-200 border border-blue-400/30">
                         <i class="fa-solid fa-calendar-days"></i> <span>📅 CHI TIẾT NGÀY ▾</span>
@@ -279,7 +490,9 @@
                         <div id="datesMenuList"></div>
                     </div>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [NAV-09] ▲────── -->
 
+                <!-- ▼────── KHỐI [NAV-10] Nút Backup / Restore ▼────── BẮT ĐẦU -->
                 <div class="flex items-center gap-1 bg-slate-900/90 px-1.5 py-1 rounded-lg border border-slate-700">
                     <button onclick="exportBackupJSON()" title="Xuất file Sao Lưu" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] px-2 py-0.5 rounded transition flex items-center gap-1">
                         <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">Backup</span>
@@ -289,12 +502,16 @@
                     </button>
                     <input type="file" id="restore-file-input" accept=".json" class="hidden" onchange="importBackupJSON(event)">
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [NAV-10] ▲────── -->
 
+                <!-- ▼────── KHỐI [NAV-11] Trạng thái kết nối Firebase (desktop) ▼────── BẮT ĐẦU -->
                 <div class="hidden md:flex items-center gap-1.5 bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-700">
                     <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" id="status-dot"></span>
                     <span id="status-element" class="text-xs text-yellow-400 font-medium">Đang kết nối...</span>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [NAV-11] ▲────── -->
 
+                <!-- ▼────── KHỐI [NAV-12] Chọn giao diện sáng/tối ▼────── BẮT ĐẦU -->
                 <div class="flex items-center bg-slate-900/60 p-1 rounded-lg border border-slate-700">
                     <i class="fa-solid fa-palette text-amber-400 text-xs px-1"></i>
                     <select onchange="changeTheme(this.value)" class="bg-transparent text-xs text-slate-200 outline-none cursor-pointer">
@@ -304,20 +521,26 @@
                         <option value="bg-theme-emerald" class="text-slate-900">Ngọc</option>
                     </select>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [NAV-12] ▲────── -->
             </div>
         </div>
     </nav>
+    <!-- ▲══════════ KẾT THÚC KHỐI [NAV] ▲══════════ -->
 
     <!-- MAIN CONTAINER -->
     <main class="max-w-7xl mx-auto w-full p-2 md:p-4 flex-grow space-y-6">
 
+        <!-- ▼══════════ KHỐI [HOME] TAB TRANG CHỦ (tab-home) ▼══════════ BẮT ĐẦU -->
         <!-- TRANG CHỦ -->
         <section id="tab-home" class="tab-content">
             <div class="bg-white/90 backdrop-blur rounded-xl shadow-md p-6 md:p-8 text-center my-4 text-slate-800">
+                <!-- ▼────── KHỐI [HOME-01] Lời chào + hướng dẫn ▼────── BẮT ĐẦU -->
                 <h2 class="text-2xl font-bold mb-4">CHÀO MỪNG ĐẾN VỚI GIẢI ĐẤU CLB-PICKLEBALL-CMTD</h2>
                 <p class="text-slate-600 mb-6 max-w-2xl mx-auto text-sm md:text-base">Vui lòng chọn một trong các mục bên dưới hoặc trên thanh menu để bắt đầu quản lý danh sách vận động viên, lịch thi đấu và bảng xếp hạng.</p>
+                <!-- ▲────── KẾT THÚC KHỐI [HOME-01] ▲────── -->
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 max-w-7xl mx-auto">
+                    <!-- ▼────── KHỐI [HOME-02] Thẻ tắt: Pick Thủ ▼────── BẮT ĐẦU -->
                     <div onclick="showTab('players')" class="cursor-pointer bg-blue-50/80 border border-blue-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
                         <div class="my-auto">
                             <i class="fa-solid fa-user-gear text-4xl text-blue-600 mb-3 group-hover:scale-110 transition-transform block"></i>
@@ -325,7 +548,9 @@
                             <p class="text-xs text-slate-500 mt-2">Thêm, xoá, sửa thông tin thành viên CLB</p>
                         </div>
                     </div>
+                    <!-- ▲────── KẾT THÚC KHỐI [HOME-02] ▲────── -->
 
+                    <!-- ▼────── KHỐI [HOME-03] Thẻ tắt: Minigame Team A & B ▼────── BẮT ĐẦU -->
                     <div onclick="showTab('minigame1')" class="cursor-pointer bg-amber-50/80 border border-amber-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
                         <div class="my-auto">
                             <i class="fa-solid fa-people-group text-4xl text-amber-600 mb-3 group-hover:scale-110 transition-transform block"></i>
@@ -333,7 +558,9 @@
                             <p class="text-xs text-slate-500 mt-2">Quản lý 24 trận đối kháng team A và B</p>
                         </div>
                     </div>
+                    <!-- ▲────── KẾT THÚC KHỐI [HOME-03] ▲────── -->
 
+                    <!-- ▼────── KHỐI [HOME-04] Thẻ tắt: Minigame Bảng & Vòng Tròn ▼────── BẮT ĐẦU -->
                     <div onclick="showTab('minigame2')" class="cursor-pointer bg-emerald-50/80 border border-emerald-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
                         <div class="my-auto">
                             <i class="fa-solid fa-diagram-project text-4xl text-emerald-600 mb-3 group-hover:scale-110 transition-transform block"></i>
@@ -341,7 +568,9 @@
                             <p class="text-xs text-slate-500 mt-2">Vòng Bảng A-B, Vòng Tròn, Bán Kết, Chung Kết</p>
                         </div>
                     </div>
+                    <!-- ▲────── KẾT THÚC KHỐI [HOME-04] ▲────── -->
 
+                    <!-- ▼────── KHỐI [HOME-05] Thẻ tắt: Quản Lý Quỹ Pick ▼────── BẮT ĐẦU -->
                     <div onclick="showTab('fund_manager')" class="cursor-pointer bg-green-50/80 border border-green-300 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
                         <div class="my-auto">
                             <i class="fa-solid fa-vault text-4xl text-green-700 mb-3 group-hover:scale-110 transition-transform block"></i>
@@ -349,7 +578,9 @@
                             <p class="text-xs text-slate-500 mt-2">Theo dõi Hội Phí Các Quý, Sân Pickleball & Số dư tự động</p>
                         </div>
                     </div>
+                    <!-- ▲────── KẾT THÚC KHỐI [HOME-05] ▲────── -->
 
+                    <!-- ▼────── KHỐI [HOME-06] Thẻ tắt: Tổng Hợp Các Ngày ▼────── BẮT ĐẦU -->
                     <div onclick="showTab('tonghop')" class="cursor-pointer bg-indigo-50/80 border border-indigo-200 p-5 rounded-2xl hover:shadow-lg transition text-center group flex flex-col justify-between items-center">
                         <div class="my-auto">
                             <i class="fa-solid fa-table-list text-4xl text-indigo-600 mb-3 group-hover:scale-110 transition-transform block"></i>
@@ -357,8 +588,10 @@
                             <p class="text-xs text-slate-500 mt-2">Tổng hợp kết quả kèo & thưởng phạt tất cả các ngày</p>
                         </div>
                     </div>
+                    <!-- ▲────── KẾT THÚC KHỐI [HOME-06] ▲────── -->
                 </div>
 
+                <!-- ▼────── KHỐI [HOME-07] Bảng thống kê trận pick ngày gần nhất ▼────── BẮT ĐẦU -->
                 <div class="mt-8 text-left border-t border-slate-200 pt-6">
                     <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
                         <div class="flex items-center gap-2">
@@ -377,12 +610,16 @@
 
                     <div id="home-closest-date-container" class="space-y-6"></div>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [HOME-07] ▲────── -->
             </div>
         </section>
+        <!-- ▲══════════ KẾT THÚC KHỐI [HOME] ▲══════════ -->
 
+        <!-- ▼══════════ KHỐI [CREATE] TAB TẠO GIẢI ĐẤU MỚI (tab-create_tournament) ▼══════════ BẮT ĐẦU -->
         <!-- TRANG TẠO GIẢI ĐẤU MỚI -->
         <section id="tab-create_tournament" class="tab-content hidden">
             <div class="bg-white/95 rounded-xl shadow-md p-6 max-w-3xl mx-auto text-slate-800">
+                <!-- ▼────── KHỐI [CREATE-01] Tiêu đề trang tạo giải ▼────── BẮT ĐẦU -->
                 <div class="flex items-center justify-between mb-6 pb-4 border-b">
                     <h2 class="text-2xl font-black text-amber-600 flex items-center gap-2">
                         <i class="fa-solid fa-trophy text-amber-500"></i> TẠO GIẢI ĐẤU MINIGAME MỚI
@@ -391,7 +628,9 @@
                         <i class="fa-solid fa-arrow-left"></i> Quay lại
                     </button>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [CREATE-01] ▲────── -->
 
+                <!-- ▼────── KHỐI [CREATE-02] Form nhập thông tin giải mới ▼────── BẮT ĐẦU -->
                 <div class="space-y-6">
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-1">Tên Giải Đấu / Minigame</label>
@@ -418,12 +657,16 @@
                         </button>
                     </div>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [CREATE-02] ▲────── -->
             </div>
         </section>
+        <!-- ▲══════════ KẾT THÚC KHỐI [CREATE] ▲══════════ -->
 
+        <!-- ▼══════════ KHỐI [PLAYERS] TAB DANH SÁCH PICK THỦ (tab-players) ▼══════════ BẮT ĐẦU -->
         <!-- DANH SÁCH PICK THỦ -->
         <section id="tab-players" class="tab-content hidden">
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 text-slate-800">
+                <!-- ▼────── KHỐI [PLAYERS-01] Tiêu đề + nút thêm Pick Thủ ▼────── BẮT ĐẦU -->
                 <div class="flex justify-between items-center mb-6 pb-4 border-b">
                     <div>
                         <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
@@ -435,7 +678,9 @@
                         <i class="fa-solid fa-plus"></i> Thêm Pick Thủ
                     </button>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [PLAYERS-01] ▲────── -->
 
+                <!-- ▼────── KHỐI [PLAYERS-02] Bảng danh sách Pick Thủ ▼────── BẮT ĐẦU -->
                 <div class="smooth-scroll">
                     <table class="w-full text-left border-collapse border border-slate-200">
                         <thead>
@@ -449,11 +694,15 @@
                         <tbody id="player-table-body" class="text-sm divide-y divide-slate-200"></tbody>
                     </table>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [PLAYERS-02] ▲────── -->
             </div>
         </section>
+        <!-- ▲══════════ KẾT THÚC KHỐI [PLAYERS] ▲══════════ -->
 
+        <!-- ▼══════════ KHỐI [M1] TAB MINIGAME TEAM A & B (tab-minigame1) ▼══════════ BẮT ĐẦU -->
         <!-- MINIGAME TEAM A & B -->
         <section id="tab-minigame1" class="tab-content hidden space-y-6">
+            <!-- ▼────── KHỐI [M1-01] Tên giải hiện tại + nút Đổi tên / Xuất Excel ▼────── BẮT ĐẦU -->
             <!-- THÔNG TIN TÊN GIẢI ĐẤU -->
             <div class="bg-amber-500/10 border border-amber-400/40 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-sm">
                 <div class="flex items-center gap-3">
@@ -469,13 +718,18 @@
                     </button>
                 </div>
             </div>
+            <!-- ▲────── KẾT THÚC KHỐI [M1-01] ▲────── -->
 
+            <!-- ▼────── KHỐI [M1-02] Danh sách VĐV chia 2 Team ▼────── BẮT ĐẦU -->
             <!-- KHU VỰC QUẢN LÝ TẬP TRUNG THÀNH VIÊN 2 ĐỘI -->
             <div class="bg-white rounded-xl shadow-md p-4 md:p-6 text-slate-800">
+                <!-- ▼────── KHỐI [M1-02a] Tiêu đề danh sách VĐV ▼────── BẮT ĐẦU -->
                 <h3 class="text-base md:text-lg font-extrabold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
                     <i class="fa-solid fa-users-rectangle text-amber-600"></i> Danh Sách VĐV Chia 2 Team (Mỗi team 9 VĐV: 6 Nam, 3 Nữ)
                 </h3>
+                <!-- ▲────── KẾT THÚC KHỐI [M1-02a] ▲────── -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- ▼────── KHỐI [M1-02b] Team A (danh sách + nút Thêm VĐV) ▼────── BẮT ĐẦU -->
                     <!-- TEAM A -->
                     <div class="border border-blue-200 bg-blue-50/50 rounded-xl p-4">
                         <div class="flex justify-between items-center mb-3">
@@ -488,7 +742,9 @@
                         </div>
                         <div id="team-A-list" class="space-y-2"></div>
                     </div>
+                    <!-- ▲────── KẾT THÚC KHỐI [M1-02b] ▲────── -->
 
+                    <!-- ▼────── KHỐI [M1-02c] Team B (danh sách + nút Thêm VĐV) ▼────── BẮT ĐẦU -->
                     <!-- TEAM B -->
                     <div class="border border-orange-200 bg-orange-50/50 rounded-xl p-4">
                         <div class="flex justify-between items-center mb-3">
@@ -501,11 +757,15 @@
                         </div>
                         <div id="team-B-list" class="space-y-2"></div>
                     </div>
+                    <!-- ▲────── KẾT THÚC KHỐI [M1-02c] ▲────── -->
                 </div>
             </div>
+            <!-- ▲────── KẾT THÚC KHỐI [M1-02] ▲────── -->
 
+            <!-- ▼────── KHỐI [M1-03] Lịch thi đấu Team A & B ▼────── BẮT ĐẦU -->
             <!-- LỊCH THI ĐẤU -->
             <div class="bg-white rounded-xl shadow-md p-4 md:p-6 text-slate-800">
+                <!-- ▼────── KHỐI [M1-03a] Tiêu đề + nút Thêm Trận Mới ▼────── BẮT ĐẦU -->
                 <div class="flex flex-wrap justify-between items-center mb-3 gap-2 border-b pb-3">
                     <div>
                         <h2 class="text-lg md:text-xl font-black text-blue-900 tracking-wide uppercase flex items-center gap-2">
@@ -517,7 +777,9 @@
                         <i class="fa-solid fa-plus"></i> Thêm Trận Mới
                     </button>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [M1-03a] ▲────── -->
 
+                <!-- ▼────── KHỐI [M1-03b] Bảng lịch thi đấu ▼────── BẮT ĐẦU -->
                 <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner">
                     <table class="w-full excel-table border-collapse">
                         <thead>
@@ -544,10 +806,14 @@
                         <tbody id="m1-schedule-body"></tbody>
                     </table>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [M1-03b] ▲────── -->
             </div>
+            <!-- ▲────── KẾT THÚC KHỐI [M1-03] ▲────── -->
 
+            <!-- ▼────── KHỐI [M1-04] Bảng tổng hợp kèo thu chi Team A & B ▼────── BẮT ĐẦU -->
             <!-- BẢNG TỔNG HỢP KÈO THU CHI (TEAM A & B) - GIỐNG BẢNG TỔNG HỢP THU CHI TRONG CHI TIẾT NGÀY -->
             <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 text-slate-800">
+                <!-- ▼────── KHỐI [M1-04a] Tiêu đề + khóa Admin tích nộp ▼────── BẮT ĐẦU -->
                 <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b gap-2">
                     <h2 class="text-base md:text-lg font-black text-slate-800 uppercase flex items-center gap-2">
                         <i class="fa-solid fa-calculator text-indigo-600"></i> Bảng Tổng Hợp Kèo Minigame Team A & B
@@ -563,7 +829,9 @@
                         </button>
                     </div>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [M1-04a] ▲────── -->
 
+                <!-- ▼────── KHỐI [M1-04b] Chọn loại kèo (gồm Kèo 0K / Kèo Tự Do) ▼────── BẮT ĐẦU -->
                 <!-- CHỌN KÈO ÁP DỤNG CHO MINIGAME TEAM -->
                 <div class="flex flex-wrap items-center gap-2 mb-3 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
                     <span class="text-xs font-bold text-amber-900"><i class="fa-solid fa-coins"></i> Loại kèo áp dụng cho các trận:</span>
@@ -581,7 +849,9 @@
                     </div>
                     <span class="text-[11px] italic text-slate-500">Tỷ số 0 = HẦM (nhân đôi tiền kèo). Chỉ tính các trận đã nhập đủ tỷ số.</span>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [M1-04b] ▲────── -->
 
+                <!-- ▼────── KHỐI [M1-04c] Bảng tổng hợp kèo từng VĐV ▼────── BẮT ĐẦU -->
                 <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner">
                     <table class="w-full min-w-[700px] text-center border-collapse border border-slate-300 text-xs">
                         <thead>
@@ -599,12 +869,18 @@
                         <tbody id="m1-keo-summary-body" class="font-semibold"></tbody>
                     </table>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [M1-04c] ▲────── -->
             </div>
+            <!-- ▲────── KẾT THÚC KHỐI [M1-04] ▲────── -->
         </section>
+        <!-- ▲══════════ KẾT THÚC KHỐI [M1] ▲══════════ -->
 
+        <!-- ▼══════════ KHỐI [M2] TAB MINIGAME BẢNG & VÒNG TRÒN (tab-minigame2) ▼══════════ BẮT ĐẦU -->
         <!-- MINIGAME BẢNG & VÒNG TRÒN -->
         <section id="tab-minigame2" class="tab-content hidden">
+            <!-- ▼────── KHỐI [M2-01] Thanh giải hiện tại + nút Tạo giải mới ▼────── BẮT ĐẦU -->
             <div class="bg-emerald-500/10 border border-emerald-400/40 rounded-xl p-3 mb-4 flex flex-wrap items-center justify-between gap-3">
+                <!-- ▼────── KHỐI [M2-01a] Tên giải hiện tại + nút Sửa tên ▼────── BẮT ĐẦU -->
                 <div class="flex items-center gap-2">
                     <span class="text-xs font-black uppercase text-emerald-900 bg-emerald-400/30 px-2.5 py-1 rounded-md">GIẢI HIỆN TẠI:</span>
                     <h2 id="current-m2-tourney-name" class="text-base md:text-lg font-black text-emerald-900">Phú Thọ Open (Bảng & Vòng Tròn)</h2>
@@ -612,13 +888,19 @@
                         <i class="fa-solid fa-pen-to-square"></i> Sửa tên
                     </button>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [M2-01a] ▲────── -->
 
+                <!-- ▼────── KHỐI [M2-01b] Nút Tạo Giải Bảng Mới ▼────── BẮT ĐẦU -->
                 <button onclick="openCreateTournamentPage('bracket')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-lg font-extrabold shadow flex items-center gap-1.5">
                     <i class="fa-solid fa-plus-circle"></i> <span>➕ Tạo Giải Bảng Mới</span>
                 </button>
+                <!-- ▲────── KẾT THÚC KHỐI [M2-01b] ▲────── -->
             </div>
+            <!-- ▲────── KẾT THÚC KHỐI [M2-01] ▲────── -->
 
+            <!-- ▼────── KHỐI [M2-02] Lịch thi đấu, bảng xếp hạng & knockout ▼────── BẮT ĐẦU -->
             <div class="bg-white/95 rounded-xl shadow-md p-4 md:p-6 mb-6 text-slate-800">
+                <!-- ▼────── KHỐI [M2-02a] Tiêu đề + nút Thêm Cặp Bảng A/B ▼────── BẮT ĐẦU -->
                 <div class="flex flex-wrap justify-between items-center mb-4 border-b pb-3 gap-2">
                     <h2 class="text-xl font-bold text-slate-800 uppercase flex items-center gap-2">
                         <i class="fa-solid fa-trophy text-yellow-500"></i> Lịch Thi Đấu Minigame Bảng & Vòng Tròn
@@ -632,23 +914,32 @@
                         </button>
                     </div>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [M2-02a] ▲────── -->
 
+                <!-- ▼────── KHỐI [M2-02b] Danh sách cặp VĐV Bảng A & Bảng B ▼────── BẮT ĐẦU -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- ▼────── KHỐI [M2-02b1] Cặp VĐV Bảng A ▼────── BẮT ĐẦU -->
                     <div class="border rounded-lg p-3 bg-blue-50/40 border-blue-200">
                         <h4 class="font-bold text-sm text-blue-900 mb-3 flex items-center gap-2">
                             <i class="fa-solid fa-user-group text-blue-600"></i> Cặp VĐV Bảng A (<span id="count-m2-A">0</span> cặp)
                         </h4>
                         <div id="m2-pairs-A" class="space-y-2"></div>
                     </div>
+                    <!-- ▲────── KẾT THÚC KHỐI [M2-02b1] ▲────── -->
+                    <!-- ▼────── KHỐI [M2-02b2] Cặp VĐV Bảng B ▼────── BẮT ĐẦU -->
                     <div class="border rounded-lg p-3 bg-orange-50/40 border-orange-200">
                         <h4 class="font-bold text-sm text-orange-900 mb-3 flex items-center gap-2">
                             <i class="fa-solid fa-user-group text-orange-600"></i> Cặp VĐV Bảng B (<span id="count-m2-B">0</span> cặp)
                         </h4>
                         <div id="m2-pairs-B" class="space-y-2"></div>
                     </div>
+                    <!-- ▲────── KẾT THÚC KHỐI [M2-02b2] ▲────── -->
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [M2-02b] ▲────── -->
 
+                <!-- ▼────── KHỐI [M2-02c] Xếp hạng + lịch vòng tròn 2 bảng ▼────── BẮT ĐẦU -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- ▼────── KHỐI [M2-02c1] Bảng A (xếp hạng + lịch vòng tròn) ▼────── BẮT ĐẦU -->
                     <div class="space-y-4">
                         <h3 class="font-extrabold text-blue-900 border-b-2 border-blue-900 pb-1">BẢNG A</h3>
                         <div class="smooth-scroll">
@@ -681,7 +972,9 @@
                             </table>
                         </div>
                     </div>
+                    <!-- ▲────── KẾT THÚC KHỐI [M2-02c1] ▲────── -->
 
+                    <!-- ▼────── KHỐI [M2-02c2] Bảng B (xếp hạng + lịch vòng tròn) ▼────── BẮT ĐẦU -->
                     <div class="space-y-4">
                         <h3 class="font-extrabold text-orange-900 border-b-2 border-orange-900 pb-1">BẢNG B</h3>
                         <div class="smooth-scroll">
@@ -714,14 +1007,20 @@
                             </table>
                         </div>
                     </div>
+                    <!-- ▲────── KẾT THÚC KHỐI [M2-02c2] ▲────── -->
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [M2-02c] ▲────── -->
 
+                <!-- ▼────── KHỐI [M2-02d] Tổng hợp kèo vòng bảng & Knockout ▼────── BẮT ĐẦU -->
                 <!-- BẢNG TỔNG HỢP KÈO VÒNG BẢNG & KNOCKOUT -->
                 <div class="max-w-2xl mx-auto space-y-6 pt-4 border-t">
+                    <!-- ▼────── KHỐI [M2-02d1] Tiêu đề Knockout ▼────── BẮT ĐẦU -->
                     <h3 class="text-center font-extrabold text-slate-800 text-lg uppercase flex items-center justify-center gap-2">
                         <i class="fa-solid fa-chart-column text-indigo-600"></i> Bảng Tổng Hợp Kèo Vòng Bảng & Knockout
                     </h3>
+                    <!-- ▲────── KẾT THÚC KHỐI [M2-02d1] ▲────── -->
 
+                    <!-- ▼────── KHỐI [M2-02d2] Vòng Bán Kết (BK1, BK2) ▼────── BẮT ĐẦU -->
                     <div class="border rounded overflow-hidden shadow-sm">
                         <div class="bg-blue-700 text-white text-xs font-bold p-1.5 text-center">VÒNG BÁN KẾT (BK1: Nhất A - Nhì B | BK2: Nhất B - Nhì A)</div>
                         <div class="smooth-scroll">
@@ -761,7 +1060,9 @@
                             </table>
                         </div>
                     </div>
+                    <!-- ▲────── KẾT THÚC KHỐI [M2-02d2] ▲────── -->
 
+                    <!-- ▼────── KHỐI [M2-02d3] Tranh 3/4 ▼────── BẮT ĐẦU -->
                     <div class="border rounded overflow-hidden shadow-sm">
                         <div class="bg-blue-700 text-white text-xs font-bold p-1.5 text-center">TRANH 3/4 (Thua BK1 vs Thua BK2)</div>
                         <div class="smooth-scroll">
@@ -782,7 +1083,9 @@
                             </table>
                         </div>
                     </div>
+                    <!-- ▲────── KẾT THÚC KHỐI [M2-02d3] ▲────── -->
 
+                    <!-- ▼────── KHỐI [M2-02d4] Tranh Chung Kết ▼────── BẮT ĐẦU -->
                     <div class="border rounded overflow-hidden shadow-sm">
                         <div class="bg-blue-700 text-white text-xs font-bold p-1.5 text-center">TRANH CHUNG KẾT (Thắng BK1 vs Thắng BK2)</div>
                         <div class="smooth-scroll">
@@ -803,7 +1106,9 @@
                             </table>
                         </div>
                     </div>
+                    <!-- ▲────── KẾT THÚC KHỐI [M2-02d4] ▲────── -->
 
+                    <!-- ▼────── KHỐI [M2-02d5] Bảng kết quả chung cuộc (Vô địch / Nhì / Hạng 3) ▼────── BẮT ĐẦU -->
                     <div class="border rounded overflow-hidden bg-amber-100/90 border-amber-300 shadow-sm">
                         <div class="bg-amber-600 text-white text-xs font-bold p-1.5 text-center">BẢNG KẾT QUẢ CHUNG CUỘC MINIGAME</div>
                         <table class="w-full text-xs border-collapse">
@@ -823,11 +1128,16 @@
                             </tbody>
                         </table>
                     </div>
+                    <!-- ▲────── KẾT THÚC KHỐI [M2-02d5] ▲────── -->
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [M2-02d] ▲────── -->
             </div>
+            <!-- ▲────── KẾT THÚC KHỐI [M2-02] ▲────── -->
 
+            <!-- ▼────── KHỐI [M2-03] Bảng tổng hợp kèo thu chi Minigame Bảng (cuối trang) ▼────── BẮT ĐẦU -->
             <!-- BẢNG TỔNG HỢP KÈO MINIGAME BẢNG & VÒNG TRÒN (ĐẶT Ở CUỐI TRANG) -->
             <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 mt-6 text-slate-800">
+                <!-- ▼────── KHỐI [M2-03a] Tiêu đề + khóa Admin tích nộp ▼────── BẮT ĐẦU -->
                 <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b gap-2">
                     <h2 class="text-base md:text-lg font-black text-slate-800 uppercase flex items-center gap-2">
                         <i class="fa-solid fa-chart-pie text-yellow-500"></i> BẢNG TỔNG HỢP KÈO MINIGAME BẢNG & VÒNG TRÒN
@@ -843,7 +1153,9 @@
                         </button>
                     </div>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [M2-03a] ▲────── -->
 
+                <!-- ▼────── KHỐI [M2-03b] Chọn loại kèo (gồm Kèo 0K / Kèo Tự Do) ▼────── BẮT ĐẦU -->
                 <div class="flex flex-wrap items-center gap-2 mb-3 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
                     <span class="text-xs font-bold text-amber-900"><i class="fa-solid fa-coins"></i> Loại kèo áp dụng cho các trận:</span>
                     <select id="m2-keo-mode-select" onchange="setM2KeoMode(this.value)" class="text-xs font-bold p-1 border rounded bg-white text-amber-900 border-amber-300 outline-none">
@@ -860,7 +1172,9 @@
                     </div>
                     <span class="text-[11px] italic text-slate-500">Thống kê từng VĐV theo lịch vòng bảng. Tỷ số 0 = HẦM (nhân đôi tiền kèo). Chỉ tính các trận đã nhập đủ tỷ số.</span>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [M2-03b] ▲────── -->
 
+                <!-- ▼────── KHỐI [M2-03c] Bảng tổng hợp kèo từng VĐV ▼────── BẮT ĐẦU -->
                 <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner">
                     <table class="w-full min-w-[700px] text-center border-collapse border border-slate-300 text-xs">
                         <thead>
@@ -878,12 +1192,18 @@
                         <tbody id="m2-keo-summary-body" class="font-semibold"></tbody>
                     </table>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [M2-03c] ▲────── -->
             </div>
+            <!-- ▲────── KẾT THÚC KHỐI [M2-03] ▲────── -->
         </section>
+        <!-- ▲══════════ KẾT THÚC KHỐI [M2] ▲══════════ -->
 
+        <!-- ▼══════════ KHỐI [DAY] TAB CHI TIẾT NGÀY (tab-day_detail) ▼══════════ BẮT ĐẦU -->
         <!-- BẢNG ĐẤU THEO NGÀY CỤ THỂ -->
         <section id="tab-day_detail" class="tab-content hidden space-y-6">
+            <!-- ▼────── KHỐI [DAY-01] Bảng thống kê trận pick trong ngày ▼────── BẮT ĐẦU -->
             <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 text-slate-800">
+                <!-- ▼────── KHỐI [DAY-01a] Tiêu đề + nút Thêm Trận ▼────── BẮT ĐẦU -->
                 <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b gap-2">
                     <h2 class="text-base md:text-lg font-black text-slate-800 uppercase flex items-center gap-2">
                         <i class="fa-solid fa-calendar-day text-blue-600"></i> BẢNG THỐNG KÊ TRẬN PICK NGÀY <span id="current-date-title" class="text-blue-700">1/10/26</span>
@@ -894,7 +1214,9 @@
                         </button>
                     </div>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [DAY-01a] ▲────── -->
 
+                <!-- ▼────── KHỐI [DAY-01b] Chọn kèo áp dụng toàn ngày ▼────── BẮT ĐẦU -->
                 <div class="mb-3 bg-amber-50 p-2.5 rounded-lg border border-amber-200 flex flex-wrap items-center justify-between gap-2">
                     <span class="text-xs font-bold text-amber-900 flex items-center gap-1">
                         <i class="fa-solid fa-coins"></i> KÈO ÁP DỤNG TOÀN NGÀY:
@@ -906,7 +1228,9 @@
                         <option value="free">Kèo Tự Do (Tùy chỉnh riêng từng trận)</option>
                     </select>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [DAY-01b] ▲────── -->
 
+                <!-- ▼────── KHỐI [DAY-01c] Bảng các trận trong ngày ▼────── BẮT ĐẦU -->
                 <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner">
                     <table class="w-full min-w-[780px] text-center border-collapse border border-slate-300 text-xs">
                         <thead>
@@ -923,9 +1247,13 @@
                         <tbody id="day-matches-body"></tbody>
                     </table>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [DAY-01c] ▲────── -->
             </div>
+            <!-- ▲────── KẾT THÚC KHỐI [DAY-01] ▲────── -->
 
+            <!-- ▼────── KHỐI [DAY-02] Bảng tổng hợp thu chi trong ngày ▼────── BẮT ĐẦU -->
             <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 text-slate-800">
+                <!-- ▼────── KHỐI [DAY-02a] Tiêu đề bảng tổng hợp thu chi ▼────── BẮT ĐẦU -->
                 <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b gap-2">
                     <h2 class="text-base md:text-lg font-black text-slate-800 uppercase flex items-center gap-2">
                         <i class="fa-solid fa-calculator text-indigo-600"></i> BẢNG TỔNG HỢP KÈO THU CHI
@@ -941,7 +1269,9 @@
                         </button>
                     </div>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [DAY-02a] ▲────── -->
 
+                <!-- ▼────── KHỐI [DAY-02b] Bảng tổng hợp thu chi từng VĐV ▼────── BẮT ĐẦU -->
                 <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner">
                     <table class="w-full min-w-[700px] text-center border-collapse border border-slate-300 text-xs">
                         <thead>
@@ -959,12 +1289,18 @@
                         <tbody id="day-summary-body" class="font-semibold"></tbody>
                     </table>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [DAY-02b] ▲────── -->
             </div>
+            <!-- ▲────── KẾT THÚC KHỐI [DAY-02] ▲────── -->
         </section>
+        <!-- ▲══════════ KẾT THÚC KHỐI [DAY] ▲══════════ -->
 
+        <!-- ▼══════════ KHỐI [FUND] TAB QUẢN LÝ QUỸ PICK (tab-fund_manager) ▼══════════ BẮT ĐẦU -->
         <!-- QUẢN LÝ QUỸ PICK -->
         <section id="tab-fund_manager" class="tab-content hidden space-y-6">
+            <!-- ▼────── KHỐI [FUND-01] Tiêu đề quỹ + khóa Admin + nút Xuất Excel ▼────── BẮT ĐẦU -->
             <div class="bg-gradient-to-r from-brand-800 via-brand-700 to-court-600 text-white p-5 rounded-2xl shadow-md flex flex-col sm:flex-row justify-between items-center gap-4">
+                <!-- ▼────── KHỐI [FUND-01a] Logo & tên mục quỹ ▼────── BẮT ĐẦU -->
                 <div class="flex items-center space-x-3">
                     <div class="p-2.5 bg-white/10 rounded-xl backdrop-blur-md border border-white/20">
                         <i class="fa-solid fa-table-tennis-paddle-ball text-2xl text-yellow-300"></i>
@@ -974,7 +1310,9 @@
                         <p class="text-xs text-brand-100">Hệ thống theo dõi Thu Chi & Hội Phí Tự Động</p>
                     </div>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [FUND-01a] ▲────── -->
 
+                <!-- ▼────── KHỐI [FUND-01b] Ô khóa Admin quỹ ▼────── BẮT ĐẦU -->
                 <div class="flex items-center gap-2 bg-white/10 p-2 rounded-xl backdrop-blur-md border border-white/20">
                     <span id="fund-admin-status-badge" class="text-xs font-bold text-yellow-300 flex items-center gap-1">
                         <i class="fa-solid fa-lock text-red-300"></i> Admin Quỹ:
@@ -984,17 +1322,23 @@
                         Mở Khóa
                     </button>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [FUND-01b] ▲────── -->
                 
+                <!-- ▼────── KHỐI [FUND-01c] Nút Xuất Excel quỹ ▼────── BẮT ĐẦU -->
                 <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
                     <button onclick="exportFundToExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-medium text-sm transition-all shadow-sm flex items-center gap-2 border border-emerald-400/30">
                         <i class="fa-solid fa-file-excel"></i>
                         <span>Xuất File Excel Quỹ</span>
                     </button>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [FUND-01c] ▲────── -->
             </div>
+            <!-- ▲────── KẾT THÚC KHỐI [FUND-01] ▲────── -->
 
+            <!-- ▼────── KHỐI [FUND-02] Các thẻ tổng quan quỹ ▼────── BẮT ĐẦU -->
             <!-- CARDS TỔNG QUAN -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- ▼────── KHỐI [FUND-02a] Thẻ: Quỹ đầu kỳ / tổng thu ▼────── BẮT ĐẦU -->
                 <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm relative overflow-hidden group">
                     <div class="flex items-center justify-between">
                         <div>
@@ -1007,7 +1351,9 @@
                     </div>
                     <div class="mt-3 text-xs text-slate-400">Cần quyền Admin để chỉnh sửa</div>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [FUND-02a] ▲────── -->
 
+                <!-- ▼────── KHỐI [FUND-02b] Thẻ: Tổng chi ▼────── BẮT ĐẦU -->
                 <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm relative overflow-hidden group">
                     <div class="flex items-center justify-between">
                         <div>
@@ -1022,7 +1368,9 @@
                         <i class="fa-solid fa-circle-info text-emerald-500"></i> Tiền sân các Quý + Kèo + Thu khác
                     </div>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [FUND-02b] ▲────── -->
 
+                <!-- ▼────── KHỐI [FUND-02c] Thẻ: Thu từ ngày / BTC ▼────── BẮT ĐẦU -->
                 <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm relative overflow-hidden group">
                     <div class="flex items-center justify-between">
                         <div>
@@ -1037,7 +1385,9 @@
                         <i class="fa-solid fa-receipt text-rose-500"></i> Chi sân, bóng & sinh hoạt
                     </div>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [FUND-02c] ▲────── -->
 
+                <!-- ▼────── KHỐI [FUND-02d] Thẻ: Quỹ hiện còn ▼────── BẮT ĐẦU -->
                 <div class="bg-gradient-to-br from-brand-700 to-brand-900 rounded-2xl p-5 text-white shadow-md relative overflow-hidden group">
                     <div class="flex items-center justify-between">
                         <div>
@@ -1052,10 +1402,14 @@
                         <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Tự động hạch toán Thừa/Thiếu
                     </div>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [FUND-02d] ▲────── -->
             </div>
+            <!-- ▲────── KẾT THÚC KHỐI [FUND-02] ▲────── -->
 
+            <!-- ▼────── KHỐI [FUND-03] Nhật ký thu / chi ▼────── BẮT ĐẦU -->
             <!-- NHẬT KÝ THU / CHI -->
             <div class="flex flex-col gap-6">
+                <!-- ▼────── KHỐI [FUND-03a] Nhật ký THU ▼────── BẮT ĐẦU -->
                 <!-- NHẬT KÝ THU -->
                 <section class="bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col">
                     <div class="p-5 border-b border-slate-100 flex justify-between items-center">
@@ -1093,7 +1447,9 @@
                         <span id="income-total" class="text-emerald-600 font-bold">0 ₫</span>
                     </div>
                 </section>
+                <!-- ▲────── KẾT THÚC KHỐI [FUND-03a] ▲────── -->
 
+                <!-- ▼────── KHỐI [FUND-03b] Nhật ký CHI ▼────── BẮT ĐẦU -->
                 <!-- NHẬT KÝ CHI -->
                 <section class="bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col">
                     <div class="p-5 border-b border-slate-100 flex justify-between items-center">
@@ -1131,10 +1487,14 @@
                         <span id="expense-total" class="text-rose-600 font-bold">0 ₫</span>
                     </div>
                 </section>
+                <!-- ▲────── KẾT THÚC KHỐI [FUND-03b] ▲────── -->
             </div>
+            <!-- ▲────── KẾT THÚC KHỐI [FUND-03] ▲────── -->
 
+            <!-- ▼────── KHỐI [FUND-04] Bảng các quý (thu quỹ theo VĐV) ▼────── BẮT ĐẦU -->
             <!-- BẢNG CÁC QUÝ -->
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                <!-- ▼────── KHỐI [FUND-04a] Tiêu đề + nút thêm quý / thêm VĐV ▼────── BẮT ĐẦU -->
                 <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
                         <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
@@ -1161,7 +1521,9 @@
                         </div>
                     </div>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [FUND-04a] ▲────── -->
 
+                <!-- ▼────── KHỐI [FUND-04b] Bảng quỹ các quý ▼────── BẮT ĐẦU -->
                 <div class="overflow-x-auto custom-scrollbar">
                     <table class="w-full text-left text-sm">
                         <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
@@ -1171,25 +1533,35 @@
                         <tfoot id="member-list-foot" class="bg-slate-50 font-bold border-t-2 border-slate-300"></tfoot>
                     </table>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [FUND-04b] ▲────── -->
             </div>
+            <!-- ▲────── KẾT THÚC KHỐI [FUND-04] ▲────── -->
         </section>
+        <!-- ▲══════════ KẾT THÚC KHỐI [FUND] ▲══════════ -->
 
+        <!-- ▼══════════ KHỐI [TONGHOP] TAB TỔNG HỢP CÁC NGÀY (tab-tonghop) ▼══════════ BẮT ĐẦU -->
         <!-- BẢNG TỔNG HỢP CÁC NGÀY -->
         <section id="tab-tonghop" class="tab-content hidden">
             <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 text-slate-800">
+                <!-- ▼────── KHỐI [TONGHOP-01] Tiêu đề tổng hợp các ngày ▼────── BẮT ĐẦU -->
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-3 border-b gap-2">
                     <h2 class="text-base md:text-xl font-extrabold text-slate-800 flex items-center gap-2 uppercase">
                         <i class="fa-solid fa-chart-column text-indigo-600"></i> BẢNG TỔNG HỢP CÁC NGÀY
                     </h2>
                     <span class="text-[11px] md:text-xs text-slate-500 italic">Chỉ tổng hợp ngày có trạng thái NOTE = YES</span>
                 </div>
+                <!-- ▲────── KẾT THÚC KHỐI [TONGHOP-01] ▲────── -->
+                <!-- ▼────── KHỐI [TONGHOP-02] Bảng tổng hợp (nội dung tự sinh) ▼────── BẮT ĐẦU -->
                 <div id="tonghop-content-container" class="smooth-scroll w-full border border-slate-200 rounded-lg shadow-inner"></div>
+                <!-- ▲────── KẾT THÚC KHỐI [TONGHOP-02] ▲────── -->
             </div>
         </section>
+        <!-- ▲══════════ KẾT THÚC KHỐI [TONGHOP] ▲══════════ -->
 
     </main>
 
     <!-- MODALS -->
+    <!-- ▼══════════ KHỐI [MODAL-01] Hộp thoại Thêm/Sửa Pick Thủ ▼══════════ BẮT ĐẦU -->
     <div id="player-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 text-slate-800">
             <h3 id="modal-title" class="text-lg font-bold text-slate-800 mb-4">Thêm Pick Thủ Mới</h3>
@@ -1213,7 +1585,9 @@
             </div>
         </div>
     </div>
+    <!-- ▲══════════ KẾT THÚC KHỐI [MODAL-01] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [MODAL-02] Hộp thoại Đổi tên VĐV trong Team ▼══════════ BẮT ĐẦU -->
     <!-- MODAL ĐỔI TÊN VĐV TRONG TEAM -->
     <div id="team-edit-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 text-slate-800">
@@ -1234,7 +1608,9 @@
             </div>
         </div>
     </div>
+    <!-- ▲══════════ KẾT THÚC KHỐI [MODAL-02] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [MODAL-03] Hộp thoại Sửa cặp VĐV Minigame Bảng ▼══════════ BẮT ĐẦU -->
     <div id="m2-edit-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 text-slate-800">
             <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
@@ -1258,7 +1634,9 @@
             </div>
         </div>
     </div>
+    <!-- ▲══════════ KẾT THÚC KHỐI [MODAL-03] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [MODAL-04] Hộp thoại Thêm/Sửa khoản Thu Chi Quỹ ▼══════════ BẮT ĐẦU -->
     <!-- MODAL THÊM KHOẢN THU CHI QUỸ -->
     <div id="fund-modal-backdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-slate-100">
@@ -1311,8 +1689,14 @@
             </form>
         </div>
     </div>
+    <!-- ▲══════════ KẾT THÚC KHỐI [MODAL-04] ▲══════════ -->
 
+
+    <!-- ■■■■ VÙNG JAVASCRIPT: các khối JS-01 ... JS-38 (mỗi khối 1 thẻ script) ■■■■ -->
     <!-- JAVASCRIPT LOGIC XỬ LÝ CHÍNH -->
+    <!-- ▼══════════ KHỐI [JS-01] Cấu hình chung: mật khẩu Admin & danh sách giải ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: window.isAdminUnlocked, window.ADMIN_PASSWORD, window.createdMinigames -->
+    <!--   ↳ Gồm: window.currentBracketMinigameId -->
     <script>
         window.isAdminUnlocked = false;
         window.ADMIN_PASSWORD = "123456";
@@ -1322,7 +1706,12 @@
         ];
 
         window.currentBracketMinigameId = localStorage.getItem('pb_current_bracket_mg_id') || 'mg_bracket_default';
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-01] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-02] Xác thực Admin (Quỹ + tích nộp) ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: checkAdminPassword, checkFundAdminPassword, requireAdminAuth -->
+    <script>
         function checkAdminPassword() {
             const inputPass = document.getElementById('admin-pass-input').value;
             if (inputPass === window.ADMIN_PASSWORD) {
@@ -1377,7 +1766,13 @@
                 }
             }
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-02] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-03] Tạo giải & quản lý giải Minigame Bảng (đổi tên/xóa/menu) ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: openCreateTournamentPage, submitNewTournament, renderDynamicMinigameDropdowns -->
+    <!--   ↳ Gồm: selectMinigameActive, renameCurrentMinigame, renameMinigameById, deleteMinigameById -->
+    <script>
         function openCreateTournamentPage(defaultType = 'bracket') {
             closeAllDropdowns();
             showTab('create_tournament');
@@ -1486,7 +1881,12 @@
                 if (window.syncToFirebase) window.syncToFirebase();
             }
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-03] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-04] DỮ LIỆU: Danh sách Pick Thủ ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: window.players -->
+    <script>
         window.players = JSON.parse(localStorage.getItem('pb_players_list')) || [
             { id: 1, name: "Tiến Thọ", gender: "Nam" },
             { id: 2, name: "Châu Sĩ", gender: "Nam" },
@@ -1507,7 +1907,12 @@
             { id: 17, name: "Hạnh", gender: "Nữ" },
             { id: 18, name: "Minh Vương", gender: "Nam" }
         ];
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-04] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-05] DỮ LIỆU: Minigame Team A & B ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: window.minigameTeamData -->
+    <script>
         /* ==========================================================
          * DỮ LIỆU TEAM A & B (ĐỒNG BỘ 18 VĐV: 9 VĐV/TEAM, 6 NAM, 3 NỮ, 24 TRẬN TỐI ƯU)
          * ========================================================== */
@@ -1542,7 +1947,12 @@
                 { id: 24, luot: 8, san: 3, noidung: "Đôi Nam Nữ", a1: "Phú Mỗ", a2: "Quỳnh Cool", scoreA: "", scoreB: "", b1: "Dũng Ngạc", b2: "Minh Vương", note: "" }
             ]
         };
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-05] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-06] DỮ LIỆU: Minigame Bảng & Vòng Tròn ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: window.m2PairsA, window.m2PairsB, window.m2ScoresA, window.m2ScoresB, window.m2KeoState -->
+    <script>
         window.m2PairsA = [
             { p1: "Tiến Thọ", p2: "Châu Sĩ" },
             { p1: "Phú Mỗ", p2: "Hà Giấy" },
@@ -1560,7 +1970,13 @@
         window.m2ScoresA = {};
         window.m2ScoresB = {};
         window.m2KeoState = { keoMode: 'default', customWin: 5, customLose: -15, payStatus: {}, btcOption: 'YES' };
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-06] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-07] DỮ LIỆU: Ngày, trận đấu, tích nộp ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: window.dates, window.currentSelectedDate, window.matchesData, window.dateKeoMode -->
+    <!--   ↳ Gồm: window.paymentStatus -->
+    <script>
         window.dates = ["1/10/26"];
         window.currentSelectedDate = "1/10/26";
 
@@ -1578,7 +1994,13 @@
             "1/10/26_Tiến Thọ": true,
             "1/10/26": { btcNoteAdminOption: "YES" }
         };
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-07] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-08] DỮ LIỆU: Quỹ Pick (thu/chi/quý) ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: window.activeQuarterColumns, window.initialFund, window.fundFeeStatus, window.fundIncomes -->
+    <!--   ↳ Gồm: window.fundExpenses, window.autoIncomeNotes, defaultFundIncomes, defaultFundExpenses -->
+    <script>
         window.activeQuarterColumns = JSON.parse(localStorage.getItem('pb_active_quarter_cols')) || [
             { id: "q1", title: "Tiền Sân Quý 1", statusTitle: "Trạng Thái Q1", defaultAmt: 800000, bgColor: "teal" }
         ];
@@ -1597,7 +2019,12 @@
         window.fundIncomes = JSON.parse(localStorage.getItem('pb_incomes')) || defaultFundIncomes;
         window.fundExpenses = JSON.parse(localStorage.getItem('pb_expenses')) || defaultFundExpenses;
         window.autoIncomeNotes = JSON.parse(localStorage.getItem('pb_auto_income_notes')) || {};
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-08] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-09] TRANG CHỦ: hiển thị bảng ngày gần nhất ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: getClosestDateToToday, renderHomeClosestDateView -->
+    <script>
         function getClosestDateToToday() {
             if (!window.dates || window.dates.length === 0) return null;
             if (window.dates.length === 1) return window.dates[0];
@@ -1884,7 +2311,14 @@
                 </div>
             `;
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-09] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-10] TRANG CHỦ: thao tác trận & kèo theo ngày ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: addMatchToDate, deleteMatchFromDate, updateMatchDataForDate, updateMatchKeoModeForDate -->
+    <!--   ↳ Gồm: applyKeoToAllMatchesForDate, handleBtcNoteChangeForDate, goToClosestDateTab -->
+    <!--   ↳ Gồm: updateAutoIncomeNote -->
+    <script>
         function addMatchToDate(dateStr) {
             if(!window.matchesData[dateStr]) window.matchesData[dateStr] = [];
             const nextId = window.matchesData[dateStr].length + 1;
@@ -1971,7 +2405,12 @@
                 if(window.syncToFirebase) window.syncToFirebase();
             });
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-10] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-11] QUỸ: tính BTC thu về theo ngày ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: getBtcThuVeForDate -->
+    <script>
         function getBtcThuVeForDate(dateStr) {
             const matches = window.matchesData[dateStr] || [];
             if (!matches || matches.length === 0) return 0;
@@ -2023,7 +2462,14 @@
 
             return (sumAmDay + sumBringBackDay);
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-11] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-12] QUỸ: quỹ đầu kỳ, cột quý, thành viên quỹ ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: updateInitialFund, addNewQuarterColumn, deleteQuarterColumn, updateDynamicQuarterTitle -->
+    <!--   ↳ Gồm: saveQuarterColsConfig, updateQuarterAmountDirect, updateQuarterStatusDirect -->
+    <!--   ↳ Gồm: addNewFundPlayerPrompt, deleteFundPlayerRow -->
+    <script>
         function updateInitialFund(val) {
             requireAdminAuth(() => {
                 window.initialFund = Number(val) || 0;
@@ -2126,7 +2572,12 @@
                 }
             });
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-12] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-13] TIỆN ÍCH: lưu dữ liệu & định dạng tiền/ngày ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: savePlayersData, saveFundData, formatVND, formatDate -->
+    <script>
         function savePlayersData() {
             localStorage.setItem('pb_players_list', JSON.stringify(window.players));
             autoBackupData();
@@ -2153,7 +2604,12 @@
             const [y, m, d] = dateStr.split('-');
             return `${d}/${m}/${y}`;
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-13] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-14] QUỸ: dashboard tổng quan ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: getQuarterCollectedTotals, updateFundDashboard, calculateFundSummary -->
+    <script>
         function getQuarterCollectedTotals() {
             let totals = {};
             (window.activeQuarterColumns || []).forEach(col => {
@@ -2220,7 +2676,12 @@
             if(elIncTot) elIncTot.innerText = formatVND(grandTotalIncome);
             if(elExpTot) elExpTot.innerText = formatVND(totalExpense);
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-14] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-15] QUỸ: bảng thành viên theo quý ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: renderFundMembers -->
+    <script>
         function renderFundMembers() {
             const searchEl = document.getElementById('member-search');
             const tbody = document.getElementById('member-list');
@@ -2343,7 +2804,12 @@
                 `;
             }
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-15] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-16] QUỸ: nhật ký THU ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: renderFundIncomes -->
+    <script>
         function renderFundIncomes() {
             const tbody = document.getElementById('income-list');
             if (!tbody) return;
@@ -2442,7 +2908,12 @@
                 tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Chưa có khoản thu nào.</td></tr>`;
             }
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-16] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-17] QUỸ: nhật ký CHI ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: renderFundExpenses -->
+    <script>
         function renderFundExpenses() {
             const tbody = document.getElementById('expense-list');
             if(!tbody) return;
@@ -2474,7 +2945,12 @@
                 tbody.appendChild(tr);
             });
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-17] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-18] QUỸ: hộp thoại thêm/sửa/xóa thu chi ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: openFundModal, openEditFundModal, closeFundModal, handleFundFormSubmit, deleteFundTx -->
+    <script>
         function openFundModal(type) {
             requireAdminAuth(() => {
                 const backdrop = document.getElementById('fund-modal-backdrop');
@@ -2585,7 +3061,12 @@
                 }
             });
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-18] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-19] QUỸ: xuất Excel ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: exportFundToExcel -->
+    <script>
         function exportFundToExcel() {
             let totalManualIncome = window.fundIncomes.reduce((sum, item) => sum + Number(item.amount), 0);
             const quarterTotals = getQuarterCollectedTotals();
@@ -2680,7 +3161,12 @@
 
             XLSX.writeFile(wb, "Quan_Ly_Thu_Chi_Quy_Pickleball.xlsx");
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-19] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-20] MENU: mở/đóng dropdown ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: toggleMenu, closeAllDropdowns -->
+    <script>
         function toggleMenu(menuId, e) {
             e.stopPropagation();
             const targetMenu = document.getElementById(menuId);
@@ -2692,7 +3178,12 @@
         function closeAllDropdowns() {
             document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-20] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-21] NGÀY: thêm/đổi tên/xóa tab ngày ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: renderDatesMenuList, selectDateView, addDateTab, renameCurrentDate, deleteCurrentDate -->
+    <script>
         function renderDatesMenuList() {
             const container = document.getElementById('datesMenuList');
             if (!container) return;
@@ -2759,7 +3250,12 @@
                 if(window.syncToFirebase) window.syncToFirebase();
             }
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-21] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-22] SETTING: xuất Excel & lối tắt sao lưu ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: exportToExcel, backupDataJSON, triggerRestoreJSON -->
+    <script>
         function exportToExcel() {
             closeAllDropdowns();
             if(window.dates.length === 0) return alert("Chưa có ngày nào để xuất Excel!");
@@ -2783,7 +3279,13 @@
 
         function backupDataJSON() { exportBackupJSON(); }
         function triggerRestoreJSON() { triggerRestoreInput(); }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-22] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-23] CHI TIẾT NGÀY: thao tác trận & tích nộp ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: addMatchToCurrentDate, deleteMatchFromCurrentDate, updateMatchData, applyKeoToAllMatchesInDate -->
+    <!--   ↳ Gồm: updateMatchKeoMode, togglePaymentStatus, handleBtcNoteChange -->
+    <script>
         function addMatchToCurrentDate() {
             addMatchToDate(window.currentSelectedDate);
         }
@@ -2818,7 +3320,12 @@
         function handleBtcNoteChange(selectEl) {
             handleBtcNoteChangeForDate(window.currentSelectedDate, selectEl);
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-23] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-24] CHI TIẾT NGÀY: hiển thị bảng ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: renderDayDetailView -->
+    <script>
         function renderDayDetailView() {
             const dateStr = window.currentSelectedDate;
             const titleEl = document.getElementById('current-date-title');
@@ -3005,7 +3512,12 @@
                 </tr>
             `;
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-24] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-25] TỔNG HỢP CÁC NGÀY: hiển thị ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: renderTongHopTab -->
+    <script>
         function renderTongHopTab() {
             const container = document.getElementById('tonghop-content-container');
             if(!container) return;
@@ -3147,7 +3659,13 @@
             `;
             container.innerHTML = html;
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-25] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-26] MINIGAME BẢNG: cặp VĐV & lịch vòng tròn ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: renderM2Pairs, openM2EditModal, closeM2EditModal, saveM2PairEdit, addPairM2, deletePairM2 -->
+    <!--   ↳ Gồm: generateM2GroupSchedule -->
+    <script>
         function renderM2Pairs() {
             const boxA = document.getElementById('m2-pairs-A');
             const boxB = document.getElementById('m2-pairs-B');
@@ -3229,7 +3747,12 @@
             }
             return schedule;
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-26] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-27] MINIGAME BẢNG: hiển thị xếp hạng & knockout ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: renderM2 -->
+    <script>
         function renderM2() {
             renderM2Pairs();
 
@@ -3418,7 +3941,13 @@
 
             renderM2KeoSummary(schedA, schedB);
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-27] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-28] MINIGAME BẢNG: kèo thu chi & cập nhật tỷ số ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: ensureM2KeoState, getM2KeoConfig, persistM2, setM2KeoMode, setM2CustomKeo, refreshAdminBadgesM2 -->
+    <!--   ↳ Gồm: checkM2AdminPassword, toggleM2Payment, setM2BtcOption, renderM2KeoSummary, updateM2Score -->
+    <script>
         /* ---------- KÈO THU CHI MINIGAME BẢNG & VÒNG TRÒN (giống bảng tổng hợp thu chi chi tiết ngày) ---------- */
         function ensureM2KeoState() {
             if (!window.m2KeoState || typeof window.m2KeoState !== 'object') window.m2KeoState = {};
@@ -3651,7 +4180,13 @@
             else window.m2ScoresB[key] = val;
             renderM2(); autoBackupData(); if(window.syncToFirebase) window.syncToFirebase();
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-28] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-29] MINIGAME TEAM: quản lý thành viên Team A/B (gồm mũi tên ↑↓) ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: saveTeamData, renameTournament, renderHeaderNameTeam, addTeamMember, removeTeamMember -->
+    <!--   ↳ Gồm: moveTeamMember, openTeamEditModal, closeTeamEditModal, saveTeamMemberEdit, renderTeamListsTeam -->
+    <script>
         /* ==========================================================
          * JAVASCRIPT XỬ LÝ MINIGAME TEAM A & B (ĐỒNG BỘ 18 VĐV & 24 TRẬN)
          * ========================================================== */
@@ -3783,7 +4318,12 @@
                 </div>
             `).join('');
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-29] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-30] MINIGAME TEAM: lịch thi đấu ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: addM1Match, deleteM1Match, updateMatchFieldTeam, renderM1ScheduleTeam -->
+    <script>
         function addM1Match() {
             const matches = window.minigameTeamData.matches;
             const newId = matches.length > 0 ? Math.max(...matches.map(m => m.id)) + 1 : 1;
@@ -3947,7 +4487,14 @@
 
             renderM1SummaryTeam(playerKeoStats);
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-30] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-31] MINIGAME TEAM: kèo thu chi ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: ensureM1KeoState, getM1KeoConfig, addM1Keo, persistM1, setM1KeoMode, setM1CustomKeo -->
+    <!--   ↳ Gồm: checkM1AdminPassword, refreshAdminBadgesM1, toggleM1Payment, setM1BtcOption -->
+    <!--   ↳ Gồm: renderM1SummaryTeam -->
+    <script>
         /* ---------- KÈO THU CHI MINIGAME TEAM (giống bảng tổng hợp thu chi chi tiết ngày) ---------- */
         function ensureM1KeoState() {
             const d = window.minigameTeamData;
@@ -4139,7 +4686,12 @@
                 </tr>
             `;
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-31] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-32] MINIGAME TEAM: xuất Excel & render tab ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: exportToExcelTeam, renderMinigameTeamTab -->
+    <script>
         function exportToExcelTeam() {
             const exportData = window.minigameTeamData.matches.map((m, i) => ({
                 "STT": i + 1,
@@ -4166,7 +4718,12 @@
             renderTeamListsTeam();
             renderM1ScheduleTeam();
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-32] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-33] SAO LƯU / PHỤC HỒI dữ liệu ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: autoBackupData, restoreAutoBackup, exportBackupJSON, triggerRestoreInput, importBackupJSON -->
+    <script>
         function autoBackupData() {
             try {
                 const getVal = (id) => document.getElementById(id)?.value || "";
@@ -4316,11 +4873,21 @@
             reader.readAsText(file);
             event.target.value = '';
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-33] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-34] GIAO DIỆN: đổi theme ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: changeTheme -->
+    <script>
         function changeTheme(themeClass) {
             document.getElementById('app-body').className = `${themeClass} min-h-screen flex flex-col font-sans transition-colors duration-300 text-slate-800`;
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-34] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-35] ĐIỀU HƯỚNG: chuyển tab & làm mới giao diện ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: showTab, refreshAllViews -->
+    <script>
         function showTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
@@ -4347,7 +4914,12 @@
             renderHomeClosestDateView();
             renderDynamicMinigameDropdowns();
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-35] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-36] PICK THỦ: thêm/sửa/xóa ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: renderPlayers, openPlayerModal, closePlayerModal, savePlayer, editPlayer, deletePlayer -->
+    <script>
         function renderPlayers() {
             const tbody = document.getElementById('player-table-body');
             if(!tbody) return;
@@ -4414,13 +4986,21 @@
                 refreshAllViews();
             }
         }
+    </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-36] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-37] KHỞI ĐỘNG: window.onload ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: window.onload -->
+    <script>
         window.onload = function() {
             restoreAutoBackup(true);
             refreshAllViews();
         };
     </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-37] ▲══════════ -->
 
+    <!-- ▼══════════ KHỐI [JS-38] FIREBASE REALTIME (đồng bộ dữ liệu, module) ▼══════════ BẮT ĐẦU -->
+    <!--   ↳ Gồm: window.syncToFirebase, firebaseConfig, app, db, getVal, setVal -->
     <!-- FIREBASE REALTIME MODULE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -4538,5 +5118,6 @@
             }
         );
     </script>
+    <!-- ▲══════════ KẾT THÚC KHỐI [JS-38] ▲══════════ -->
 </body>
 </html>
