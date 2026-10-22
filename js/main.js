@@ -1,1091 +1,1657 @@
-window.isAdminUnlocked = false;
-window.ADMIN_PASSWORD = "123456";
+/* ==========================================================================
+   CLB-PICKLEBALL-CMTD SYSTEM - MAIN JAVASCRIPT LOGIC
+   ========================================================================== */
 
-window.createdMinigames = JSON.parse(localStorage.getItem('pb_created_minigames')) || [
-    { id: 'mg_bracket_default', name: 'Phú Thọ Open (Bảng & Vòng Tròn)', type: 'bracket' }
-];
+// --- GLOBAL APP STATE & CONSTANTS ---
+window.currentTab = 'home';
+window.isAdminUnlocked = window.isAdminUnlocked || false;
+window.ADMIN_PASSWORD = window.ADMIN_PASSWORD || "123456";
 
-window.currentBracketMinigameId = localStorage.getItem('pb_current_bracket_mg_id') || 'mg_bracket_default';
-
-function checkAdminPassword() {
-    const inputPass = document.getElementById('admin-pass-input').value;
-    if (inputPass === window.ADMIN_PASSWORD) {
-        window.isAdminUnlocked = true;
-        const badge = document.getElementById('admin-status-badge');
-        if(badge) {
-            badge.innerHTML = `<i class="fa-solid fa-lock-open text-emerald-600"></i> Đã Mở Khóa Admin:`;
-            badge.className = "text-xs font-bold text-emerald-700 flex items-center gap-1";
-        }
-        alert("🔑 Xác thực Admin thành công!");
-        renderDayDetailView();
-        renderHomeClosestDateView();
-    } else {
-        alert("❌ Mật khẩu Admin không đúng!");
+// App Theme Dynamic Switching
+function changeTheme(themeClass) {
+    const body = document.getElementById('app-body');
+    if (body) {
+        body.className = `${themeClass} min-h-screen flex flex-col font-sans transition-colors duration-300 text-slate-800`;
+        localStorage.setItem('pb_app_theme', themeClass);
     }
 }
 
-function checkFundAdminPassword() {
-    const inputPass = document.getElementById('fund-admin-pass-input').value;
-    if (inputPass === window.ADMIN_PASSWORD) {
-        window.isAdminUnlocked = true;
-        const badge = document.getElementById('fund-admin-status-badge');
-        const badgeDay = document.getElementById('admin-status-badge');
-        if(badge) {
-            badge.innerHTML = `<i class="fa-solid fa-lock-open text-emerald-300"></i> Admin Quỹ: Mở Khóa`;
-            badge.className = "text-xs font-extrabold text-emerald-300 flex items-center gap-1";
-        }
-        if(badgeDay) {
-            badgeDay.innerHTML = `<i class="fa-solid fa-lock-open text-emerald-600"></i> Đã Mở Khóa Admin:`;
-            badgeDay.className = "text-xs font-bold text-emerald-700 flex items-center gap-1";
-        }
-        alert("🔑 Xác thực Admin thành công!");
+function loadSavedTheme() {
+    const savedTheme = localStorage.getItem('pb_app_theme') || 'bg-theme-slate';
+    changeTheme(savedTheme);
+}
+
+// Global Tab Navigation
+function showTab(tabId) {
+    window.currentTab = tabId;
+    const tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => tab.classList.add('hidden'));
+
+    const activeTab = document.getElementById(`tab-${tabId}`);
+    if (activeTab) {
+        activeTab.classList.remove('hidden');
+    }
+
+    // Refresh dynamic components depending on active tab
+    if (tabId === 'home') {
+        renderHomeClosestDateView();
+    } else if (tabId === 'players') {
+        renderPlayersList();
+    } else if (tabId === 'minigame1') {
+        renderMinigame1();
+    } else if (tabId === 'minigame2') {
+        renderM2();
+    } else if (tabId === 'fund_manager') {
         updateFundDashboard();
+    } else if (tabId === 'tonghop') {
+        renderTongHopView();
+    } else if (tabId === 'day_detail') {
         renderDayDetailView();
-        renderHomeClosestDateView();
-    } else {
-        alert("❌ Mật khẩu Admin không đúng!");
     }
-}
 
-function requireAdminAuth(actionCallback) {
-    if (window.isAdminUnlocked) {
-        actionCallback();
-    } else {
-        const pass = prompt("🔒 Vui lòng nhập mật khẩu Admin để thực hiện:");
-        if (pass === window.ADMIN_PASSWORD) {
-            window.isAdminUnlocked = true;
-            alert("🔑 Xác thực Admin thành công!");
-            actionCallback();
-        } else if (pass !== null) {
-            alert("❌ Mật khẩu Admin không đúng!");
-        }
-    }
-}
-
-function openCreateTournamentPage(defaultType = 'bracket') {
     closeAllDropdowns();
-    showTab('create_tournament');
-    const radio = document.querySelector(`input[name="tourney-type"][value="${defaultType}"]`);
-    if (radio) radio.checked = true;
-    document.getElementById('new-tourney-name').value = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function submitNewTournament() {
-    const nameInput = document.getElementById('new-tourney-name').value.trim();
-    const typeInput = document.querySelector('input[name="tourney-type"]:checked').value;
+// Dropdown Handling
+function toggleMenu(menuId, event) {
+    if (event) event.stopPropagation();
+    const menu = document.getElementById(menuId);
+    if (!menu) return;
 
-    if (!nameInput) {
-        alert("⚠️ Vui lòng nhập tên giải đấu!");
+    const isVisible = menu.classList.contains('show');
+    closeAllDropdowns();
+    if (!isVisible) {
+        menu.classList.add('show');
+    }
+}
+
+function closeAllDropdowns() {
+    document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
+}
+
+// Back/Forward Navigation Event Handler
+window.addEventListener('popstate', () => {
+    showTab('home');
+});
+
+/* ==========================================================================
+   1. MANAGE PICKLEBALL PLAYERS (PICK THỦ)
+   ========================================================================== */
+function renderPlayersList() {
+    const tbody = document.getElementById('player-table-body');
+    if (!tbody) return;
+
+    if (!window.players || window.players.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">Chưa có VĐV nào trong hệ thống.</td></tr>`;
         return;
     }
 
-    const newTourney = {
-        id: 'mg_' + Date.now(),
-        name: nameInput,
-        type: typeInput,
-        createdAt: new Date().toISOString()
-    };
+    tbody.innerHTML = window.players.map((p, idx) => `
+        <tr class="hover:bg-slate-50 transition">
+            <td class="p-2 border text-center font-bold text-slate-500">${idx + 1}</td>
+            <td class="p-2 border font-semibold text-slate-800">${p.name}</td>
+            <td class="p-2 border text-center">
+                <span class="px-2 py-0.5 text-xs font-bold rounded-full ${p.gender === 'Nữ' ? 'bg-pink-100 text-pink-700' : 'bg-blue-100 text-blue-700'}">
+                    ${p.gender}
+                </span>
+            </td>
+            <td class="p-2 border text-center">
+                <div class="flex items-center justify-center gap-2">
+                    <button onclick="editPlayer(${p.id})" class="text-blue-600 hover:text-blue-800 p-1 font-bold text-xs">
+                        <i class="fa-solid fa-pen"></i> Sửa
+                    </button>
+                    <button onclick="deletePlayer(${p.id})" class="text-red-500 hover:text-red-700 p-1 font-bold text-xs">
+                        <i class="fa-solid fa-trash"></i> Xóa
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
 
-    window.createdMinigames.push(newTourney);
-    localStorage.setItem('pb_created_minigames', JSON.stringify(window.createdMinigames));
+function openPlayerModal(player = null) {
+    const modal = document.getElementById('player-modal');
+    if (!modal) return;
 
-    window.currentBracketMinigameId = newTourney.id;
-    localStorage.setItem('pb_current_bracket_mg_id', newTourney.id);
-    showTab('minigame2');
-    renderM2();
+    if (player) {
+        document.getElementById('modal-title').innerText = "Chỉnh Sửa Pick Thủ";
+        document.getElementById('player-id').value = player.id;
+        document.getElementById('player-name').value = player.name;
+        document.getElementById('player-gender').value = player.gender || 'Nam';
+    } else {
+        document.getElementById('modal-title').innerText = "Thêm Pick Thủ Mới";
+        document.getElementById('player-id').value = '';
+        document.getElementById('player-name').value = '';
+        document.getElementById('player-gender').value = 'Nam';
+    }
+    modal.classList.remove('hidden');
+}
 
-    renderDynamicMinigameDropdowns();
+function closePlayerModal() {
+    const modal = document.getElementById('player-modal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function savePlayer() {
+    const id = document.getElementById('player-id').value;
+    const name = document.getElementById('player-name').value.trim();
+    const gender = document.getElementById('player-gender').value;
+
+    if (!name) {
+        alert("⚠️ Vui lòng nhập tên Pick Thủ!");
+        return;
+    }
+
+    if (id) {
+        const idx = window.players.findIndex(p => p.id == id);
+        if (idx !== -1) {
+            window.players[idx].name = name;
+            window.players[idx].gender = gender;
+        }
+    } else {
+        const newId = Date.now();
+        window.players.push({ id: newId, name, gender });
+    }
+
+    savePlayersToStorage();
+    closePlayerModal();
+    renderPlayersList();
+    refreshAllViews();
+}
+
+function editPlayer(id) {
+    const player = window.players.find(p => p.id == id);
+    if (player) openPlayerModal(player);
+}
+
+function deletePlayer(id) {
+    if (confirm(" Bạn có chắc chắn muốn xóa Pick Thủ này khỏi danh sách CLB?")) {
+        window.players = window.players.filter(p => p.id != id);
+        savePlayersToStorage();
+        renderPlayersList();
+        refreshAllViews();
+    }
+}
+
+function savePlayersToStorage() {
+    localStorage.setItem('pb_players_list', JSON.stringify(window.players));
     autoBackupData();
     if (window.syncToFirebase) window.syncToFirebase();
-    alert(`🎉 Đã khởi tạo thành công Giải đấu: ${newTourney.name}!`);
 }
 
-function renderDynamicMinigameDropdowns() {
-    const containerBracket = document.getElementById('nav-m2-dropdown-list');
-    const bracketList = window.createdMinigames.filter(m => m.type === 'bracket');
-    const currentBracketMg = bracketList.find(m => m.id === window.currentBracketMinigameId) || bracketList[0];
+/* ==========================================================================
+   2. MINIGAME TEAM A & B MANAGEMENT
+   ========================================================================== */
+function renderMinigame1() {
+    renderTeamMembers('A');
+    renderTeamMembers('B');
+    renderM1Schedule();
+    renderM1KeoSummary();
+}
 
-    if (currentBracketMg) {
-        window.currentBracketMinigameId = currentBracketMg.id;
-        const el = document.getElementById('current-m2-tourney-name');
-        if(el) el.innerText = currentBracketMg.name;
+function renameTournament() {
+    const currentName = window.minigameTeamData.tourneyName || "MINIGAME TEAM A & B";
+    const newName = prompt("Nhập tên mới cho Giải Minigame Team:", currentName);
+    if (newName && newName.trim() !== "") {
+        window.minigameTeamData.tourneyName = newName.trim();
+        document.getElementById('current-tourney-name').innerText = newName.trim();
+        saveM1ToStorage();
     }
+}
 
-    if (containerBracket) {
-        containerBracket.innerHTML = bracketList.map(mg => `
-            <div class="dropdown-item ${mg.id === window.currentBracketMinigameId ? 'bg-emerald-100 font-bold text-emerald-900' : ''}" onclick="selectMinigameActive('${mg.id}', 'bracket')">
-                <span class="truncate flex items-center gap-1.5"><i class="fa-solid fa-diagram-project text-emerald-600"></i> ${mg.name}</span>
-                <div class="flex items-center gap-1">
-                    <button onclick="renameMinigameById('${mg.id}', event)" class="text-blue-600 hover:text-blue-800 p-1" title="Sửa tên"><i class="fa-solid fa-pen"></i></button>
-                    ${bracketList.length > 1 ? `<button onclick="deleteMinigameById('${mg.id}', event)" class="text-red-500 hover:text-red-700 p-1" title="Xóa giải"><i class="fa-solid fa-trash"></i></button>` : ''}
-                </div>
+function renderTeamMembers(team) {
+    const listEl = document.getElementById(`team-${team}-list`);
+    const countEl = document.getElementById(`team-${team}-count`);
+    if (!listEl) return;
+
+    const memberArray = team === 'A' ? window.minigameTeamData.teamA : window.minigameTeamData.teamB;
+    if (countEl) countEl.innerText = memberArray.length;
+
+    listEl.innerHTML = memberArray.map((name, idx) => `
+        <div class="flex items-center justify-between p-2 bg-white border rounded-lg shadow-sm">
+            <span class="font-bold text-xs text-slate-800">${idx + 1}. ${name}</span>
+            <div class="flex items-center gap-1">
+                <button onclick="openTeamEditModal('${team}', ${idx})" class="text-blue-600 hover:text-blue-800 text-xs px-1.5 py-0.5 font-bold"><i class="fa-solid fa-pen"></i></button>
+                <button onclick="removeTeamMember('${team}', ${idx})" class="text-red-500 hover:text-red-700 text-xs px-1.5 py-0.5 font-bold"><i class="fa-solid fa-trash"></i></button>
             </div>
-        `).join('');
+        </div>
+    `).join('');
+}
+
+function addTeamMember(team) {
+    const name = prompt(`Nhập tên VĐV mới cho Team ${team}:`);
+    if (name && name.trim() !== '') {
+        if (team === 'A') window.minigameTeamData.teamA.push(name.trim());
+        else window.minigameTeamData.teamB.push(name.trim());
+
+        saveM1ToStorage();
+        renderMinigame1();
     }
 }
 
-function selectMinigameActive(id, type) {
-    closeAllDropdowns();
-    window.currentBracketMinigameId = id;
-    localStorage.setItem('pb_current_bracket_mg_id', id);
-    showTab('minigame2');
-    renderM2();
-    renderDynamicMinigameDropdowns();
-}
+function removeTeamMember(team, idx) {
+    if (confirm(" Xóa VĐV này khỏi Team?")) {
+        if (team === 'A') window.minigameTeamData.teamA.splice(idx, 1);
+        else window.minigameTeamData.teamB.splice(idx, 1);
 
-function renameCurrentMinigame(type) {
-    renameMinigameById(window.currentBracketMinigameId);
-}
-
-function renameMinigameById(id, e) {
-    if(e) e.stopPropagation();
-    closeAllDropdowns();
-    const mg = window.createdMinigames.find(item => item.id === id);
-    if (mg) {
-        const newName = prompt(`Nhập tên mới cho giải "${mg.name}":`, mg.name);
-        if (newName && newName.trim() !== '' && newName !== mg.name) {
-            mg.name = newName.trim();
-            localStorage.setItem('pb_created_minigames', JSON.stringify(window.createdMinigames));
-            renderDynamicMinigameDropdowns();
-            autoBackupData();
-            if (window.syncToFirebase) window.syncToFirebase();
-        }
+        saveM1ToStorage();
+        renderMinigame1();
     }
 }
 
-function deleteMinigameById(id, e) {
-    if(e) e.stopPropagation();
-    closeAllDropdowns();
-    const mg = window.createdMinigames.find(item => item.id === id);
-    if (mg && confirm(`Bạn có chắc chắn muốn XÓA giải đấu "${mg.name}"?`)) {
-        window.createdMinigames = window.createdMinigames.filter(item => item.id !== id);
-        localStorage.setItem('pb_created_minigames', JSON.stringify(window.createdMinigames));
+function openTeamEditModal(team, idx) {
+    const modal = document.getElementById('team-edit-modal');
+    if (!modal) return;
+    const name = team === 'A' ? window.minigameTeamData.teamA[idx] : window.minigameTeamData.teamB[idx];
 
-        const remainingBracket = window.createdMinigames.filter(m => m.type === 'bracket');
-        if (remainingBracket.length > 0) window.currentBracketMinigameId = remainingBracket[0].id;
-
-        renderDynamicMinigameDropdowns();
-        refreshAllViews();
-        autoBackupData();
-        if (window.syncToFirebase) window.syncToFirebase();
-    }
+    document.getElementById('edit-team-group').value = team;
+    document.getElementById('edit-team-index').value = idx;
+    document.getElementById('edit-team-name-input').value = name;
+    modal.classList.remove('hidden');
 }
 
-window.players = JSON.parse(localStorage.getItem('pb_players_list')) || [
-    { id: 1, name: "Tiến Thọ", gender: "Nam" },
-    { id: 2, name: "Châu Sĩ", gender: "Nam" },
-    { id: 3, name: "Vân Đình", gender: "Nữ" },
-    { id: 4, name: "Ly", gender: "Nữ" },
-    { id: 5, name: "Phú Mỗ", gender: "Nam" },
-    { id: 6, name: "Hà Giấy", gender: "Nam" },
-    { id: 7, name: "Long Diễm", gender: "Nam" },
-    { id: 8, name: "Tuấn La", gender: "Nam" },
-    { id: 9, name: "Trí Đô", gender: "Nam" },
-    { id: 10, name: "Thành Sóc", gender: "Nam" },
-    { id: 11, name: "Quỳnh Cool", gender: "Nữ" },
-    { id: 12, name: "Hải Hà", gender: "Nữ" },
-    { id: 13, name: "Dũng Ngạc", gender: "Nam" },
-    { id: 14, name: "Lợi Trì", gender: "Nam" },
-    { id: 15, name: "Thành Đàm", gender: "Nam" },
-    { id: 16, name: "Điền Chèm", gender: "Nam" },
-    { id: 17, name: "Hạnh", gender: "Nữ" },
-    { id: 18, name: "Minh Vương", gender: "Nam" }
-];
-
-window.minigameTeamData = JSON.parse(localStorage.getItem('pb_minigame_team_standalone_data')) || {
-    tourneyName: "MINIGAME TEAM A & B",
-    teamA: ["Tiến Thọ", "Châu Sĩ", "Phú Mỗ", "Hà Giấy", "Long Diễm", "Tuấn La", "Vân Đình", "Ly", "Quỳnh Cool"],
-    teamB: ["Trí Đô", "Thành Sóc", "Dũng Ngạc", "Lợi Trì", "Thành Đàm", "Điền Chèm", "Hải Hà", "Hạnh", "Minh Vương"],
-    matches: [
-        { id: 1, luot: 1, san: 1, noidung: "Đôi Nam", a1: "Tiến Thọ", a2: "Châu Sĩ", scoreA: "", scoreB: "", b1: "Trí Đô", b2: "Thành Sóc", note: "" },
-        { id: 2, luot: 1, san: 2, noidung: "Đôi Nam", a1: "Phú Mỗ", a2: "Hà Giấy", scoreA: "", scoreB: "", b1: "Dũng Ngạc", b2: "Lợi Trì", note: "" },
-        { id: 3, luot: 1, san: 3, noidung: "Đôi Nam", a1: "Long Diễm", a2: "Tuấn La", scoreA: "", scoreB: "", b1: "Thành Đàm", b2: "Điền Chèm", note: "" },
-        { id: 4, luot: 2, san: 1, noidung: "Đôi Nam", a1: "Tiến Thọ", a2: "Phú Mỗ", scoreA: "", scoreB: "", b1: "Trí Đô", b2: "Dũng Ngạc", note: "" },
-        { id: 5, luot: 2, san: 2, noidung: "Đôi Nam", a1: "Châu Sĩ", a2: "Hà Giấy", scoreA: "", scoreB: "", b1: "Thành Sóc", b2: "Lợi Trì", note: "" },
-        { id: 6, luot: 2, san: 3, noidung: "Đôi Nam", a1: "Long Diễm", a2: "Hà Giấy", scoreA: "", scoreB: "", b1: "Thành Đàm", b2: "Dũng Ngạc", note: "" },
-        { id: 7, luot: 3, san: 1, noidung: "Đôi Nam", a1: "Tiến Thọ", a2: "Hà Giấy", scoreA: "", scoreB: "", b1: "Trí Đô", b2: "Lợi Trì", note: "" },
-        { id: 8, luot: 3, san: 2, noidung: "Đôi Nam", a1: "Châu Sĩ", a2: "Phú Mỗ", scoreA: "", scoreB: "", b1: "Thành Sóc", b2: "Dũng Ngạc", note: "" },
-        { id: 9, luot: 3, san: 3, noidung: "Đôi Nam", a1: "Tuấn La", a2: "Long Diễm", scoreA: "", scoreB: "", b1: "Minh Vương", b2: "Điền Chèm", note: "" },
-        { id: 10, luot: 4, san: 1, noidung: "Đôi Nữ", a1: "Vân Đình", a2: "Ly", scoreA: "", scoreB: "", b1: "Hải Hà", b2: "Hạnh", note: "" },
-        { id: 11, luot: 4, san: 2, noidung: "Đôi Nữ", a1: "Ly", a2: "Quỳnh Cool", scoreA: "", scoreB: "", b1: "Hạnh", b2: "Minh Vương", note: "" },
-        { id: 12, luot: 4, san: 3, noidung: "Đôi Nữ", a1: "Vân Đình", a2: "Quỳnh Cool", scoreA: "", scoreB: "", b1: "Hải Hà", b2: "Minh Vương", note: "" },
-        { id: 13, luot: 5, san: 1, noidung: "Đôi Nam Nam", a1: "Tiến Thọ", a2: "Tuấn La", scoreA: "", scoreB: "", b1: "Trí Đô", b2: "Minh Vương", note: "" },
-        { id: 14, luot: 5, san: 2, noidung: "Đôi Nam Nam", a1: "Châu Sĩ", a2: "Long Diễm", scoreA: "", scoreB: "", b1: "Thành Sóc", b2: "Điền Chèm", note: "" },
-        { id: 15, luot: 5, san: 3, noidung: "Đôi Nam Nam", a1: "Phú Mỗ", a2: "Hà Giấy", scoreA: "", scoreB: "", b1: "Dũng Ngạc", b2: "Thành Đàm", note: "" },
-        { id: 16, luot: 6, san: 1, noidung: "Đôi Nam Nữ", a1: "Tiến Thọ", a2: "Vân Đình", scoreA: "", scoreB: "", b1: "Trí Đô", b2: "Hải Hà", note: "" },
-        { id: 17, luot: 6, san: 2, noidung: "Đôi Nam Nữ", a1: "Châu Sĩ", a2: "Ly", scoreA: "", scoreB: "", b1: "Thành Sóc", b2: "Hạnh", note: "" },
-        { id: 18, luot: 6, san: 3, noidung: "Đôi Nam Nữ", a1: "Phú Mỗ", a2: "Quỳnh Cool", scoreA: "", scoreB: "", b1: "Dũng Ngạc", b2: "Minh Vương", note: "" },
-        { id: 19, luot: 7, san: 1, noidung: "Đôi Nam Nữ", a1: "Hà Giấy", a2: "Vân Đình", scoreA: "", scoreB: "", b1: "Lợi Trì", b2: "Hải Hà", note: "" },
-        { id: 20, luot: 7, san: 2, noidung: "Đôi Nam Nữ", a1: "Long Diễm", a2: "Ly", scoreA: "", scoreB: "", b1: "Thành Đàm", b2: "Hạnh", note: "" },
-        { id: 21, luot: 7, san: 3, noidung: "Đôi Nam Nữ", a1: "Tuấn La", a2: "Quỳnh Cool", scoreA: "", scoreB: "", b1: "Điền Chèm", b2: "Minh Vương", note: "" },
-        { id: 22, luot: 8, san: 1, noidung: "Đôi Nam Nữ", a1: "Tiến Thọ", a2: "Ly", scoreA: "", scoreB: "", b1: "Trí Đô", b2: "Hạnh", note: "" },
-        { id: 23, luot: 8, san: 2, noidung: "Đôi Nam Nữ", a1: "Châu Sĩ", a2: "Vân Đình", scoreA: "", scoreB: "", b1: "Thành Sóc", b2: "Hải Hà", note: "" },
-        { id: 24, luot: 8, san: 3, noidung: "Đôi Nam Nữ", a1: "Phú Mỗ", a2: "Quỳnh Cool", scoreA: "", scoreB: "", b1: "Dũng Ngạc", b2: "Minh Vương", note: "" }
-    ]
-};
-
-window.m2PairsA = [
-    { p1: "Tiến Thọ", p2: "Châu Sĩ" },
-    { p1: "Phú Mỗ", p2: "Hà Giấy" },
-    { p1: "Long Diễm", p2: "Tuấn La" },
-    { p1: "Vân Đình", p2: "Ly" }
-];
-
-window.m2PairsB = [
-    { p1: "Trí Đô", p2: "Thành Sóc" },
-    { p1: "Dũng Ngạc", p2: "Lợi Trì" },
-    { p1: "Thành Đàm", p2: "Điền Chèm" },
-    { p1: "Quỳnh Cool", p2: "Hải Hà" }
-];
-
-window.m2ScoresA = {};
-window.m2ScoresB = {};
-window.m2KeoState = { keoMode: 'default', customWin: 5, customLose: -15, payStatus: {}, btcOption: 'YES' };
-
-window.dates = ["1/10/26"];
-window.currentSelectedDate = "1/10/26";
-
-window.matchesData = {
-    "1/10/26": [
-        { id: 1, c1_p1: "Trí Đô", c1_p2: "Tiến Thọ", c2_p1: "Phú Mỗ", c2_p2: "Thành Đàm", score1: "8", score2: "11", keoMode: "default", customWin: 5, customLose: -15 },
-        { id: 2, c1_p1: "Phú Mỗ", c1_p2: "Thành Đàm", c2_p1: "Tiến Thọ", c2_p2: "Trí Đô", score1: "9", score2: "11", keoMode: "default", customWin: 5, customLose: -15 },
-        { id: 3, c1_p1: "Tiến Thọ", c1_p2: "Trí Đô", c2_p1: "Thành Đàm", c2_p2: "Long Diễm", score1: "11", score2: "5", keoMode: "default", customWin: 5, customLose: -15 }
-    ]
-};
-
-window.dateKeoMode = { "1/10/26": "default" };
-window.paymentStatus = {
-    "1/10/26_Vân Đình": true,
-    "1/10/26_Tiến Thọ": true,
-    "1/10/26": { btcNoteAdminOption: "YES" }
-};
-
-window.activeQuarterColumns = JSON.parse(localStorage.getItem('pb_active_quarter_cols')) || [
-    { id: "q1", title: "Tiền Sân Quý 1", statusTitle: "Trạng Thái Q1", defaultAmt: 800000, bgColor: "teal" }
-];
-
-window.initialFund = Number(localStorage.getItem('pb_initial_fund')) || 500000;
-
-const defaultFundIncomes = [
-    { id: 1, date: "2026-01-05", desc: "Thu tiền ủng hộ giao lưu", amount: 500000, source: "Khách vãng lai / Khác", note: "Chuyển khoản tài trợ" }
-];
-
-const defaultFundExpenses = [
-    { id: 1, date: "2026-01-02", desc: "Thanh toán tiền thuê sân Tháng 1", amount: 1200000, source: "Khách vãng lai / Khác", note: "Hóa đơn thanh toán tiền sân định kỳ" }
-];
-
-window.fundFeeStatus = JSON.parse(localStorage.getItem('pb_fee_status')) || {};
-window.fundIncomes = JSON.parse(localStorage.getItem('pb_incomes')) || defaultFundIncomes;
-window.fundExpenses = JSON.parse(localStorage.getItem('pb_expenses')) || defaultFundExpenses;
-window.autoIncomeNotes = JSON.parse(localStorage.getItem('pb_auto_income_notes')) || {};
-
-function getClosestDateToToday() {
-    if (!window.dates || window.dates.length === 0) return null;
-    if (window.dates.length === 1) return window.dates[0];
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    let closestDateStr = window.dates[0];
-    let minDiff = Infinity;
-
-    const parseDateString = (dStr) => {
-        if (!dStr) return new Date(0);
-        const parts = dStr.split('/');
-        if (parts.length === 3) {
-            let day = parseInt(parts[0], 10);
-            let month = parseInt(parts[1], 10) - 1;
-            let year = parseInt(parts[2], 10);
-            if (year < 100) year += 2000;
-            return new Date(year, month, day);
-        }
-        return new Date(dStr);
-    };
-
-    window.dates.forEach(dStr => {
-        const dObj = parseDateString(dStr);
-        const diff = Math.abs(dObj.getTime() - today.getTime());
-        if (diff < minDiff) {
-            minDiff = diff;
-            closestDateStr = dStr;
-        }
-    });
-
-    return closestDateStr;
+function closeTeamEditModal() {
+    const modal = document.getElementById('team-edit-modal');
+    if (modal) modal.classList.add('hidden');
 }
 
-function renderHomeClosestDateView() {
-    const container = document.getElementById('home-closest-date-container');
-    const titleEl = document.getElementById('home-closest-date-title');
-    if (!container) return;
+function saveTeamMemberEdit() {
+    const team = document.getElementById('edit-team-group').value;
+    const idx = parseInt(document.getElementById('edit-team-index').value);
+    const newName = document.getElementById('edit-team-name-input').value.trim();
 
-    const closestDate = getClosestDateToToday();
-    if (!closestDate) {
-        if(titleEl) titleEl.innerText = "Chưa có dữ liệu";
-        container.innerHTML = `<div class="p-6 text-center text-slate-400 bg-slate-55 rounded-xl">Chưa có ngày nào được tạo trong hệ thống.</div>`;
-        return;
-    }
+    if (!newName) return;
 
-    if(titleEl) titleEl.innerText = closestDate;
+    if (team === 'A') window.minigameTeamData.teamA[idx] = newName;
+    else window.minigameTeamData.teamB[idx] = newName;
 
-    const matches = window.matchesData[closestDate] || [];
+    saveM1ToStorage();
+    closeTeamEditModal();
+    renderMinigame1();
+}
 
-    let matchesTableRows = '';
-    let stats = {};
-    window.players.forEach(p => { stats[p.name] = { played: 0, winK: 0, loseK: 0, total: 0 }; });
+function renderM1Schedule() {
+    const tbody = document.getElementById('m1-schedule-body');
+    const countEl = document.getElementById('m1-match-count');
+    if (!tbody) return;
 
-    matches.forEach((m, idx) => {
-        const val1 = (m.score1 || "").toString().trim();
-        const val2 = (m.score2 || "").toString().trim();
-        const s1 = parseInt(val1);
-        const s2 = parseInt(val2);
+    const matches = window.minigameTeamData.matches || [];
+    if (countEl) countEl.innerText = matches.length;
 
-        let keo1 = "", keo2 = "";
-        const mMode = m.keoMode || window.dateKeoMode[closestDate] || 'default';
-        let winAmt = 5, loseAmt = -15;
+    tbody.innerHTML = matches.map((m, idx) => {
+        const sA = m.scoreA !== "" && m.scoreA !== undefined ? parseInt(m.scoreA) : null;
+        const sB = m.scoreB !== "" && m.scoreB !== undefined ? parseInt(m.scoreB) : null;
 
-        if (mMode === 'k0') { winAmt = 0; loseAmt = 0; }
-        else if (mMode === 'k25') { winAmt = 0; loseAmt = -25; }
-        else if (mMode === 'free') {
-            winAmt = parseFloat(m.customWin) || 0;
-            loseAmt = parseFloat(m.customLose) || 0;
-            if (loseAmt > 0) loseAmt = -loseAmt;
-        }
+        let winner = "---";
+        let diffText = "0";
+        let pointsA = 0;
+        let pointsB = 0;
+        let statusTag = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-500">Chưa đấu</span>`;
 
-        if(!isNaN(s1) && !isNaN(s2)) {
-            let isHam = (s1 === 0 || s2 === 0);
-            let effWin = isHam ? (winAmt > 0 ? winAmt * 2 : 0) : winAmt;
-            let effLose = isHam ? loseAmt * 2 : loseAmt;
+        if (sA !== null && sB !== null && !isNaN(sA) && !isNaN(sB)) {
+            const diff = sA - sB;
+            diffText = diff > 0 ? `+${diff}` : `${diff}`;
 
-            if(s1 > s2) { keo1 = effWin; keo2 = effLose; }
-            else if(s2 > s1) { keo1 = effLose; keo2 = effWin; }
-            else { keo1 = 0; keo2 = 0; }
-
-            const pair1 = [m.c1_p1, m.c1_p2].filter(Boolean);
-            const pair2 = [m.c2_p1, m.c2_p2].filter(Boolean);
-
-            if(s1 > s2) {
-                pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].winK += effWin; stats[v].total += effWin; } });
-                pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].loseK += effLose; stats[v].total += effLose; } });
-            } else if(s2 > s1) {
-                pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].winK += effWin; stats[v].total += effWin; } });
-                pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].loseK += effLose; stats[v].total += effLose; } });
+            if (sA > sB) {
+                winner = "Đội A";
+                pointsA = 1;
+                statusTag = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700">A Thắng</span>`;
+            } else if (sB > sA) {
+                winner = "Đội B";
+                pointsB = 1;
+                statusTag = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-700">B Thắng</span>`;
+            } else {
+                winner = "Hòa";
+                statusTag = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-700">Hòa</span>`;
             }
         }
 
-        const buildPlayerSelectHome = (val, field) => {
-            let opts = `<option value="">-- Chọn Pick --</option>`;
-            window.players.forEach(p => {
-                opts += `<option value="${p.name}" ${p.name === val ? 'selected' : ''}>${p.name}</option>`;
-            });
-            return `<select onchange="updateMatchDataForDate('${closestDate}', ${idx}, '${field}', this.value)" class="player-select-btn text-[11px] border rounded p-1 outline-none w-full bg-white shadow-sm">${opts}</select>`;
-        };
-
-        const isHam1 = (val1 === "0" || s1 === 0);
-        const isHam2 = (val2 === "0" || s2 === 0);
-
-        const score1Inner = isHam1 ? `<span class="ham-text">HẦM</span>` : `<input type="text" class="score-input" value="${m.score1 || ''}" onchange="updateMatchDataForDate('${closestDate}',${idx}, 'score1', this.value)">`;
-        const score2Inner = isHam2 ? `<span class="ham-text">HẦM</span>` : `<input type="text" class="score-input" value="${m.score2 || ''}" onchange="updateMatchDataForDate('${closestDate}',${idx}, 'score2', this.value)">`;
-
-        let keoCellUI = `
-            <select onchange="updateMatchKeoModeForDate('${closestDate}',${idx}, this.value)" class="text-[10px] sm:text-[11px] font-bold p-0.5 border rounded bg-amber-50 outline-none w-full text-amber-900 border-amber-300">
-                <option value="default" ${mMode==='default'?'selected':''}>Kèo (+5k/-15k)</option>
-                <option value="k25" ${mMode==='k25'?'selected':''}>Kèo 25k (0k/-25k)</option>
-                <option value="k0" ${mMode==='k0'?'selected':''}>Kèo 0K (0k/0k)</option>
-                <option value="free" ${mMode==='free'?'selected':''}>Kèo Tự Do</option>
-            </select>
-        `;
-
-        if (mMode === 'free') {
-            keoCellUI += `
-                <div class="flex items-center justify-center gap-1 mt-1">
-                    <span class="text-[10px] text-emerald-700 font-bold">+</span>
-                    <input type="number" class="keo-custom-input text-emerald-700" value="${m.customWin !== undefined ? m.customWin : 5}" onchange="updateMatchDataForDate('${closestDate}',${idx}, 'customWin', this.value)" title="Tiền thắng">
-                    <span class="text-[10px] text-red-600 font-bold">/</span>
-                    <input type="number" class="keo-custom-input text-red-600" value="${m.customLose !== undefined ? m.customLose : -15}" onchange="updateMatchDataForDate('${closestDate}',${idx}, 'customLose', this.value)" title="Tiền thua">
-                </div>
-            `;
-        }
-
-        matchesTableRows += `
-            <tr class="hover:bg-slate-50 text-center">
-                <td class="font-bold text-slate-700 whitespace-nowrap px-1">Trận ${idx + 1}</td>
-                <td class="p-1">${buildPlayerSelectHome(m.c1_p1, 'c1_p1')}</td>
-                <td class="p-1">${buildPlayerSelectHome(m.c1_p2, 'c1_p2')}</td>
-                <td class="p-1 bg-purple-50/40 border-x border-purple-200">
-                    <div class="flex items-center justify-center gap-0.5">
-                        <div onclick="if(${isHam1}) updateMatchDataForDate('${closestDate}', ${idx}, 'score1', '')">${score1Inner}</div>
-                        <span class="font-black text-slate-400 px-0.5">-</span>
-                        <div onclick="if(${isHam2}) updateMatchDataForDate('${closestDate}', ${idx}, 'score2', '')">${score2Inner}</div>
-                    </div>
+        return `
+            <tr>
+                <td class="text-center font-bold text-slate-600">${idx + 1}</td>
+                <td class="text-center font-bold">${m.luot}</td>
+                <td class="text-center font-bold">${m.san}</td>
+                <td class="text-center font-semibold text-slate-700">${m.noidung}</td>
+                <td class="player-cell">${generatePlayerSelectHTML('m1', idx, 'a1', m.a1, window.minigameTeamData.teamA)}</td>
+                <td class="player-cell">${generatePlayerSelectHTML('m1', idx, 'a2', m.a2, window.minigameTeamData.teamA)}</td>
+                <td class="text-center">
+                    <input type="number" class="score-input" value="${m.scoreA !== undefined ? m.scoreA : ''}" onchange="updateM1Score(${idx}, 'scoreA', this.value)">
                 </td>
-                <td class="p-1">${buildPlayerSelectHome(m.c2_p1, 'c2_p1')}</td>
-                <td class="p-1">${buildPlayerSelectHome(m.c2_p2, 'c2_p2')}</td>
-                <td class="p-1 bg-amber-50/50">${keoCellUI}</td>
-                <td class="p-1 font-extrabold ${keo1 > 0 ? 'txt-win' : (keo1 < 0 ? 'txt-lose' : '')}">${keo1 !== '' ? keo1 + 'K' : '---'}</td>
-                <td class="p-1 font-extrabold ${keo2 > 0 ? 'txt-win' : (keo2 < 0 ? 'txt-lose' : '')}">${keo2 !== '' ? keo2 + 'K' : '---'}</td>
-                <td class="p-1 text-center whitespace-nowrap">
-                    <button onclick="deleteMatchFromDate('${closestDate}',${idx})" class="text-slate-400 hover:text-red-600 font-bold p-1 transition-colors" title="Xóa trận đấu">
-                        <i class="fa-solid fa-trash-can text-sm"></i>
-                    </button>
+                <td class="text-center font-black text-slate-400">VS</td>
+                <td class="text-center">
+                    <input type="number" class="score-input" value="${m.scoreB !== undefined ? m.scoreB : ''}" onchange="updateM1Score(${idx}, 'scoreB', this.value)">
+                </td>
+                <td class="player-cell">${generatePlayerSelectHTML('m1', idx, 'b1', m.b1, window.minigameTeamData.teamB)}</td>
+                <td class="player-cell">${generatePlayerSelectHTML('m1', idx, 'b2', m.b2, window.minigameTeamData.teamB)}</td>
+                <td class="text-center font-bold ${winner === 'Đội A' ? 'text-blue-600' : winner === 'Đội B' ? 'text-orange-600' : 'text-slate-500'}">${winner}</td>
+                <td class="text-center font-bold">${diffText}</td>
+                <td class="text-center font-bold text-blue-700">${pointsA}</td>
+                <td class="text-center font-bold text-orange-700">${pointsB}</td>
+                <td class="text-center">${statusTag}</td>
+                <td class="text-center">
+                    <button onclick="deleteM1Match(${idx})" class="text-red-500 hover:text-red-700 font-bold p-1"><i class="fa-solid fa-trash"></i></button>
                 </td>
             </tr>
         `;
+    }).join('');
+}
+
+function generatePlayerSelectHTML(type, matchIdx, field, currentValue, optionsList) {
+    const list = optionsList && optionsList.length > 0 ? optionsList : window.players.map(p => p.name);
+    return `
+        <select onchange="updateMatchPlayer('${type}', ${matchIdx}, '${field}', this.value)" class="player-select-btn bg-slate-50 border rounded px-1 py-0.5 text-xs font-bold text-blue-900 outline-none w-full">
+            <option value="">-- Chọn --</option>
+            ${list.map(p => {
+                const pName = typeof p === 'object' ? p.name : p;
+                return `<option value="${pName}" ${pName === currentValue ? 'selected' : ''}>${pName}</option>`;
+            }).join('')}
+        </select>
+    `;
+}
+
+function updateMatchPlayer(type, matchIdx, field, val) {
+    if (type === 'm1') {
+        window.minigameTeamData.matches[matchIdx][field] = val;
+        saveM1ToStorage();
+    }
+}
+
+function updateM1Score(matchIdx, field, val) {
+    window.minigameTeamData.matches[matchIdx][field] = val === "" ? "" : parseInt(val);
+    saveM1ToStorage();
+    renderM1Schedule();
+    renderM1KeoSummary();
+}
+
+function addM1Match() {
+    const matches = window.minigameTeamData.matches || [];
+    const newMatch = {
+        id: matches.length + 1,
+        luot: Math.floor(matches.length / 3) + 1,
+        san: (matches.length % 3) + 1,
+        noidung: "Đôi Nam",
+        a1: window.minigameTeamData.teamA[0] || "",
+        a2: window.minigameTeamData.teamA[1] || "",
+        scoreA: "",
+        scoreB: "",
+        b1: window.minigameTeamData.teamB[0] || "",
+        b2: window.minigameTeamData.teamB[1] || "",
+        note: ""
+    };
+
+    window.minigameTeamData.matches.push(newMatch);
+    saveM1ToStorage();
+    renderM1Schedule();
+}
+
+function deleteM1Match(idx) {
+    if (confirm(" Xóa trận đấu này khỏi lịch?")) {
+        window.minigameTeamData.matches.splice(idx, 1);
+        saveM1ToStorage();
+        renderM1Schedule();
+        renderM1KeoSummary();
+    }
+}
+
+function checkM1AdminPassword() {
+    const pass = document.getElementById('m1-admin-pass-input').value;
+    if (pass === window.ADMIN_PASSWORD) {
+        window.isAdminUnlocked = true;
+        const badge = document.getElementById('m1-admin-status-badge');
+        if (badge) badge.innerHTML = `<i class="fa-solid fa-lock-open text-emerald-600"></i> Đã Mở Khóa Admin:`;
+        alert("🔑 Xác thực Admin thành công!");
+        renderM1KeoSummary();
+    } else {
+        alert("❌ Mật khẩu không đúng!");
+    }
+}
+
+function setM1KeoMode(mode) {
+    window.minigameTeamData.keoMode = mode;
+    const customBox = document.getElementById('m1-keo-custom-box');
+    if (customBox) {
+        if (mode === 'free') customBox.classList.remove('hidden');
+        else customBox.classList.add('hidden');
+    }
+    saveM1ToStorage();
+    renderM1KeoSummary();
+}
+
+function setM1CustomKeo() {
+    const win = parseInt(document.getElementById('m1-keo-custom-win').value) || 0;
+    const lose = parseInt(document.getElementById('m1-keo-custom-lose').value) || 0;
+    window.minigameTeamData.customWin = win;
+    window.minigameTeamData.customLose = lose;
+    saveM1ToStorage();
+    renderM1KeoSummary();
+}
+
+function renderM1KeoSummary() {
+    const tbody = document.getElementById('m1-keo-summary-body');
+    if (!tbody) return;
+
+    const mode = window.minigameTeamData.keoMode || 'default';
+    const matches = window.minigameTeamData.matches || [];
+    const allPlayers = [...new Set([...window.minigameTeamData.teamA, ...window.minigameTeamData.teamB])];
+
+    let playerStats = {};
+    allPlayers.forEach(p => {
+        playerStats[p] = { matchesCount: 0, winCount: 0, loseCount: 0, totalMoney: 0, paid: false };
     });
 
-    if(!matchesTableRows) {
-        matchesTableRows = `<tr><td colspan="10" class="p-4 text-center text-slate-400">Chưa có trận đấu nào được tạo trong ngày này.</td></tr>`;
+    matches.forEach(m => {
+        const sA = parseInt(m.scoreA);
+        const sB = parseInt(m.scoreB);
+        if (isNaN(sA) || isNaN(sB)) return;
+
+        let winVal = 5000;
+        let loseVal = -15000;
+
+        if (mode === 'k25') { winVal = 0; loseVal = -25000; }
+        else if (mode === 'k0') { winVal = 0; loseVal = 0; }
+        else if (mode === 'free') {
+            winVal = window.minigameTeamData.customWin || 0;
+            loseVal = -(window.minigameTeamData.customLose || 0);
+        }
+
+        // Tỷ số 0 = HẦM (Nhân đôi tiền thua)
+        let isHamA = (sA === 0);
+        let isHamB = (sB === 0);
+
+        const playersA = [m.a1, m.a2];
+        const playersB = [m.b1, m.b2];
+
+        playersA.forEach(p => {
+            if (p && playerStats[p]) {
+                playerStats[p].matchesCount++;
+                if (sA > sB) {
+                    playerStats[p].winCount++;
+                    playerStats[p].totalMoney += winVal;
+                } else if (sB > sA) {
+                    playerStats[p].loseCount++;
+                    playerStats[p].totalMoney += isHamA ? loseVal * 2 : loseVal;
+                }
+            }
+        });
+
+        playersB.forEach(p => {
+            if (p && playerStats[p]) {
+                playerStats[p].matchesCount++;
+                if (sB > sA) {
+                    playerStats[p].winCount++;
+                    playerStats[p].totalMoney += winVal;
+                } else if (sA > sB) {
+                    playerStats[p].loseCount++;
+                    playerStats[p].totalMoney += isHamB ? loseVal * 2 : loseVal;
+                }
+            }
+        });
+    });
+
+    tbody.innerHTML = allPlayers.map(pName => {
+        const stat = playerStats[pName];
+        const formattedMoney = stat.totalMoney.toLocaleString('vi-VN') + " ₫";
+        const moneyClass = stat.totalMoney >= 0 ? 'txt-win' : 'txt-lose';
+
+        return `
+            <tr>
+                <td class="p-2 border text-left pl-3 font-bold text-slate-800">${pName}</td>
+                <td class="p-2 border font-bold">${stat.matchesCount}</td>
+                <td class="p-2 border text-emerald-600 font-bold">${stat.winCount}</td>
+                <td class="p-2 border text-red-600 font-bold">${stat.loseCount}</td>
+                <td class="p-2 border font-bold ${moneyClass}">${formattedMoney}</td>
+                <td class="p-2 border font-bold ${moneyClass}">${formattedMoney}</td>
+                <td class="p-2 border bg-amber-50">
+                    <input type="checkbox" ${stat.paid ? 'checked' : ''} ${window.isAdminUnlocked ? '' : 'disabled'} onchange="toggleM1PlayerPaid('${pName}', this.checked)" class="w-4 h-4 accent-emerald-600 cursor-pointer">
+                </td>
+                <td class="p-2 border font-bold ${stat.paid ? 'note-paid' : 'note-unpaid'}">${stat.paid ? 'ĐÃ NỘP' : 'CHƯA NỘP'}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function toggleM1PlayerPaid(pName, isChecked) {
+    if (!window.minigameTeamData.paidStatus) window.minigameTeamData.paidStatus = {};
+    window.minigameTeamData.paidStatus[pName] = isChecked;
+    saveM1ToStorage();
+    renderM1KeoSummary();
+}
+
+function saveM1ToStorage() {
+    localStorage.setItem('pb_minigame_team_standalone_data', JSON.stringify(window.minigameTeamData));
+    autoBackupData();
+    if (window.syncToFirebase) window.syncToFirebase();
+}
+
+function exportToExcelTeam() {
+    if (typeof XLSX === 'undefined') {
+        alert("⚠️ Thư viện XLSX chưa tải xong!");
+        return;
+    }
+    const matches = window.minigameTeamData.matches || [];
+    const sheetData = matches.map((m, idx) => ({
+        "STT": idx + 1,
+        "Lượt": m.luot,
+        "Sân": m.san,
+        "Nội dung": m.noidung,
+        "Đội A - VĐV 1": m.a1,
+        "Đội A - VĐV 2": m.a2,
+        "Tỷ số A": m.scoreA,
+        "Tỷ số B": m.scoreB,
+        "Đội B - VĐV 1": m.b1,
+        "Đội B - VĐV 2": m.b2
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(sheetData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Minigame Team A-B");
+    XLSX.writeFile(wb, `Minigame_Team_AB_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+/* ==========================================================================
+   3. MINIGAME BẢNG & VÒNG TRÒN (MINIGAME 2)
+   ========================================================================== */
+window.m2Data = JSON.parse(localStorage.getItem('pb_m2_bracket_data')) || {
+    pairsA: [{ id: 1, p1: "Tiến Thọ", p2: "Châu Sĩ" }, { id: 2, p1: "Phú Mỗ", p2: "Hà Giấy" }],
+    pairsB: [{ id: 3, p1: "Trí Đô", p2: "Thành Sóc" }, { id: 4, p1: "Dũng Ngạc", p2: "Lợi Trì" }],
+    scheduleA: [],
+    scheduleB: [],
+    knockout: { bk1: { s1: '', s2: '' }, bk2: { s1: '', s2: '' }, t3: { s1: '', s2: '' }, ck: { s1: '', s2: '' } }
+};
+
+function renderM2() {
+    renderM2Pairs('A');
+    renderM2Pairs('B');
+    renderM2ScheduleAndRank('A');
+    renderM2ScheduleAndRank('B');
+    renderM2Knockout();
+    renderM2KeoSummary();
+}
+
+function renderM2Pairs(group) {
+    const container = document.getElementById(`m2-pairs-${group}`);
+    const countEl = document.getElementById(`count-m2-${group}`);
+    if (!container) return;
+
+    const list = group === 'A' ? window.m2Data.pairsA : window.m2Data.pairsB;
+    if (countEl) countEl.innerText = list.length;
+
+    container.innerHTML = list.map((item, idx) => `
+        <div class="flex items-center justify-between p-2 bg-white border rounded shadow-sm text-xs">
+            <span class="font-bold text-slate-800">Cặp ${idx + 1}: ${item.p1} & ${item.p2}</span>
+            <div class="flex items-center gap-1">
+                <button onclick="openM2EditModal('${group}', ${idx})" class="text-blue-600 hover:text-blue-800 p-1 font-bold"><i class="fa-solid fa-pen"></i></button>
+                <button onclick="deleteM2Pair('${group}', ${idx})" class="text-red-500 hover:text-red-700 p-1 font-bold"><i class="fa-solid fa-trash"></i></button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function addPairM2(group) {
+    const p1 = prompt(`Nhập tên VĐV 1 Cặp Bảng ${group}:`);
+    if (!p1) return;
+    const p2 = prompt(`Nhập tên VĐV 2 Cặp Bảng ${group}:`);
+    if (!p2) return;
+
+    const newPair = { id: Date.now(), p1: p1.trim(), p2: p2.trim() };
+    if (group === 'A') window.m2Data.pairsA.push(newPair);
+    else window.m2Data.pairsB.push(newPair);
+
+    saveM2ToStorage();
+    renderM2();
+}
+
+function openM2EditModal(group, idx) {
+    const modal = document.getElementById('m2-edit-modal');
+    if (!modal) return;
+
+    const item = group === 'A' ? window.m2Data.pairsA[idx] : window.m2Data.pairsB[idx];
+    document.getElementById('m2-edit-group').value = group;
+    document.getElementById('m2-edit-index').value = idx;
+    document.getElementById('m2-p1-input').value = item.p1;
+    document.getElementById('m2-p2-input').value = item.p2;
+
+    modal.classList.remove('hidden');
+}
+
+function closeM2EditModal() {
+    const modal = document.getElementById('m2-edit-modal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function saveM2PairEdit() {
+    const group = document.getElementById('m2-edit-group').value;
+    const idx = parseInt(document.getElementById('m2-edit-index').value);
+    const p1 = document.getElementById('m2-p1-input').value.trim();
+    const p2 = document.getElementById('m2-p2-input').value.trim();
+
+    if (!p1 || !p2) return;
+
+    if (group === 'A') {
+        window.m2Data.pairsA[idx].p1 = p1;
+        window.m2Data.pairsA[idx].p2 = p2;
+    } else {
+        window.m2Data.pairsB[idx].p1 = p1;
+        window.m2Data.pairsB[idx].p2 = p2;
     }
 
-    let summaryRows = '';
-    let sumBringBack = 0, sumThucThu = 0, sumAmThucTe = 0;
+    saveM2ToStorage();
+    closeM2EditModal();
+    renderM2();
+}
 
-    window.players.forEach(p => {
-        const st = stats[p.name];
-        if(st.played > 0) {
-            const payKey = `${closestDate}_${p.name}`;
-            const isPaid = window.paymentStatus[payKey] || false;
+function deleteM2Pair(group, idx) {
+    if (confirm(" Xóa cặp đấu này?")) {
+        if (group === 'A') window.m2Data.pairsA.splice(idx, 1);
+        else window.m2Data.pairsB.splice(idx, 1);
 
-            let bringBack = 0;
-            if(st.played >= 4 && st.total > 0) { bringBack = st.total; sumBringBack += bringBack; }
-            if(st.total < 0) { sumAmThucTe += st.total; if(isPaid) sumThucThu += Math.abs(st.total); }
+        saveM2ToStorage();
+        renderM2();
+    }
+}
 
-            let noteText = "";
-            if(st.total < 0) {
-                noteText = isPaid ? `<span class="note-paid"><i class="fa-solid fa-check"></i> Đã nộp</span>` : `<span class="note-unpaid"><i class="fa-solid fa-xmark"></i> Chưa nộp</span>`;
-            } else if(st.total > 0) {
-                noteText = isPaid ? `<span class="note-paid"><i class="fa-solid fa-check"></i> Đã nhận</span>` : `<span class="note-unpaid"><i class="fa-solid fa-clock"></i> Chưa nhận</span>`;
+function renderM2ScheduleAndRank(group) {
+    const scheduleBody = document.getElementById(`m2-schedule-${group}`);
+    const rankBody = document.getElementById(`m2-rank-${group}`);
+    if (!scheduleBody || !rankBody) return;
+
+    const pairs = group === 'A' ? window.m2Data.pairsA : window.m2Data.pairsB;
+    let schedule = group === 'A' ? window.m2Data.scheduleA : window.m2Data.scheduleB;
+
+    // Tự động sinh lịch xoay vòng nếu số cặp thay đổi
+    if (!schedule || schedule.length === 0) {
+        schedule = [];
+        let mIdx = 1;
+        for (let i = 0; i < pairs.length; i++) {
+            for (let j = i + 1; j < pairs.length; j++) {
+                schedule.push({
+                    id: mIdx++,
+                    team1Idx: i,
+                    team2Idx: j,
+                    s1: '',
+                    s2: ''
+                });
             }
+        }
+        if (group === 'A') window.m2Data.scheduleA = schedule;
+        else window.m2Data.scheduleB = schedule;
+    }
 
-            const disabledAttr = window.isAdminUnlocked ? '' : 'disabled title="Cần mật khẩu Admin để sửa"';
+    // Compute Rankings
+    let ranks = pairs.map((p, idx) => ({ idx, name: `${p.p1} & ${p.p2}`, points: 0, diff: 0, win: 0 }));
 
-            summaryRows += `
-                <tr class="hover:bg-slate-50 text-center">
-                    <td class="p-2 border text-left pl-3"><span class="player-tag">${p.name}</span></td>
-                    <td class="p-2 border">${st.played}</td>
-                    <td class="p-2 border txt-win">${st.winK > 0 ? '+' + st.winK + 'K' : ''}</td>
-                    <td class="p-2 border txt-lose">${st.loseK < 0 ? st.loseK + 'K' : ''}</td>
-                    <td class="p-2 border text-blue-600 font-bold">${bringBack > 0 ? '+' + bringBack + 'K' : ''}</td>
-                    <td class="p-2 border font-extrabold ${st.total < 0 ? 'txt-lose' : (st.total > 0 ? 'txt-win' : '')}">${st.total !== 0 ? (st.total > 0 ? '+' + st.total + 'K' : st.total + 'K') : '0K'}</td>
-                    <td class="p-2 border bg-amber-50/30">
-                        <input type="checkbox" ${isPaid ? 'checked' : ''} ${disabledAttr} onclick="togglePaymentStatus('${payKey}')" class="w-4 h-4 cursor-pointer accent-emerald-600">
-                    </td>
-                    <td class="p-2 border">${noteText}</td>
-                </tr>
-            `;
+    scheduleBody.innerHTML = schedule.map((m, idx) => {
+        const team1 = pairs[m.team1Idx] ? `${pairs[m.team1Idx].p1} & ${pairs[m.team1Idx].p2}` : 'N/A';
+        const team2 = pairs[m.team2Idx] ? `${pairs[m.team2Idx].p1} & ${pairs[m.team2Idx].p2}` : 'N/A';
+
+        const s1 = parseInt(m.s1);
+        const s2 = parseInt(m.s2);
+
+        if (!isNaN(s1) && !isNaN(s2)) {
+            const diff = s1 - s2;
+            if (ranks[m.team1Idx]) {
+                ranks[m.team1Idx].diff += diff;
+                if (s1 > s2) { ranks[m.team1Idx].points += 1; ranks[m.team1Idx].win += 1; }
+            }
+            if (ranks[m.team2Idx]) {
+                ranks[m.team2Idx].diff -= diff;
+                if (s2 > s1) { ranks[m.team2Idx].points += 1; ranks[m.team2Idx].win += 1; }
+            }
+        }
+
+        return `
+            <tr>
+                <td class="p-1 border font-bold text-slate-500">${idx + 1}</td>
+                <td class="p-1 border font-semibold text-slate-800">${team1}</td>
+                <td class="p-1 border">
+                    <input type="number" class="score-input" value="${m.s1 !== undefined ? m.s1 : ''}" onchange="updateM2Score('${group}', ${idx}, 's1', this.value)">
+                </td>
+                <td class="p-1 border">
+                    <input type="number" class="score-input" value="${m.s2 !== undefined ? m.s2 : ''}" onchange="updateM2Score('${group}', ${idx}, 's2', this.value)">
+                </td>
+                <td class="p-1 border font-semibold text-slate-800">${team2}</td>
+            </tr>
+        `;
+    }).join('');
+
+    // Sắp xếp Bảng Xếp Hạng
+    ranks.sort((a, b) => b.points - a.points || b.diff - a.diff);
+
+    rankBody.innerHTML = ranks.map((r, idx) => `
+        <tr class="${idx === 0 ? 'bg-amber-100 font-bold' : ''}">
+            <td class="p-1 border font-bold text-slate-600">${idx + 1}</td>
+            <td class="p-1 border text-slate-800">${r.name}</td>
+            <td class="p-1 border font-bold text-blue-700">${r.points}</td>
+            <td class="p-1 border font-bold text-emerald-700">${r.diff > 0 ? '+' + r.diff : r.diff}</td>
+        </tr>
+    `).join('');
+
+    // Cập nhật tên vào các trận Knockout
+    if (ranks.length >= 2) {
+        if (group === 'A') {
+            window.m2RankA1 = ranks[0].name;
+            window.m2RankA2 = ranks[1].name;
+        } else {
+            window.m2RankB1 = ranks[0].name;
+            window.m2RankB2 = ranks[1].name;
+        }
+    }
+}
+
+function updateM2Score(group, matchIdx, field, val) {
+    let schedule = group === 'A' ? window.m2Data.scheduleA : window.m2Data.scheduleB;
+    if (schedule[matchIdx]) {
+        schedule[matchIdx][field] = val;
+        saveM2ToStorage();
+        renderM2();
+    }
+}
+
+function renderM2Knockout() {
+    const bk1T1 = document.getElementById('bk1-team1-name');
+    const bk1T2 = document.getElementById('bk1-team2-name');
+    const bk2T1 = document.getElementById('bk2-team1-name');
+    const bk2T2 = document.getElementById('bk2-team2-name');
+
+    if (bk1T1) bk1T1.innerText = window.m2RankA1 || "Nhất A";
+    if (bk1T2) bk1T2.innerText = window.m2RankB2 || "Nhì B";
+    if (bk2T1) bk2T1.innerText = window.m2RankB1 || "Nhất B";
+    if (bk2T2) bk2T2.innerText = window.m2RankA2 || "Nhì A";
+
+    // Re-assign values for input boxes from storage
+    const ko = window.m2Data.knockout || {};
+    ['bk1-s1', 'bk1-s2', 'bk2-s1', 'bk2-s2', 't3-s1', 't3-s2', 'ck-s1', 'ck-s2'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            const keys = id.split('-');
+            if (ko[keys[0]] && ko[keys[0]][keys[1]] !== undefined) {
+                input.value = ko[keys[0]][keys[1]];
+            }
+        }
+    });
+}
+
+function checkM2AdminPassword() {
+    const pass = document.getElementById('m2-admin-pass-input').value;
+    if (pass === window.ADMIN_PASSWORD) {
+        window.isAdminUnlocked = true;
+        const badge = document.getElementById('m2-admin-status-badge');
+        if (badge) badge.innerHTML = `<i class="fa-solid fa-lock-open text-emerald-600"></i> Đã Mở Khóa Admin:`;
+        alert("🔑 Xác thực Admin thành công!");
+        renderM2KeoSummary();
+    } else {
+        alert("❌ Mật khẩu không đúng!");
+    }
+}
+
+function setM2KeoMode(mode) {
+    window.m2Data.keoMode = mode;
+    const customBox = document.getElementById('m2-keo-custom-box');
+    if (customBox) {
+        if (mode === 'free') customBox.classList.remove('hidden');
+        else customBox.classList.add('hidden');
+    }
+    saveM2ToStorage();
+    renderM2KeoSummary();
+}
+
+function setM2CustomKeo() {
+    const win = parseInt(document.getElementById('m2-keo-custom-win').value) || 0;
+    const lose = parseInt(document.getElementById('m2-keo-custom-lose').value) || 0;
+    window.m2Data.customWin = win;
+    window.m2Data.customLose = lose;
+    saveM2ToStorage();
+    renderM2KeoSummary();
+}
+
+function renderM2KeoSummary() {
+    const tbody = document.getElementById('m2-keo-summary-body');
+    if (!tbody) return;
+
+    const mode = window.m2Data.keoMode || 'default';
+    const allPairs = [...window.m2Data.pairsA, ...window.m2Data.pairsB];
+    const allSchedules = [...(window.m2Data.scheduleA || []), ...(window.m2Data.scheduleB || [])];
+
+    let playerStats = {};
+    allPairs.forEach(p => {
+        if (!playerStats[p.p1]) playerStats[p.p1] = { matchesCount: 0, winCount: 0, loseCount: 0, totalMoney: 0 };
+        if (!playerStats[p.p2]) playerStats[p.p2] = { matchesCount: 0, winCount: 0, loseCount: 0, totalMoney: 0 };
+    });
+
+    allSchedules.forEach(m => {
+        const s1 = parseInt(m.s1);
+        const s2 = parseInt(m.s2);
+        if (isNaN(s1) || isNaN(s2)) return;
+
+        let winVal = 5000;
+        let loseVal = -15000;
+
+        if (mode === 'k25') { winVal = 0; loseVal = -25000; }
+        else if (mode === 'k0') { winVal = 0; loseVal = 0; }
+        else if (mode === 'free') {
+            winVal = window.m2Data.customWin || 0;
+            loseVal = -(window.m2Data.customLose || 0);
+        }
+
+        const isHam1 = (s1 === 0);
+        const isHam2 = (s2 === 0);
+
+        const groupPairs = window.m2Data.pairsA.concat(window.m2Data.pairsB);
+        const pair1 = groupPairs[m.team1Idx];
+        const pair2 = groupPairs[m.team2Idx];
+
+        if (pair1) {
+            [pair1.p1, pair1.p2].forEach(p => {
+                if (playerStats[p]) {
+                    playerStats[p].matchesCount++;
+                    if (s1 > s2) { playerStats[p].winCount++; playerStats[p].totalMoney += winVal; }
+                    else if (s2 > s1) { playerStats[p].loseCount++; playerStats[p].totalMoney += isHam1 ? loseVal * 2 : loseVal; }
+                }
+            });
+        }
+
+        if (pair2) {
+            [pair2.p1, pair2.p2].forEach(p => {
+                if (playerStats[p]) {
+                    playerStats[p].matchesCount++;
+                    if (s2 > s1) { playerStats[p].winCount++; playerStats[p].totalMoney += winVal; }
+                    else if (s1 > s2) { playerStats[p].loseCount++; playerStats[p].totalMoney += isHam2 ? loseVal * 2 : loseVal; }
+                }
+            });
         }
     });
 
-    let btcThuVe = sumAmThucTe + sumBringBack;
-    let quyCon = sumThucThu - Math.abs(btcThuVe);
+    tbody.innerHTML = Object.keys(playerStats).map(pName => {
+        const stat = playerStats[pName];
+        const formattedMoney = stat.totalMoney.toLocaleString('vi-VN') + " ₫";
+        const moneyClass = stat.totalMoney >= 0 ? 'txt-win' : 'txt-lose';
 
-    const pStatus = window.paymentStatus[closestDate];
-    const currentOption = (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption) ? pStatus.btcNoteAdminOption : "YES";
+        return `
+            <tr>
+                <td class="p-2 border text-left pl-3 font-bold text-slate-800">${pName}</td>
+                <td class="p-2 border font-bold">${stat.matchesCount}</td>
+                <td class="p-2 border text-emerald-600 font-bold">${stat.winCount}</td>
+                <td class="p-2 border text-red-600 font-bold">${stat.loseCount}</td>
+                <td class="p-2 border font-bold ${moneyClass}">${formattedMoney}</td>
+                <td class="p-2 border font-bold ${moneyClass}">${formattedMoney}</td>
+                <td class="p-2 border bg-amber-50">
+                    <input type="checkbox" ${window.isAdminUnlocked ? '' : 'disabled'} class="w-4 h-4 accent-emerald-600 cursor-pointer">
+                </td>
+                <td class="p-2 border font-bold text-slate-400">---</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function saveM2ToStorage() {
+    localStorage.setItem('pb_m2_bracket_data', JSON.stringify(window.m2Data));
+    autoBackupData();
+    if (window.syncToFirebase) window.syncToFirebase();
+}
+
+/* ==========================================================================
+   4. MANAGE MATCHES & DAYS DETAILS (CHI TIẾT CÁC NGÀY CHƠI PICK)
+   ========================================================================== */
+window.dailyMatchesData = JSON.parse(localStorage.getItem('pb_daily_matches_data')) || {
+    "1/10/26": {
+        note: "YES",
+        keoMode: "default",
+        matches: [
+            { id: 1, p1: "Tiến Thọ", p2: "Châu Sĩ", s1: 11, s2: 8, p3: "Phú Mỗ", p4: "Hà Giấy", keo: "default" }
+        ],
+        paidStatus: {}
+    }
+};
+
+window.currentActiveDate = localStorage.getItem('pb_current_active_date') || "1/10/26";
+
+function renderDatesMenuList() {
+    const menuList = document.getElementById('datesMenuList');
+    if (!menuList) return;
+
+    const dates = Object.keys(window.dailyMatchesData);
+    menuList.innerHTML = dates.map(d => `
+        <div class="dropdown-item ${d === window.currentActiveDate ? 'bg-blue-50 text-blue-700 font-bold' : ''}" onclick="selectDateActive('${d}')">
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-calendar-day text-blue-600"></i> ${d}</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded ${window.dailyMatchesData[d].note === 'YES' ? 'bg-emerald-100 text-emerald-800 font-bold' : 'bg-slate-100 text-slate-500'}">
+                ${window.dailyMatchesData[d].note || 'NO'}
+            </span>
+        </div>
+    `).join('');
+}
+
+function selectDateActive(d) {
+    window.currentActiveDate = d;
+    localStorage.setItem('pb_current_active_date', d);
+    showTab('day_detail');
+    renderDayDetailView();
+}
+
+function addDateTab() {
+    closeAllDropdowns();
+    const newDate = prompt("Nhập tên ngày mới (VD: 15/10/26):");
+    if (newDate && newDate.trim() !== "") {
+        const dStr = newDate.trim();
+        if (!window.dailyMatchesData[dStr]) {
+            window.dailyMatchesData[dStr] = {
+                note: "YES",
+                keoMode: "default",
+                matches: [],
+                paidStatus: {}
+            };
+            saveDailyDataToStorage();
+            selectDateActive(dStr);
+        } else {
+            alert("⚠️ Ngày này đã tồn tại trong hệ thống!");
+        }
+    }
+}
+
+function renameCurrentDate() {
+    closeAllDropdowns();
+    const oldDate = window.currentActiveDate;
+    const newDate = prompt(`Sửa tên ngày "${oldDate}" thành:`, oldDate);
+    if (newDate && newDate.trim() !== "" && newDate !== oldDate) {
+        const dStr = newDate.trim();
+        window.dailyMatchesData[dStr] = window.dailyMatchesData[oldDate];
+        delete window.dailyMatchesData[oldDate];
+
+        window.currentActiveDate = dStr;
+        localStorage.setItem('pb_current_active_date', dStr);
+        saveDailyDataToStorage();
+        renderDayDetailView();
+    }
+}
+
+function deleteCurrentDate() {
+    closeAllDropdowns();
+    const curDate = window.currentActiveDate;
+    if (confirm(` Bạn có chắc chắn muốn xóa dữ liệu ngày ${curDate}?`)) {
+        delete window.dailyMatchesData[curDate];
+        const remaining = Object.keys(window.dailyMatchesData);
+        if (remaining.length > 0) {
+            window.currentActiveDate = remaining[0];
+        } else {
+            window.currentActiveDate = "1/10/26";
+            window.dailyMatchesData["1/10/26"] = { note: "YES", keoMode: "default", matches: [], paidStatus: {} };
+        }
+        saveDailyDataToStorage();
+        renderDayDetailView();
+    }
+}
+
+function renderDayDetailView() {
+    const titleEl = document.getElementById('current-date-title');
+    if (titleEl) titleEl.innerText = window.currentActiveDate;
+
+    renderDatesMenuList();
+    renderDayMatchesTable();
+    renderDayKeoSummary();
+}
+
+function renderDayMatchesTable() {
+    const tbody = document.getElementById('day-matches-body');
+    if (!tbody) return;
+
+    const dayObj = window.dailyMatchesData[window.currentActiveDate] || { matches: [] };
+    const matches = dayObj.matches || [];
+
+    tbody.innerHTML = matches.map((m, idx) => `
+        <tr>
+            <td class="p-2 border font-bold text-slate-500">${idx + 1}</td>
+            <td class="p-2 border font-semibold">${generatePlayerSelectHTML('day', idx, 'p1', m.p1)}</td>
+            <td class="p-2 border font-semibold">${generatePlayerSelectHTML('day', idx, 'p2', m.p2)}</td>
+            <td class="p-2 border">
+                <div class="flex items-center justify-center gap-1">
+                    <input type="number" class="score-input" value="${m.s1 !== undefined ? m.s1 : ''}" onchange="updateDayMatchScore(${idx}, 's1', this.value)">
+                    <span class="font-bold text-slate-400">-</span>
+                    <input type="number" class="score-input" value="${m.s2 !== undefined ? m.s2 : ''}" onchange="updateDayMatchScore(${idx}, 's2', this.value)">
+                </div>
+            </td>
+            <td class="p-2 border font-semibold">${generatePlayerSelectHTML('day', idx, 'p3', m.p3)}</td>
+            <td class="p-2 border font-semibold">${generatePlayerSelectHTML('day', idx, 'p4', m.p4)}</td>
+            <td class="p-2 border">
+                <select onchange="updateDayMatchKeo(${idx}, this.value)" class="text-xs p-1 border rounded font-semibold outline-none bg-amber-50 text-amber-900 border-amber-300">
+                    <option value="default" ${m.keo === 'default' ? 'selected' : ''}>+5k / -15k</option>
+                    <option value="k25" ${m.keo === 'k25' ? 'selected' : ''}>Kèo 25k</option>
+                    <option value="k0" ${m.keo === 'k0' ? 'selected' : ''}>Kèo 0k</option>
+                </select>
+            </td>
+            <td class="p-2 border text-emerald-600 font-bold">+5k</td>
+            <td class="p-2 border text-red-600 font-bold">-15k</td>
+            <td class="p-2 border">
+                <button onclick="deleteDayMatch(${idx})" class="text-red-500 hover:text-red-700 font-bold p-1"><i class="fa-solid fa-trash"></i></button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function updateDayMatchScore(idx, field, val) {
+    const dayObj = window.dailyMatchesData[window.currentActiveDate];
+    if (dayObj && dayObj.matches[idx]) {
+        dayObj.matches[idx][field] = val === "" ? "" : parseInt(val);
+        saveDailyDataToStorage();
+        renderDayMatchesTable();
+        renderDayKeoSummary();
+    }
+}
+
+function updateDayMatchKeo(idx, keoVal) {
+    const dayObj = window.dailyMatchesData[window.currentActiveDate];
+    if (dayObj && dayObj.matches[idx]) {
+        dayObj.matches[idx].keo = keoVal;
+        saveDailyDataToStorage();
+        renderDayKeoSummary();
+    }
+}
+
+function addMatchToCurrentDate() {
+    const dayObj = window.dailyMatchesData[window.currentActiveDate];
+    if (!dayObj) return;
+
+    dayObj.matches.push({
+        id: Date.now(),
+        p1: window.players[0] ? window.players[0].name : "",
+        p2: window.players[1] ? window.players[1].name : "",
+        s1: "",
+        s2: "",
+        p3: window.players[2] ? window.players[2].name : "",
+        p4: window.players[3] ? window.players[3].name : "",
+        keo: dayObj.keoMode || "default"
+    });
+
+    saveDailyDataToStorage();
+    renderDayMatchesTable();
+}
+
+function deleteDayMatch(idx) {
+    const dayObj = window.dailyMatchesData[window.currentActiveDate];
+    if (dayObj && confirm(" Xóa trận đấu này khỏi ngày?")) {
+        dayObj.matches.splice(idx, 1);
+        saveDailyDataToStorage();
+        renderDayMatchesTable();
+        renderDayKeoSummary();
+    }
+}
+
+function applyKeoToAllMatchesInDate(keoMode) {
+    const dayObj = window.dailyMatchesData[window.currentActiveDate];
+    if (dayObj) {
+        dayObj.keoMode = keoMode;
+        if (keoMode !== 'free') {
+            dayObj.matches.forEach(m => m.keo = keoMode);
+        }
+        saveDailyDataToStorage();
+        renderDayMatchesTable();
+        renderDayKeoSummary();
+    }
+}
+
+function renderDayKeoSummary() {
+    const tbody = document.getElementById('day-summary-body');
+    if (!tbody) return;
+
+    const dayObj = window.dailyMatchesData[window.currentActiveDate] || { matches: [], paidStatus: {} };
+    const matches = dayObj.matches || [];
+
+    let playerStats = {};
+    window.players.forEach(p => {
+        playerStats[p.name] = { matchesCount: 0, winCount: 0, loseCount: 0, totalMoney: 0 };
+    });
+
+    matches.forEach(m => {
+        const s1 = parseInt(m.s1);
+        const s2 = parseInt(m.s2);
+        if (isNaN(s1) || isNaN(s2)) return;
+
+        let winVal = 5000;
+        let loseVal = -15000;
+
+        if (m.keo === 'k25') { winVal = 0; loseVal = -25000; }
+        else if (m.keo === 'k0') { winVal = 0; loseVal = 0; }
+
+        const isHam1 = (s1 === 0);
+        const isHam2 = (s2 === 0);
+
+        const pair1 = [m.p1, m.p2];
+        const pair2 = [m.p3, m.p4];
+
+        pair1.forEach(p => {
+            if (p && playerStats[p]) {
+                playerStats[p].matchesCount++;
+                if (s1 > s2) { playerStats[p].winCount++; playerStats[p].totalMoney += winVal; }
+                else if (s2 > s1) { playerStats[p].loseCount++; playerStats[p].totalMoney += isHam1 ? loseVal * 2 : loseVal; }
+            }
+        });
+
+        pair2.forEach(p => {
+            if (p && playerStats[p]) {
+                playerStats[p].matchesCount++;
+                if (s2 > s1) { playerStats[p].winCount++; playerStats[p].totalMoney += winVal; }
+                else if (s1 > s2) { playerStats[p].loseCount++; playerStats[p].totalMoney += isHam2 ? loseVal * 2 : loseVal; }
+            }
+        });
+    });
+
+    tbody.innerHTML = Object.keys(playerStats).map(pName => {
+        const stat = playerStats[pName];
+        if (stat.matchesCount === 0) return ''; // Bỏ qua VĐV không thi đấu ngày này
+
+        const isPaid = dayObj.paidStatus[pName] || false;
+        const formattedMoney = stat.totalMoney.toLocaleString('vi-VN') + " ₫";
+        const moneyClass = stat.totalMoney >= 0 ? 'txt-win' : 'txt-lose';
+
+        return `
+            <tr>
+                <td class="p-2 border text-left pl-3 font-bold text-slate-800">${pName}</td>
+                <td class="p-2 border font-bold">${stat.matchesCount}</td>
+                <td class="p-2 border text-emerald-600 font-bold">${stat.winCount}</td>
+                <td class="p-2 border text-red-600 font-bold">${stat.loseCount}</td>
+                <td class="p-2 border font-bold ${moneyClass}">${formattedMoney}</td>
+                <td class="p-2 border font-bold ${moneyClass}">${formattedMoney}</td>
+                <td class="p-2 border bg-amber-50">
+                    <input type="checkbox" ${isPaid ? 'checked' : ''} ${window.isAdminUnlocked ? '' : 'disabled'} onchange="toggleDayPlayerPaid('${pName}', this.checked)" class="w-4 h-4 accent-emerald-600 cursor-pointer">
+                </td>
+                <td class="p-2 border font-bold ${isPaid ? 'note-paid' : 'note-unpaid'}">${isPaid ? 'ĐÃ NỘP' : 'CHƯA NỘP'}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function toggleDayPlayerPaid(pName, isChecked) {
+    const dayObj = window.dailyMatchesData[window.currentActiveDate];
+    if (dayObj) {
+        if (!dayObj.paidStatus) dayObj.paidStatus = {};
+        dayObj.paidStatus[pName] = isChecked;
+        saveDailyDataToStorage();
+        renderDayKeoSummary();
+    }
+}
+
+function saveDailyDataToStorage() {
+    localStorage.setItem('pb_daily_matches_data', JSON.stringify(window.dailyMatchesData));
+    autoBackupData();
+    if (window.syncToFirebase) window.syncToFirebase();
+}
+
+/* ==========================================================================
+   5. FUND MANAGER (QUẢN LÝ QUỸ PICKLEBALL)
+   ========================================================================== */
+window.fundData = JSON.parse(localStorage.getItem('pb_fund_data')) || {
+    initialFund: 5000000,
+    transactions: [
+        { id: 1, type: 'income', date: '2026-10-01', desc: 'Thu quỹ Quý 4 VĐV Tiến Thọ', amount: 500000, source: 'Tiến Thọ', note: 'Chuyển khoản' },
+        { id: 2, type: 'expense', date: '2026-10-02', desc: 'Tiền thuê sân Tháng 10', amount: 1200000, source: 'Chi Sân', note: 'Tiền mặt' }
+    ],
+    quarters: ['Quý 1/26', 'Quý 2/26', 'Quý 3/26', 'Quý 4/26'],
+    quarterPaid: {}
+};
+
+function updateFundDashboard() {
+    renderFundSummaryCards();
+    renderFundTransactions();
+    renderFundMembers();
+}
+
+function updateInitialFund(val) {
+    requireAdminAuth(() => {
+        window.fundData.initialFund = parseInt(val) || 0;
+        saveFundToStorage();
+        updateFundDashboard();
+    });
+}
+
+function renderFundSummaryCards() {
+    const initialInput = document.getElementById('input-initial-fund');
+    if (initialInput) initialInput.value = window.fundData.initialFund || 0;
+
+    let totalIncome = 0;
+    let totalExpense = 0;
+
+    (window.fundData.transactions || []).forEach(tx => {
+        if (tx.type === 'income') totalIncome += parseInt(tx.amount || 0);
+        else if (tx.type === 'expense') totalExpense += parseInt(tx.amount || 0);
+    });
+
+    const balance = (window.fundData.initialFund || 0) + totalIncome - totalExpense;
+
+    const incomeEl = document.getElementById('stat-income');
+    const expenseEl = document.getElementById('stat-expense');
+    const balanceEl = document.getElementById('stat-balance');
+
+    if (incomeEl) incomeEl.innerText = totalIncome.toLocaleString('vi-VN') + " ₫";
+    if (expenseEl) expenseEl.innerText = totalExpense.toLocaleString('vi-VN') + " ₫";
+    if (balanceEl) balanceEl.innerText = balance.toLocaleString('vi-VN') + " ₫";
+
+    const incTot = document.getElementById('income-total');
+    const expTot = document.getElementById('expense-total');
+    if (incTot) incTot.innerText = totalIncome.toLocaleString('vi-VN') + " ₫";
+    if (expTot) expTot.innerText = totalExpense.toLocaleString('vi-VN') + " ₫";
+}
+
+function renderFundTransactions() {
+    const incBody = document.getElementById('income-list');
+    const expBody = document.getElementById('expense-list');
+
+    if (!incBody || !expBody) return;
+
+    const incomes = (window.fundData.transactions || []).filter(t => t.type === 'income');
+    const expenses = (window.fundData.transactions || []).filter(t => t.type === 'expense');
+
+    incBody.innerHTML = incomes.map(t => `
+        <tr class="hover:bg-slate-50 transition border-b">
+            <td class="py-2 px-3 font-semibold text-slate-600">${t.date}</td>
+            <td class="py-2 px-3 font-bold text-slate-800">${t.desc}</td>
+            <td class="py-2 px-3 text-right font-extrabold text-emerald-600">+${parseInt(t.amount).toLocaleString('vi-VN')} ₫</td>
+            <td class="py-2 px-3 font-semibold text-slate-700">${t.source || 'N/A'}</td>
+            <td class="py-2 px-3 text-slate-500">${t.note || ''}</td>
+            <td class="py-2 px-3 text-center">
+                <button onclick="deleteTransaction(${t.id})" class="text-red-500 hover:text-red-700 p-1 font-bold text-xs"><i class="fa-solid fa-trash"></i></button>
+            </td>
+        </tr>
+    `).join('');
+
+    expBody.innerHTML = expenses.map(t => `
+        <tr class="hover:bg-slate-50 transition border-b">
+            <td class="py-2 px-3 font-semibold text-slate-600">${t.date}</td>
+            <td class="py-2 px-3 font-bold text-slate-800">${t.desc}</td>
+            <td class="py-2 px-3 text-right font-extrabold text-rose-600">-${parseInt(t.amount).toLocaleString('vi-VN')} ₫</td>
+            <td class="py-2 px-3 font-semibold text-slate-700">${t.source || 'N/A'}</td>
+            <td class="py-2 px-3 text-slate-500">${t.note || ''}</td>
+            <td class="py-2 px-3 text-center">
+                <button onclick="deleteTransaction(${t.id})" class="text-red-500 hover:text-red-700 p-1 font-bold text-xs"><i class="fa-solid fa-trash"></i></button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function openFundModal(type) {
+    const backdrop = document.getElementById('fund-modal-backdrop');
+    if (!backdrop) return;
+
+    document.getElementById('tx-type').value = type;
+    document.getElementById('tx-date').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('tx-desc').value = '';
+    document.getElementById('tx-amount').value = '';
+    document.getElementById('tx-note').value = '';
+
+    const header = document.getElementById('fund-modal-header');
+    const title = document.getElementById('fund-modal-title');
+    const btnSubmit = document.getElementById('fund-btn-submit');
+    const sourceSelect = document.getElementById('tx-source-select');
+
+    if (type === 'income') {
+        header.className = "p-4 bg-emerald-600 text-white flex justify-between items-center";
+        title.innerHTML = `<i class="fa-solid fa-plus-circle"></i> Thêm Khoản Thu Mới`;
+        btnSubmit.className = "px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm";
+    } else {
+        header.className = "p-4 bg-rose-600 text-white flex justify-between items-center";
+        title.innerHTML = `<i class="fa-solid fa-minus-circle"></i> Thêm Khoản Chi Mới`;
+        btnSubmit.className = "px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm rounded-lg transition-colors shadow-sm";
+    }
+
+    sourceSelect.innerHTML = `<option value="Khác">Khác / Chi Sân</option>` + window.players.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
+
+    backdrop.classList.remove('hidden');
+}
+
+function closeFundModal() {
+    const backdrop = document.getElementById('fund-modal-backdrop');
+    if (backdrop) backdrop.classList.add('hidden');
+}
+
+function handleFundFormSubmit(e) {
+    e.preventDefault();
+    const type = document.getElementById('tx-type').value;
+    const date = document.getElementById('tx-date').value;
+    const desc = document.getElementById('tx-desc').value.trim();
+    const amount = parseInt(document.getElementById('tx-amount').value);
+    const source = document.getElementById('tx-source-select').value;
+    const note = document.getElementById('tx-note').value.trim();
+
+    if (!desc || isNaN(amount) || amount <= 0) {
+        alert("⚠️ Vui lòng nhập đầy đủ và chính xác thông tin!");
+        return;
+    }
+
+    const newTx = { id: Date.now(), type, date, desc, amount, source, note };
+    if (!window.fundData.transactions) window.fundData.transactions = [];
+    window.fundData.transactions.push(newTx);
+
+    saveFundToStorage();
+    closeFundModal();
+    updateFundDashboard();
+}
+
+function deleteTransaction(id) {
+    requireAdminAuth(() => {
+        if (confirm(" Xóa giao dịch này khỏi Nhật Ký Quỹ?")) {
+            window.fundData.transactions = window.fundData.transactions.filter(t => t.id !== id);
+            saveFundToStorage();
+            updateFundDashboard();
+        }
+    });
+}
+
+function renderFundMembers() {
+    const trHead = document.getElementById('member-list-thead-tr');
+    const tbody = document.getElementById('member-list');
+    const tfoot = document.getElementById('member-list-foot');
+
+    if (!trHead || !tbody) return;
+
+    const quarters = window.fundData.quarters || ['Quý 1/26', 'Quý 2/26', 'Quý 3/26', 'Quý 4/26'];
+    const searchTerm = (document.getElementById('member-search') ? document.getElementById('member-search').value : '').toLowerCase();
+
+    // Table Header
+    trHead.innerHTML = `
+        <th class="py-2.5 px-3 w-12 text-center">STT</th>
+        <th class="py-2.5 px-3 min-w-[160px]">Họ & Tên Pick Thủ</th>
+        ${quarters.map((q, idx) => `
+            <th class="py-2.5 px-3 text-center cursor-pointer hover:bg-slate-200" onclick="renameQuarterColumn(${idx})">
+                ${q} <i class="fa-solid fa-pen text-[10px] text-slate-400"></i>
+            </th>
+        `).join('')}
+    `;
+
+    const filteredPlayers = window.players.filter(p => p.name.toLowerCase().includes(searchTerm));
+
+    tbody.innerHTML = filteredPlayers.map((p, idx) => `
+        <tr class="hover:bg-slate-50 transition border-b">
+            <td class="py-2 px-3 text-center font-bold text-slate-400">${idx + 1}</td>
+            <td class="py-2 px-3 font-bold text-slate-800">${p.name}</td>
+            ${quarters.map(q => {
+                const key = `${p.name}_${q}`;
+                const isPaid = window.fundData.quarterPaid[key] || false;
+                return `
+                    <td class="py-2 px-3 text-center">
+                        <input type="checkbox" ${isPaid ? 'checked' : ''} ${window.isAdminUnlocked ? '' : 'disabled'} onchange="toggleQuarterPaid('${p.name}', '${q}', this.checked)" class="w-4 h-4 accent-emerald-600 cursor-pointer">
+                    </td>
+                `;
+            }).join('')}
+        </tr>
+    `).join('');
+}
+
+function toggleQuarterPaid(pName, quarter, isChecked) {
+    if (!window.fundData.quarterPaid) window.fundData.quarterPaid = {};
+    const key = `${pName}_${quarter}`;
+    window.fundData.quarterPaid[key] = isChecked;
+
+    saveFundToStorage();
+    updateFundDashboard();
+}
+
+function addNewQuarterColumn() {
+    requireAdminAuth(() => {
+        const qName = prompt("Nhập tên Cột Quý Mới (VD: Quý 1/27):");
+        if (qName && qName.trim() !== '') {
+            if (!window.fundData.quarters) window.fundData.quarters = [];
+            window.fundData.quarters.push(qName.trim());
+            saveFundToStorage();
+            updateFundDashboard();
+        }
+    });
+}
+
+function renameQuarterColumn(idx) {
+    requireAdminAuth(() => {
+        const oldName = window.fundData.quarters[idx];
+        const newName = prompt(`Sửa tên cột "${oldName}" thành:`, oldName);
+        if (newName && newName.trim() !== '' && newName !== oldName) {
+            window.fundData.quarters[idx] = newName.trim();
+            saveFundToStorage();
+            updateFundDashboard();
+        }
+    });
+}
+
+function addNewFundPlayerPrompt() {
+    openPlayerModal();
+}
+
+function saveFundToStorage() {
+    localStorage.setItem('pb_fund_data', JSON.stringify(window.fundData));
+    autoBackupData();
+    if (window.syncToFirebase) window.syncToFirebase();
+}
+
+function exportFundToExcel() {
+    if (typeof XLSX === 'undefined') {
+        alert("⚠️ Thư viện XLSX chưa tải xong!");
+        return;
+    }
+    const wsTx = XLSX.utils.json_to_sheet(window.fundData.transactions || []);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, wsTx, "Thu Chi Quỹ");
+    XLSX.writeFile(wb, `Quan_Ly_Quy_Pickleball_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+/* ==========================================================================
+   6. BẢNG TỔNG HỢP CÁC NGÀY & HOME VIEWS
+   ========================================================================== */
+function renderTongHopView() {
+    const container = document.getElementById('tonghop-content-container');
+    if (!container) return;
+
+    const dates = Object.keys(window.dailyMatchesData).filter(d => window.dailyMatchesData[d].note === 'YES');
+
+    if (dates.length === 0) {
+        container.innerHTML = `<div class="p-6 text-center text-slate-500 font-semibold">Chưa có ngày chơi nào được bật trạng thái NOTE = YES.</div>`;
+        return;
+    }
+
+    let summaryMap = {};
+    window.players.forEach(p => {
+        summaryMap[p.name] = { totalMatches: 0, totalWin: 0, totalLose: 0, totalMoney: 0 };
+    });
+
+    dates.forEach(d => {
+        const dayObj = window.dailyMatchesData[d];
+        (dayObj.matches || []).forEach(m => {
+            const s1 = parseInt(m.s1);
+            const s2 = parseInt(m.s2);
+            if (isNaN(s1) || isNaN(s2)) return;
+
+            let winVal = 5000;
+            let loseVal = -15000;
+            if (m.keo === 'k25') { winVal = 0; loseVal = -25000; }
+            else if (m.keo === 'k0') { winVal = 0; loseVal = 0; }
+
+            const pair1 = [m.p1, m.p2];
+            const pair2 = [m.p3, m.p4];
+
+            pair1.forEach(p => {
+                if (p && summaryMap[p]) {
+                    summaryMap[p].totalMatches++;
+                    if (s1 > s2) { summaryMap[p].totalWin++; summaryMap[p].totalMoney += winVal; }
+                    else if (s2 > s1) { summaryMap[p].totalLose++; summaryMap[p].totalMoney += (s1 === 0 ? loseVal * 2 : loseVal); }
+                }
+            });
+
+            pair2.forEach(p => {
+                if (p && summaryMap[p]) {
+                    summaryMap[p].totalMatches++;
+                    if (s2 > s1) { summaryMap[p].totalWin++; summaryMap[p].totalMoney += winVal; }
+                    else if (s1 > s2) { summaryMap[p].totalLose++; summaryMap[p].totalMoney += (s2 === 0 ? loseVal * 2 : loseVal); }
+                }
+            });
+        });
+    });
 
     container.innerHTML = `
-        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-5">
-            <div>
-                <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b gap-2">
-                    <h4 class="font-bold text-sm text-slate-700 flex items-center gap-1.5">
-                        <i class="fa-solid fa-table-list text-blue-600"></i> BẢNG ĐI HÀNH TRẬN PICK NGÀY ${closestDate}
-                    </h4>
-                    <div class="flex items-center gap-2">
-                        <select onchange="applyKeoToAllMatchesForDate('${closestDate}', this.value)" class="text-xs p-1 border rounded bg-white font-bold outline-none border-amber-400 text-slate-800 cursor-pointer">
-                            <option value="default" ${(window.dateKeoMode[closestDate]||'default')==='default'?'selected':''}>Kèo (+5k/-15k)</option>
-                            <option value="k25" ${(window.dateKeoMode[closestDate]||'default')==='k25'?'selected':''}>Kèo 25k (0k/-25k)</option>
-                            <option value="k0" ${(window.dateKeoMode[closestDate]||'default')==='k0'?'selected':''}>Kèo 0K (0k/0k)</option>
-                            <option value="free" ${(window.dateKeoMode[closestDate]||'default')==='free'?'selected':''}>Kèo Tự Do</option>
-                        </select>
-                        <button onclick="addMatchToDate('${closestDate}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-2.5 py-1 rounded shadow font-bold flex items-center gap-1">
-                            <i class="fa-solid fa-plus"></i> Thêm Trận
-                        </button>
-                    </div>
-                </div>
+        <table class="w-full text-center border-collapse text-xs">
+            <thead>
+                <tr class="bg-slate-800 text-white font-bold">
+                    <th class="p-2 border">STT</th>
+                    <th class="p-2 border text-left pl-3">PICK THỦ</th>
+                    <th class="p-2 border">TỔNG TRẬN</th>
+                    <th class="p-2 border">TỔNG THẮNG</th>
+                    <th class="p-2 border">TỔNG THUA</th>
+                    <th class="p-2 border">TỔNG MANG VỀ</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${Object.keys(summaryMap).map((pName, idx) => {
+                    const stat = summaryMap[pName];
+                    if (stat.totalMatches === 0) return '';
+                    const moneyClass = stat.totalMoney >= 0 ? 'text-emerald-600' : 'text-red-600';
+                    return `
+                        <tr class="hover:bg-slate-50 transition border-b">
+                            <td class="p-2 border font-bold text-slate-500">${idx + 1}</td>
+                            <td class="p-2 border text-left pl-3 font-bold text-slate-800">${pName}</td>
+                            <td class="p-2 border font-bold">${stat.totalMatches}</td>
+                            <td class="p-2 border font-bold text-emerald-600">${stat.totalWin}</td>
+                            <td class="p-2 border font-bold text-red-600">${stat.totalLose}</td>
+                            <td class="p-2 border font-extrabold ${moneyClass}">${stat.totalMoney.toLocaleString('vi-VN')} ₫</td>
+                        </tr>
+                    `;
+                }).join('')}
+            </tbody>
+        </table>
+    `;
+}
 
-                <div class="smooth-scroll border border-slate-200 rounded-lg bg-white shadow-sm">
-                    <table class="w-full text-xs min-w-[780px] border-collapse text-center">
-                        <thead>
-                            <tr class="bg-slate-100 text-slate-700 font-bold">
-                                <th class="p-2 border w-10">STT</th>
-                                <th class="p-2 border bg-emerald-50 text-emerald-900" colspan="2">CẶP PICK 1</th>
-                                <th class="p-2 border bg-purple-100 text-purple-900 w-20">TỶ SỐ</th>
-                                <th class="p-2 border bg-red-50 text-red-900" colspan="2">CẶP PICK 2</th>
-                                <th class="p-2 border bg-amber-50 text-amber-900 w-28">CHỌN KÈO TRẬN</th>
-                                <th class="p-2 border bg-amber-50 text-amber-900" colspan="2">KÈO BAN ĐẦU</th>
-                                <th class="p-2 border w-12 bg-slate-200 text-slate-800"><i class="fa-solid fa-gear"></i></th>
-                            </tr>
-                        </thead>
-                        <tbody>${matchesTableRows}</tbody>
-                    </table>
-                </div>
-            </div>
+function renderHomeClosestDateView() {
+    const titleEl = document.getElementById('home-closest-date-title');
+    const container = document.getElementById('home-closest-date-container');
 
-            <div>
-                <h4 class="font-bold text-sm text-slate-700 mb-2 flex items-center gap-1.5">
-                    <i class="fa-solid fa-calculator text-indigo-600"></i> BẢNG TỔNG HỢP KÈO THƯỞNG PHẠT NGÀY ${closestDate}
-                </h4>
-                <div class="smooth-scroll border border-slate-200 rounded-lg bg-white shadow-sm">
-                    <table class="w-full text-xs min-w-[650px] border-collapse">
-                        <thead>
-                            <tr class="bg-slate-100 text-slate-700 font-bold text-center">
-                                <th class="p-2 border w-28 text-left pl-3">PICK THỦ</th>
-                                <th class="p-2 border w-16">TRẬN</th>
-                                <th class="p-2 border w-20">THẮNG</th>
-                                <th class="p-2 border w-20">THUA</th>
-                                <th class="p-2 border w-24">MANG VỀ</th>
-                                <th class="p-2 border w-20">TỔNG</th>
-                                <th class="p-2 border w-20 bg-amber-50 text-amber-900">THỰC TẾ</th>
-                                <th class="p-2 border w-28">TRẠNG THÁI</th>
+    const dates = Object.keys(window.dailyMatchesData);
+    const closestDate = dates[dates.length - 1] || "1/10/26";
+
+    if (titleEl) titleEl.innerText = closestDate;
+
+    if (!container) return;
+
+    const dayObj = window.dailyMatchesData[closestDate] || { matches: [] };
+    const matches = dayObj.matches || [];
+
+    container.innerHTML = `
+        <div class="border rounded-xl p-4 bg-slate-50">
+            <h4 class="font-bold text-sm text-slate-700 mb-3"><i class="fa-solid fa-list-check"></i> Các trận đấu ngày ${closestDate}:</h4>
+            <div class="smooth-scroll">
+                <table class="w-full text-xs text-center border-collapse">
+                    <thead class="bg-blue-600 text-white font-bold">
+                        <tr>
+                            <th class="p-1.5 border">Cặp Pick 1</th>
+                            <th class="p-1.5 border w-16">Tỷ Số</th>
+                            <th class="p-1.5 border">Cặp Pick 2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${matches.length > 0 ? matches.map(m => `
+                            <tr class="border-b bg-white">
+                                <td class="p-2 font-bold text-blue-900">${m.p1} & ${m.p2}</td>
+                                <td class="p-2 font-extrabold text-slate-800">${m.s1 !== '' ? m.s1 : '-'} : ${m.s2 !== '' ? m.s2 : '-'}</td>
+                                <td class="p-2 font-bold text-orange-900">${m.p3} & ${m.p4}</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            ${summaryRows || `<tr><td colspan="8" class="p-4 text-center text-slate-400">Chưa có kết quả tổng hợp.</td></tr>`}
-                            <tr class="bg-slate-100 font-extrabold text-center">
-                                <td class="p-2 border text-left text-red-600 pl-3">TỔNG BTC THU VỀ</td>
-                                <td class="p-2 border" colspan="3"></td>
-                                <td class="p-2 border text-blue-700">+${sumBringBack}K</td>
-                                <td class="p-2 border text-red-600">${btcThuVe}K</td>
-                                <td class="p-2 border text-blue-700">+${sumThucThu}K</td>
-                                <td class="p-2 border text-slate-600 whitespace-nowrap">
-                                    <select onchange="handleBtcNoteChangeForDate('${closestDate}', this)" class="text-xs font-bold p-1 border rounded bg-white text-emerald-700 outline-none">
-                                        <option value="YES" ${currentOption==='YES'?'selected':''}>YES (Chuyển tổng ngày)</option>
-                                        <option value="NO" ${currentOption==='NO'?'selected':''}>NO (Không chuyển)</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr class="bg-slate-100 font-extrabold text-center">
-                                <td class="p-2 border text-left text-red-600 pl-3" colspan="4">Quỹ Còn</td>
-                                <td class="p-2 border text-red-600 text-sm" colspan="2">${quyCon}K</td>
-                                <td class="p-2 border" colspan="2"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                        `).join('') : `<tr><td colspan="3" class="p-3 text-slate-400">Chưa có trận nào.</td></tr>`}
+                    </tbody>
+                </table>
             </div>
         </div>
     `;
 }
 
-function addMatchToDate(dateStr) {
-    if(!window.matchesData[dateStr]) window.matchesData[dateStr] = [];
-    const nextId = window.matchesData[dateStr].length + 1;
-    const globalMode = window.dateKeoMode[dateStr] || 'default';
-    window.matchesData[dateStr].push({ 
-        id: nextId, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "",
-        keoMode: globalMode, customWin: (globalMode === 'k25' || globalMode === 'k0') ? 0 : 5, customLose: globalMode === 'k25' ? -25 : (globalMode === 'k0' ? 0 : -15)
-    });
-    refreshAllViews();
-    autoBackupData();
-    if(window.syncToFirebase) window.syncToFirebase();
-}
-
-function deleteMatchFromDate(dateStr, index) {
-    if(confirm(`Bạn có chắc chắn muốn XÓA Trận ${index + 1}?`)) {
-        if(window.matchesData[dateStr]) {
-            window.matchesData[dateStr].splice(index, 1);
-            refreshAllViews();
-            autoBackupData();
-            if(window.syncToFirebase) window.syncToFirebase();
-        }
-    }
-}
-
-function updateMatchDataForDate(dateStr, index, field, value) {
-    if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
-        window.matchesData[dateStr][index][field] = value;
-        refreshAllViews();
-        autoBackupData();
-        if(window.syncToFirebase) window.syncToFirebase();
-    }
-}
-
-function updateMatchKeoModeForDate(dateStr, index, modeVal) {
-    if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
-        const m = window.matchesData[dateStr][index];
-        m.keoMode = modeVal;
-        if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
-        else if (modeVal === 'k0') { m.customWin = 0; m.customLose = 0; }
-        else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
-        refreshAllViews();
-        autoBackupData();
-        if(window.syncToFirebase) window.syncToFirebase();
-    }
-}
-
-function applyKeoToAllMatchesForDate(dateStr, modeVal) {
-    window.dateKeoMode[dateStr] = modeVal;
-    const matches = window.matchesData[dateStr] || [];
-    matches.forEach(m => {
-        m.keoMode = modeVal;
-        if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
-        else if (modeVal === 'k0') { m.customWin = 0; m.customLose = 0; }
-        else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
-    });
-    refreshAllViews();
-    autoBackupData();
-    if(window.syncToFirebase) window.syncToFirebase();
-}
-
-function handleBtcNoteChangeForDate(dateStr, selectEl) {
-    if (!window.paymentStatus) window.paymentStatus = {};
-    if (!window.paymentStatus[dateStr] || typeof window.paymentStatus[dateStr] !== 'object') {
-        window.paymentStatus[dateStr] = {};
-    }
-    window.paymentStatus[dateStr].btcNoteAdminOption = selectEl.value;
-    refreshAllViews();
-    autoBackupData();
-    if (window.syncToFirebase) window.syncToFirebase();
-}
-
 function goToClosestDateTab() {
-    const closestDate = getClosestDateToToday();
-    if (closestDate) {
-        selectDateView(closestDate);
-    }
+    const dates = Object.keys(window.dailyMatchesData);
+    const closestDate = dates[dates.length - 1] || "1/10/26";
+    selectDateActive(closestDate);
 }
 
-function updateAutoIncomeNote(dateStr, noteVal) {
-    requireAdminAuth(() => {
-        window.autoIncomeNotes[dateStr] = noteVal;
-        localStorage.setItem('pb_auto_income_notes', JSON.stringify(window.autoIncomeNotes));
-        autoBackupData();
-        if(window.syncToFirebase) window.syncToFirebase();
-    });
+/* ==========================================================================
+   7. IMPORT / EXPORT BACKUP JSON & AUTO REFRESH
+   ========================================================================== */
+function autoBackupData() {
+    const fullBackup = {
+        players: window.players,
+        minigameTeamData: window.minigameTeamData,
+        m2Data: window.m2Data,
+        createdMinigames: window.createdMinigames,
+        dailyMatchesData: window.dailyMatchesData,
+        fundData: window.fundData,
+        backupTime: new Date().toISOString()
+    };
+    localStorage.setItem('pb_full_system_backup', JSON.stringify(fullBackup));
 }
 
-function getBtcThuVeForDate(dateStr) {
-    const matches = window.matchesData[dateStr] || [];
-    if (!matches || matches.length === 0) return 0;
-
-    let statsDay = {};
-    (window.players || []).forEach(p => { 
-        if (p && p.name) statsDay[p.name.trim()] = { played: 0, total: 0 }; 
-    });
-
-    matches.forEach(m => {
-        const s1 = parseInt(m.score1);
-        const s2 = parseInt(m.score2);
-        const mMode = m.keoMode || (window.dateKeoMode ? window.dateKeoMode[dateStr] : 'default') || 'default';
-        
-        let winAmt = 5, loseAmt = -15;
-        if (mMode === "k0") { winAmt = 0; loseAmt = 0; }
-        else if (mMode === "k25") { winAmt = 0; loseAmt = -25; }
-        else if (mMode === "free") {
-            winAmt = parseFloat(m.customWin) || 0;
-            loseAmt = parseFloat(m.customLose) || 0;
-            if (loseAmt > 0) loseAmt = -loseAmt;
-        }
-
-        if (!isNaN(s1) && !isNaN(s2)) {
-            const pair1 = [m.c1_p1, m.c1_p2].filter(Boolean).map(x => x.trim());
-            const pair2 = [m.c2_p1, m.c2_p2].filter(Boolean).map(x => x.trim());
-            let isHam = (s1 === 0 || s2 === 0);
-            let effWin = isHam ? (winAmt > 0 ? winAmt * 2 : 0) : winAmt;
-            let effLose = isHam ? loseAmt * 2 : loseAmt;
-
-            if (s1 > s2) {
-                pair1.forEach(v => { if (!statsDay[v]) statsDay[v] = { played: 0, total: 0 }; statsDay[v].played++; statsDay[v].total += effWin; });
-                pair2.forEach(v => { if (!statsDay[v]) statsDay[v] = { played: 0, total: 0 }; statsDay[v].played++; statsDay[v].total += effLose; });
-            } else if (s2 > s1) {
-                pair2.forEach(v => { if (!statsDay[v]) statsDay[v] = { played: 0, total: 0 }; statsDay[v].played++; statsDay[v].total += effWin; });
-                pair1.forEach(v => { if (!statsDay[v]) statsDay[v] = { played: 0, total: 0 }; statsDay[v].played++; statsDay[v].total += effLose; });
-            }
-        }
-    });
-
-    let sumAmDay = 0, sumBringBackDay = 0;
-    Object.keys(statsDay).forEach(pName => {
-        let st = statsDay[pName];
-        if (st.played > 0) {
-            if (st.total < 0) sumAmDay += st.total;
-            else if (st.played >= 4 && st.total > 0) sumBringBackDay += st.total;
-        }
-    });
-
-    return (sumAmDay + sumBringBackDay);
-}
-
-function updateInitialFund(val) {
-    requireAdminAuth(() => {
-        window.initialFund = Number(val) || 0;
-        localStorage.setItem('pb_initial_fund', window.initialFund);
-        calculateFundSummary();
-        autoBackupData();
-        if(window.syncToFirebase) window.syncToFirebase();
-    });
-}
-
-function addNewQuarterColumn() {
-    requireAdminAuth(() => {
-        const num = window.activeQuarterColumns.length + 1;
-        const qId = `q_${Date.now()}`;
-        const colors = ["amber", "purple", "blue", "teal", "emerald", "indigo", "rose"];
-        const chosenColor = colors[(num - 1) % colors.length];
-
-        const qTitle = prompt(`Nhập tên hiển thị cho Cột Quý Mới (VD: Tiền Sân Quý ${num}):`, `Tiền Sân Quý ${num}`);
-        if (!qTitle) return;
-
-        window.activeQuarterColumns.push({
-            id: qId,
-            title: qTitle.trim(),
-            statusTitle: `Trạng Thái Q${num}`,
-            defaultAmt: 800000,
-            bgColor: chosenColor
-        });
-
-        saveQuarterColsConfig();
-        renderFundMembers();
-    });
-}
-
-function deleteQuarterColumn(qId, title) {
-    requireAdminAuth(() => {
-        if (confirm(`Bạn có chắc chắn muốn XÓA cột "${title}" này khỏi Bảng Quỹ?`)) {
-            window.activeQuarterColumns = window.activeQuarterColumns.filter(col => col.id !== qId);
-            saveQuarterColsConfig();
-            renderFundMembers();
-        }
-    });
-}
-
-function updateDynamicQuarterTitle(qId, field, value) {
-    requireAdminAuth(() => {
-        const col = window.activeQuarterColumns.find(c => c.id === qId);
-        if (col) {
-            col[field] = value.trim();
-            saveQuarterColsConfig();
-        }
-    });
-}
-
-function saveQuarterColsConfig() {
-    localStorage.setItem('pb_active_quarter_cols', JSON.stringify(window.activeQuarterColumns));
+function exportBackupJSON() {
     autoBackupData();
-    if (window.syncToFirebase) window.syncToFirebase();
+    const backupData = localStorage.getItem('pb_full_system_backup');
+    const blob = new Blob([backupData], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `CLB_Pickleball_CMTD_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
 }
 
-function updateQuarterAmountDirect(playerId, qKey, val) {
-    requireAdminAuth(() => {
-        const numVal = Number(val) || 0;
-        window.fundFeeStatus[`${playerId}_${qKey}_amt`] = numVal;
-        saveFundData();
-    });
+function triggerRestoreInput() {
+    const input = document.getElementById('restore-file-input');
+    if (input) input.click();
 }
 
-function updateQuarterStatusDirect(playerId, qKey, val) {
-    requireAdminAuth(() => {
-        window.fundFeeStatus[`${playerId}_${qKey}_status`] = val;
-        saveFundData();
-    });
-}
+function importBackupJSON(event) {
+    const file = event.target.files[0];
+    if (!file) return;
 
-function addNewFundPlayerPrompt() {
-    requireAdminAuth(() => {
-        const name = prompt("Nhập tên Pick thủ mới muốn thêm vào danh sách Quỹ:");
-        if (name && name.trim() !== "") {
-            const trimmed = name.trim();
-            const existing = window.players.find(p => p.name.toLowerCase() === trimmed.toLowerCase());
-            if (existing) {
-                alert("Pick thủ này đã có trong danh sách!");
-            } else {
-                const newPlayer = { id: Date.now(), name: trimmed, gender: "Nam" };
-                window.players.push(newPlayer);
-                savePlayersData();
-                refreshAllViews();
-            }
-        }
-    });
-}
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (data.players) window.players = data.players;
+            if (data.minigameTeamData) window.minigameTeamData = data.minigameTeamData;
+            if (data.m2Data) window.m2Data = data.m2Data;
+            if (data.createdMinigames) window.createdMinigames = data.createdMinigames;
+            if (data.dailyMatchesData) window.dailyMatchesData = data.dailyMatchesData;
+            if (data.fundData) window.fundData = data.fundData;
 
-function deleteFundPlayerRow(playerId) {
-    requireAdminAuth(() => {
-        const p = window.players.find(item => item.id === playerId);
-        if (p && confirm(`Bạn có chắc chắn muốn XÓA Pick thủ "${p.name}" khỏi danh sách?`)) {
-            window.players = window.players.filter(item => item.id !== playerId);
-            savePlayersData();
+            savePlayersToStorage();
+            saveM1ToStorage();
+            saveM2ToStorage();
+            saveDailyDataToStorage();
+            saveFundToStorage();
+
             refreshAllViews();
+            alert("🎉 Đã Phục Hồi (Restore) Dữ Liệu Thành Công!");
+        } catch (err) {
+            alert("❌ File sao lưu không hợp lệ hoặc bị hỏng!");
         }
-    });
+    };
+    reader.readAsText(file);
 }
 
-function savePlayersData() {
-    localStorage.setItem('pb_players_list', JSON.stringify(window.players));
-    autoBackupData();
-    if(window.syncToFirebase) window.syncToFirebase();
-}
+function backupDataJSON() { exportBackupJSON(); }
+function triggerRestoreJSON() { triggerRestoreInput(); }
 
-function saveFundData() {
-    localStorage.setItem('pb_fee_status', JSON.stringify(window.fundFeeStatus));
-    localStorage.setItem('pb_incomes', JSON.stringify(window.fundIncomes));
-    localStorage.setItem('pb_expenses', JSON.stringify(window.fundExpenses));
-    localStorage.setItem('pb_auto_income_notes', JSON.stringify(window.autoIncomeNotes));
+function refreshAllViews() {
+    renderDynamicMinigameDropdowns();
+    renderPlayersList();
+    renderMinigame1();
+    renderM2();
+    renderDayDetailView();
     updateFundDashboard();
-    autoBackupData();
-    if(window.syncToFirebase) window.syncToFirebase();
+    renderHomeClosestDateView();
 }
 
-function formatVND(amount) {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+// Global Export to Excel function for all views
+function exportToExcel() {
+    exportToExcelTeam();
 }
 
-function formatDate(dateStr) {
-    if(!dateStr) return '';
-    if(dateStr.includes('/')) return dateStr;
-    const [y, m, d] = dateStr.split('-');
-    return `${d}/${m}/${y}`;
-}
+/* ==========================================================================
+   INITIALIZATION UPON PAGE LOAD
+   ========================================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+    loadSavedTheme();
+    renderDynamicMinigameDropdowns();
+    refreshAllViews();
 
-function getQuarterCollectedTotals() {
-    let totals = {};
-    (window.activeQuarterColumns || []).forEach(col => {
-        let colSum = 0;
-        (window.players || []).forEach(p => {
-            const qKey = col.id;
-            const currentStatus = window.fundFeeStatus[`${p.id}_${qKey}_status`] || (window.fundFeeStatus[`${p.id}_${qKey}`] ? "paid" : "unpaid");
-            const currentAmt = window.fundFeeStatus[`${p.id}_${qKey}_amt`] !== undefined ? Number(window.fundFeeStatus[`${p.id}_${qKey}_amt`]) : Number(col.defaultAmt || 0);
-            if (currentStatus === "paid") {
-                colSum += currentAmt;
-            }
-        });
-        totals[col.id] = colSum;
-    });
-    return totals;
-}
-
-function updateFundDashboard() {
-    const inputInit = document.getElementById('input-initial-fund');
-    if(inputInit && document.activeElement !== inputInit) {
-        inputInit.value = window.initialFund;
-    }
-    renderFundMembers();
-    renderFundIncomes();
-    renderFundExpenses();
-    calculateFundSummary();
-}
-
-function calculateFundSummary() {
-    let totalManualIncome = window.fundIncomes.reduce((sum, item) => sum + Number(item.amount), 0);
-    const quarterTotals = getQuarterCollectedTotals();
-    let totalQuartersIncome = Object.values(quarterTotals).reduce((a, b) => a + Number(b), 0);
-
-    let autoDailyIncomeTotal = 0;
-    (window.dates || []).forEach(d => {
-        const pStatus = window.paymentStatus ? window.paymentStatus[d] : null;
-        let isTransferYes = true;
-        if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
-            isTransferYes = false;
-        }
-        
-        if (isTransferYes) {
-            let dayNetK = getBtcThuVeForDate(d);
-            if (dayNetK !== 0) {
-                autoDailyIncomeTotal += Math.abs(dayNetK * 1000);
-            }
-        }
-    });
-
-    const grandTotalIncome = totalManualIncome + totalQuartersIncome + autoDailyIncomeTotal;
-    const totalExpense = window.fundExpenses.reduce((sum, item) => sum + Number(item.amount), 0);
-    const currentBalance = window.initialFund + grandTotalIncome - totalExpense;
-
-    const elInc = document.getElementById('stat-income');
-    const elExp = document.getElementById('stat-expense');
-    const elBal = document.getElementById('stat-balance');
-
-    if(elInc) elInc.innerText = formatVND(grandTotalIncome);
-    if(elExp) elExp.innerText = formatVND(totalExpense);
-    if(elBal) elBal.innerText = formatVND(currentBalance);
-
-    const elIncTot = document.getElementById('income-total');
-    const elExpTot = document.getElementById('expense-total');
-    if(elIncTot) elIncTot.innerText = formatVND(grandTotalIncome);
-    if(elExpTot) elExpTot.innerText = formatVND(totalExpense);
-}
-
-function renderFundMembers() {
-    const searchEl = document.getElementById('member-search');
-    const tbody = document.getElementById('member-list');
-    const theadTr = document.getElementById('member-list-thead-tr');
-    const tfoot = document.getElementById('member-list-foot');
-    if(!tbody || !theadTr) return;
-
-    let headerHtml = `
-        <th class="py-3 px-3 w-10 text-center">STT</th>
-        <th class="py-3 px-3 min-w-[140px]">Tên Pick Thủ</th>
-    `;
-
-    window.activeQuarterColumns.forEach(col => {
-        const c = col.bgColor || "teal";
-        headerHtml += `
-            <th class="py-2 px-2 text-center bg-${c}-50/80 border-x border-${c}-100 min-w-[130px]">
-                <div class="flex items-center justify-between gap-1">
-                    <input type="text" value="${col.title}" onchange="updateDynamicQuarterTitle('${col.id}', 'title', this.value)" class="w-full text-center bg-transparent border-b border-${c}-300 font-bold text-${c}-900 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Sửa tên cột">
-                    ${window.activeQuarterColumns.length > 1 ? `<button onclick="deleteQuarterColumn('${col.id}', '${col.title}')" class="text-rose-500 hover:text-rose-700 text-[10px] p-0.5" title="Xóa cột này"><i class="fa-solid fa-trash"></i></button>` : ''}
-                </div>
-            </th>
-            <th class="py-2 px-2 text-center bg-${c}-50/50 min-w-[110px]">
-                <input type="text" value="${col.statusTitle}" onchange="updateDynamicQuarterTitle('${col.id}', 'statusTitle', this.value)" class="w-full text-center bg-transparent border-b border-${c}-300 font-bold text-${c}-800 text-xs focus:bg-white focus:outline-none p-0.5 rounded" title="Sửa tên Trạng Thái">
-            </th>
-        `;
-    });
-
-    headerHtml += `<th class="py-3 px-3 text-center min-w-[90px]">Thao Tác</th>`;
-    theadTr.innerHTML = headerHtml;
-
-    const search = searchEl ? searchEl.value.toLowerCase() : '';
-    tbody.innerHTML = '';
-
-    const filtered = window.players.filter(p => p.name.toLowerCase().includes(search));
-
-    if(filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="${3 + window.activeQuarterColumns.length * 2}" class="text-center py-6 text-slate-400">Không tìm thấy Pick thủ nào.</td></tr>`;
-        if(tfoot) tfoot.innerHTML = '';
-        return;
-    }
-
-    let collectedTotalsAll = getQuarterCollectedTotals();
-
-    filtered.forEach((p, idx) => {
-        let rowHtml = `
-            <td class="py-3 px-3 text-center font-medium text-slate-500">${idx + 1}</td>
-            <td class="py-3 px-3"><span class="player-tag">${p.name}</span></td>
-        `;
-
-        window.activeQuarterColumns.forEach(col => {
-            const qKey = col.id;
-            const c = col.bgColor || "teal";
-            const currentStatus = window.fundFeeStatus[`${p.id}_${qKey}_status`] || (window.fundFeeStatus[`${p.id}_${qKey}`] ? "paid" : "unpaid");
-            const currentAmt = window.fundFeeStatus[`${p.id}_${qKey}_amt`] !== undefined ? window.fundFeeStatus[`${p.id}_${qKey}_amt`] : col.defaultAmt;
-
-            rowHtml += `
-                <td class="py-2 px-2 text-center bg-${c}-50/20">
-                    <input type="number" step="10000" value="${currentAmt}" onchange="updateQuarterAmountDirect(${p.id}, '${qKey}', this.value)" class="w-24 text-center font-bold text-${c}-900 border rounded px-1 py-0.5 bg-white focus:ring-1 focus:ring-${c}-500 outline-none text-xs">
-                </td>
-                <td class="py-2 px-2 text-center bg-${c}-50/20">
-                    <select onchange="updateQuarterStatusDirect(${p.id}, '${qKey}', this.value)" class="text-xs font-bold p-1 rounded-full border outline-none cursor-pointer ${
-                        currentStatus === 'paid' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
-                        currentStatus === 'unpaid' ? 'bg-rose-100 text-rose-800 border-rose-300' :
-                        currentStatus === 'pause' ? 'bg-amber-100 text-amber-800 border-amber-300' :
-                        'bg-slate-200 text-slate-700 border-slate-300'
-                    }">
-                        <option value="no" ${currentStatus === 'no' ? 'selected' : ''}>NO (Chưa đến)</option>
-                        <option value="unpaid" ${currentStatus === 'unpaid' ? 'selected' : ''}>Chưa đóng</option>
-                        <option value="paid" ${currentStatus === 'paid' ? 'selected' : ''}>Đã đóng</option>
-                        <option value="pause" ${currentStatus === 'pause' ? 'selected' : ''}>Tạm nghỉ</option>
-                    </select>
-                </td>
-            `;
-        });
-
-        rowHtml += `
-            <td class="py-3 px-3 text-center">
-                <button onclick="deleteFundPlayerRow(${p.id})" class="text-red-600 hover:text-red-800 font-bold text-xs bg-red-50 border border-red-200 px-2 py-1 rounded-lg shadow-sm hover:bg-red-100 transition-colors flex items-center gap-1 mx-auto" title="Xóa Pick thủ này khỏi Quỹ">
-                    <i class="fa-solid fa-trash-can"></i>
-                    <span>Xóa</span>
-                </button>
-            </td>
-        `;
-
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 transition-colors";
-        tr.innerHTML = rowHtml;
-        tbody.appendChild(tr);
-    });
-
-    let grandTotalCollected = Object.values(collectedTotalsAll).reduce((a, b) => a + Number(b), 0);
-    const totalExpense = window.fundExpenses.reduce((sum, item) => sum + Number(item.amount), 0);
-    const netCourt = grandTotalCollected - totalExpense;
-
-    if(tfoot) {
-        let footQuarterCells = window.activeQuarterColumns.map(col => {
-            const c = col.bgColor || "teal";
-            return `<td class="py-2.5 px-3 text-center text-${c}-800 font-extrabold" colspan="2">${col.title}:${formatVND(collectedTotalsAll[col.id] || 0)}</td>`;
-        }).join('');
-
-        const colSpanCount = 1 + window.activeQuarterColumns.length * 2;
-
-        tfoot.innerHTML = `
-            <tr class="bg-emerald-50/80 text-emerald-900">
-                <td class="py-2.5 px-3 text-center font-bold" colspan="2">TỔNG THU CÁC QUÝ:</td>
-                ${footQuarterCells}
-                <td class="py-2.5 px-3 text-center text-emerald-700 font-black">${formatVND(grandTotalCollected)}</td>
-            </tr>
-            <tr class="bg-rose-50/80 text-rose-900">
-                <td class="py-2.5 px-3 text-center font-bold" colspan="2">DÒNG CHI QUỸ:</td>
-                <td class="py-2.5 px-3 text-right font-extrabold" colspan="${colSpanCount - 1}">Tổng Các Khoản Chi Tiền Sân & Sinh Hoạt:</td>
-                <td class="py-2.5 px-3 text-center text-rose-600 font-black">-${formatVND(totalExpense)}</td>
-            </tr>
-            <tr class="bg-slate-200/80 text-slate-900">
-                <td class="py-3 px-3 text-center font-black" colspan="2">THU - CHI CÒN LẠI:</td>
-                <td class="py-3 px-3 text-center font-black text-base ${netCourt >= 0 ? 'text-emerald-700' : 'text-rose-700'}" colspan="${colSpanCount}">
-                    ${formatVND(netCourt)}
-                </td>
-            </tr>
-        `;
-    }
-}
-
-function renderFundIncomes() {
-    const tbody = document.getElementById('income-list');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-
-    const quarterTotals = getQuarterCollectedTotals();
-    (window.activeQuarterColumns || []).forEach(col => {
-        const totalAmt = quarterTotals[col.id] || 0;
-        const trQ = document.createElement('tr');
-        trQ.className = "bg-teal-50/80 font-semibold text-xs border-b border-teal-200/80 hover:bg-teal-100/80 transition-colors";
-        trQ.innerHTML = `
-            <td class="py-2.5 px-3 text-slate-500 whitespace-nowrap">Theo Quý</td>
-            <td class="py-2.5 px-3 text-teal-950 font-bold wrap-content-cell min-w-[220px]">
-                <div class="flex items-center gap-1.5">
-                    <i class="fa-solid fa-vault text-teal-600 flex-shrink-0"></i>
-                    <span>${col.title} (Tự động tính từ Bảng Các Quý)</span>
-                </div>
-            </td>
-            <td class="py-2.5 px-3 text-right font-black text-teal-700 whitespace-nowrap">+${formatVND(totalAmt)}</td>
-            <td class="py-2.5 px-3 text-slate-600 whitespace-nowrap"><span class="player-tag">Pick Thủ CLB</span></td>
-            <td class="py-2.5 px-3 text-slate-500 italic min-w-[200px]">Tự động tổng hợp số tiền các Pick thủ đã đóng</td>
-            <td class="py-2.5 px-3 text-center whitespace-nowrap">
-                <button onclick="alert('Dòng này tự động tổng hợp từ Bảng Tiền Sân Các Quý ở bên dưới.')" class="text-blue-600 hover:text-blue-800 p-1 transition-colors">
-                    <i class="fa-solid fa-circle-info"></i>
-                </button>
-            </td>
-        `;
-        tbody.appendChild(trQ);
-    });
-
-    (window.dates || []).forEach(d => {
-        const pStatus = window.paymentStatus ? window.paymentStatus[d] : null;
-        let isTransferYes = true;
-        
-        if (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption === "NO") {
-            isTransferYes = false;
-        }
-
-        if (isTransferYes) {
-            let dayNetK = getBtcThuVeForDate(d);
-            if (dayNetK !== 0) {
-                const positiveAmount = Math.abs(dayNetK) * 1000;
-                const currentCustomNote = window.autoIncomeNotes[d] !== undefined ? window.autoIncomeNotes[d] : "Đồng bộ tự động từ trận đấu";
-
-                const trAuto = document.createElement('tr');
-                trAuto.className = "bg-emerald-50/80 font-semibold text-xs border-b border-emerald-200/80 hover:bg-emerald-100/80 transition-colors";
-                trAuto.innerHTML = `
-                    <td class="py-2.5 px-3 text-slate-600 whitespace-nowrap">${d}</td>
-                    <td class="py-2.5 px-3 text-emerald-950 font-bold wrap-content-cell min-w-[220px]">
-                        <div class="flex items-center gap-1.5">
-                            <i class="fa-solid fa-coins text-amber-500 flex-shrink-0"></i>
-                            <span>Thu tiền kèo Ngày ${d}</span>
-                        </div>
-                    </td>
-                    <td class="py-2.5 px-3 text-right font-black text-emerald-700 whitespace-nowrap">+${formatVND(positiveAmount)}</td>
-                    <td class="py-2.5 px-3 text-slate-600 whitespace-nowrap"><span class="player-tag">BTC CLB</span></td>
-                    <td class="py-2.5 px-3 min-w-[200px]">
-                        <textarea onchange="updateAutoIncomeNote('${d}', this.value)" rows="1" class="w-full bg-white border border-emerald-300 rounded px-2 py-1 text-xs text-slate-700 font-medium focus:outline-none focus:ring-1 focus:ring-emerald-500 shadow-sm" placeholder="Nhập ghi chú chi tiết...">${currentCustomNote}</textarea>
-                    </td>
-                    <td class="py-2.5 px-3 text-center whitespace-nowrap">
-                        <button onclick="alert('Dòng này tự động cập nhật số tiền từ Bảng Chi Tiết Ngày ${d}.')" class="text-blue-600 hover:text-blue-800 mr-2 p-1 transition-colors">
-                            <i class="fa-solid fa-pencil"></i>
-                        </button>
-                        <button onclick="requireAdminAuth(() => { if(confirm('Để ẩn khoản thu tự động Ngày ${d}, bạn có muốn đổi trạng thái NOTE của ngày này thành NO?')) { if(!window.paymentStatus['${d}']) window.paymentStatus['${d}'] = {}; window.paymentStatus['${d}'].btc
+    // Online status indicator
+    const statusEl = document.getElementById('status-element');
+    const statusElMob = document.getElementById('status-element-mobile');
+    if (statusEl) statusEl.innerText = "Online (Sẵn sàng)";
+    if (statusElMob) statusElMob.innerText = "Online";
+});
