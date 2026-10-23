@@ -3170,3 +3170,56 @@ window.onload = function() {
     restoreAutoBackup(true);
     refreshAllViews();
 };
+// ==========================================
+// BỔ SUNG LOGIC XỬ LÝ PICK THỦ NGHỈ & CỘT XIN NGHỈ
+// ==========================================
+
+// 1. Render danh sách pick thủ vào thẻ chọn nhiều (multiple select)
+function renderAbsentPlayersDropdown(currentDateData) {
+    const selectEl = document.getElementById('absent-players-select');
+    if (!selectEl) return;
+
+    const players = window.players || [];
+    const absentList = currentDateData?.absentPlayers || [];
+
+    selectEl.innerHTML = players.map(player => {
+        const playerName = typeof player === 'object' ? player.name : player;
+        const isSelected = absentList.includes(playerName) ? 'selected' : '';
+        return `<option value="${playerName}" ${isSelected}>${playerName}</option>`;
+    }).join('');
+}
+
+// 2. Bắt sự kiện khi thay đổi danh sách pick thủ nghỉ
+function handleAbsentPlayersChange(selectElement) {
+    const selectedOptions = Array.from(selectElement.selectedOptions).map(opt => opt.value);
+    
+    if (window.currentSelectedDate && window.matchesData) {
+        if (!window.currentActiveDateObj) window.currentActiveDateObj = {};
+        window.currentActiveDateObj.absentPlayers = selectedOptions;
+        
+        if (!window.currentActiveDateObj.absentStatusMap) {
+            window.currentActiveDateObj.absentStatusMap = {};
+        }
+        selectedOptions.forEach(name => {
+            if (!window.currentActiveDateObj.absentStatusMap[name]) {
+                window.currentActiveDateObj.absentStatusMap[name] = 'unexcused'; // Mặc định không phép -30k
+            }
+        });
+
+        if (typeof window.syncToFirebase === 'function') window.syncToFirebase();
+        if (typeof renderDayDetailView === 'function') renderDayDetailView();
+    }
+}
+
+// 3. Xử lý thay đổi trạng thái xin nghỉ (Có phép 0k / Không phép -30k)
+function handleIndividualAbsentStatusChange(playerName, statusValue) {
+    if (!window.currentActiveDateObj) window.currentActiveDateObj = {};
+    if (!window.currentActiveDateObj.absentStatusMap) {
+        window.currentActiveDateObj.absentStatusMap = {};
+    }
+    
+    window.currentActiveDateObj.absentStatusMap[playerName] = statusValue;
+
+    if (typeof window.syncToFirebase === 'function') window.syncToFirebase();
+    if (typeof renderDayDetailView === 'function') renderDayDetailView();
+}
