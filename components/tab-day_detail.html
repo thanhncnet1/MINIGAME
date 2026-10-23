@@ -42,21 +42,9 @@
 
 <div class="bg-white/95 rounded-xl shadow-md p-3 md:p-6 text-slate-800 mt-4">
     <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b gap-2">
-        <div class="flex flex-wrap items-center gap-3">
-            <h2 class="text-base md:text-lg font-black text-slate-800 uppercase flex items-center gap-2">
-                <i class="fa-solid fa-calculator text-indigo-600"></i> BẢNG TỔNG HỢP KÈO THU CHI
-            </h2>
-            <!-- Khung chọn danh sách pick thủ nghỉ (chọn nhiều người) -->
-            <div class="flex items-center gap-1.5 bg-rose-50 border border-rose-200 px-2 py-1 rounded-lg">
-                <span class="text-xs font-bold text-rose-800 flex items-center gap-1">
-                    <i class="fa-solid fa-user-slash"></i> Pick thủ nghỉ:
-                </span>
-                <select id="absent-players-select" multiple onchange="handleAbsentPlayersChange(this)" class="text-xs p-1 border rounded bg-white font-medium outline-none border-rose-300 text-slate-800 cursor-pointer min-w-[140px]" title="Giữ Ctrl hoặc chạm nhiều lần để chọn nhiều pick thủ">
-                    <!-- Danh sách pick thủ sẽ được render động từ JS -->
-                </select>
-                <span class="text-[10px] text-slate-500 italic">(Chọn nhiều)</span>
-            </div>
-        </div>
+        <h2 class="text-base md:text-lg font-black text-slate-800 uppercase flex items-center gap-2">
+            <i class="fa-solid fa-calculator text-indigo-600"></i> BẢNG TỔNG HỢP KÈO NGÀY
+        </h2>
 
         <div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-300">
             <span id="admin-status-badge" class="text-xs font-bold text-slate-600 flex items-center gap-1">
