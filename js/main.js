@@ -1603,6 +1603,7 @@ function handleBtcNoteChange(selectEl) {
 }
 
 function renderDayDetailView() {
+    removeLegacyAbsentBox();
     const dateStr = window.currentSelectedDate;
     const titleEl = document.getElementById('current-date-title');
     if(titleEl) titleEl.innerText = dateStr;
@@ -3396,6 +3397,29 @@ function ensureDaySummaryAbsentHeader(sumBody) {
         else if (ths.length >= 7) headRow.insertBefore(th, ths[6]);
         else headRow.appendChild(th);
     } catch (e) { console.warn('ensureDaySummaryAbsentHeader:', e); }
+}
+
+// Gỡ ô chọn "Pick thủ nghỉ" cũ (multi-select #absent-players-select) nằm cạnh tiêu đề
+// "Bảng tổng hợp kèo thu chi" ở tab Chi Tiết Ngày, để bảng giống các ngày khác và giống trang chủ.
+// Việc chọn VĐV nghỉ nay thực hiện bằng dòng "VĐV XIN NGHỈ HÔM NAY" nằm trong bảng.
+function removeLegacyAbsentBox() {
+    try {
+        const sel = document.getElementById('absent-players-select');
+        if (!sel) return;
+        const stopRe = new RegExp('tổng hợp|kèo|thu chi'.normalize('NFC'));
+        let target = sel;
+        while (target.parentElement) {
+            const p = target.parentElement;
+            if (['BODY', 'SECTION', 'TABLE', 'MAIN'].includes(p.tagName) || /^tab-/.test(p.id || '')) break;
+            const clone = p.cloneNode(true);
+            const inner = clone.querySelector('#absent-players-select');
+            if (inner) inner.remove();
+            const rest = (clone.textContent || '').replace(/\s+/g, ' ').trim().normalize('NFC').toLowerCase();
+            if (stopRe.test(rest) || rest.length > 40) break; // đã chạm khung chứa tiêu đề bảng -> dừng
+            target = p;
+        }
+        target.remove();
+    } catch (e) { console.warn('removeLegacyAbsentBox:', e); }
 }
 
 // ---- Hàm cũ (giữ tên để tương thích) - nay dùng chung dữ liệu mới theo ngày đang chọn ----
