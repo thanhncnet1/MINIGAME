@@ -8,17 +8,15 @@
             <p class="text-xs text-brand-100">Hệ thống theo dõi Thu Chi & Hội Phí Tự Động</p>
         </div>
     </div>
-
+    
     <div class="flex items-center gap-2 bg-white/10 p-2 rounded-xl backdrop-blur-md border border-white/20">
         <span id="fund-admin-status-badge" class="text-xs font-bold text-yellow-300 flex items-center gap-1">
             <i class="fa-solid fa-lock text-red-300"></i> Admin Quỹ:
         </span>
         <input type="password" id="fund-admin-pass-input" placeholder="Pass Admin..." class="w-24 text-xs p-1 border rounded bg-white text-slate-800 outline-none focus:ring-1 focus:ring-yellow-400">
-        <button onclick="checkFundAdminPassword()" class="bg-yellow-500 hover:bg-yellow-400 text-slate-900 text-xs px-2.5 py-1 rounded font-extrabold shadow">
-            Mở Khóa
-        </button>
+        <button onclick="checkFundAdminPassword()" class="bg-yellow-500 hover:bg-yellow-400 text-slate-900 text-xs px-2.5 py-1 rounded font-extrabold shadow"> Mở Khóa </button>
     </div>
-    
+
     <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
         <button onclick="exportFundToExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-medium text-sm transition-all shadow-sm flex items-center gap-2 border border-emerald-400/30">
             <i class="fa-solid fa-file-excel"></i>
@@ -28,7 +26,7 @@
 </div>
 
 <!-- CARDS TỔNG QUAN -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
     <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm relative overflow-hidden group">
         <div class="flex items-center justify-between">
             <div>
@@ -89,10 +87,10 @@
 </div>
 
 <!-- NHẬT KÝ THU / CHI -->
-<div class="flex flex-col gap-6">
+<div class="flex flex-col gap-6 mt-6">
     <!-- NHẬT KÝ THU -->
     <section class="bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col">
-        <div class="p-5 border-b border-slate-100 flex justify-between items-center">
+        <div class="p-5 border-b border-slate-100 flex flex-wrap justify-between items-center gap-2">
             <div>
                 <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
                     <i class="fa-solid fa-circle-arrow-down text-emerald-600"></i>
@@ -100,12 +98,22 @@
                 </h2>
                 <p class="text-xs text-slate-500 mt-0.5">Tự động cộng Tiền Sân Các Quý + Tiền Kèo + Thu thủ công</p>
             </div>
-            <button onclick="openFundModal('income')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm">
-                <i class="fa-solid fa-plus"></i>
-                <span>Thêm Thu</span>
-            </button>
+            <div class="flex items-center gap-2">
+                <!-- Dòng hiển thị trạng thái và sắp xếp -->
+                <span class="text-xs text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg border font-medium flex items-center gap-1">
+                    <i class="fa-solid fa-sort text-slate-600"></i> Đã sắp xếp theo thời gian mới nhất
+                </span>
+                <button onclick="openFundModal('income')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Thêm Thu</span>
+                </button>
+            </div>
         </div>
-
+        <!-- Thêm dòng chú thích hiển thị bảng thu -->
+        <div class="bg-emerald-50/60 px-5 py-2 border-b border-emerald-100 text-[11px] text-emerald-900 font-medium flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-emerald-600"></i>
+            <span>Bảng liệt kê toàn bộ các khoản thu quỹ, được đồng bộ trực tiếp từ các trận đấu ngày và tiền hội phí quý của pick thủ.</span>
+        </div>
         <div class="flex-1 overflow-x-auto custom-scrollbar max-h-96">
             <table class="w-full text-left text-sm border-collapse">
                 <thead class="bg-slate-50 text-slate-600 font-semibold sticky top-0 border-b border-slate-200">
@@ -121,7 +129,6 @@
                 <tbody id="income-list" class="divide-y divide-slate-100"></tbody>
             </table>
         </div>
-
         <div class="p-3 bg-slate-50 border-t border-slate-100 rounded-b-2xl flex justify-between items-center px-4 font-semibold text-slate-700 text-sm">
             <span>Tổng Thu Quỹ:</span>
             <span id="income-total" class="text-emerald-600 font-bold">0 ₫</span>
@@ -130,7 +137,7 @@
 
     <!-- NHẬT KÝ CHI -->
     <section class="bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col">
-        <div class="p-5 border-b border-slate-100 flex justify-between items-center">
+        <div class="p-5 border-b border-slate-100 flex flex-wrap justify-between items-center gap-2">
             <div>
                 <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
                     <i class="fa-solid fa-circle-arrow-up text-rose-600"></i>
@@ -138,12 +145,21 @@
                 </h2>
                 <p class="text-xs text-slate-500 mt-0.5">Tiền thuê sân, bóng, giải thưởng & giao lưu</p>
             </div>
-            <button onclick="openFundModal('expense')" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm">
-                <i class="fa-solid fa-plus"></i>
-                <span>Thêm Chi</span>
-            </button>
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg border font-medium flex items-center gap-1">
+                    <i class="fa-solid fa-sort text-slate-600"></i> Đã sắp xếp theo thời gian mới nhất
+                </span>
+                <button onclick="openFundModal('expense')" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Thêm Chi</span>
+                </button>
+            </div>
         </div>
-
+        <!-- Thêm dòng chú thích hiển thị bảng chi -->
+        <div class="bg-rose-50/60 px-5 py-2 border-b border-rose-100 text-[11px] text-rose-900 font-medium flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-rose-600"></i>
+            <span>Bảng ghi nhận toàn bộ các khoản chi tiêu thực tế của câu lạc bộ (tiền sân, nước uống, thiết bị sân bãi, liên hoan).</span>
+        </div>
         <div class="flex-1 overflow-x-auto custom-scrollbar max-h-96">
             <table class="w-full text-left text-sm border-collapse">
                 <thead class="bg-slate-50 text-slate-600 font-semibold sticky top-0 border-b border-slate-200">
@@ -159,7 +175,6 @@
                 <tbody id="expense-list" class="divide-y divide-slate-100"></tbody>
             </table>
         </div>
-
         <div class="p-3 bg-slate-50 border-t border-slate-100 rounded-b-2xl flex justify-between items-center px-4 font-semibold text-slate-700 text-sm">
             <span>Tổng Khoản Chi:</span>
             <span id="expense-total" class="text-rose-600 font-bold">0 ₫</span>
@@ -168,7 +183,7 @@
 </div>
 
 <!-- BẢNG CÁC QUÝ -->
-<div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+<div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden mt-6">
     <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
             <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
@@ -177,25 +192,22 @@
             </h2>
             <p class="text-xs text-slate-500 mt-0.5">Click tên cột để sửa. Tiền thu được từ từng Quý sẽ tự động đồng bộ vào Nhật Ký Khoản Thu ở trên.</p>
         </div>
-
         <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
             <button onclick="addNewQuarterColumn()" class="bg-teal-700 hover:bg-teal-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow flex items-center gap-1.5">
                 <i class="fa-solid fa-folder-plus text-yellow-300"></i>
                 <span>➕ Thêm Cột Quý Mới</span>
             </button>
-
             <button onclick="addNewFundPlayerPrompt()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow flex items-center gap-1.5">
                 <i class="fa-solid fa-user-plus"></i>
                 <span>➕ Thêm Pick Thủ</span>
             </button>
-
             <div class="relative flex-1 sm:w-44">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                 <input type="text" id="member-search" oninput="renderFundMembers()" placeholder="Tìm Pick thủ..." class="w-full pl-9 pr-3 py-1.5 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500">
             </div>
         </div>
     </div>
-
+    
     <div class="overflow-x-auto custom-scrollbar">
         <table class="w-full text-left text-sm">
             <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
