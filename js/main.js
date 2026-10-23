@@ -332,6 +332,8 @@ window.matchesData = {
     ]
 };
 
+window.ABSENT_FINE_K = 30; // Mức phạt VĐV xin nghỉ KHÔNG PHÉP (đơn vị K)
+
 window.dateKeoMode = { "1/10/26": "default" };
 window.paymentStatus = {
     "1/10/26_Vân Đình": true,
@@ -517,23 +519,31 @@ function renderHomeClosestDateView() {
     }
 
     let summaryRows = '';
-    let sumBringBack = 0, sumThucThu = 0, sumAmThucTe = 0;
+    let sumBringBack = 0, sumThucThu = 0, sumAmThucTe = 0, sumFine = 0;
+    const fineMap = getAbsentFineMap(closestDate);
 
     window.players.forEach(p => {
         const st = stats[p.name];
-        if(st.played > 0) {
+        const isAbsent = Object.prototype.hasOwnProperty.call(fineMap, p.name);
+        if(st.played > 0 || isAbsent) {
             const payKey = `${closestDate}_${p.name}`;
             const isPaid = window.paymentStatus[payKey] || false;
 
+            const fine = isAbsent ? fineMap[p.name] : 0;
+            const netTotal = st.total + fine;
+            sumFine += fine;
+
             let bringBack = 0;
-            if(st.played >= 4 && st.total > 0) { bringBack = st.total; sumBringBack += bringBack; }
-            if(st.total < 0) { sumAmThucTe += st.total; if(isPaid) sumThucThu += Math.abs(st.total); }
+            if(st.played >= 4 && netTotal > 0) { bringBack = netTotal; sumBringBack += bringBack; }
+            if(netTotal < 0) { sumAmThucTe += netTotal; if(isPaid) sumThucThu += Math.abs(netTotal); }
 
             let noteText = "";
-            if(st.total < 0) {
+            if(netTotal < 0) {
                 noteText = isPaid ? `<span class="note-paid"><i class="fa-solid fa-check"></i> Đã nộp</span>` : `<span class="note-unpaid"><i class="fa-solid fa-xmark"></i> Chưa nộp</span>`;
-            } else if(st.total > 0) {
+            } else if(netTotal > 0) {
                 noteText = isPaid ? `<span class="note-paid"><i class="fa-solid fa-check"></i> Đã nhận</span>` : `<span class="note-unpaid"><i class="fa-solid fa-clock"></i> Chưa nhận</span>`;
+            } else if(isAbsent) {
+                noteText = `<span class="text-slate-500 font-bold"><i class="fa-solid fa-user-clock"></i> Nghỉ - không phạt</span>`;
             }
 
             const disabledAttr = window.isAdminUnlocked ? '' : 'disabled title="Cần mật khẩu Admin để sửa"';
@@ -546,6 +556,7 @@ function renderHomeClosestDateView() {
                     <td class="p-2 border txt-lose">${st.loseK < 0 ? st.loseK + 'K' : ''}</td>
                     <td class="p-2 border text-blue-600 font-bold">${bringBack > 0 ? '+' + bringBack + 'K' : ''}</td>
                     <td class="p-2 border font-extrabold ${st.total < 0 ? 'txt-lose' : (st.total > 0 ? 'txt-win' : '')}">${st.total !== 0 ? (st.total > 0 ? '+' + st.total + 'K' : st.total + 'K') : '0K'}</td>
+                    ${buildAbsentFineCell(closestDate, p.name, isAbsent, fine, true)}
                     <td class="p-2 border bg-amber-50/30">
                         <input type="checkbox" ${isPaid ? 'checked' : ''} ${disabledAttr} onclick="togglePaymentStatus('${payKey}')" class="w-4 h-4 cursor-pointer accent-emerald-600">
                     </td>
@@ -613,17 +624,20 @@ function renderHomeClosestDateView() {
                                 <th class="p-2 border w-20">THUA</th>
                                 <th class="p-2 border w-24">MANG VỀ</th>
                                 <th class="p-2 border w-20">TỔNG</th>
+                                <th class="p-2 border w-28 bg-rose-50 text-rose-800" data-col="absent">XIN NGHỈ</th>
                                 <th class="p-2 border w-20 bg-amber-50 text-amber-900">THỰC TẾ</th>
                                 <th class="p-2 border w-28">TRẠNG THÁI</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${summaryRows || `<tr><td colspan="8" class="p-4 text-center text-slate-400">Chưa có kết quả tổng hợp.</td></tr>`}
+                            ${summaryRows || `<tr><td colspan="9" class="p-4 text-center text-slate-400">Chưa có kết quả tổng hợp.</td></tr>`}
+                            ${buildAbsentSelectorRow(closestDate, 9)}
                             <tr class="bg-slate-100 font-extrabold text-center">
                                 <td class="p-2 border text-left text-red-600 pl-3">TỔNG BTC THU VỀ</td>
                                 <td class="p-2 border" colspan="3"></td>
                                 <td class="p-2 border text-blue-700">+${sumBringBack}K</td>
-                                <td class="p-2 border text-red-600">${btcThuVe}K</td>
+                                <td class="p-2 border text-red-600" title="Đã gồm tiền phạt nghỉ">${btcThuVe}K</td>
+                                <td class="p-2 border ${sumFine < 0 ? 'txt-lose' : 'text-slate-500'}">${sumFine < 0 ? sumFine + 'K' : '0K'}</td>
                                 <td class="p-2 border text-blue-700">+${sumThucThu}K</td>
                                 <td class="p-2 border text-slate-600 whitespace-nowrap">
                                     <select onchange="handleBtcNoteChangeForDate('${closestDate}', this)" class="text-xs font-bold p-1 border rounded bg-white text-emerald-700 outline-none">
@@ -635,7 +649,7 @@ function renderHomeClosestDateView() {
                             <tr class="bg-slate-100 font-extrabold text-center">
                                 <td class="p-2 border text-left text-red-600 pl-3" colspan="4">Quỹ Còn</td>
                                 <td class="p-2 border text-red-600 text-sm" colspan="2">${quyCon}K</td>
-                                <td class="p-2 border" colspan="2"></td>
+                                <td class="p-2 border" colspan="3"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -734,7 +748,8 @@ function updateAutoIncomeNote(dateStr, noteVal) {
 
 function getBtcThuVeForDate(dateStr) {
     const matches = window.matchesData[dateStr] || [];
-    if (!matches || matches.length === 0) return 0;
+    const fineMapBtc = getAbsentFineMap(dateStr);
+    if ((!matches || matches.length === 0) && Object.keys(fineMapBtc).length === 0) return 0;
 
     let statsDay = {};
     (window.players || []).forEach(p => { 
@@ -772,10 +787,18 @@ function getBtcThuVeForDate(dateStr) {
         }
     });
 
+    // Cộng tiền phạt VĐV xin nghỉ (không phép) vào tổng của VĐV đó
+    Object.keys(fineMapBtc).forEach(pName => {
+        const key = pName.trim();
+        if (!statsDay[key]) statsDay[key] = { played: 0, total: 0 };
+        statsDay[key].total += fineMapBtc[pName];
+        statsDay[key].absent = true;
+    });
+
     let sumAmDay = 0, sumBringBackDay = 0;
     Object.keys(statsDay).forEach(pName => {
         let st = statsDay[pName];
-        if (st.played > 0) {
+        if (st.played > 0 || st.absent) {
             if (st.total < 0) sumAmDay += st.total;
             else if (st.played >= 4 && st.total > 0) sumBringBackDay += st.total;
         }
@@ -1696,25 +1719,34 @@ function renderDayDetailView() {
 
     const sumBody = document.getElementById('day-summary-body');
     if(!sumBody) return;
+    ensureDaySummaryAbsentHeader(sumBody);
     sumBody.innerHTML = '';
 
-    let sumBringBack = 0, sumThucThu = 0, sumAmThucTe = 0;
+    let sumBringBack = 0, sumThucThu = 0, sumAmThucTe = 0, sumFine = 0;
+    const fineMap = getAbsentFineMap(dateStr);
 
     window.players.forEach(p => {
         const st = stats[p.name];
-        if(st.played > 0) {
+        const isAbsent = Object.prototype.hasOwnProperty.call(fineMap, p.name);
+        if(st.played > 0 || isAbsent) {
             const payKey = `${dateStr}_${p.name}`;
             const isPaid = window.paymentStatus[payKey] || false;
 
+            const fine = isAbsent ? fineMap[p.name] : 0;
+            const netTotal = st.total + fine;
+            sumFine += fine;
+
             let bringBack = 0;
-            if(st.played >= 4 && st.total > 0) { bringBack = st.total; sumBringBack += bringBack; }
-            if(st.total < 0) { sumAmThucTe += st.total; if(isPaid) sumThucThu += Math.abs(st.total); }
+            if(st.played >= 4 && netTotal > 0) { bringBack = netTotal; sumBringBack += bringBack; }
+            if(netTotal < 0) { sumAmThucTe += netTotal; if(isPaid) sumThucThu += Math.abs(netTotal); }
 
             let noteText = "";
-            if(st.total < 0) {
+            if(netTotal < 0) {
                 noteText = isPaid ? `<span class="note-paid">Đã nộp</span>` : `<span class="note-unpaid">Chưa nộp</span>`;
-            } else if(st.total > 0) {
+            } else if(netTotal > 0) {
                 noteText = isPaid ? `<span class="note-paid">Đã nhận</span>` : `<span class="note-unpaid">Chưa nhận</span>`;
+            } else if(isAbsent) {
+                noteText = `<span class="text-slate-500 font-bold">Nghỉ - không phạt</span>`;
             }
 
             const disabledAttr = window.isAdminUnlocked ? '' : 'disabled title="Cần mật khẩu Admin để sửa"';
@@ -1727,6 +1759,7 @@ function renderDayDetailView() {
                     <td class="p-2 border txt-lose">${st.loseK < 0 ? st.loseK : ''}</td>
                     <td class="p-2 border text-blue-600 font-bold">${bringBack > 0 ? bringBack : ''}</td>
                     <td class="p-2 border font-extrabold ${st.total < 0 ? 'txt-lose' : (st.total > 0 ? 'txt-win' : '')}">${st.total}</td>
+                    ${buildAbsentFineCell(dateStr, p.name, isAbsent, fine, false)}
                     <td class="p-2 border bg-amber-50/30">
                         <input type="checkbox" ${isPaid ? 'checked' : ''} ${disabledAttr} onclick="togglePaymentStatus('${payKey}')" class="w-4 h-4 cursor-pointer accent-emerald-600">
                     </td>
@@ -1743,13 +1776,15 @@ function renderDayDetailView() {
     const currentOption = (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption) ? pStatus.btcNoteAdminOption : "YES";
 
     sumBody.innerHTML += `
+        ${buildAbsentSelectorRow(dateStr, 9)}
         <tr class="bg-slate-100 font-extrabold">
             <td class="p-2 border text-left text-red-600 whitespace-nowrap pl-3">TỔNG BTC THU VỀ</td>
             <td class="p-2 border"></td>
             <td class="p-2 border"></td>
             <td class="p-2 border"></td>
             <td class="p-2 border text-blue-700">${sumBringBack}</td>
-            <td class="p-2 border text-red-600">${btcThuVe}</td>
+            <td class="p-2 border text-red-600" title="Đã gồm tiền phạt nghỉ">${btcThuVe}</td>
+            <td class="p-2 border ${sumFine < 0 ? 'txt-lose' : 'text-slate-500'}">${sumFine < 0 ? sumFine : 0}</td>
             <td class="p-2 border text-blue-700">${sumThucThu}</td>
             <td class="p-2 border whitespace-nowrap">
                 <select onchange="handleBtcNoteChangeForDate('${dateStr}', this)" class="text-xs font-bold p-1 border rounded bg-white text-emerald-700 outline-none">
@@ -1761,7 +1796,7 @@ function renderDayDetailView() {
         <tr class="bg-slate-100 font-extrabold">
             <td class="p-2 border text-left text-red-600 pl-3" colspan="4">Quỹ Còn</td>
             <td class="p-2 border text-red-600 text-sm" colspan="2">${quyCon}</td>
-            <td class="p-2 border" colspan="2"></td>
+            <td class="p-2 border" colspan="3"></td>
         </tr>
     `;
 }
@@ -1836,10 +1871,19 @@ function renderTongHopTab() {
             }
         });
 
+        // Cộng tiền phạt VĐV xin nghỉ (không phép) trong ngày
+        const fineMapDay = getAbsentFineMap(d);
+        vdvList.forEach(v => {
+            if (Object.prototype.hasOwnProperty.call(fineMapDay, v)) {
+                statsDay[v].total += fineMapDay[v];
+                statsDay[v].absent = true;
+            }
+        });
+
         let sumAmDay = 0, sumBringBackDay = 0;
         vdvList.forEach(v => {
             let st = statsDay[v];
-            if (st.played > 0) {
+            if (st.played > 0 || st.absent) {
                 if (isTransferYes) {
                     vdvDayTotals[v][d] = st.total;
                     vdvRowKeoSum[v] += st.total;
@@ -3171,55 +3215,212 @@ window.onload = function() {
     refreshAllViews();
 };
 // ==========================================
-// BỔ SUNG LOGIC XỬ LÝ PICK THỦ NGHỈ & CỘT XIN NGHỈ
+// XỬ LÝ PICK THỦ XIN NGHỈ + CỘT XIN NGHỈ (BẢNG TỔNG HỢP KÈO NGÀY)
+// ------------------------------------------
+// Dữ liệu lưu trong window.paymentStatus[<ngày>] (tự đồng bộ Firebase + sao lưu):
+//   absentCount     : số VĐV nghỉ hôm đó (0, 2, 3, 4)
+//   absentPlayers   : mảng tên VĐV nghỉ (độ dài = absentCount, '' = chưa chọn)
+//   absentStatusMap : { tênVĐV: 'unexcused' (Nộp phạt) | 'excused' (Không nộp phạt) }
+// Mức phạt: window.ABSENT_FINE_K (mặc định 30K)
 // ==========================================
+var ABSENT_COUNT_OPTIONS = [0, 2, 3, 4];
 
-// 1. Render danh sách pick thủ vào thẻ chọn nhiều (multiple select)
+function escAbsentAttr(str) {
+    return String(str == null ? '' : str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function escAbsentJs(str) {
+    return String(str == null ? '' : str).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+function getDayStatusObj(dateStr, create) {
+    if (!window.paymentStatus) window.paymentStatus = {};
+    let o = window.paymentStatus[dateStr];
+    if (!o || typeof o !== 'object') {
+        if (!create) return null;
+        o = {};
+        window.paymentStatus[dateStr] = o;
+    }
+    return o;
+}
+
+// Đọc cấu hình VĐV nghỉ của 1 ngày (đã chuẩn hóa)
+function getAbsentInfo(dateStr) {
+    const o = getDayStatusObj(dateStr, false) || {};
+    let players = Array.isArray(o.absentPlayers) ? o.absentPlayers.map(x => x || '') : [];
+    let count = parseInt(o.absentCount);
+    if (isNaN(count)) count = players.filter(Boolean).length;
+    while (players.length < count) players.push('');
+    if (players.length > count) players = players.slice(0, count);
+    return { count: count, players: players, status: o.absentStatusMap || {} };
+}
+
+// { tênVĐV: -30 (nộp phạt) | 0 (không nộp phạt) } - chỉ gồm VĐV nghỉ đã được chọn và còn trong danh sách
+function getAbsentFineMap(dateStr) {
+    const info = getAbsentInfo(dateStr);
+    const valid = new Set((window.players || []).map(p => p && p.name).filter(Boolean));
+    const fineK = Number(window.ABSENT_FINE_K) || 30;
+    const map = {};
+    info.players.forEach(name => {
+        if (!name || !valid.has(name)) return;
+        map[name] = (info.status[name] === 'excused') ? 0 : -fineK;
+    });
+    return map;
+}
+
+function persistAbsentChange() {
+    refreshAllViews();
+    if (typeof autoBackupData === 'function') autoBackupData();
+    if (window.syncToFirebase) window.syncToFirebase();
+}
+
+// Chọn số lượng VĐV nghỉ: 0 / 2 / 3 / 4
+function setAbsentCount(dateStr, val) {
+    const n = Math.max(0, parseInt(val) || 0);
+    const o = getDayStatusObj(dateStr, true);
+    const info = getAbsentInfo(dateStr);
+    let players = info.players.slice(0, n);
+    while (players.length < n) players.push('');
+    o.absentCount = n;
+    o.absentPlayers = players;
+    // dọn trạng thái của VĐV không còn nằm trong danh sách nghỉ
+    const status = o.absentStatusMap || {};
+    Object.keys(status).forEach(k => { if (!players.includes(k)) delete status[k]; });
+    o.absentStatusMap = status;
+    persistAbsentChange();
+}
+
+// Chọn VĐV nghỉ cho ô số slotIdx
+function setAbsentPlayerSlot(dateStr, slotIdx, name) {
+    const o = getDayStatusObj(dateStr, true);
+    const info = getAbsentInfo(dateStr);
+    const players = info.players.slice();
+    if (slotIdx < 0 || slotIdx >= players.length) return;
+    if (name && players.some((p, i) => i !== slotIdx && p === name)) {
+        alert('VĐV này đã được chọn nghỉ ở ô khác!');
+        refreshAllViews();
+        return;
+    }
+    const oldName = players[slotIdx];
+    players[slotIdx] = name || '';
+    o.absentCount = info.count;
+    o.absentPlayers = players;
+    const status = o.absentStatusMap || {};
+    if (oldName && oldName !== name && !players.includes(oldName)) delete status[oldName];
+    if (name && !status[name]) status[name] = 'unexcused'; // mặc định: Nộp phạt
+    o.absentStatusMap = status;
+    persistAbsentChange();
+}
+
+// Chọn Nộp phạt / Không nộp phạt cho 1 VĐV nghỉ
+function setAbsentStatus(dateStr, playerName, statusValue) {
+    const o = getDayStatusObj(dateStr, true);
+    if (!o.absentStatusMap) o.absentStatusMap = {};
+    o.absentStatusMap[playerName] = (statusValue === 'excused') ? 'excused' : 'unexcused';
+    persistAbsentChange();
+}
+
+// Ô "XIN NGHỈ" của 1 dòng VĐV trong bảng tổng hợp
+function buildAbsentFineCell(dateStr, playerName, isAbsent, fine, withK) {
+    if (!isAbsent) return `<td class="p-2 border bg-rose-50/20"></td>`;
+    const fineK = Number(window.ABSENT_FINE_K) || 30;
+    const unexcused = fine < 0;
+    const amtText = unexcused ? (withK ? `${fine}K` : `${fine}`) : (withK ? '0K' : '0');
+    const n = escAbsentJs(playerName);
+    return `
+        <td class="p-1.5 border bg-rose-50/40">
+            <div class="flex flex-col items-center gap-0.5">
+                <span class="font-extrabold ${unexcused ? 'txt-lose' : 'text-slate-500'}">${amtText}</span>
+                <select onchange="setAbsentStatus('${escAbsentJs(dateStr)}', '${n}', this.value)" class="text-[10px] font-bold p-0.5 border rounded bg-white outline-none cursor-pointer ${unexcused ? 'text-red-600 border-red-300' : 'text-emerald-700 border-emerald-300'}">
+                    <option value="unexcused" ${unexcused ? 'selected' : ''}>Nộp phạt (-${fineK}K)</option>
+                    <option value="excused" ${!unexcused ? 'selected' : ''}>Không nộp phạt (0K)</option>
+                </select>
+            </div>
+        </td>`;
+}
+
+// Dòng chọn VĐV xin nghỉ (chọn 2, 3 hoặc 4 VĐV) nằm trong bảng tổng hợp kèo ngày
+function buildAbsentSelectorRow(dateStr, colspan) {
+    const info = getAbsentInfo(dateStr);
+    const d = escAbsentJs(dateStr);
+    const names = (window.players || []).map(p => p && p.name).filter(Boolean);
+
+    const countOpts = ABSENT_COUNT_OPTIONS.slice();
+    if (!countOpts.includes(info.count)) { countOpts.push(info.count); countOpts.sort((a, b) => a - b); }
+    const countSelect = `
+        <select onchange="setAbsentCount('${d}', this.value)" class="text-xs font-bold p-1 border rounded bg-white text-rose-700 border-rose-300 outline-none cursor-pointer">
+            ${countOpts.map(n => `<option value="${n}" ${info.count === n ? 'selected' : ''}>${n === 0 ? 'Không có VĐV nghỉ' : n + ' VĐV nghỉ'}</option>`).join('')}
+        </select>`;
+
+    const slots = info.players.map((cur, i) => {
+        const opts = names.map(nm => {
+            const takenElsewhere = info.players.some((p, j) => j !== i && p === nm);
+            return `<option value="${escAbsentAttr(nm)}" ${cur === nm ? 'selected' : ''} ${takenElsewhere ? 'disabled' : ''}>${escAbsentAttr(nm)}</option>`;
+        }).join('');
+        return `
+            <select onchange="setAbsentPlayerSlot('${d}', ${i}, this.value)" class="text-xs font-bold p-1 border rounded bg-white outline-none cursor-pointer ${cur ? 'text-slate-800 border-rose-300' : 'text-slate-400 border-slate-300'}">
+                <option value="">-- Chọn VĐV nghỉ ${i + 1} --</option>
+                ${opts}
+            </select>`;
+    }).join('');
+
+    const fineK = Number(window.ABSENT_FINE_K) || 30;
+    return `
+        <tr class="bg-rose-50/70">
+            <td class="p-2 border text-left" colspan="${colspan}">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="font-extrabold text-rose-700 text-xs whitespace-nowrap"><i class="fa-solid fa-user-clock"></i> VĐV XIN NGHỈ HÔM NAY:</span>
+                    ${countSelect}
+                    ${slots}
+                    <span class="text-[10px] italic text-slate-500">VĐV được chọn sẽ hiện trong bảng; chọn "Nộp phạt" (-${fineK}K) hoặc "Không nộp phạt" ở cột XIN NGHỈ.</span>
+                </div>
+            </td>
+        </tr>`;
+}
+
+// Thêm cột tiêu đề XIN NGHỈ (giữa TỔNG và THỰC TẾ) cho bảng tổng hợp ở tab Chi Tiết Ngày
+// (tiêu đề bảng này nằm trong HTML nên bổ sung bằng JS, chỉ thêm 1 lần)
+function ensureDaySummaryAbsentHeader(sumBody) {
+    try {
+        const table = sumBody && sumBody.closest ? sumBody.closest('table') : null;
+        if (!table) return;
+        const headRow = table.querySelector('thead tr');
+        if (!headRow) return;
+        const ths = Array.from(headRow.children);
+        if (ths.some(t => t.getAttribute('data-col') === 'absent' || t.textContent.normalize('NFC').toUpperCase().includes('XIN NGHỈ'.normalize('NFC')))) return;
+        let target = ths.find(t => /TH[ỰỰ]C\s*T[ẾẾ]/i.test(t.textContent.normalize('NFC')));
+        const th = document.createElement('th');
+        th.setAttribute('data-col', 'absent');
+        th.className = 'p-2 border w-28 bg-rose-50 text-rose-800';
+        th.textContent = 'XIN NGHỈ';
+        if (target) headRow.insertBefore(th, target);
+        else if (ths.length >= 7) headRow.insertBefore(th, ths[6]);
+        else headRow.appendChild(th);
+    } catch (e) { console.warn('ensureDaySummaryAbsentHeader:', e); }
+}
+
+// ---- Hàm cũ (giữ tên để tương thích) - nay dùng chung dữ liệu mới theo ngày đang chọn ----
 function renderAbsentPlayersDropdown(currentDateData) {
     const selectEl = document.getElementById('absent-players-select');
     if (!selectEl) return;
-
-    const players = window.players || [];
-    const absentList = currentDateData?.absentPlayers || [];
-
-    selectEl.innerHTML = players.map(player => {
+    const info = getAbsentInfo(window.currentSelectedDate);
+    selectEl.innerHTML = (window.players || []).map(player => {
         const playerName = typeof player === 'object' ? player.name : player;
-        const isSelected = absentList.includes(playerName) ? 'selected' : '';
-        return `<option value="${playerName}" ${isSelected}>${playerName}</option>`;
+        return `<option value="${escAbsentAttr(playerName)}" ${info.players.includes(playerName) ? 'selected' : ''}>${escAbsentAttr(playerName)}</option>`;
     }).join('');
 }
 
-// 2. Bắt sự kiện khi thay đổi danh sách pick thủ nghỉ
 function handleAbsentPlayersChange(selectElement) {
-    const selectedOptions = Array.from(selectElement.selectedOptions).map(opt => opt.value);
-    
-    if (window.currentSelectedDate && window.matchesData) {
-        if (!window.currentActiveDateObj) window.currentActiveDateObj = {};
-        window.currentActiveDateObj.absentPlayers = selectedOptions;
-        
-        if (!window.currentActiveDateObj.absentStatusMap) {
-            window.currentActiveDateObj.absentStatusMap = {};
-        }
-        selectedOptions.forEach(name => {
-            if (!window.currentActiveDateObj.absentStatusMap[name]) {
-                window.currentActiveDateObj.absentStatusMap[name] = 'unexcused'; // Mặc định không phép -30k
-            }
-        });
-
-        if (typeof window.syncToFirebase === 'function') window.syncToFirebase();
-        if (typeof renderDayDetailView === 'function') renderDayDetailView();
-    }
+    const selected = Array.from(selectElement.selectedOptions).map(opt => opt.value);
+    const o = getDayStatusObj(window.currentSelectedDate, true);
+    o.absentCount = selected.length;
+    o.absentPlayers = selected;
+    const status = o.absentStatusMap || {};
+    selected.forEach(name => { if (!status[name]) status[name] = 'unexcused'; });
+    Object.keys(status).forEach(k => { if (!selected.includes(k)) delete status[k]; });
+    o.absentStatusMap = status;
+    persistAbsentChange();
 }
 
-// 3. Xử lý thay đổi trạng thái xin nghỉ (Có phép 0k / Không phép -30k)
 function handleIndividualAbsentStatusChange(playerName, statusValue) {
-    if (!window.currentActiveDateObj) window.currentActiveDateObj = {};
-    if (!window.currentActiveDateObj.absentStatusMap) {
-        window.currentActiveDateObj.absentStatusMap = {};
-    }
-    
-    window.currentActiveDateObj.absentStatusMap[playerName] = statusValue;
-
-    if (typeof window.syncToFirebase === 'function') window.syncToFirebase();
-    if (typeof renderDayDetailView === 'function') renderDayDetailView();
+    setAbsentStatus(window.currentSelectedDate, playerName, statusValue);
 }
