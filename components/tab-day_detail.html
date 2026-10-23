@@ -4,7 +4,7 @@
             <i class="fa-solid fa-calendar-day text-blue-600"></i> BẢNG THỐNG KÊ TRẬN PICK NGÀY <span id="current-date-title" class="text-blue-700">1/10/26</span>
         </h2>
         <div class="flex items-center gap-2">
-            <button onclick="addMatchToCurrentDate()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg shadow font-bold flex items-center gap-1">
+            <button onclick="addMatchToCurrentDate()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg shadow font-bold flex items-center gap-1 transition-all">
                 <i class="fa-solid fa-plus"></i> Thêm Trận
             </button>
         </div>
@@ -12,7 +12,7 @@
 
     <div class="mb-3 bg-amber-50 p-2.5 rounded-lg border border-amber-200 flex flex-wrap items-center justify-between gap-2">
         <span class="text-xs font-bold text-amber-900 flex items-center gap-1">
-            <i class="fa-solid fa-coins"></i> KÈO ÁP DỤNG TOÀN NGÀY:
+            <i class="fa-solid fa-coins"></i> KÈO ÁP DỤNG CHO NGÀY:
         </span>
         <select id="keo-mode-select" onchange="applyKeoToAllMatchesInDate(this.value)" class="text-xs p-1.5 border rounded bg-white font-bold outline-none border-amber-400 text-slate-800 cursor-pointer">
             <option value="default">Kèo (+5k/-15k)</option>
@@ -22,7 +22,7 @@
         </select>
     </div>
 
-    <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner">
+    <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner overflow-x-auto">
         <table class="w-full min-w-[780px] text-center border-collapse border border-slate-300 text-xs">
             <thead>
                 <tr class="bg-slate-100 text-slate-700 font-bold">
@@ -51,11 +51,11 @@
                 <i class="fa-solid fa-lock text-red-500"></i> Mở Khóa Admin Tích Nộp:
             </span>
             <input type="password" id="admin-pass-input" placeholder="Nhập Pass..." class="w-24 text-xs p-1 border rounded outline-none focus:ring-1 focus:ring-blue-500">
-            <button onclick="checkAdminPassword()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded font-bold shadow"> Xác Nhận </button>
+            <button onclick="checkAdminPassword()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded font-bold shadow transition-all"> Xác Nhận </button>
         </div>
     </div>
 
-    <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner">
+    <div class="smooth-scroll rounded-lg border border-slate-200 shadow-inner overflow-x-auto">
         <table class="w-full min-w-[780px] text-center border-collapse border border-slate-300 text-xs">
             <thead>
                 <tr class="bg-slate-100 text-slate-700 font-bold">
