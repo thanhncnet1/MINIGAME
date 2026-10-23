@@ -27,7 +27,6 @@ window.syncToFirebase = function() {
         dates: window.dates,
         dateKeoMode: window.dateKeoMode,
         paymentStatus: window.paymentStatus,
-        dayAbsentData: window.dayAbsentData,
         fundIncomes: window.fundIncomes,
         fundExpenses: window.fundExpenses,
         fundFeeStatus: window.fundFeeStatus,
@@ -59,7 +58,6 @@ function loadDataFromFirebase(callback) {
             if (data.dates) window.dates = data.dates;
             if (data.dateKeoMode) window.dateKeoMode = data.dateKeoMode;
             if (data.paymentStatus) window.paymentStatus = data.paymentStatus;
-            if (data.dayAbsentData) { window.dayAbsentData = data.dayAbsentData; localStorage.setItem('pb_day_absent_data', JSON.stringify(data.dayAbsentData)); }
             if (data.fundIncomes) { window.fundIncomes = data.fundIncomes; localStorage.setItem('pb_incomes', JSON.stringify(data.fundIncomes)); }
             if (data.fundExpenses) { window.fundExpenses = data.fundExpenses; localStorage.setItem('pb_expenses', JSON.stringify(data.fundExpenses)); }
             if (data.fundFeeStatus) { window.fundFeeStatus = data.fundFeeStatus; localStorage.setItem('pb_fee_status', JSON.stringify(data.fundFeeStatus)); }
@@ -285,7 +283,7 @@ window.fundExpenses = JSON.parse(localStorage.getItem('pb_expenses')) || default
 window.autoIncomeNotes = JSON.parse(localStorage.getItem('pb_auto_income_notes')) || {};
 
 // ==========================================
-// CÁC HÀM XỬ LÝ PICK THỦ NGHỈ & CỘT XIN NGHỈ
+// CÁC HÀM HỖ TRỢ XỬ LÝ PICK THỦ NGHỈ & CỘT XIN NGHỈ
 // ==========================================
 function renderAbsentPlayersDropdown(currentDateData) {
     const selectEl = document.getElementById('absent-players-select');
@@ -302,7 +300,6 @@ function renderAbsentPlayersDropdown(currentDateData) {
 }
 
 function handleAbsentPlayersChange(selectElement) {
-    // Lấy toàn bộ các pick thủ được chọn từ thẻ select multiple
     const selectedOptions = Array.from(selectElement.selectedOptions).map(opt => opt.value);
     const dateStr = window.currentSelectedDate;
     
@@ -312,11 +309,9 @@ function handleAbsentPlayersChange(selectElement) {
     if (!window.dayAbsentData[dateStr].absentStatusMap) {
         window.dayAbsentData[dateStr].absentStatusMap = {};
     }
-    
-    // Gán trạng thái mặc định (Không phép -30k) cho những ai vừa được chọn nghỉ nếu chưa có trạng thái
     selectedOptions.forEach(name => {
         if (!window.dayAbsentData[dateStr].absentStatusMap[name]) {
-            window.dayAbsentData[dateStr].absentStatusMap[name] = 'unexcused'; 
+            window.dayAbsentData[dateStr].absentStatusMap[name] = 'unexcused'; // Mặc định không phép -30k
         }
     });
 
@@ -365,7 +360,9 @@ function getClosestDateToToday() {
     return closestDateStr;
 }
 
-function renderHomeClosestDateView() {}
+function renderHomeClosestDateView() {
+    // Render phần home tùy ý hoặc bỏ qua nếu chưa dùng tới
+}
 
 function selectDateView(dateStr) {
     window.currentSelectedDate = dateStr;
@@ -394,17 +391,19 @@ function refreshAllViews() {
     if(typeof renderTongHopTab === 'function') renderTongHopTab();
 }
 
-function autoBackupData() {}
+function autoBackupData() {
+    // Hàm lưu local phụ trợ nếu có
+}
 
 // ==========================================
-// HÀM CHÍNH: RENDER CHI TIẾT NGÀY & TỔNG HỢP THU CHI (CÓ CỘT XIN NGHỈ)
+// HÀM CHÍNH: RENDER CHI TIẾT NGÀY THI ĐẤU & CỘT XIN NGHỈ
 // ==========================================
 function renderDayDetailView() {
     const dateStr = window.currentSelectedDate;
     const titleEl = document.getElementById('current-date-title');
     if(titleEl) titleEl.innerText = dateStr; 
 
-    // Khởi tạo và render dropdown danh sách chọn nhiều pick thủ nghỉ
+    // Khởi tạo và render dropdown danh sách chọn pick thủ nghỉ
     if (!window.dayAbsentData[dateStr]) window.dayAbsentData[dateStr] = { absentPlayers: [], absentStatusMap: {} };
     renderAbsentPlayersDropdown(window.dayAbsentData[dateStr]);
 
@@ -543,7 +542,6 @@ function renderDayDetailView() {
 
         const totalWithAbsent = st.total + absentFine;
 
-        // Hiển thị pick thủ trên bảng tổng hợp nếu họ có đánh trận nào HOẶC được chọn là đang nghỉ trong ngày
         if(st.played > 0 || isAbsent) { 
             const payKey = `${dateStr}_${p.name}`; 
             const isPaid = window.paymentStatus[payKey] || false; 
