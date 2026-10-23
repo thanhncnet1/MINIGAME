@@ -577,7 +577,7 @@ function renderHomeClosestDateView() {
             <div>
                 <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b gap-2">
                     <h4 class="font-bold text-sm text-slate-700 flex items-center gap-1.5">
-                        <i class="fa-solid fa-table-list text-blue-600"></i> BẢNG ĐI HÀNH TRẬN PICK NGÀY ${closestDate}
+                        <i class="fa-solid fa-table-list text-blue-600"></i> KÈO ÁP DỤNG CHO NGÀY ${closestDate}
                     </h4>
                     <div class="flex items-center gap-2">
                         <select onchange="applyKeoToAllMatchesForDate('${closestDate}', this.value)" class="text-xs p-1 border rounded bg-white font-bold outline-none border-amber-400 text-slate-800 cursor-pointer">
@@ -612,7 +612,7 @@ function renderHomeClosestDateView() {
 
             <div>
                 <h4 class="font-bold text-sm text-slate-700 mb-2 flex items-center gap-1.5">
-                    <i class="fa-solid fa-calculator text-indigo-600"></i> BẢNG TỔNG HỢP KÈO THƯỞNG PHẠT NGÀY ${closestDate}
+                    <i class="fa-solid fa-calculator text-indigo-600"></i> BẢNG TỔNG HỢP KÈO NGÀY ${closestDate}
                 </h4>
                 <div class="smooth-scroll border border-slate-200 rounded-lg bg-white shadow-sm">
                     <table class="w-full text-xs min-w-[650px] border-collapse">
