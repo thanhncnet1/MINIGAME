@@ -53,8 +53,7 @@ function getBtcThuVeForDate(dateStr) {
     Object.keys(statsDay).forEach(pName => {
         let st = statsDay[pName];
         if (st.played > 0 || st.absent) {
-            let thucTeVal = st.total < 0 ? st.total : 0;
-            if (thucTeVal < 0) sumAmDay += thucTeVal;
+            if (st.total < 0) sumAmDay += st.total;
             else if (st.played >= 4 && st.total > 0) sumBringBackDay += st.total;
         }
     });
@@ -118,6 +117,7 @@ function renderFundMembers() {
     const searchEl = document.getElementById('member-search');
     const tbody = document.getElementById('member-list');
     const theadTr = document.getElementById('member-list-thead-tr');
+    const tfoot = document.getElementById('member-list-foot');
     if(!tbody || !theadTr) return;
 
     let headerHtml = `<th class="py-3 px-3 w-10 text-center">STT</th><th class="py-3 px-3 min-w-[140px]">Tên Pick Thủ</th>`;
@@ -139,6 +139,7 @@ function renderFundMembers() {
     tbody.innerHTML = '';
     const filtered = window.players.filter(p => p.name.toLowerCase().includes(search));
 
+    let collectedTotalsAll = getQuarterCollectedTotals();
     filtered.forEach((p, idx) => {
         let rowHtml = `<td class="py-3 px-3 text-center font-medium text-slate-500">${idx + 1}</td><td class="py-3 px-3"><span class="player-tag">${p.name}</span></td>`;
         window.activeQuarterColumns.forEach(col => {
