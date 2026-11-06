@@ -31,31 +31,6 @@ window.players = JSON.parse(localStorage.getItem('pb_players_list')) || [
     { id: 18, name: "Minh Vương", gender: "Nam" }
 ];
 
-window.minigameTeamData = JSON.parse(localStorage.getItem('pb_minigame_team_standalone_data')) || {
-    tourneyName: "MINIGAME TEAM A & B",
-    teamA: ["Tiến Thọ", "Châu Sĩ", "Phú Mỗ", "Hà Giấy", "Long Diễm", "Tuấn La", "Vân Đình", "Ly", "Quỳnh Cool"],
-    teamB: ["Trí Đô", "Thành Sóc", "Dũng Ngạc", "Lợi Trì", "Thành Đàm", "Điền Chèm", "Hải Hà", "Hạnh", "Minh Vương"],
-    matches: [
-        { id: 1, luot: 1, san: 1, noidung: "Đôi Nam", a1: "Tiến Thọ", a2: "Châu Sĩ", scoreA: "", scoreB: "", b1: "Trí Đô", b2: "Thành Sóc", note: "" },
-        { id: 2, luot: 1, san: 2, noidung: "Đôi Nam", a1: "Phú Mỗ", a2: "Hà Giấy", scoreA: "", scoreB: "", b1: "Dũng Ngạc", b2: "Lợi Trì", note: "" }
-        // ... (các trận đấu mặc định khác)
-    ]
-};
-
-window.m2PairsA = [
-    { p1: "Tiến Thọ", p2: "Châu Sĩ" }, { p1: "Phú Mỗ", p2: "Hà Giấy" },
-    { p1: "Long Diễm", p2: "Tuấn La" }, { p1: "Vân Đình", p2: "Ly" }
-];
-
-window.m2PairsB = [
-    { p1: "Trí Đô", p2: "Thành Sóc" }, { p1: "Dũng Ngạc", p2: "Lợi Trì" },
-    { p1: "Thành Đàm", p2: "Điền Chèm" }, { p1: "Quỳnh Cool", p2: "Hải Hà" }
-];
-
-window.m2ScoresA = {};
-window.m2ScoresB = {};
-window.m2KeoState = { keoMode: 'default', customWin: 5, customLose: -15, payStatus: {}, btcOption: 'YES' };
-
 window.dates = ["1/10/26"];
 window.currentSelectedDate = "1/10/26";
 
