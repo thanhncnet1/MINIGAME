@@ -1,5 +1,5 @@
 // ==========================================
-// QUẢN LÝ NGÀY ĐẤU, TRẬN ĐẤU & TỔNG HỢP KÈO (HOME & CHI TIẾT NGÀY)
+// QUẢN LÝ NGÀY ĐẤU, TRẬN ĐẤU & TỔNG HỢP KÈO
 // ==========================================
 function getClosestDateToToday() {
     if (!window.dates || window.dates.length === 0) return null;
@@ -36,23 +36,10 @@ function getClosestDateToToday() {
     return closestDateStr;
 }
 
-// Hàm render giao diện Trang Chủ (Home) tích hợp ô xác thực Admin và chuẩn hóa cột Thực Tế / Quỹ Còn
 function renderHomeClosestDateView() {
     const container = document.getElementById('home-closest-date-container');
     const titleEl = document.getElementById('home-closest-date-title');
     if (!container) return;
-
-    // Hiển thị trạng thái mở khóa Admin ở trang Home nếu có phần tử tương ứng
-    const homeAdminBadge = document.getElementById('home-admin-status-badge');
-    if (homeAdminBadge) {
-        if (window.isAdminUnlocked) {
-            homeAdminBadge.innerHTML = `<i class="fa-solid fa-lock-open text-emerald-600"></i> Đã Mở Khóa Admin`;
-            homeAdminBadge.className = "text-xs font-bold text-emerald-700 flex items-center gap-1";
-        } else {
-            homeAdminBadge.innerHTML = `<i class="fa-solid fa-lock text-red-500"></i> Chưa Mở Khóa Admin`;
-            homeAdminBadge.className = "text-xs font-bold text-slate-600 flex items-center gap-1";
-        }
-    }
 
     const closestDate = getClosestDateToToday();
     if (!closestDate) {
@@ -129,6 +116,17 @@ function renderHomeClosestDateView() {
             </select>
         `;
 
+        if (mMode === 'free') {
+            keoCellUI += `
+                <div class="flex items-center justify-center gap-1 mt-1">
+                    <span class="text-[10px] text-emerald-700 font-bold">+</span>
+                    <input type="number" class="keo-custom-input text-emerald-700" value="${m.customWin !== undefined ? m.customWin : 5}" onchange="updateMatchDataForDate('${closestDate}', ${idx}, 'customWin', this.value)" title="Tiền thắng">
+                    <span class="text-[10px] text-red-600 font-bold">/</span>
+                    <input type="number" class="keo-custom-input text-red-600" value="${m.customLose !== undefined ? m.customLose : -15}" onchange="updateMatchDataForDate('${closestDate}', ${idx}, 'customLose', this.value)" title="Tiền thua">
+                </div>
+            `;
+        }
+
         matchesTableRows += `
             <tr class="hover:bg-slate-50 text-center">
                 <td class="font-bold text-slate-700 whitespace-nowrap px-1">Trận ${idx + 1}</td>
@@ -156,7 +154,7 @@ function renderHomeClosestDateView() {
     });
 
     let summaryRows = '';
-    let sumBringBack = 0, sumThucThu = 0, sumThucTeAm = 0, sumThieuChuaChon = 0, sumFine = 0;
+    let sumBringBack = 0, sumThucThu = 0, sumAmThucTe = 0, sumFine = 0;
     const fineMap = getAbsentFineMap(closestDate);
 
     window.players.forEach(p => {
@@ -171,17 +169,7 @@ function renderHomeClosestDateView() {
 
             let bringBack = 0;
             if(st.played >= 4 && netTotal > 0) { bringBack = netTotal; sumBringBack += bringBack; }
-
-            // Cột thực tế chỉ cộng dồn giá trị âm (tiền âm hoặc phạt âm)
-            let thucTeVal = netTotal < 0 ? netTotal : 0;
-            if (thucTeVal < 0) {
-                sumThucTeAm += thucTeVal;
-                if (isPaid) {
-                    sumThucThu += Math.abs(thucTeVal);
-                } else {
-                    sumThieuChuaChon += Math.abs(thucTeVal);
-                }
-            }
+            if(netTotal < 0) { sumAmThucTe += netTotal; if(isPaid) sumThucThu += Math.abs(netTotal); }
 
             let noteText = "";
             if(netTotal < 0) {
@@ -201,7 +189,7 @@ function renderHomeClosestDateView() {
                     <td class="p-2 border txt-win font-bold">${st.wins > 0 ? st.wins : ''}</td>
                     <td class="p-2 border txt-lose font-bold">${st.losses > 0 ? st.losses : ''}</td>
                     <td class="p-2 border text-blue-600 font-bold">${bringBack > 0 ? '+' + bringBack + 'K' : ''}</td>
-                    <td class="p-2 border font-extrabold ${netTotal < 0 ? 'txt-lose' : (netTotal > 0 ? 'txt-win' : '')}">${netTotal !== 0 ? (netTotal > 0 ? '+' + netTotal + 'K' : netTotal + 'K') : '0K'}</td>
+                    <td class="p-2 border font-extrabold ${st.total < 0 ? 'txt-lose' : (st.total > 0 ? 'txt-win' : '')}">${st.total !== 0 ? (st.total > 0 ? '+' + st.total + 'K' : st.total + 'K') : '0K'}</td>
                     ${buildAbsentFineCell(closestDate, p.name, isAbsent, fine, true)}
                     <td class="p-2 border bg-amber-50/30">
                         <input type="checkbox" ${isPaid ? 'checked' : ''} ${disabledAttr} onclick="togglePaymentStatus('${payKey}')" class="w-4 h-4 cursor-pointer accent-emerald-600">
@@ -212,8 +200,10 @@ function renderHomeClosestDateView() {
         }
     });
 
-    let btcThuVe = sumThucTeAm + sumBringBack;
-    let quyCon = sumThieuChuaChon; // Quỹ còn chính là giá trị thiếu mà cột thực tế chưa được chọn nộp/nhận
+    let btcThuVe = sumAmThucTe + sumBringBack;
+    let quyCon = sumThucThu - Math.abs(btcThuVe);
+    const pStatus = window.paymentStatus[closestDate];
+    const currentOption = (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption) ? pStatus.btcNoteAdminOption : "YES";
 
     container.innerHTML = `
         <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-5">
@@ -280,10 +270,15 @@ function renderHomeClosestDateView() {
                                 <td class="p-2 border text-red-600">${btcThuVe}K</td>
                                 <td class="p-2 border ${sumFine < 0 ? 'txt-lose' : 'text-slate-500'}">${sumFine < 0 ? sumFine + 'K' : '0K'}</td>
                                 <td class="p-2 border text-blue-700">+${sumThucThu}K</td>
-                                <td class="p-2 border text-slate-600 whitespace-nowrap">---</td>
+                                <td class="p-2 border text-slate-600 whitespace-nowrap">
+                                    <select onchange="handleBtcNoteChangeForDate('${closestDate}', this)" class="text-xs font-bold p-1 border rounded bg-white text-emerald-700 outline-none">
+                                        <option value="YES" ${currentOption==='YES'?'selected':''}>YES (Chuyển tổng ngày)</option>
+                                        <option value="NO" ${currentOption==='NO'?'selected':''}>NO (Không chuyển)</option>
+                                    </select>
+                                </td>
                             </tr>
                             <tr class="bg-slate-100 font-extrabold text-center">
-                                <td class="p-2 border text-left text-red-600 pl-3" colspan="4">Quỹ Còn (Chưa chọn)</td>
+                                <td class="p-2 border text-left text-red-600 pl-3" colspan="4">Quỹ Còn</td>
                                 <td class="p-2 border text-red-600 text-sm" colspan="2">${quyCon}K</td>
                                 <td class="p-2 border" colspan="3"></td>
                             </tr>
@@ -295,7 +290,77 @@ function renderHomeClosestDateView() {
     `;
 }
 
-// Render màn hình Chi Tiết Ngày Đấu áp dụng đồng bộ quy tắc cột Thực Tế & Quỹ Còn
+function addMatchToDate(dateStr) {
+    if(!window.matchesData[dateStr]) window.matchesData[dateStr] = [];
+    const nextId = window.matchesData[dateStr].length + 1;
+    const globalMode = window.dateKeoMode[dateStr] || 'default';
+    window.matchesData[dateStr].push({ 
+        id: nextId, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "",
+        keoMode: globalMode, customWin: 5, customLose: -15
+    });
+    refreshAllViews();
+    autoBackupData();
+    if(window.syncToFirebase) window.syncToFirebase();
+}
+
+function deleteMatchFromDate(dateStr, index) {
+    if(confirm(`Bạn có chắc chắn muốn XÓA Trận ${index + 1}?`)) {
+        if(window.matchesData[dateStr]) {
+            window.matchesData[dateStr].splice(index, 1);
+            refreshAllViews();
+            autoBackupData();
+            if(window.syncToFirebase) window.syncToFirebase();
+        }
+    }
+}
+
+function updateMatchDataForDate(dateStr, index, field, value) {
+    if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
+        window.matchesData[dateStr][index][field] = value;
+        refreshAllViews();
+        autoBackupData();
+        if(window.syncToFirebase) window.syncToFirebase();
+    }
+}
+
+function updateMatchKeoModeForDate(dateStr, index, modeVal) {
+    if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
+        const m = window.matchesData[dateStr][index];
+        m.keoMode = modeVal;
+        if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
+        else if (modeVal === 'k0') { m.customWin = 0; m.customLose = 0; }
+        else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
+        refreshAllViews();
+        autoBackupData();
+        if(window.syncToFirebase) window.syncToFirebase();
+    }
+}
+
+function applyKeoToAllMatchesForDate(dateStr, modeVal) {
+    window.dateKeoMode[dateStr] = modeVal;
+    const matches = window.matchesData[dateStr] || [];
+    matches.forEach(m => {
+        m.keoMode = modeVal;
+        if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
+        else if (modeVal === 'k0') { m.customWin = 0; m.customLose = 0; }
+        else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
+    });
+    refreshAllViews();
+    autoBackupData();
+    if(window.syncToFirebase) window.syncToFirebase();
+}
+
+function handleBtcNoteChangeForDate(dateStr, selectEl) {
+    if (!window.paymentStatus) window.paymentStatus = {};
+    if (!window.paymentStatus[dateStr] || typeof window.paymentStatus[dateStr] !== 'object') {
+        window.paymentStatus[dateStr] = {};
+    }
+    window.paymentStatus[dateStr].btcNoteAdminOption = selectEl.value;
+    refreshAllViews();
+    autoBackupData();
+    if (window.syncToFirebase) window.syncToFirebase();
+}
+
 function renderDayDetailView() {
     removeLegacyAbsentBox();
     const dateStr = window.currentSelectedDate;
@@ -371,6 +436,17 @@ function renderDayDetailView() {
             </select>
         `;
 
+        if (mMode === 'free') {
+            keoCellUI += `
+                <div class="flex items-center justify-center gap-1 mt-1">
+                    <span class="text-[10px] text-emerald-700 font-bold">+</span>
+                    <input type="number" class="keo-custom-input text-emerald-700" value="${m.customWin !== undefined ? m.customWin : 5}" onchange="updateMatchDataForDate('${dateStr}', ${idx}, 'customWin', this.value)" title="Tiền thắng">
+                    <span class="text-[10px] text-red-600 font-bold">/</span>
+                    <input type="number" class="keo-custom-input text-red-600" value="${m.customLose !== undefined ? m.customLose : -15}" onchange="updateMatchDataForDate('${dateStr}', ${idx}, 'customLose', this.value)" title="Tiền thua">
+                </div>
+            `;
+        }
+
         tbody.innerHTML += `
             <tr class="hover:bg-slate-50">
                 <td class="font-bold text-slate-700 whitespace-nowrap px-1">Trận ${idx+1}</td>
@@ -402,7 +478,7 @@ function renderDayDetailView() {
     ensureDaySummaryAbsentHeader(sumBody);
     sumBody.innerHTML = '';
 
-    let sumBringBack = 0, sumThucThu = 0, sumThucTeAm = 0, sumThieuChuaChon = 0, sumFine = 0;
+    let sumBringBack = 0, sumThucThu = 0, sumAmThucTe = 0, sumFine = 0;
     const fineMap = getAbsentFineMap(dateStr);
 
     window.players.forEach(p => {
@@ -417,16 +493,7 @@ function renderDayDetailView() {
 
             let bringBack = 0;
             if(st.played >= 4 && netTotal > 0) { bringBack = netTotal; sumBringBack += bringBack; }
-
-            let thucTeVal = netTotal < 0 ? netTotal : 0;
-            if (thucTeVal < 0) {
-                sumThucTeAm += thucTeVal;
-                if (isPaid) {
-                    sumThucThu += Math.abs(thucTeVal);
-                } else {
-                    sumThieuChuaChon += Math.abs(thucTeVal);
-                }
-            }
+            if(netTotal < 0) { sumAmThucTe += netTotal; if(isPaid) sumThucThu += Math.abs(netTotal); }
 
             let noteText = "";
             if(netTotal < 0) {
@@ -446,7 +513,7 @@ function renderDayDetailView() {
                     <td class="p-2 border txt-win font-bold">${st.wins > 0 ? st.wins : ''}</td>
                     <td class="p-2 border txt-lose font-bold">${st.losses > 0 ? st.losses : ''}</td>
                     <td class="p-2 border text-blue-600 font-bold">${bringBack > 0 ? bringBack : ''}</td>
-                    <td class="p-2 border font-extrabold ${netTotal < 0 ? 'txt-lose' : (netTotal > 0 ? 'txt-win' : '')}">${netTotal}</td>
+                    <td class="p-2 border font-extrabold ${st.total < 0 ? 'txt-lose' : (st.total > 0 ? 'txt-win' : '')}">${st.total}</td>
                     ${buildAbsentFineCell(dateStr, p.name, isAbsent, fine, false)}
                     <td class="p-2 border bg-amber-50/30">
                         <input type="checkbox" ${isPaid ? 'checked' : ''} ${disabledAttr} onclick="togglePaymentStatus('${payKey}')" class="w-4 h-4 cursor-pointer accent-emerald-600">
@@ -457,8 +524,10 @@ function renderDayDetailView() {
         }
     });
 
-    let btcThuVe = sumThucTeAm + sumBringBack;
-    let quyCon = sumThieuChuaChon;
+    let btcThuVe = sumAmThucTe + sumBringBack;
+    let quyCon = sumThucThu - Math.abs(btcThuVe);
+    const pStatus = window.paymentStatus[dateStr];
+    const currentOption = (pStatus && typeof pStatus === 'object' && pStatus.btcNoteAdminOption) ? pStatus.btcNoteAdminOption : "YES";
 
     sumBody.innerHTML += `
         ${buildAbsentSelectorRow(dateStr, 9)}
@@ -469,74 +538,19 @@ function renderDayDetailView() {
             <td class="p-2 border text-red-600">${btcThuVe}</td>
             <td class="p-2 border ${sumFine < 0 ? 'txt-lose' : 'text-slate-500'}">${sumFine < 0 ? sumFine : 0}</td>
             <td class="p-2 border text-blue-700">${sumThucThu}</td>
-            <td class="p-2 border whitespace-nowrap">---</td>
+            <td class="p-2 border whitespace-nowrap">
+                <select onchange="handleBtcNoteChangeForDate('${dateStr}', this)" class="text-xs font-bold p-1 border rounded bg-white text-emerald-700 outline-none">
+                    <option value="YES" ${currentOption==='YES'?'selected':''}>YES (Chuyển tổng ngày)</option>
+                    <option value="NO" ${currentOption==='NO'?'selected':''}>NO (Không chuyển)</option>
+                </select>
+            </td>
         </tr>
         <tr class="bg-slate-100 font-extrabold">
-            <td class="p-2 border text-left text-red-600 pl-3" colspan="4">Quỹ Còn (Chưa chọn)</td>
+            <td class="p-2 border text-left text-red-600 pl-3" colspan="4">Quỹ Còn</td>
             <td class="p-2 border text-red-600 text-sm" colspan="2">${quyCon}</td>
             <td class="p-2 border" colspan="3"></td>
         </tr>
     `;
-}
-
-function addMatchToDate(dateStr) {
-    if(!window.matchesData[dateStr]) window.matchesData[dateStr] = [];
-    const nextId = window.matchesData[dateStr].length + 1;
-    const globalMode = window.dateKeoMode[dateStr] || 'default';
-    window.matchesData[dateStr].push({ 
-        id: nextId, c1_p1: "", c1_p2: "", c2_p1: "", c2_p2: "", score1: "", score2: "",
-        keoMode: globalMode, customWin: 5, customLose: -15
-    });
-    refreshAllViews();
-    autoBackupData();
-    if(window.syncToFirebase) window.syncToFirebase();
-}
-
-function deleteMatchFromDate(dateStr, index) {
-    if(confirm(`Bạn có chắc chắn muốn XÓA Trận ${index + 1}?`)) {
-        if(window.matchesData[dateStr]) {
-            window.matchesData[dateStr].splice(index, 1);
-            refreshAllViews();
-            autoBackupData();
-            if(window.syncToFirebase) window.syncToFirebase();
-        }
-    }
-}
-
-function updateMatchDataForDate(dateStr, index, field, value) {
-    if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
-        window.matchesData[dateStr][index][field] = value;
-        refreshAllViews();
-        autoBackupData();
-        if(window.syncToFirebase) window.syncToFirebase();
-    }
-}
-
-function updateMatchKeoModeForDate(dateStr, index, modeVal) {
-    if(window.matchesData[dateStr] && window.matchesData[dateStr][index]) {
-        const m = window.matchesData[dateStr][index];
-        m.keoMode = modeVal;
-        if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
-        else if (modeVal === 'k0') { m.customWin = 0; m.customLose = 0; }
-        else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
-        refreshAllViews();
-        autoBackupData();
-        if(window.syncToFirebase) window.syncToFirebase();
-    }
-}
-
-function applyKeoToAllMatchesForDate(dateStr, modeVal) {
-    window.dateKeoMode[dateStr] = modeVal;
-    const matches = window.matchesData[dateStr] || [];
-    matches.forEach(m => {
-        m.keoMode = modeVal;
-        if (modeVal === 'default') { m.customWin = 5; m.customLose = -15; }
-        else if (modeVal === 'k0') { m.customWin = 0; m.customLose = 0; }
-        else if (modeVal === 'k25') { m.customWin = 0; m.customLose = -25; }
-    });
-    refreshAllViews();
-    autoBackupData();
-    if(window.syncToFirebase) window.syncToFirebase();
 }
 
 function togglePaymentStatus(payKey) {
