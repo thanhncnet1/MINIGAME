@@ -413,7 +413,7 @@ function renderHomeClosestDateView() {
 
     let matchesTableRows = '';
     let stats = {};
-    window.players.forEach(p => { stats[p.name] = { played: 0, winK: 0, loseK: 0, total: 0 }; });
+    window.players.forEach(p => { stats[p.name] = { played: 0, wins: 0, losses: 0, winK: 0, loseK: 0, total: 0 }; });
 
     matches.forEach((m, idx) => {
         const val1 = (m.score1 || "").toString().trim();
@@ -446,11 +446,11 @@ function renderHomeClosestDateView() {
             const pair2 = [m.c2_p1, m.c2_p2].filter(Boolean);
 
             if(s1 > s2) {
-                pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].winK += effWin; stats[v].total += effWin; } });
-                pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].loseK += effLose; stats[v].total += effLose; } });
+                pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].wins++; stats[v].winK += effWin; stats[v].total += effWin; } });
+                pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].losses++; stats[v].loseK += effLose; stats[v].total += effLose; } });
             } else if(s2 > s1) {
-                pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].winK += effWin; stats[v].total += effWin; } });
-                pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].loseK += effLose; stats[v].total += effLose; } });
+                pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].wins++; stats[v].winK += effWin; stats[v].total += effWin; } });
+                pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].losses++; stats[v].loseK += effLose; stats[v].total += effLose; } });
             }
         }
 
@@ -552,8 +552,8 @@ function renderHomeClosestDateView() {
                 <tr class="hover:bg-slate-50 text-center">
                     <td class="p-2 border text-left pl-3"><span class="player-tag">${p.name}</span></td>
                     <td class="p-2 border">${st.played}</td>
-                    <td class="p-2 border txt-win">${st.winK > 0 ? '+' + st.winK + 'K' : ''}</td>
-                    <td class="p-2 border txt-lose">${st.loseK < 0 ? st.loseK + 'K' : ''}</td>
+                    <td class="p-2 border txt-win font-bold">${st.wins > 0 ? st.wins : ''}</td>
+                    <td class="p-2 border txt-lose font-bold">${st.losses > 0 ? st.losses : ''}</td>
                     <td class="p-2 border text-blue-600 font-bold">${bringBack > 0 ? '+' + bringBack + 'K' : ''}</td>
                     <td class="p-2 border font-extrabold ${st.total < 0 ? 'txt-lose' : (st.total > 0 ? 'txt-win' : '')}">${st.total !== 0 ? (st.total > 0 ? '+' + st.total + 'K' : st.total + 'K') : '0K'}</td>
                     ${buildAbsentFineCell(closestDate, p.name, isAbsent, fine, true)}
@@ -1127,142 +1127,10 @@ function renderFundMembers() {
     }
 }
 
-// ==========================================
-// HIỂN THỊ & SẮP XẾP BẢNG NHẬT KÝ THU / CHI (QUẢN LÝ QUỸ PICK)
-// ------------------------------------------
-// - Sắp xếp các khoản thu/chi theo NGÀY (mới nhất trước hoặc cũ nhất trước)
-// - Chọn SỐ DÒNG hiển thị (5 / 10 / 20 / 50 / Tất cả) cho từng bảng
-// - Dòng tổng hợp "Theo Quý" luôn ghim ở đầu bảng thu, không bị tính vào giới hạn dòng
-// - Lựa chọn được nhớ trên thiết bị (localStorage: pb_fund_view_prefs)
-// ==========================================
-var FUND_LIMIT_OPTIONS = [5, 10, 20, 50, 0]; // 0 = Tất cả
-
-function getFundViewPrefs() {
-    if (!window.fundViewPrefs) {
-        let saved = null;
-        try { saved = JSON.parse(localStorage.getItem('pb_fund_view_prefs')); } catch (e) { saved = null; }
-        const norm = (x) => ({
-            sort: (x && x.sort === 'asc') ? 'asc' : 'desc',
-            limit: (x && FUND_LIMIT_OPTIONS.includes(Number(x.limit))) ? Number(x.limit) : 0
-        });
-        window.fundViewPrefs = { income: norm(saved && saved.income), expense: norm(saved && saved.expense) };
-    }
-    return window.fundViewPrefs;
-}
-
-function saveFundViewPrefs() {
-    try { localStorage.setItem('pb_fund_view_prefs', JSON.stringify(getFundViewPrefs())); } catch (e) {}
-}
-
-// Đổi chuỗi ngày ("2026-01-05" hoặc "1/10/26" hoặc "01/10/2026") thành mốc thời gian để sắp xếp
-function parseFundDateToTs(str) {
-    if (!str) return 0;
-    const t = String(str).trim();
-    let d, m, y;
-    if (t.includes('/')) {
-        const a = t.split('/'); d = parseInt(a[0]); m = parseInt(a[1]); y = parseInt(a[2]);
-        if (y < 100) y += 2000;
-    } else if (t.includes('-')) {
-        const a = t.split('-'); y = parseInt(a[0]); m = parseInt(a[1]); d = parseInt(a[2]);
-    } else { return 0; }
-    if (!d || !m || !y) return 0;
-    return new Date(y, m - 1, d).getTime();
-}
-
-function setFundSort(type, value) {
-    getFundViewPrefs()[type].sort = (value === 'asc') ? 'asc' : 'desc';
-    saveFundViewPrefs();
-    if (type === 'income') renderFundIncomes(); else renderFundExpenses();
-}
-
-function setFundLimit(type, value) {
-    const n = parseInt(value);
-    getFundViewPrefs()[type].limit = FUND_LIMIT_OPTIONS.includes(n) ? n : 0;
-    saveFundViewPrefs();
-    if (type === 'income') renderFundIncomes(); else renderFundExpenses();
-}
-
-// Tạo thanh "Sắp xếp / Hiển thị" phía trên bảng (chỉ tạo 1 lần, tiêu đề bảng nằm trong HTML nên chèn bằng JS)
-function ensureFundTableToolbar(type, tbody) {
-    try {
-        const id = 'fund-toolbar-' + type;
-        let bar = document.getElementById(id);
-        if (bar) return bar;
-        const table = tbody.closest ? tbody.closest('table') : null;
-        const scrollBox = table ? table.parentElement : null;
-        if (!scrollBox || !scrollBox.parentElement) return null;
-        const color = type === 'income' ? 'emerald' : 'rose';
-        bar = document.createElement('div');
-        bar.id = id;
-        bar.className = 'px-4 py-2 border-b border-slate-100 bg-white flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-600';
-        const selCls = `text-xs font-bold p-1 border rounded bg-white text-${color}-700 border-${color}-300 outline-none cursor-pointer`;
-        bar.innerHTML = `
-            <label class="flex items-center gap-1.5 font-bold text-slate-600">
-                <i class="fa-solid fa-arrow-down-wide-short text-${color}-600"></i> Sắp xếp theo ngày:
-                <select id="fund-sort-${type}" onchange="setFundSort('${type}', this.value)" class="${selCls}">
-                    <option value="desc">Mới nhất → Cũ nhất</option>
-                    <option value="asc">Cũ nhất → Mới nhất</option>
-                </select>
-            </label>
-            <label class="flex items-center gap-1.5 font-bold text-slate-600">
-                <i class="fa-solid fa-list-ol text-${color}-600"></i> Hiển thị:
-                <select id="fund-limit-${type}" onchange="setFundLimit('${type}', this.value)" class="${selCls}">
-                    ${FUND_LIMIT_OPTIONS.map(n => `<option value="${n}">${n === 0 ? 'Tất cả' : n + ' dòng'}</option>`).join('')}
-                </select>
-            </label>
-            <span id="fund-info-${type}" class="ml-auto italic text-slate-500"></span>
-        `;
-        scrollBox.parentElement.insertBefore(bar, scrollBox);
-        return bar;
-    } catch (e) { console.warn('ensureFundTableToolbar:', e); return null; }
-}
-
-function updateFundToolbar(type, shown, total, pinned) {
-    const pref = getFundViewPrefs()[type];
-    const selSort = document.getElementById('fund-sort-' + type);
-    const selLimit = document.getElementById('fund-limit-' + type);
-    const info = document.getElementById('fund-info-' + type);
-    if (selSort) selSort.value = pref.sort;
-    if (selLimit) selLimit.value = String(pref.limit);
-    if (info) {
-        info.textContent = `Đang hiển thị ${shown}/${total} khoản` + (pinned > 0 ? ` (gồm ${pinned} dòng tổng hợp theo quý)` : '');
-    }
-}
-
-// Sắp xếp theo ngày + áp dụng giới hạn số dòng + đưa các dòng vào bảng
-function finalizeFundRows(type, tbody, pinnedRows, datedRows, emptyMsg) {
-    ensureFundTableToolbar(type, tbody);
-    const pref = getFundViewPrefs()[type];
-    const dir = pref.sort === 'asc' ? 1 : -1;
-    datedRows.sort((a, b) => ((a.ts - b.ts) * dir) || ((a.seq - b.seq) * dir));
-
-    const total = pinnedRows.length + datedRows.length;
-    const visible = pref.limit > 0 ? datedRows.slice(0, pref.limit) : datedRows;
-    const hidden = datedRows.length - visible.length;
-
-    pinnedRows.forEach(r => tbody.appendChild(r.tr));
-    visible.forEach(r => tbody.appendChild(r.tr));
-
-    if (total === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">${emptyMsg}</td></tr>`;
-    } else if (hidden > 0) {
-        const trMore = document.createElement('tr');
-        trMore.innerHTML = `<td colspan="6" class="text-center py-2 text-xs bg-slate-50">
-            <button onclick="setFundLimit('${type}', 0)" class="text-blue-600 hover:text-blue-800 font-bold">
-                <i class="fa-solid fa-angles-down"></i> Còn ${hidden} khoản nữa - bấm để xem tất cả
-            </button></td>`;
-        tbody.appendChild(trMore);
-    }
-    updateFundToolbar(type, pinnedRows.length + visible.length, total, pinnedRows.length);
-}
-
 function renderFundIncomes() {
     const tbody = document.getElementById('income-list');
     if (!tbody) return;
     tbody.innerHTML = '';
-    const pinnedRows = [];   // dòng tổng hợp theo quý (luôn ghim ở đầu bảng)
-    const datedRows = [];    // các khoản thu theo ngày (sẽ được sắp xếp theo ngày)
-    let rowSeq = 0;
 
     const quarterTotals = getQuarterCollectedTotals();
     (window.activeQuarterColumns || []).forEach(col => {
@@ -1286,7 +1154,7 @@ function renderFundIncomes() {
                 </button>
             </td>
         `;
-        pinnedRows.push({ tr: trQ });
+        tbody.appendChild(trQ);
     });
 
     (window.dates || []).forEach(d => {
@@ -1327,7 +1195,7 @@ function renderFundIncomes() {
                         </button>
                     </td>
                 `;
-                datedRows.push({ ts: parseFundDateToTs(d), seq: rowSeq++, tr: trAuto });
+                tbody.appendChild(trAuto);
             }
         }
     });
@@ -1350,20 +1218,25 @@ function renderFundIncomes() {
                 </button>
             </td>
         `;
-        datedRows.push({ ts: parseFundDateToTs(item.date), seq: rowSeq++, tr: tr });
+        tbody.appendChild(tr);
     });
 
-    finalizeFundRows('income', tbody, pinnedRows, datedRows, 'Chưa có khoản thu nào.');
+    if (tbody.children.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Chưa có khoản thu nào.</td></tr>`;
+    }
 }
 
 function renderFundExpenses() {
     const tbody = document.getElementById('expense-list');
     if(!tbody) return;
     tbody.innerHTML = '';
-    const datedRows = [];
-    let rowSeq = 0;
 
-    (window.fundExpenses || []).forEach(item => {
+    if(window.fundExpenses.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Chưa có khoản chi nào.</td></tr>`;
+        return;
+    }
+
+    window.fundExpenses.forEach(item => {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 transition-colors";
         tr.innerHTML = `
@@ -1381,10 +1254,8 @@ function renderFundExpenses() {
                 </button>
             </td>
         `;
-        datedRows.push({ ts: parseFundDateToTs(item.date), seq: rowSeq++, tr: tr });
+        tbody.appendChild(tr);
     });
-
-    finalizeFundRows('expense', tbody, [], datedRows, 'Chưa có khoản chi nào.');
 }
 
 function openFundModal(type) {
@@ -1746,7 +1617,7 @@ function renderDayDetailView() {
     tbody.innerHTML = '';
 
     let stats = {};
-    window.players.forEach(p => { stats[p.name] = { played: 0, winK: 0, loseK: 0, total: 0 }; });
+    window.players.forEach(p => { stats[p.name] = { played: 0, wins: 0, losses: 0, winK: 0, loseK: 0, total: 0 }; });
 
     matches.forEach((m, idx) => {
         const val1 = (m.score1 || "").toString().trim();
@@ -1779,11 +1650,11 @@ function renderDayDetailView() {
             const pair2 = [m.c2_p1, m.c2_p2].filter(Boolean);
 
             if(s1 > s2) {
-                pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].winK += effWin; stats[v].total += effWin; } });
-                pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].loseK += effLose; stats[v].total += effLose; } });
+                pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].wins++; stats[v].winK += effWin; stats[v].total += effWin; } });
+                pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].losses++; stats[v].loseK += effLose; stats[v].total += effLose; } });
             } else if(s2 > s1) {
-                pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].winK += effWin; stats[v].total += effWin; } });
-                pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].loseK += effLose; stats[v].total += effLose; } });
+                pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].wins++; stats[v].winK += effWin; stats[v].total += effWin; } });
+                pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].losses++; stats[v].loseK += effLose; stats[v].total += effLose; } });
             }
         }
 
@@ -1885,8 +1756,8 @@ function renderDayDetailView() {
                 <tr class="hover:bg-slate-50">
                     <td class="p-2 border text-left whitespace-nowrap pl-3"><span class="player-tag">${p.name}</span></td>
                     <td class="p-2 border">${st.played}</td>
-                    <td class="p-2 border txt-win">${st.winK > 0 ? st.winK : ''}</td>
-                    <td class="p-2 border txt-lose">${st.loseK < 0 ? st.loseK : ''}</td>
+                    <td class="p-2 border txt-win font-bold">${st.wins > 0 ? st.wins : ''}</td>
+                    <td class="p-2 border txt-lose font-bold">${st.losses > 0 ? st.losses : ''}</td>
                     <td class="p-2 border text-blue-600 font-bold">${bringBack > 0 ? bringBack : ''}</td>
                     <td class="p-2 border font-extrabold ${st.total < 0 ? 'txt-lose' : (st.total > 0 ? 'txt-win' : '')}">${st.total}</td>
                     ${buildAbsentFineCell(dateStr, p.name, isAbsent, fine, false)}
@@ -2465,7 +2336,7 @@ function renderM2KeoSummary(schedA, schedB) {
     let stats = {};
     const addPlayer = (name, group) => {
         if (!name) return;
-        if (!stats[name]) stats[name] = { name, groups: [], played: 0, winK: 0, loseK: 0, total: 0 };
+        if (!stats[name]) stats[name] = { name, groups: [], played: 0, wins: 0, losses: 0, winK: 0, loseK: 0, total: 0 };
         if (!stats[name].groups.includes(group)) stats[name].groups.push(group);
     };
     window.m2PairsA.forEach(p => { addPlayer(p.p1, 'A'); addPlayer(p.p2, 'A'); });
@@ -2490,7 +2361,7 @@ function renderM2KeoSummary(schedA, schedB) {
                 const st = stats[n];
                 if (!st) return;
                 st.played++;
-                if (isWin) st.winK += effWin; else st.loseK += effLose;
+                if (isWin) { st.wins++; st.winK += effWin; } else { st.losses++; st.loseK += effLose; }
                 st.total += isWin ? effWin : effLose;
             });
         };
@@ -2532,8 +2403,8 @@ function renderM2KeoSummary(schedA, schedB) {
                     <span class="ml-1 text-[10px] font-black ${grpCls}">(${grpLabel})</span>
                 </td>
                 <td class="p-2 border">${st.played}</td>
-                <td class="p-2 border txt-win">${st.winK > 0 ? st.winK : ''}</td>
-                <td class="p-2 border txt-lose">${st.loseK < 0 ? st.loseK : ''}</td>
+                <td class="p-2 border txt-win font-bold">${st.wins > 0 ? st.wins : ''}</td>
+                <td class="p-2 border txt-lose font-bold">${st.losses > 0 ? st.losses : ''}</td>
                 <td class="p-2 border text-blue-600 font-bold">${bringBack > 0 ? bringBack : ''}</td>
                 <td class="p-2 border font-extrabold ${st.total < 0 ? 'txt-lose' : (st.total > 0 ? 'txt-win' : '')}">${st.total}</td>
                 <td class="p-2 border bg-amber-50/30">
@@ -2769,7 +2640,7 @@ function renderM1ScheduleTeam() {
 
     let playerKeoStats = {};
     [...window.minigameTeamData.teamA, ...window.minigameTeamData.teamB].forEach(v => {
-        playerKeoStats[v] = { name: v, team: window.minigameTeamData.teamA.includes(v) ? 'A' : 'B', played: 0, winK: 0, loseK: 0, total: 0 };
+        playerKeoStats[v] = { name: v, team: window.minigameTeamData.teamA.includes(v) ? 'A' : 'B', played: 0, wins: 0, losses: 0, winK: 0, loseK: 0, total: 0 };
     });
 
     tbody.innerHTML = matches.map((m, index) => {
@@ -2902,7 +2773,7 @@ function addM1Keo(stats, name, isWin, amt) {
     const st = stats[name];
     if (!st) return;
     st.played++;
-    if (isWin) st.winK += amt; else st.loseK += amt;
+    if (isWin) { st.wins++; st.winK += amt; } else { st.losses++; st.loseK += amt; }
     st.total += amt;
 }
 
@@ -3021,8 +2892,8 @@ function renderM1SummaryTeam(playerKeoStats) {
                     <span class="ml-1 text-[10px] font-black ${st.team === 'A' ? 'text-blue-600' : 'text-orange-600'}">(${st.team})</span>
                 </td>
                 <td class="p-2 border">${st.played}</td>
-                <td class="p-2 border txt-win">${st.winK > 0 ? st.winK : ''}</td>
-                <td class="p-2 border txt-lose">${st.loseK < 0 ? st.loseK : ''}</td>
+                <td class="p-2 border txt-win font-bold">${st.wins > 0 ? st.wins : ''}</td>
+                <td class="p-2 border txt-lose font-bold">${st.losses > 0 ? st.losses : ''}</td>
                 <td class="p-2 border text-blue-600 font-bold">${bringBack > 0 ? bringBack : ''}</td>
                 <td class="p-2 border font-extrabold ${st.total < 0 ? 'txt-lose' : (st.total > 0 ? 'txt-win' : '')}">${st.total}</td>
                 <td class="p-2 border bg-amber-50/30">
@@ -3508,7 +3379,6 @@ function buildAbsentSelectorRow(dateStr, colspan) {
 }
 
 // Thêm cột tiêu đề XIN NGHỈ (giữa TỔNG và THỰC TẾ) cho bảng tổng hợp ở tab Chi Tiết Ngày
-// (tiêu đề bảng này nằm trong HTML nên bổ sung bằng JS, chỉ thêm 1 lần)
 function ensureDaySummaryAbsentHeader(sumBody) {
     try {
         const table = sumBody && sumBody.closest ? sumBody.closest('table') : null;
@@ -3517,7 +3387,7 @@ function ensureDaySummaryAbsentHeader(sumBody) {
         if (!headRow) return;
         const ths = Array.from(headRow.children);
         if (ths.some(t => t.getAttribute('data-col') === 'absent' || t.textContent.normalize('NFC').toUpperCase().includes('XIN NGHỈ'.normalize('NFC')))) return;
-        let target = ths.find(t => /TH[ỰỰ]C\s*T[ẾẾ]/i.test(t.textContent.normalize('NFC')));
+        let target = ths.find(t => /TH[ỰỰ]C\s*T[Ếế]/i.test(t.textContent.normalize('NFC')));
         const th = document.createElement('th');
         th.setAttribute('data-col', 'absent');
         th.className = 'p-2 border w-28 bg-rose-50 text-rose-800';
@@ -3528,9 +3398,6 @@ function ensureDaySummaryAbsentHeader(sumBody) {
     } catch (e) { console.warn('ensureDaySummaryAbsentHeader:', e); }
 }
 
-// Gỡ ô chọn "Pick thủ nghỉ" cũ (multi-select #absent-players-select) nằm cạnh tiêu đề
-// "Bảng tổng hợp kèo thu chi" ở tab Chi Tiết Ngày, để bảng giống các ngày khác và giống trang chủ.
-// Việc chọn VĐV nghỉ nay thực hiện bằng dòng "VĐV XIN NGHỈ HÔM NAY" nằm trong bảng.
 function removeLegacyAbsentBox() {
     try {
         const sel = document.getElementById('absent-players-select');
@@ -3544,14 +3411,13 @@ function removeLegacyAbsentBox() {
             const inner = clone.querySelector('#absent-players-select');
             if (inner) inner.remove();
             const rest = (clone.textContent || '').replace(/\s+/g, ' ').trim().normalize('NFC').toLowerCase();
-            if (stopRe.test(rest) || rest.length > 40) break; // đã chạm khung chứa tiêu đề bảng -> dừng
+            if (stopRe.test(rest) || rest.length > 40) break;
             target = p;
         }
         target.remove();
     } catch (e) { console.warn('removeLegacyAbsentBox:', e); }
 }
 
-// ---- Hàm cũ (giữ tên để tương thích) - nay dùng chung dữ liệu mới theo ngày đang chọn ----
 function renderAbsentPlayersDropdown(currentDateData) {
     const selectEl = document.getElementById('absent-players-select');
     if (!selectEl) return;
