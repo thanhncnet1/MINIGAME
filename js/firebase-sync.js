@@ -17,33 +17,47 @@ if (typeof firebase !== 'undefined' && !firebase.apps.length) {
 }
 const db = typeof firebase !== 'undefined' ? firebase.firestore() : null;
 
-// Hàm tự động đẩy dữ liệu lên Cloud
-window.syncToFirebase = function() {
+// Biến lưu trữ bộ hẹn giờ debounce cho Firebase
+let firebaseSyncTimer = null;
+
+// Hàm tự động đẩy dữ liệu lên Cloud có áp dụng Debounce (Tránh gọi liên tục gây chậm)
+window.syncToFirebase = function(immediate = false) {
     if (!db) return;
-    const payload = {
-        players: window.players,
-        minigameTeamData: window.minigameTeamData,
-        matchesData: window.matchesData,
-        dates: window.dates,
-        dateKeoMode: window.dateKeoMode,
-        paymentStatus: window.paymentStatus,
-        fundIncomes: window.fundIncomes,
-        fundExpenses: window.fundExpenses,
-        fundFeeStatus: window.fundFeeStatus,
-        activeQuarterColumns: window.activeQuarterColumns,
-        initialFund: window.initialFund,
-        updatedAt: new Date().toISOString()
+
+    const executeSync = () => {
+        const payload = {
+            players: window.players,
+            minigameTeamData: window.minigameTeamData,
+            matchesData: window.matchesData,
+            dates: window.dates,
+            dateKeoMode: window.dateKeoMode,
+            paymentStatus: window.paymentStatus,
+            fundIncomes: window.fundIncomes,
+            fundExpenses: window.fundExpenses,
+            fundFeeStatus: window.fundFeeStatus,
+            activeQuarterColumns: window.activeQuarterColumns,
+            initialFund: window.initialFund,
+            updatedAt: new Date().toISOString()
+        };
+
+        db.collection("club_data").doc("main_config").set(payload, { merge: true })
+            .then(() => {
+                console.log("☁️ Đồng bộ Cloud Firestore thành công!");
+            })
+            .catch((error) => {
+                console.error("❌ Lỗi đồng bộ Firebase: ", error);
+            });
     };
 
-    db.collection("club_data").doc("main_config").set(payload, { merge: true })
-        .then(() => {
-            console.log("☁️ Đồng bộ Cloud Firestore thành công!");
-        })
-        .catch((error) => {
-            console.error("❌ Lỗi đồng bộ Firebase: ", error);
-        });
+    if (immediate) {
+        clearTimeout(firebaseSyncTimer);
+        executeSync();
+    } else {
+        // Trì hoãn 1.5 giây sau thao tác cuối cùng mới gọi Firebase để tối ưu tốc độ mạng
+        clearTimeout(firebaseSyncTimer);
+        firebaseSyncTimer = setTimeout(executeSync, 1500);
+    }
 };
-
 // Hàm tải dữ liệu từ Cloud khi khởi động ứng dụng trên thiết bị mới
 function loadDataFromFirebase(callback) {
     if (!db) {
