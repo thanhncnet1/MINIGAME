@@ -36,7 +36,7 @@ function getClosestDateToToday() {
     return closestDateStr;
 }
 
-function renderHomeClosestDateView() {
+funwindow.renderHomeClosestDateView = function() {
     const container = document.getElementById('home-closest-date-container');
     const titleEl = document.getElementById('home-closest-date-title');
     if (!container) return;
@@ -55,6 +55,7 @@ function renderHomeClosestDateView() {
     let stats = {};
     window.players.forEach(p => { stats[p.name] = { played: 0, wins: 0, losses: 0, winK: 0, loseK: 0, total: 0 }; });
 
+    // Sử dụng vòng lặp tối ưu 1 lượt duyệt cho cả trận đấu và thống kê VĐV
     matches.forEach((m, idx) => {
         const val1 = (m.score1 || "").toString().trim();
         const val2 = (m.score2 || "").toString().trim();
@@ -86,13 +87,74 @@ function renderHomeClosestDateView() {
             const pair2 = [m.c2_p1, m.c2_p2].filter(Boolean);
 
             if(s1 > s2) {
-                pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].wins++; stats[v].winK += effWin; stats[v].total += effWin; } });
-                pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].losses++; stats[v].loseK += effLose; stats[v].total += effLose; } });
+                pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].wins++; stats[v].total += effWin; } });
+                pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].losses++; stats[v].total += effLose; } });
             } else if(s2 > s1) {
-                pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].wins++; stats[v].winK += effWin; stats[v].total += effWin; } });
-                pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].losses++; stats[v].loseK += effLose; stats[v].total += effLose; } });
+                pair2.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].wins++; stats[v].total += effWin; } });
+                pair1.forEach(v => { if(stats[v]) { stats[v].played++; stats[v].losses++; stats[v].total += effLose; } });
             }
         }
+
+        const buildPlayerSelectHome = (val, field) => {
+            let opts = `<option value="">-- Chọn Pick --</option>`;
+            window.players.forEach(p => {
+                opts += `<option value="${p.name}" ${p.name === val ? 'selected' : ''}>${p.name}</option>`;
+            });
+            return `<select onchange="updateMatchDataForDate('${closestDate}', ${idx}, '${field}', this.value)" class="player-select-btn text-[11px] border rounded p-1 outline-none w-full bg-white shadow-sm">${opts}</select>`;
+        };
+
+        matchesTableRows += `
+            <tr class="hover:bg-slate-50 text-center">
+                <td class="font-bold text-slate-700 whitespace-nowrap px-1">Trận ${idx + 1}</td>
+                <td class="p-1">${buildPlayerSelectHome(m.c1_p1, 'c1_p1')}</td>
+                <td class="p-1">${buildPlayerSelectHome(m.c1_p2, 'c1_p2')}</td>
+                <td class="p-1 bg-purple-50/40 border-x border-purple-200">
+                    <div class="flex items-center justify-center gap-0.5">
+                        <input type="text" class="score-input w-12 text-center" value="${m.score1 || ''}" onchange="updateMatchDataForDate('${closestDate}', ${idx}, 'score1', this.value)">
+                        <span class="font-black text-slate-400 px-0.5">-</span>
+                        <input type="text" class="score-input w-12 text-center" value="${m.score2 || ''}" onchange="updateMatchDataForDate('${closestDate}', ${idx}, 'score2', this.value)">
+                    </div>
+                </td>
+                <td class="p-1">${buildPlayerSelectHome(m.c2_p1, 'c2_p1')}</td>
+                <td class="p-1">${buildPlayerSelectHome(m.c2_p2, 'c2_p2')}</td>
+                <td class="p-1 font-extrabold ${keo1 > 0 ? 'txt-win' : (keo1 < 0 ? 'txt-lose' : '')}">${keo1 !== '' ? keo1 + 'K' : '---'}</td>
+                <td class="p-1 font-extrabold ${keo2 > 0 ? 'txt-win' : (keo2 < 0 ? 'txt-lose' : '')}">${keo2 !== '' ? keo2 + 'K' : '---'}</td>
+                <td class="p-1 text-center whitespace-nowrap">
+                    <button onclick="deleteMatchFromDate('${closestDate}', ${idx})" class="text-slate-400 hover:text-red-600 font-bold p-1 transition-colors">
+                        <i class="fa-solid fa-trash-can text-sm"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+
+    // Render rút gọn giao diện bảng thống kê trang Home để tải siêu tốc
+    container.innerHTML = `
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-4">
+            <div class="flex justify-between items-center">
+                <span class="text-xs font-bold text-slate-600">Hiển thị nhanh kết quả ngày ${closestDate}</span>
+                <button onclick="addMatchToDate('${closestDate}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-2.5 py-1 rounded shadow font-bold">
+                    <i class="fa-solid fa-plus"></i> Thêm Trận
+                </button>
+            </div>
+            <div class="smooth-scroll border border-slate-200 rounded-lg bg-white shadow-sm overflow-x-auto">
+                <table class="w-full text-xs min-w-[750px] border-collapse text-center">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 font-bold">
+                            <th class="p-2 border w-10">STT</th>
+                            <th class="p-2 border" colspan="2">CẶP 1</th>
+                            <th class="p-2 border w-24">TỶ SỐ</th>
+                            <th class="p-2 border" colspan="2">CẶP 2</th>
+                            <th class="p-2 border" colspan="2">KÈO</th>
+                            <th class="p-2 border w-10">Xóa</th>
+                        </tr>
+                    </thead>
+                    <tbody>${matchesTableRows || '<tr><td colspan="9" class="p-4 text-center text-slate-400">Chưa có trận đấu nào.</td></tr>'}</tbody>
+                </table>
+            </div>
+        </div>
+    `;
+};
 
         const buildPlayerSelectHome = (val, field) => {
             let opts = `<option value="">-- Chọn Pick --</option>`;
